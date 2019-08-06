@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Calendar Notifications</string>
+
+    <string name="main_activity_title">Calendar Notifications</string>
+
+    <string name="settings">Configurações</string>
+    <string name="application_has_no_access">Esta aplicação precisa de permissões especiais para poder acessar as notificações do calendário\n\nPor favor, garanta as permissões READ_CALENDAR e WRITE_CALENDAR\n\nWRITE_CALENDAR é requerida para esconder as notificações originais do calendário</string>
+
+    <string name="cancel">Cancelar</string>
+
+    <!-- string name="app_updated">App Updated</string -->
+
+    <string name="dismiss">Dispensar</string>
+    <string name="snooze">Adiar</string>
+
+    <string name="help_feedback">Ajuda e retorno</string>
+
+    <string name="empty_title">(Sem título)</string>
+    <string name="snooze_event_for">Adiar o evento por:</string>
+
+    <string name="snooze_preset_15_min">15 minutos</string>
+    <string name="snooze_preset_1_hour">1 hora</string>
+    <string name="snooze_preset_4_hours">4 horas</string>
+    <string name="snooze_preset_1_day">1 dia</string>
+
+    <string name="location">Local:</string>
+    <string name="today">Hoje</string>
+    <string name="tomorrow">Amanhã</string>
+    <string name="change_event_time">Altere o tempo do evento</string>
+    <string name="one_hour_from_now">Mova para a hora seguinte</string>
+    <string name="same_time_tomorrow">Mova para o dia seguinte</string>
+    <string name="next_week_same_day">Mova para a semana seguinte</string>
+
+    <string name="snoozed_until_string">Adiar até</string>
+    <string name="card_view_btn_change">ALTERAR</string>
+    <string name="card_view_btn_snooze">ADIAR</string>
+    <string name="settings_name">Configurações</string>
+    <string name="app_created_with">Aplicação criada com</string>
+    <string name="notification_settings">Configurações de Notificação</string>
+    <string name="snooze_presets">Configurações de adiamento</string>
+    <!-- string name="dialog_snooze_text_label">Lista das opções de adiamento separadas por vírgulas\n\nValores suportados como \'15m\', \'2h\' or \'3d\'\n\nAté 6 items na lista\n\nDeixe em branco para usar o padrão</string -->
+
+    <string name="error_cannot_parse_preset">Desculpe, não foi possível processar sua entrada</string>
+    <string name="snooze_presets_title">Opções de Adiamento</string>
+    <string name="snooze_presets_summary">Aqui você pode alterar as opções padrão de adiamento</string>
+
+    <string name="error_too_many_presets">São suportados no máximo 6 opções, aquelas adicionais serão ignoradas</string>
+
+    <string name="days">dias</string>
+    <string name="day">dia</string>
+    <string name="hours">horas</string>
+    <string name="hour">hora</string>
+    <string name="minutes">minutos</string>
+    <string name="minute">minuto</string>
+    <string name="no_calendar_permissions_main">Aplicação não possuí permissões de calendário</string>
+    <string name="view_after_edit">Visualizar depois de editar</string>
+    <string name="view_after_edit_summary">Ative para vizualizar automaticamente o evento após alterar sua data utilizando a opção de Adiar</string>
+    <string name="misc_settings">Outras configurações</string>
+
+
+    <string name="enable_reminders">Habilitar lembretes</string>
+    <string name="enable_reminders_summary">Se habilitado, a aplicação irá lembrar repetidamente sobre notificações ativas</string>
+    <string name="remind_interval">Intervalo do lembrete</string>
+    <string name="invalid_reminder_interval">O intervalo do lembrete não pode ser zero, revertido para 1 minuto</string>
+    <string name="max_reminders">Máximo de lembretes</string>
+    <string name="max_reminders_summary">O número máximo de lembretes a serem acionados, 0 para indefinido</string>
+
+<!-- 'Akira Nóis ;) -->
+
+    <string name="pebble_notification_title">Calendário</string>
+
+</resources>
