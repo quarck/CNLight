@@ -42,7 +42,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/material_red"
+                android:background="#0f0f0f"
                 android:id="@+id/snooze_view_event_details_layout"
                 android:visibility="visible"
                 android:elevation="@dimen/toolbar_elevation"

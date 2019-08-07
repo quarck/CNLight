@@ -209,7 +209,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:background="@color/primary_text"
+            android:background="#0f0f0f"
             android:elevation="4dp"
             tools:targetApi="m"
             >
@@ -274,7 +274,7 @@
             android:id="@+id/list_events"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/cardview_light_background"
+            android:background="@color/cardview_dark_background"
             />
 
     </android.support.v4.widget.SwipeRefreshLayout>

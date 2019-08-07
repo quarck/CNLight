@@ -317,11 +317,12 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         if (color == 0)
             color = ContextCompat.getColor(this, R.color.primary)
 
-        val colorDrawable = ColorDrawable(color)
+        val colorDrawable = ColorDrawable(color.invertColor().scaleColor(0.1f))
         findOrThrow<RelativeLayout>(R.id.snooze_view_event_details_layout).background = colorDrawable
+        title.setTextColor(ColorStateList.valueOf(color.scaleColor(1.8f)))
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = color.scaleColor(0.7f)
+            window.statusBarColor = 0
         }
 
 //        val shouldOfferMove = (!event.isRepeating) && (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))

@@ -25,6 +25,7 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
@@ -467,11 +468,15 @@ open class EditEventActivity : AppCompatActivity() {
             accountName.text = calendar.name
 
             val color = originalEvent?.color ?: calendar.color
-            eventTitleLayout.background = ColorDrawable(color.adjustCalendarColor())
-            eventTitleText.background = ColorDrawable(color.adjustCalendarColor())
+
+            eventTitleLayout.background = ColorDrawable(color.invertColor().scaleColor(0.1f))
+            eventTitleText.background = ColorDrawable(color.invertColor().scaleColor(0.1f))
+
+            eventTitleText.setTextColor(ColorStateList.valueOf(color.scaleColor(1.8f)))
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = color.scaleColor(0.7f)
+                //window.statusBarColor = color.scaleColor(0.7f)
+                window.statusBarColor = 0
             }
 
             from = state.from
@@ -515,11 +520,13 @@ open class EditEventActivity : AppCompatActivity() {
             switchAllDay.isEnabled = false
 
             accountName.text = calendar.name
-            eventTitleLayout.background = ColorDrawable(eventToEdit.color.adjustCalendarColor())
-            eventTitleText.background = ColorDrawable(eventToEdit.color.adjustCalendarColor())
+            eventTitleLayout.background = ColorDrawable(eventToEdit.color.invertColor().scaleColor(0.1f))
+            eventTitleText.background = ColorDrawable(eventToEdit.color.invertColor().scaleColor(0.1f))
+            eventTitleText.setTextColor(ColorStateList.valueOf(eventToEdit.color.scaleColor(1.8f)))
+
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = eventToEdit.color.scaleColor(0.7f)
+                window.statusBarColor = 0
             }
 
             eventTitleText.setText(eventToEdit.title)
@@ -558,15 +565,17 @@ open class EditEventActivity : AppCompatActivity() {
         else {
             // Initialize default values
             accountName.text = calendar.name
-            eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor())
-            eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor())
+            eventTitleText.setTextColor(ColorStateList.valueOf(calendar.color.scaleColor(1.8f)))
+
+            eventTitleLayout.background = ColorDrawable(calendar.color.invertColor().scaleColor(0.1f))
+            eventTitleText.background = ColorDrawable(calendar.color.invertColor().scaleColor(0.1f))
 
             if (receivedSharedText.isNotEmpty()) {
                 eventTitleText.setText(receivedSharedText)
             }
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = calendar.color.scaleColor(0.7f)
+                window.statusBarColor = 0
             }
 
             // Set default date and time
@@ -761,11 +770,13 @@ open class EditEventActivity : AppCompatActivity() {
 //                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.statusBarColor = calendar.color.scaleColor(0.7f)
+                    window.statusBarColor = 0
                 }
 
-                eventTitleLayout.background = ColorDrawable(calendar.color.adjustCalendarColor())
-                eventTitleText.background = ColorDrawable(calendar.color.adjustCalendarColor())
+                eventTitleLayout.background = ColorDrawable(calendar.color.invertColor().scaleColor(0.1f))
+                eventTitleText.background = ColorDrawable(calendar.color.invertColor().scaleColor(0.1f))
+                eventTitleText.setTextColor(ColorStateList.valueOf(calendar.color.scaleColor(1.8f)))
+
 
             }
         }

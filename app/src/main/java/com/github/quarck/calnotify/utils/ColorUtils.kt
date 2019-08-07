@@ -147,3 +147,13 @@ fun Int.scaleColor(value: Float): Int {
 
     return RGB(newR, newG, newB).toInt()
 }
+
+fun Int.invertColor(): Int {
+    val (r, g, b) = RGB(this)
+
+    val newR = 255 - r
+    val newG = 255 - g
+    val newB = 255 - b
+
+    return RGB(newR, newG, newB).toInt()
+}
