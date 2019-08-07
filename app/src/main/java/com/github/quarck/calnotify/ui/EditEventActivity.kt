@@ -318,7 +318,7 @@ open class EditEventActivity : AppCompatActivity() {
         val toolbar = find<Toolbar?>(R.id.toolbar)
         toolbar?.visibility = View.GONE
 
-        window.navigationBarColor = 0
+        window.navigationBarColor = resources.getColor(android.R.color.black)
 
         persistentState = CalendarChangePersistentState(this)
 

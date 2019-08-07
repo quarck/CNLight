@@ -83,7 +83,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private lateinit var recyclerView: RecyclerView
     private lateinit var reloadLayout: RelativeLayout
 
-    private lateinit var newStyleMessageLayout: View
     private lateinit var quietHoursLayout: RelativeLayout
     private lateinit var quietHoursTextView: TextView
     private var refreshLayout: SwipeRefreshLayout? = null
@@ -121,7 +120,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        window.navigationBarColor = 0
+        window.navigationBarColor = resources.getColor(android.R.color.black)
 
         shouldForceRepost = (System.currentTimeMillis() - (globalState?.lastNotificationRePost ?: 0L)) > Consts.MIN_FORCE_REPOST_INTERVAL
 
@@ -147,8 +146,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         quietHoursLayout = findOrThrow<RelativeLayout>(R.id.activity_main_quiet_hours_info_layout)
         quietHoursTextView = findOrThrow<TextView>(R.id.activity_main_quiet_hours)
-
-        newStyleMessageLayout = findOrThrow<View>(R.id.activity_main_new_style_message_layout)
 
         calendarRescanEnabled = settings.enableCalendarRescan
 

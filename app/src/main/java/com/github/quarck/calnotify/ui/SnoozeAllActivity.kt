@@ -111,7 +111,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_snooze_all)
 
-        window.navigationBarColor = 0
+        window.navigationBarColor = resources.getColor(android.R.color.black)
 
         val currentTime = System.currentTimeMillis()
 

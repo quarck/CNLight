@@ -44,7 +44,7 @@ class AboutActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        window.navigationBarColor = 0
+        window.navigationBarColor = resources.getColor(android.R.color.black)
 
         val versionText = find<TextView?>(R.id.text_view_app_version)
         val pInfo = packageManager.getPackageInfo(packageName, 0);

@@ -39,7 +39,7 @@ class SettingsActivity : PreferenceActivity() {
     public override fun onCreate(savedInstanceState: Bundle?) {
         delegate.installViewFactory()
         delegate.onCreate(savedInstanceState)
-        window.navigationBarColor = 0
+        window.navigationBarColor = resources.getColor(android.R.color.black)
         super.onCreate(savedInstanceState)
     }
 

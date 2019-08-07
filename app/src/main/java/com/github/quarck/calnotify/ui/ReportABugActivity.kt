@@ -45,7 +45,7 @@ class ReportABugActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        window.navigationBarColor = 0
+        window.navigationBarColor = resources.getColor(android.R.color.black)
 
         val pInfo = packageManager.getPackageInfo(packageName, 0)
 

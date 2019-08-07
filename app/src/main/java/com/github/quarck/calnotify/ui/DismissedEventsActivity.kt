@@ -37,7 +37,7 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
         setSupportActionBar(find<Toolbar?>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
-        window.navigationBarColor = 0
+        window.navigationBarColor = resources.getColor(android.R.color.black)
 
         adapter =
                 DismissedEventListAdapter(

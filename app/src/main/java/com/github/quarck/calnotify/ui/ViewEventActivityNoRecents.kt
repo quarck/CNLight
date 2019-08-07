@@ -179,7 +179,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         setContentView(R.layout.activity_view)
 
-        window.navigationBarColor = 0
+        window.navigationBarColor = resources.getColor(android.R.color.black)
 
         val currentTime = System.currentTimeMillis()
 
