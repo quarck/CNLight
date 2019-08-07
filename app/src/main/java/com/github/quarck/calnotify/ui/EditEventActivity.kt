@@ -318,6 +318,8 @@ open class EditEventActivity : AppCompatActivity() {
         val toolbar = find<Toolbar?>(R.id.toolbar)
         toolbar?.visibility = View.GONE
 
+        window.navigationBarColor = 0
+
         persistentState = CalendarChangePersistentState(this)
 
         val intent = intent

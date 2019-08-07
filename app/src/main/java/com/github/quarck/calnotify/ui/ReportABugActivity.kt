@@ -45,6 +45,8 @@ class ReportABugActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
+        window.navigationBarColor = 0
+
         val pInfo = packageManager.getPackageInfo(packageName, 0)
 
         val memoText = resources.getString(R.string.bugs_details).format(

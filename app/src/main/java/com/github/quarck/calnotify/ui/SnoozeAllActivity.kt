@@ -111,6 +111,8 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_snooze_all)
 
+        window.navigationBarColor = 0
+
         val currentTime = System.currentTimeMillis()
 
         settings = Settings(this)

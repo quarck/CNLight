@@ -179,6 +179,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         setContentView(R.layout.activity_view)
 
+        window.navigationBarColor = 0
+
         val currentTime = System.currentTimeMillis()
 
         settings = Settings(this)

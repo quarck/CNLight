@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/compact_view_layout_height"
-    android:background="@color/cardview_dark_background">
+    android:background="#000">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -126,7 +126,7 @@
                 android:id="@+id/imageview_is_muted_indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                card_view:srcCompat="@drawable/ic_volume_off_black_24dp"
+                card_view:srcCompat="@drawable/ic_volume_off_white_24dp"
                 android:contentDescription="@string/notification_is_muted"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
@@ -141,7 +141,7 @@
                 android:id="@+id/imageview_is_task_indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                card_view:srcCompat="@drawable/ic_event_available_black_24dp"
+                card_view:srcCompat="@drawable/ic_event_available_white_24dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="0dp"
                 android:padding="0dp"
@@ -149,21 +149,6 @@
                 android:importantForAccessibility="no"
                 android:scaleX="0.75"
                 android:scaleY="0.75"
-                android:alpha="0.75"
-                />
-
-            <ImageView
-                android:id="@+id/imageview_is_alarm_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="0dp"
-                android:layout_marginTop="0dp"
-                android:importantForAccessibility="no"
-                android:padding="0dp"
-                android:scaleX="0.75"
-                android:scaleY="0.75"
-                android:visibility="gone"
-                card_view:srcCompat="@drawable/ic_alarm_black_24dp"
                 android:alpha="0.75"
                 />
 

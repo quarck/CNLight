@@ -79,7 +79,6 @@ class EventListAdapter(
 
         var muteImage: ImageView?
         var taskImage: ImageView?
-        val alarmImage: ImageView?
 
         var calendarColor: ColorDrawable
 
@@ -100,7 +99,6 @@ class EventListAdapter(
 
             muteImage = itemView.find<ImageView?>(R.id.imageview_is_muted_indicator)
             taskImage = itemView.find<ImageView?>(R.id.imageview_is_task_indicator)
-            alarmImage = itemView.find<ImageView?>(R.id.imageview_is_alarm_indicator)
 
             calendarColor = ColorDrawable(0)
 
@@ -326,7 +324,6 @@ class EventListAdapter(
 
             holder.taskImage?.visibility = if (event.isTask) View.VISIBLE else View.GONE
 
-            holder.alarmImage?.visibility = if (event.isAlarm) View.VISIBLE else View.GONE
 
             holder.undoLayout?.visibility = View.GONE
             holder.compactViewContentLayout?.visibility = View.VISIBLE

@@ -121,6 +121,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
+        window.navigationBarColor = 0
+
         shouldForceRepost = (System.currentTimeMillis() - (globalState?.lastNotificationRePost ?: 0L)) > Consts.MIN_FORCE_REPOST_INTERVAL
 
         refreshLayout = find<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)

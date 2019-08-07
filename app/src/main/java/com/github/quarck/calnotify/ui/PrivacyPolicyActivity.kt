@@ -16,6 +16,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
+        window.navigationBarColor = 0
     }
 
 }
