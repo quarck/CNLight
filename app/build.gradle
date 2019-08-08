@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         applicationId "com.github.quarck.cnlight"
-        minSdkVersion 18
+        minSdkVersion 25
         //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 25
         versionCode 1
