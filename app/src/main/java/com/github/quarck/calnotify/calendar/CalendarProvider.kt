@@ -1179,9 +1179,7 @@ object CalendarProvider : CalendarProviderInterface {
                     CalendarContract.Calendars.VISIBLE
             )
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                fields.add(CalendarContract.Calendars.IS_PRIMARY)
-            }
+            fields.add(CalendarContract.Calendars.IS_PRIMARY)
 
             val uri = CalendarContract.Calendars.CONTENT_URI
 
@@ -1203,12 +1201,7 @@ object CalendarProvider : CalendarProviderInterface {
                 val syncEvents: Int? = cursor.getInt(9)
                 val visible: Int? = cursor.getInt(10)
 
-                val isPrimary: Int? =
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                            cursor.getInt(11)
-                        } else {
-                            0
-                        }
+                val isPrimary: Int? = cursor.getInt(11)
 
                 val isEditable =
                         when(accessLevel ?: 0) {

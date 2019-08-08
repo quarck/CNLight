@@ -323,9 +323,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         findOrThrow<RelativeLayout>(R.id.snooze_view_event_details_layout).background = colorDrawable
         title.setTextColor(ColorStateList.valueOf(color.scaleColor(1.8f)))
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = 0
-        }
+        window.statusBarColor = 0
 
 //        val shouldOfferMove = (!event.isRepeating) && (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
         val shouldOfferMove = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
@@ -726,11 +724,9 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         state.state = ViewEventActivityStateCode.SnoozeUntilOpenedDatePicker
         snoozeUntil_DatePicker = datePicker
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val firstDayOfWeek = Settings(this).firstDayOfWeek
-            if (firstDayOfWeek != -1)
-                snoozeUntil_DatePicker?.firstDayOfWeek = firstDayOfWeek
-        }
+        val firstDayOfWeek = Settings(this).firstDayOfWeek
+        if (firstDayOfWeek != -1)
+            snoozeUntil_DatePicker?.firstDayOfWeek = firstDayOfWeek
 
         if (initialValueForDate != 0L) {
             val cal = Calendar.getInstance()

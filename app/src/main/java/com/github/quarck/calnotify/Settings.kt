@@ -70,14 +70,6 @@ data class LedSettings (
     fun toQuiet() = this
 }
 
-data class PebbleSettings (
-        val forwardEventToPebble: Boolean,
-        val pebbleOldFirmware: Boolean,
-        val forwardReminderToPebble: Boolean,
-        val forwardOnlyAlarms: Boolean
-) {
-    fun toQuiet() = copy(forwardEventToPebble = false, forwardReminderToPebble = false)
-}
 
 data class NotificationBehaviorSettings (
         val allowNotificationSwipe: Boolean,
@@ -93,17 +85,13 @@ data class NotificationSettings
         val vibration: VibrationSettings,
         val reminderVibration: VibrationSettings,
         val led: LedSettings,
-        val pebble: PebbleSettings,
 
         val ringtoneUri: Uri?,
         val reminderRingtoneUri: Uri?,
 
-        val headsUpNotification: Boolean,
         val showColorInNotification: Boolean,
 
         val quietHoursMuteLED: Boolean,
-
-        val useAlarmStreamForEverything: Boolean,
 
         val showDescriptionInTheNotification: Boolean,
         val appendEmptyAction: Boolean,
@@ -114,7 +102,6 @@ data class NotificationSettings
             copy(
                     vibration = vibration.toQuiet(),
                     reminderVibration = reminderVibration.toQuiet(),
-                    pebble = pebble.toQuiet(),
                     ringtoneUri = null,
                     reminderRingtoneUri = null
             )
@@ -177,9 +164,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     private val reminderCustomRingtone: Boolean
         get() = getBoolean(REMINDERS_CUSTOM_RINGTONE_KEY, false)
 
-//    val notificationUseAlarmStream: Boolean
-//        get() = getBoolean(USE_ALARM_STREAM_FOR_NOTIFICATION_KEY, false)
-//
     val remindersEnabled: Boolean
         get() = getBoolean(ENABLE_REMINDERS_KEY, false)
 
@@ -342,15 +326,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         setString(LED_PATTERN_KEY, s.pattern.joinToString(separator=",") { "$it" })
     }
 
-    fun loadPebbleSettings(): PebbleSettings {
-        return PebbleSettings(
-                forwardEventToPebble = getBoolean(FORWARD_TO_PEBBLE_KEY, false),
-                pebbleOldFirmware = getBoolean(PEBBLE_TEXT_IN_TITLE_KEY, false),
-                forwardReminderToPebble = getBoolean(PEBBLE_FORWARD_REMINDERS_KEY, false),
-                forwardOnlyAlarms =  getBoolean(PEBBLE_FORWARD_ONLY_ALARMS, false)
-        )
-    }
-
     fun loadNotificationSettings(): NotificationSettings {
 
         return NotificationSettings (
@@ -358,17 +333,13 @@ class Settings(context: Context) : PersistentStorageBase(context) {
             vibration =  loadVibrationSettings(),
             reminderVibration = loadReminderVibrationSettings(),
             led = loadLedSettings(),
-            pebble = loadPebbleSettings(),
 
             ringtoneUri = loadRingtoneUri(RINGTONE_KEY),
             reminderRingtoneUri = loadRingtoneUri(if (reminderCustomRingtone) REMINDERS_RINGTONE_KEY else RINGTONE_KEY),
 
-            headsUpNotification = getBoolean(HEADS_UP_NOTIFICATINO_KEY, false),
-            showColorInNotification = getBoolean(NOTIFICATION_CALENDAR_COLOR_KEY, true),
+            showColorInNotification = true,
 
             quietHoursMuteLED = getBoolean(QUIET_HOURS_MUTE_LED, false),
-
-            useAlarmStreamForEverything = getBoolean(USE_ALARM_STREAM_FOR_NOTIFICATION_KEY, false),
 
             showDescriptionInTheNotification = getBoolean(SHOW_EVENT_DESC_IN_THE_NOTIFICATION_KEY, false),
             appendEmptyAction = getBoolean(NOTIFICATION_ADD_EMPTY_ACTION_KEY, false),
@@ -387,9 +358,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
     val defaultNewEventDurationMinutes: Int
         get() = getString(ADD_EVENT_DEFAULT_DURATION_KEY, "").toIntOrNull() ?: 30
 
-
-    val notificationWakeScreen: Boolean
-        get() = getBoolean(NOTIFICATION_WAKE_SCREEN_KEY, false)
 
     val reminderCustomVibra: Boolean
         get() = getBoolean(REMINDERS_CUSTOM_VIBRATION_KEY, false)
@@ -452,7 +420,6 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events" // false
         private const val DONT_SHOW_ALL_DAY_EVENTS_KEY = "dont_show_all_day_events" // false
         private const val FIRST_DAY_OF_WEEK_KEY = "first_day_of_week" // "1" (string!)
-        private const val USE_ALARM_STREAM_FOR_NOTIFICATION_KEY = "use_alarm_stream_for_notification" // false
         private const val ENABLE_CALENDAR_RESCAN_KEY = "enable_manual_calendar_rescan" // true
         private const val NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY = "notify_on_email_only_events" // false
         private const val DEVELOPER_MODE_KEY = "dev"
@@ -472,15 +439,8 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val LED_ENABLED_KEY = "notification_led" // true
         private const val LED_COLOR_KEY = "notification_led_color" //
         private const val LED_PATTERN_KEY = "notification_led_v2pattern" // "300,2000"
-        private const val FORWARD_TO_PEBBLE_KEY = "forward_to_pebble" // false
-        private const val PEBBLE_TEXT_IN_TITLE_KEY = "pebble_text_in_title" // false
-        private const val HEADS_UP_NOTIFICATINO_KEY = "heads_up_notification" // true
-        private const val NOTIFICATION_WAKE_SCREEN_KEY = "notification_wake_screen" // false
-        private const val NOTIFICATION_CALENDAR_COLOR_KEY = "notification_cal_color" // true  --> must be hard-coded true  -- kill the pref
         private const val NOTIFICATION_MAX_NOTIFICATIONS_KEY = "max_notifications_before_collapse" // 8
         private const val NOTIFICATION_COLLAPSE_EVERYTHING_KEY = "max_notifications_collapse_everything" // false (change to true)
-        private const val PEBBLE_FORWARD_REMINDERS_KEY = "pebble_forward_reminders" // false
-        private const val PEBBLE_FORWARD_ONLY_ALARMS = "pebble_only_alarm_events" // false
         private const val REMINDERS_CUSTOM_RINGTONE_KEY = "reminders_custom_ringtone" // false
         private const val REMINDERS_CUSTOM_VIBRATION_KEY = "reminders_custom_vibration" // false
         private const val REMINDERS_RINGTONE_KEY = "reminder_pref_key_ringtone" //

@@ -476,10 +476,7 @@ open class EditEventActivity : AppCompatActivity() {
 
             eventTitleText.setTextColor(ColorStateList.valueOf(color.scaleColor(1.8f)))
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                //window.statusBarColor = color.scaleColor(0.7f)
-                window.statusBarColor = 0
-            }
+            window.statusBarColor = 0
 
             from = state.from
             to = state.to
@@ -527,9 +524,7 @@ open class EditEventActivity : AppCompatActivity() {
             eventTitleText.setTextColor(ColorStateList.valueOf(eventToEdit.color.scaleColor(1.8f)))
 
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = 0
-            }
+            window.statusBarColor = 0
 
             eventTitleText.setText(eventToEdit.title)
             note.setText(eventToEdit.desc)
@@ -576,9 +571,7 @@ open class EditEventActivity : AppCompatActivity() {
                 eventTitleText.setText(receivedSharedText)
             }
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                window.statusBarColor = 0
-            }
+            window.statusBarColor = 0
 
             // Set default date and time
             var currentTime = System.currentTimeMillis()
@@ -771,9 +764,7 @@ open class EditEventActivity : AppCompatActivity() {
 //                eventTitleText.background = ColorDrawable(
 //                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.statusBarColor = 0
-                }
+                window.statusBarColor = 0
 
                 eventTitleLayout.background = ColorDrawable(calendar.color.invertColor().scaleColor(0.1f))
                 eventTitleText.background = ColorDrawable(calendar.color.invertColor().scaleColor(0.1f))
@@ -920,7 +911,7 @@ open class EditEventActivity : AppCompatActivity() {
         )
 
         val firstDayOfWeek = Settings(this).firstDayOfWeek
-        if (firstDayOfWeek != -1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (firstDayOfWeek != -1) {
             dialog.datePicker.firstDayOfWeek = firstDayOfWeek
         }
 
@@ -982,7 +973,7 @@ open class EditEventActivity : AppCompatActivity() {
                 to.dayOfMonth
         )
         val firstDayOfWeek = Settings(this).firstDayOfWeek
-        if (firstDayOfWeek != -1 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (firstDayOfWeek != -1) {
             dialog.datePicker.firstDayOfWeek = firstDayOfWeek
         }
 
@@ -1306,31 +1297,16 @@ open class EditEventActivity : AppCompatActivity() {
 
         textView.setOnClickListener (this::onNotificationClick)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            textView.setTextAppearance(android.R.style.TextAppearance_Medium)
-        }
-        else {
-            @Suppress("DEPRECATION")
-            textView.setTextAppearance(this, android.R.style.TextAppearance_Medium)
-        }
+        textView.setTextAppearance(android.R.style.TextAppearance_Medium)
 
         textView.setTextColor(notificationPrototype.textColors)
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            textView.setPaddingRelative(
-                    notificationPrototype.paddingStart,
-                    notificationPrototype.paddingTop,
-                    notificationPrototype.paddingEnd,
-                    notificationPrototype.paddingBottom)
-        }
-        else {
-            textView.setPadding(
-                    notificationPrototype.paddingLeft,
-                    notificationPrototype.paddingTop,
-                    notificationPrototype.paddingRight,
-                    notificationPrototype.paddingBottom)
-        }
+        textView.setPaddingRelative(
+                notificationPrototype.paddingStart,
+                notificationPrototype.paddingTop,
+                notificationPrototype.paddingEnd,
+                notificationPrototype.paddingBottom)
 
         textView.isClickable = true
         textView.background = notificationPrototype.background

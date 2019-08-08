@@ -248,7 +248,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
         else {
             // if we have essential permissions - now check for power manager optimisations
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !settings.doNotShowBatteryOptimisationWarning) {
+            if (!settings.doNotShowBatteryOptimisationWarning) {
                 if (!powerManager.isIgnoringBatteryOptimizations(BuildConfig.APPLICATION_ID)) {
 
                     AlertDialog.Builder(this)

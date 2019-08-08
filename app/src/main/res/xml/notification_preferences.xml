@@ -14,13 +14,6 @@
             android:showDefault="true"
             />
 
-        <CheckBoxPreference
-            android:key="use_alarm_stream_for_notification"
-            android:title="@string/use_alarm_stream"
-            android:summary="@string/use_alarm_stream_summary"
-            android:defaultValue="false"
-            />
-
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -86,23 +79,6 @@
             android:summary="@string/snooze_on_swipe_summary"
             android:defaultValue="false"
             android:dependency="pref_key_enable_allow_swipe"
-            />
-
-        <CheckBoxPreference android:key="heads_up_notification"
-            android:title="@string/heads_up_notification"
-            android:summary="@string/heads_up_notification_summary"
-            android:defaultValue="true" />
-
-        <CheckBoxPreference android:key="notification_wake_screen"
-            android:title="@string/wake_screen_title"
-            android:summary="@string/wake_screen_summary"
-            android:defaultValue="false"
-            />
-
-        <CheckBoxPreference android:key="notification_cal_color"
-            android:title="@string/event_color_notification"
-            android:summary="@string/event_color_notification_summary"
-            android:defaultValue="true"
             />
 
     </PreferenceCategory>

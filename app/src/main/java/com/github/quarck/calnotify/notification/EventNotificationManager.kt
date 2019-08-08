@@ -33,7 +33,6 @@ import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.pebble.PebbleUtils
 import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.reminders.ReminderState
@@ -132,18 +131,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
         context.notificationManager.cancelAll()
     }
 
-    @Suppress("DEPRECATION")
-    private fun wakeScreenIfRequired(ctx: Context, settings: Settings) {
-
-        if (settings.notificationWakeScreen) {
-            background {
-                wakeLocked(ctx.powerManager, Consts.WAKE_SCREEN_DURATION*2/3,
-                        PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP, SCREEN_WAKE_LOCK_NAME) {
-                    Thread.sleep(Consts.WAKE_SCREEN_DURATION)
-                }
-            }
-        }
-    }
 
     private fun arrangeEvents(
             events: List<EventAlertRecord>,
@@ -267,9 +254,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
             }
         }
 
-        // If this is a new notification -- wake screen when required
-        if (primaryEventId != null || (updatedAnything && !force))
-            wakeScreenIfRequired(context, settings)
     }
 
     override fun fireEventReminder(context: Context, itIsAfterQuietHoursReminder: Boolean, hasActiveAlarms: Boolean) {
@@ -304,7 +288,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         activeEvents
                 )
 
-                wakeScreenIfRequired(context, settings)
             }
             else {
                 context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
@@ -508,10 +491,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         .setContentText(text)
                         .setSmallIcon(com.github.quarck.calnotify.R.drawable.stat_notify_calendar_multiple)
                         .setPriority(
-                                if (notificationsSettings.headsUpNotification && shouldPlayAndVibrate)
-                                    NotificationCompat.PRIORITY_HIGH
-                                else
-                                    NotificationCompat.PRIORITY_DEFAULT
+                                NotificationCompat.PRIORITY_DEFAULT
                         )
                         .setContentIntent(pendingIntent)
                         .setAutoCancel(false)
@@ -527,10 +507,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
                 lastSoundTimestamp = currentTime
 
-                if (notificationsSettings.useAlarmStreamForEverything || hasAlarms)
-                    builder.setSound(notificationsSettings.ringtoneUri, AudioManager.STREAM_ALARM)
-                else
-                    builder.setSound(notificationsSettings.ringtoneUri)
+                builder.setSound(notificationsSettings.ringtoneUri)
             }
 
             if (notificationsSettings.vibration.on
@@ -569,12 +546,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             if (!reminderState.quietHoursOneTimeReminderEnabled)
                 reminderState.quietHoursOneTimeReminderEnabled = true
-        }
-
-        if (shouldPlayAndVibrate && notificationsSettings.pebble.forwardEventToPebble) {
-            if (!notificationsSettings.pebble.forwardOnlyAlarms || hasAlarms) {
-                PebbleUtils.forwardNotificationToPebble(context, title, "", true)
-            }
         }
 
         return postedNotification
@@ -640,19 +611,17 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val snoozePresets = settings.snoozePresets
 
-        if (isMarshmallowOrAbove) {
-            if (notificationsSettings.useBundledNotifications) {
-                postGroupNotification(
-                        context,
-                        notificationsSettingsQuiet,
-                        snoozePresets,
-                        summaryNotificationIsOngoing,
-                        numTotalEvents
-                )
-            }
-            else {
-                removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
-            }
+        if (notificationsSettings.useBundledNotifications) {
+            postGroupNotification(
+                    context,
+                    notificationsSettingsQuiet,
+                    snoozePresets,
+                    summaryNotificationIsOngoing,
+                    numTotalEvents
+            )
+        }
+        else {
+            removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
         }
 
         var currentTime = System.currentTimeMillis()
@@ -936,10 +905,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
 //        catch (ex: Exception) {
 //            DevLog.error(LOG_TAG, "Exception: ${ex.detailed}")
 //        }
-//
-//        if (notificationSettings.pebble.forwardReminderToPebble) {
-//            PebbleUtils.forwardNotificationToPebble(ctx, title, text, notificationSettings.pebble.pebbleOldFirmware)
-//        }
 //    }
 
     @Suppress("unused")
@@ -1096,10 +1061,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 .setContentText(notificationTextString)
                 .setSmallIcon(iconId)
                 .setPriority(
-                        if (notificationSettings.headsUpNotification && !isForce && !wasCollapsed)
-                            NotificationCompat.PRIORITY_HIGH
-                        else
-                            NotificationCompat.PRIORITY_DEFAULT
+                        NotificationCompat.PRIORITY_DEFAULT
                 )
                 .setContentIntent(
                         primaryPendingIntent
@@ -1289,10 +1251,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
             lastSoundTimestamp = currentTime
 
-            if (notificationSettings.useAlarmStreamForEverything || event.isAlarm || forceAlarmStream)
-                builder.setSound(notificationSettings.ringtoneUri, AudioManager.STREAM_ALARM)
-            else
-                builder.setSound(notificationSettings.ringtoneUri)
+            builder.setSound(notificationSettings.ringtoneUri)
         }
 
         if (notificationSettings.vibration.on
@@ -1329,13 +1288,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
         catch (ex: Exception) {
             DevLog.error(LOG_TAG, "Exception on notificationId=${event.notificationId}: ${ex.detailed}")
-        }
-
-        if ((!isReminder && notificationSettings.pebble.forwardEventToPebble) ||
-                (isReminder && notificationSettings.pebble.forwardReminderToPebble)) {
-            if (!notificationSettings.pebble.forwardOnlyAlarms || event.isAlarm || forceAlarmStream) {
-                PebbleUtils.forwardNotificationToPebble(ctx, event.title, notificationTextString, notificationSettings.pebble.pebbleOldFirmware)
-            }
         }
     }
 
@@ -1532,7 +1484,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 "DEBUG: Some requests were auto-dismissed due to calendar move"
         )
 
-        PebbleUtils.forwardNotificationToPebble(context, "DEBUG:", "Events auto-dismissed", false)
     }
 
     override fun postNearlyMissedNotificationDebugMessage(context: Context) {
@@ -1544,7 +1495,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 "DEBUG: Some events has fired later than expeted"
         )
 
-        PebbleUtils.forwardNotificationToPebble(context, "DEBUG:", "Events nearly-missed", false)
     }
 
     override fun postNotificationsAlarmDelayDebugMessage(context: Context, title: String, text: String) {
@@ -1556,7 +1506,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 text
         )
 
-        PebbleUtils.forwardNotificationToPebble(context, title, text, false)
     }
 
     override fun postNotificationsSnoozeAlarmDelayDebugMessage(context: Context, title: String, text: String) {
@@ -1568,7 +1517,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 text
         )
 
-        PebbleUtils.forwardNotificationToPebble(context, title, text, false)
     }
 
 
