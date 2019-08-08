@@ -25,7 +25,7 @@
         android:id="@+id/list_bt_devices"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/cardview_light_background"
+        android:background="#000"
         android:layout_below="@id/textViewCarModeComment"
         android:layout_alignParentBottom="true"
         />

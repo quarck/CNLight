@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@color/primary_text"
-            android:text="@string/context_policy"
+            android:text="I PROMISE YOU NOTHING"
             android:visibility="visible"
             android:focusable="true"
             android:autoLink="web"

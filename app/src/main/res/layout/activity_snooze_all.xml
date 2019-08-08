@@ -67,7 +67,7 @@
                         android:paddingRight="@dimen/snooze_view_img_padding_end"
                         android:paddingStart="@dimen/snooze_view_img_padding_start"
                         android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:src="@drawable/ic_update_black_24dp" />
+                        android:src="@drawable/ic_update_white_24dp" />
 
                     <TextView
                         android:id="@+id/snooze_snooze_for"
@@ -466,7 +466,7 @@
                         android:paddingRight="@dimen/snooze_view_img_padding_end"
                         android:paddingStart="@dimen/snooze_view_img_padding_start"
                         android:paddingTop="@dimen/snooze_view_spacing"
-                        android:src="@drawable/ic_repeat_one_black_24dp"
+                        android:src="@drawable/baseline_repeat_white_24dp"
                         android:visibility="gone" />
 
                     <TextView
@@ -499,7 +499,7 @@
                         android:paddingRight="@dimen/snooze_view_img_padding_end"
                         android:paddingStart="@dimen/snooze_view_img_padding_start"
                         android:paddingTop="@dimen/snooze_view_spacing"
-                        android:src="@drawable/ic_date_range_black_24dp"
+                        android:src="@drawable/baseline_date_range_white_24dp"
                         android:visibility="gone" />
 
                     <TextView

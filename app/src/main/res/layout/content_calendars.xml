@@ -15,7 +15,7 @@
         android:id="@+id/list_calendars"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/cardview_light_background" />
+        android:background="#000" />
 
 	<TextView
 		android:id="@+id/no_calendars_text"
