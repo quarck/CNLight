@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--
-    <color name="primary">#03A9F4</color>
-    <color name="primary_dark">#0288D1</color>
-    <color name="primary_light">#B3E5FC</color>
-    <color name="accent">#FFC107</color>
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#727272</color>
-    <color name="icons">#FFFFFF</color>
-    <color name="divider">#B6B6B6</color> -->
 
     <color name="background">#000</color>
 
+    <color name="backgroundToolbar">#222</color>
+
     <color name="primary">#A08375</color>
     <color name="primary_dark">#BAA59C</color>
-	<color name="primary_light">#302724</color>
+    <color name="primary_light">#302724</color>
 
     <color name="accent">#FF6978</color>
     <color name="primary_text">#DEDEDF</color>
@@ -23,21 +16,11 @@
     <color name="divider">#89494A</color>
     <color name="divider_light">#39393A</color>
 
-    <color name="event_title_color">#000000</color>
+    <color name="event_title_color">#FFFFFF</color>
     <color name="event_title_hint_color">#313132</color>
 
     <color name="event_unselected_tag_color">#515152</color>
-    <color name="event_selected_tag_color">#000000</color>
-
-<!--
-    <color name="primary">#3F51B5</color>
-    <color name="primary_dark">#303F9F</color>
-    <color name="primary_light">#C5CAE9</color>
-    <color name="accent">#009688</color>
-    <color name="primary_text">#212121</color>
-    <color name="secondary_text">#727272</color>
-    <color name="icons">#FFFFFF</color>
-    <color name="divider">#B6B6B6</color> -->
+    <color name="event_selected_tag_color">#FFFFFF</color>
 
     <color name="light_divider">#292929</color>
 
@@ -49,26 +32,10 @@
     <color name="cal_sample_primary">#03A9F4</color>
 
     <color name="quiet_hours_active_text">#FFC107</color>
-    <color name="quiet_hours_active_background">#DEDEDE</color>
+    <color name="quiet_hours_active_background">#221111</color>
 
-	    <color name="led_clr1">#0000ff</color>
-    <color name="led_clr2">#00FF00</color>
-    <color name="led_clr3">#00FFFF</color>
-    <color name="led_clr4">#FF0000</color>
-    <color name="led_clr5">#FF00FF</color>
-    <color name="led_clr6">#FFFF00</color>
-    <color name="led_clr7">#FFFFFF</color>
-    <color name="led_clr8">#7F00FF</color>
+    <color name="nearly_black">#0f0f0f</color>
+    <color name="true_black_as_night">#000</color>
 
-    <array name="led_colors">
-        <item>@color/led_clr1</item>
-        <item>@color/led_clr2</item>
-        <item>@color/led_clr3</item>
-        <item>@color/led_clr4</item>
-        <item>@color/led_clr5</item>
-        <item>@color/led_clr6</item>
-        <item>@color/led_clr7</item>
-        <item>@color/led_clr8</item>
-    </array>
 
 </resources>

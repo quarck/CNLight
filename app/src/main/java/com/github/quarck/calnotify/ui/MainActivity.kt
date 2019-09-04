@@ -34,6 +34,7 @@ import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.Toolbar
@@ -113,9 +114,12 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         DevLog.debug(LOG_TAG, "onCreateView")
 
-        ApplicationController.onMainActivityCreate(this);
+        ApplicationController.onMainActivityCreate(this)
 
         setContentView(R.layout.activity_main)
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
         setSupportActionBar(find<Toolbar?>(R.id.toolbar))
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -221,19 +225,19 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     }
 
     private fun checkPermissions() {
-        val hasPermissions = PermissionsManager.hasAllCalendarPermissions(this)
+        val hasPermissions = PermissionsManager.hasAllPermissions(this)
 
         //find<TextView>(R.id.no_permissions_view).visibility = if (hasPermissions) View.GONE else View.VISIBLE;
 
         if (!hasPermissions) {
-            if (PermissionsManager.shouldShowCalendarRationale(this)) {
+            if (PermissionsManager.shouldShowRationale(this)) {
 
                 AlertDialog.Builder(this)
                         .setMessage(R.string.application_has_no_access)
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.ok) {
                             _, _ ->
-                            PermissionsManager.requestCalendarPermissions(this)
+                            PermissionsManager.requestPermissions(this)
                         }
                         .setNegativeButton(R.string.exit) {
                             _, _ ->
@@ -243,7 +247,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                         .show()
             }
             else {
-                PermissionsManager.requestCalendarPermissions(this)
+                PermissionsManager.requestPermissions(this)
             }
         }
         else {
@@ -324,7 +328,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             val intervalNames: Array<String> = resources.getStringArray(R.array.custom_quiet_hours_interval_names)
 
             val builder = AlertDialog.Builder(this)
-            val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_large)
+            val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_medium)
 
             builder.setTitle(getString(R.string.start_quiet_hours_dialog_title))
             adapter.addAll(intervalNames.toMutableList())
@@ -392,7 +396,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         val muteAllMenuItem = menu.findItem(R.id.action_mute_all)
         if (muteAllMenuItem != null) {
-            muteAllMenuItem.isVisible = settings.enableNotificationMute
+            muteAllMenuItem.isVisible = true
             muteAllMenuItem.isEnabled = adapter.anyForMute
         }
 
@@ -409,13 +413,22 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         val customQuiet = menu.findItem(R.id.action_custom_quiet_interval)
         if (customQuiet != null) {
-            customQuiet.isVisible = true
-            customQuiet.title =
-                    resources.getString(
-                            if (ApplicationController.isCustomQuietHoursActive(this))
-                                R.string.stop_quiet_hours
-                            else
-                                R.string.start_quiet_hours)
+            if (settings.allowMuteAndAlarm) {
+                customQuiet.isVisible = true
+                customQuiet.title =
+                        resources.getString(
+                                if (ApplicationController.isCustomQuietHoursActive(this))
+                                    R.string.stop_quiet_hours
+                                else
+                                    R.string.start_quiet_hours)
+            } else {
+              customQuiet.isVisible = false
+            }
+        }
+
+        val muteAll = menu.findItem(R.id.action_mute_all)
+        if (muteAll != null) {
+            muteAll.isVisible = settings.allowMuteAndAlarm
         }
 
         if (settings.devModeEnabled) {
@@ -449,14 +462,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             R.id.action_settings -> {
                 shouldForceRepost = true // so onResume would re-post everything
                 startActivity(
-                        Intent(this, SettingsActivity::class.java)
+                        Intent(this, SettingsActivityNew::class.java)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
             }
-
-            R.id.action_report_a_bug ->
-                startActivity(
-                        Intent(this, ReportABugActivity::class.java)
-                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             R.id.action_about ->
                 startActivity(
@@ -506,7 +514,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 }).toTypedArray()
                     }
 
-            val quietPeriodUntil = QuietHoursManager(this).getSilentUntil(settings)
+            val quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)
 
             runOnUiThread {
                 adapter.setEventsToDisplay(events);

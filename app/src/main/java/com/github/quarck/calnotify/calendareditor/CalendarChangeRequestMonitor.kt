@@ -42,7 +42,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
         DevLog.debug(LOG_TAG, "onRescanFromService")
 
-        if (!PermissionsManager.hasAllCalendarPermissionsNoCache(context)) {
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onRescanFromService - no calendar permission to proceed")
             return
         }

@@ -1,18 +1,9 @@
-As part of normal operation, this app receives and stores information about events fired by Android Calendar
+PRIVACY POLICY
 
-No such information ever leaves application: 
+In order to operate, this app would receive and keep locally the information about calendar events fired by the Android Calendar
 
- * it is not transmitted anywhere
+Any details are stored completely within the app and deleted forever once app is uninstalled
 
- * not shared with anyone
+This app does not transmit or share any of your personal data to/with anyone
 
- * not provided to any 3rd party 
-
-After event is dismissed, its infromation is stored in the Bin for a number of days (default 3), and 
-after expiration - information is completely removed. 
-
-Bin can be disabled, in such case information about event is removed from the app as soon as event 
-is dismissed. 
-
-Application contains functionality of keeping logs in a persistent storage for debug purpose, this 
-functionality is off by default and can only be enabled through hidden developers menu. 
+If you create a new calendar event using this app or update the existing one, event would be synced by your device according to your device sync settings

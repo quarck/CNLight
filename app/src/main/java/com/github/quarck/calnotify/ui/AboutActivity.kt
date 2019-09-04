@@ -74,6 +74,6 @@ class AboutActivity : AppCompatActivity() {
     companion object {
         val imageCreditUri = "http://cornmanthe3rd.deviantart.com/"
         val kotlinUri = "https://kotlinlang.org/"
-        val githubUri = "https://github.com/quarck/CalendarNotification"
+        val githubUri = "https://github.com/quarck/CNLight"
     }
 }

@@ -36,7 +36,7 @@ class ListPreference<T>(
     fun create() {
 
         val builder = AlertDialog.Builder(context)
-        builder.setIcon(R.drawable.ic_launcher)
+        builder.setIcon(R.mipmap.ic_launcher_new)
         builder.setTitle(context.resources.getString(titleId))
 
         val arrayAdapter = ArrayAdapter<String>(context, android.R.layout.select_dialog_singlechoice, namesArray)

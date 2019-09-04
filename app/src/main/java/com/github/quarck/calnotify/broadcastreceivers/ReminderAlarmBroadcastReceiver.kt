@@ -35,7 +35,10 @@ import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivity
-import com.github.quarck.calnotify.utils.*
+import com.github.quarck.calnotify.utils.alarmManager
+import com.github.quarck.calnotify.utils.powerManager
+import com.github.quarck.calnotify.utils.setExactAndAlarm
+import com.github.quarck.calnotify.utils.wakeLocked
 
 open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
@@ -49,11 +52,11 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
 
-        partialWakeLocked(context, Consts.REMINDER_ALARM_TIMEOUT, REMINDER_WAKE_LOCK_NAME) {
+        wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, REMINDER_WAKE_LOCK_NAME) {
 
             if (!ApplicationController.hasActiveEventsToRemind(context)) {
                 DevLog.info(LOG_TAG, "Reminder broadcast alarm received: no active requests")
-                return@partialWakeLocked
+                return@wakeLocked
             }
 
             val settings = Settings(context)
@@ -72,7 +75,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                     if (hasActiveAlarms)
                         0L
                     else
-                        QuietHoursManager(context).getSilentUntil(settings)
+                        QuietHoursManager.getSilentUntil(settings)
 
             if (hasActiveAlarms) {
                 DevLog.info(LOG_TAG, "Quiet hours overriden by #alarm tag")
@@ -135,13 +138,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         shouldFire = true
 
                         DevLog.info(LOG_TAG, "Good to fire, since last: ${sinceLastFire}, interval[next]: ${nextReminderInterval}, next fire expected at $nextFireAt")
-
-                        if (currentTime > reminderState.nextFireExpectedAt + Consts.ALARM_THRESHOLD) {
-                            DevLog.error(LOG_TAG, "WARNING: reminder alarm expected at ${reminderState.nextFireExpectedAt}, " +
-                                    "received $currentTime, ${(currentTime - reminderState.nextFireExpectedAt) / 1000L}s late")
-
-                            ApplicationController.onReminderAlarmLate(context, currentTime, reminderState.nextFireExpectedAt)
-                        }
                     }
                 }
                 else {
@@ -184,7 +180,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         DevLog.info(LOG_TAG, "Firing reminder, current time ${System.currentTimeMillis()}")
 
-        ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder, hasActiveAlarms)
+        ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder, hasActiveAlarms);
 
         ReminderState(context).onReminderFired(currentTime)
     }

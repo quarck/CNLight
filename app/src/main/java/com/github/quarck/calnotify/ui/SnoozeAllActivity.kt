@@ -133,7 +133,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
         snoozePresets = settings.snoozePresets.filter { it > 0L }.toLongArray()
 
         val isQuiet =
-                QuietHoursManager(this).isInsideQuietPeriod(
+                QuietHoursManager.isInsideQuietPeriod(
                         settings,
                         snoozePresets.map { it -> currentTime + it }.toLongArray())
 

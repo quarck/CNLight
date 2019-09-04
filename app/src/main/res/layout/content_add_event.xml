@@ -263,6 +263,7 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:text="@string/all_day"
                 android:layout_toEndOf="@id/image_date_time"
+                android:textColor="@color/primary_text"
 
                 />
 

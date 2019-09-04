@@ -324,7 +324,6 @@ class EventListAdapter(
 
             holder.taskImage?.visibility = if (event.isTask) View.VISIBLE else View.GONE
 
-
             holder.undoLayout?.visibility = View.GONE
             holder.compactViewContentLayout?.visibility = View.VISIBLE
 

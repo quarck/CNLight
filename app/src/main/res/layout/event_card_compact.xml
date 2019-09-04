@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/compact_view_layout_height"
-    android:background="#000">
+    android:background="@color/true_black_as_night">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -151,7 +151,6 @@
                 android:scaleY="0.75"
                 android:alpha="0.75"
                 />
-
 
         </LinearLayout>
 

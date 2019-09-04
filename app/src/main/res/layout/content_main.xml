@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/activity_main_quiet_hours_info_layout"
             android:visibility="gone"
-            android:background="#420"
+            android:background="@color/quiet_hours_active_background"
             android:elevation="4dp"
             tools:targetApi="m"
             >
@@ -87,7 +87,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:background="#0f0f0f"
+            android:background="@color/nearly_black"
             android:elevation="4dp"
             tools:targetApi="m"
             >
@@ -152,7 +152,7 @@
             android:id="@+id/list_events"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#000"
+            android:background="@color/true_black_as_night"
             />
 
     </android.support.v4.widget.SwipeRefreshLayout>

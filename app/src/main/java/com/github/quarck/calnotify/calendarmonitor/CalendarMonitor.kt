@@ -19,8 +19,6 @@
 
 package com.github.quarck.calnotify.calendarmonitor
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
@@ -28,7 +26,6 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroadcastReceiver
-import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmPeriodicRescanBroadcastReceiver
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
@@ -47,23 +44,10 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         CalendarMonitorManual(calendarProvider, this)
     }
 
-    private var lastScan = 0L
-
     override fun onSystemTimeChange(context: Context) {
 
         DevLog.info(LOG_TAG, "onSystemTimeChange");
-        launchRescanService(context)
-    }
-
-    override fun onPeriodicRescanBroadcast(context: Context, intent: Intent) {
-
-        DevLog.info(LOG_TAG, "onPeriodicRescanBroadcast");
-
-        val currentTime = System.currentTimeMillis()
-        if (currentTime - lastScan < Consts.ALARM_THRESHOLD / 4)
-            return
-
-        launchRescanService(context)
+        //launchRescanService(context)
     }
 
     // should return true if we have fired at new requests, so UI should reload if it is open
@@ -71,14 +55,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         DevLog.info(LOG_TAG, "onAppResumed")
 
-        val currentTime = System.currentTimeMillis()
-        val doMonitorRescan = monitorSettingsChanged || (currentTime - lastScan >= Consts.ALARM_THRESHOLD / 4)
-
-        launchRescanService(
+        CalendarMonitorIntentService.startRescanService(
                 context,
-                reloadCalendar = true,
-                rescanMonitor = doMonitorRescan,
-                userActionUntil = System.currentTimeMillis() + Consts.MAX_USER_ACTION_DELAY
+                0,
+                true,
+                System.currentTimeMillis() + Consts.MAX_USER_ACTION_DELAY
         )
     }
 
@@ -90,7 +71,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             return
         }
 
-        if (!PermissionsManager.hasAllCalendarPermissionsNoCache(context)) {
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onAlarmBroadcast - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
@@ -118,11 +99,11 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
                 }
             }
 
-            launchRescanService(
-                    context,
-                    reloadCalendar = true,
-                    rescanMonitor = true
-            )
+
+//            launchRescanService(
+//                context,
+//                reloadCalendar = true
+//            )
         }
         catch (ex: Exception) {
             DevLog.error(LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.detailed}")
@@ -134,7 +115,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     // working, that's why the rest of the class is here
     override fun onProviderReminderBroadcast(context: Context, intent: Intent) {
 
-        if (!PermissionsManager.hasAllCalendarPermissionsNoCache(context)) {
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onProviderReminderBroadcast - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
@@ -147,7 +128,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         val alertTime = uri?.lastPathSegment?.toLongOrNull()
         if (alertTime == null) {
             DevLog.error(LOG_TAG, "ERROR alertTime is null!")
-            launchRescanService(context)
+            //launchRescanService(context)
             return
         }
 
@@ -203,24 +184,10 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
         ApplicationController.afterCalendarEventFired(context)
 
-        launchRescanService(
-                context,
-                reloadCalendar = true,
-                rescanMonitor = true
-        )
-    }
-
-    // should return true if we have fired at new requests, so UI should reload if it is open
-    override fun launchRescanService(
-            context: Context,
-            delayed: Int,
-            reloadCalendar: Boolean,
-            rescanMonitor: Boolean,
-            userActionUntil: Long
-    ) {
-        lastScan = System.currentTimeMillis()
-
-        CalendarMonitorService.startRescanService(context, delayed, reloadCalendar, rescanMonitor, userActionUntil)
+//        launchRescanService(
+//                context,
+//                reloadCalendar = true
+//        )
     }
 
     override fun onEventEditedByUs(context: Context, eventId: Long) {
@@ -240,7 +207,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         }
 
 
-        if (!PermissionsManager.hasAllCalendarPermissionsNoCache(context)) {
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onEventEditedByUs - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
@@ -277,14 +244,14 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 
     override fun onRescanFromService(context: Context) {
 
-        if (!PermissionsManager.hasAllCalendarPermissionsNoCache(context)) {
+        if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onRescanFromService - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
 
-        // Always schedule it regardless of..
-        schedulePeriodicRescanAlarm(context)
+//        // Always schedule it regardless of..
+//        schedulePeriodicRescanAlarm(context)
 
         if (!Settings(context).enableCalendarRescan) {
             DevLog.error(LOG_TAG, "onRescanFromService - manual scan disabled")
@@ -360,20 +327,6 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
                     )
         }
     }
-
-    private fun schedulePeriodicRescanAlarm(context: Context) {
-
-        val interval = Consts.CALENDAR_RESCAN_INTERVAL
-        val next = System.currentTimeMillis() + interval
-
-        DevLog.debug(LOG_TAG, "schedulePeriodicRescanAlarm, interval: $interval");
-
-        val intent = Intent(context, ManualEventAlarmPeriodicRescanBroadcastReceiver::class.java);
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        context.alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, next, interval, pendingIntent)
-    }
-
 
     override fun getAlertsAt(context: android.content.Context, time: Long): List<MonitorEventAlertEntry> {
 

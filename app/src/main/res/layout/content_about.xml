@@ -8,6 +8,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ui.AboutActivity"
     tools:showIn="@layout/activity_about"
+    android:background="@color/background"
     >
 
     <LinearLayout
@@ -25,7 +26,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/primary_text"
-            android:text="@string/app_name"
+            android:text="@string/app_name_cnlight"
             android:layout_gravity="center_horizontal"
             />
 
@@ -97,49 +98,6 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/primary_text"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/credits"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/app_icon"
-                android:textColor="@color/primary_text"
-                android:paddingLeft="@dimen/activity_help_credits_padding_left"
-                android:paddingStart="@dimen/activity_help_credits_padding_left"
-                android:paddingRight="@dimen/activity_help_credits_padding_right"
-                android:paddingEnd="@dimen/activity_help_credits_padding_right"
-                android:paddingTop="@dimen/activity_help_credits_padding_vertical"
-                android:paddingBottom="@dimen/activity_help_credits_padding_vertical"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/credits_icon_author"
-                android:onClick="OnTextViewCreditsClick"
-                android:textColor="@color/accent"
-                android:clickable="true"/>
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="20dp"/>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="20dp"/>
@@ -150,7 +108,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/primary_text"
-            android:text="(c) 2019 Sergey Parshin"
+            android:text="(c) 2019 QRCK"
             android:layout_gravity="center_horizontal"
             tools:ignore="HardcodedText"
             />
@@ -168,6 +126,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="20dp"/>
+
 
 
         <TextView

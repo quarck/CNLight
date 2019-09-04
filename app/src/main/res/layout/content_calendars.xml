@@ -6,7 +6,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-	app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".ui.AboutActivity"
         tools:showIn="@layout/activity_calendars"
 	>
@@ -15,7 +15,7 @@
         android:id="@+id/list_calendars"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000" />
+        android:background="@color/true_black_as_night" />
 
 	<TextView
 		android:id="@+id/no_calendars_text"

@@ -26,7 +26,6 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.monitorstorage.MonitorStorage
-//import com.github.quarck.calnotify.monitorstorage.WasHandledCache
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.detailed
 import java.util.*
@@ -71,7 +70,7 @@ class CalendarMonitorManual(
     // should return true if we have fired at new requests, so UI should reload if it is open
     fun manualFireEventsAt_NoHousekeeping(context: Context, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
 
-        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
+        if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(LOG_TAG, "manualFireEventsAt_NoHousekeeping: no permissions");
             return false
         }
@@ -189,7 +188,7 @@ class CalendarMonitorManual(
 
     fun scanForSingleEvent(context: Context, event: EventRecord): Boolean {
 
-        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
+        if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(LOG_TAG, "scanForSingleEvent: no permissions");
             return false
         }
@@ -249,7 +248,7 @@ class CalendarMonitorManual(
 
     fun scanNextEvent(context: Context, state: CalendarMonitorState): Pair<Long, Boolean> {
 
-        if (!PermissionsManager.hasAllCalendarPermissions(context)) {
+        if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(LOG_TAG, "scanNextEvent: no permissions");
             return Pair(Long.MAX_VALUE, false)
         }
