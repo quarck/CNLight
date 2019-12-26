@@ -102,8 +102,8 @@ object ApplicationController : EventMovedHandler {
 
         DevLog.info(LOG_TAG, "onEventAlarm at ${System.currentTimeMillis()}");
 
-        val alarmWasExpectedAt = context.persistentState.nextSnoozeAlarmExpectedAt
-        val currentTime = System.currentTimeMillis()
+//        val alarmWasExpectedAt = context.persistentState.nextSnoozeAlarmExpectedAt
+//        val currentTime = System.currentTimeMillis()
 
         context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context)
@@ -754,7 +754,7 @@ object ApplicationController : EventMovedHandler {
 
             if (settings.versionCodeFirstInstalled == 0L) {
                 val pInfo = context.packageManager.getPackageInfo(context.packageName, 0);
-                settings.versionCodeFirstInstalled = pInfo.versionCode.toLong();
+                settings.versionCodeFirstInstalled = pInfo.longVersionCode
             }
         }
     }

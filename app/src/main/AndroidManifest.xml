@@ -148,6 +148,14 @@
         <service android:name=".notification.NotificationActionDismissService" />
         <service android:name=".notification.NotificationActionSnoozeService" />
         <service android:name=".notification.NotificationActionMuteToggleService" />
+        <service
+            android:name=".notification.KillGoogleCalendarNotificationsService"
+            android:label="@string/kill_google_calendar_notifications"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService"/>
+            </intent-filter>
+        </service>
 
         <receiver android:name=".broadcastreceivers.AppUpdatedBroadcastReceiver">
             <intent-filter>

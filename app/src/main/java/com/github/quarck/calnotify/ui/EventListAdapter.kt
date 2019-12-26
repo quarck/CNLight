@@ -171,8 +171,8 @@ class EventListAdapter(
                     }
 
                     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
-                        val position = viewHolder!!.adapterPosition
-                        val adapter = recyclerView?.adapter as EventListAdapter?
+                        val position = viewHolder.adapterPosition
+                        val adapter = recyclerView.adapter as EventListAdapter?
 
                         if (adapter == null) {
                             DevLog.error(LOG_TAG, "getMovementFlags: no adapter! returning 0")
@@ -194,7 +194,7 @@ class EventListAdapter(
                     }
 
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                        val swipedPosition = viewHolder?.adapterPosition
+                        val swipedPosition = viewHolder.adapterPosition
                         if (swipedPosition != null) {
                             _recyclerView?.itemAnimator?.changeDuration = 0;
 

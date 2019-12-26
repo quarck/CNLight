@@ -251,7 +251,7 @@ object NotificationChannelManager {
         val channelId: String
         val channelName: String
         val channelDesc: String
-        val channelOffset: Int
+        //val channelOffset: Int
 
 //        val settings = Settings(context)
 
@@ -337,7 +337,7 @@ object NotificationChannelManager {
         val channelId: String
         val channelName: String
         val channelDesc: String
-        val channelOffset: Int
+        //val channelOffset: Int
 
 //        val settings = Settings(context)
 

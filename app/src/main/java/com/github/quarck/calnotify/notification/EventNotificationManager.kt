@@ -135,7 +135,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val maxNotificationsBeforeCollapse =
                 if (settings.notificationsAlwaysCollapsed)
-                    0
+                    1
                 else
                     Consts.MAX_UNCOLLAPSED_NOTIFICATIONS
 
@@ -233,7 +233,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             context: Context, itIsAfterQuietHoursReminder: Boolean,
             hasActiveAlarms: Boolean) {
 
-        val settings = Settings(context)
+        //val settings = Settings(context)
         //val isQuietPeriodActive = !hasActiveAlarms && (QuietHoursManager.getSilentUntil(settings) != 0L)
 
         EventsStorage(context).use {
@@ -311,7 +311,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         val ret = mutableListOf<EventAlertNotificationRecord>()
 
-        val notificationsSettings = settings.notificationSettingsSnapshot
+        //val notificationsSettings = settings.notificationSettingsSnapshot
 
         val eventsSorted = events.sortedByDescending { it.instanceStartTime }
 
