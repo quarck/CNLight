@@ -407,6 +407,7 @@ If you create a new calendar event using this app or update the existing one, ev
 
     <string name="pre_oreo_notification_channels_explanation_v2">Where is everything? Please read:\nhttps://github.com/quarck/CalendarNotification/issues/322</string>
     <string name="kill_google_calendar_notifications">Kill Google Calendar Notifications</string>
+    <string name="note_text">Note text</string>
 
 </resources>
 

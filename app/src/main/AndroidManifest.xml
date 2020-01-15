@@ -100,8 +100,7 @@
             android:name=".ui.SettingsActivityNew"
             android:label="@string/settings_name"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".prefs.activities.BehaviorSettingsActivity"
             android:label="@string/app_behavior"
@@ -128,6 +127,15 @@
             android:parentActivityName=".ui.SettingsActivityNew"
             android:theme="@style/AppTheme" />
 
+        <activity android:name=".ui.CreateNoteActivity"
+            android:theme="@style/AppTheme"
+            android:label="Create a note/reminder">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.github.quarck.cnlight.fileprovider"
@@ -153,7 +161,7 @@
             android:label="@string/kill_google_calendar_notifications"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService"/>
+                <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
 
