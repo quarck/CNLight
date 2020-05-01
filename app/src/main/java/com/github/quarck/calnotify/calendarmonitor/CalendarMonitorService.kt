@@ -191,7 +191,7 @@ class CalendarMonitorOneTimeJobService : JobService()  {
 
         private fun getJobInfo(delayMillis: Long): JobInfo {
             val component = ComponentName(
-                    "com.github.quarck.calnotify",
+                    BuildConfig.APPLICATION_ID,
                     CalendarMonitorOneTimeJobService::class.java.name)
             val builder =
                     JobInfo.Builder(Consts.JobIDS.CALENDAR_RESCAN_ONCE, component)

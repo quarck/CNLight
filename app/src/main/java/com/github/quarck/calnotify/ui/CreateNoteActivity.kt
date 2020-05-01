@@ -104,29 +104,32 @@ class CreateNoteActivity : AppCompatActivity() {
         val eventId = CalendarChangeManager(CalendarProvider).createEvent(this, calendar.calendarId, calendar.owner, details)
 
         if (eventId != -1L) {
-            DevLog.debug(LOG_TAG, "Event created: id=${eventId}")
 
-            val nextReminder = calendarProvider.getNextEventReminderTime(this, eventId, startTime)
-            if (nextReminder != 0L) {
-                Toast.makeText(
-                        this,
-                        resources.getString(R.string.event_was_created_reminder_at).format(dateToStr(this, nextReminder)),
-                        Toast.LENGTH_LONG
-                ).show()
-            }
-            else {
-                Toast.makeText(this, R.string.event_was_created, Toast.LENGTH_LONG).show()
-            }
-            finish()
-
+            onEventCreated(startTime, eventId)
         } else {
-            DevLog.error(LOG_TAG, "Failed to create event")
-
-            AlertDialog.Builder(this)
-                    .setMessage(R.string.new_event_failed_to_create_event)
-                    .setPositiveButton(android.R.string.ok) { _, _ -> }
-                    .show()
+            onCreateFailed()
         }
+    }
+
+    private fun onEventCreated(startTime: Long, eventId: Long) {
+        DevLog.debug(LOG_TAG, "Event created: id=${eventId}")
+
+        startActivity(
+                Intent(this, ViewEventActivity::class.java)
+                        .putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
+                        .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, startTime)
+                        .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+        finish()
+    }
+
+    private fun onCreateFailed() {
+        DevLog.error(LOG_TAG, "Failed to create event")
+
+        AlertDialog.Builder(this)
+                .setMessage(R.string.new_event_failed_to_create_event)
+                .setPositiveButton(android.R.string.ok) { _, _ -> }
+                .show()
     }
 
     private fun createVoiceNote() {
