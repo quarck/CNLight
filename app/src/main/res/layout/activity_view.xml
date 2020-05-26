@@ -355,6 +355,7 @@
                     android:paddingTop="@dimen/snooze_view_action_padding_top">
 
                     <ImageView
+                        android:id="@+id/snooze_view_snooze_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:longClickable="false"
@@ -377,386 +378,154 @@
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text" />
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present1_quiet_time_notice_baseline"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/snooze_view_snooze_sub_layout_1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:orientation="horizontal"
                         android:layout_alignParentEnd="true"
+                        android:layout_toEndOf="@id/snooze_view_snooze_icon"
                         android:layout_below="@id/snooze_snooze_for"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
+
                         android:paddingEnd="@dimen/snooze_view_padding_end"
                         android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:visibility="visible" />
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        >
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present1_quiet_time_notice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/snooze_view_snooze_present1_quiet_time_notice_baseline"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_snooze_for"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/secondary_text"
-                        android:visibility="gone" />
+                        <TextView
+                            android:id="@+id/snooze_view_snooze_15m"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present1"
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
+
+                            android:text="@string/_15_m"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
+
+                        <TextView
+                            android:id="@+id/snooze_view_snooze_60m"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
+
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
+
+                            android:text="@string/_1_h"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
+
+                        <TextView
+                            android:id="@+id/snooze_view_snooze_240m"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
+
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
+
+                            android:text="@string/_4_h"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/snooze_view_snooze_sub_layout_2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_snooze_for"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="OnButtonSnoozeClick"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/snooze_preset_15_min"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text" />
-
-
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present2_quiet_time_notice_baseline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
                         android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present1"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
+                        android:layout_toEndOf="@id/snooze_view_snooze_icon"
+                        android:layout_below="@id/snooze_view_snooze_sub_layout_1"
+
                         android:paddingEnd="@dimen/snooze_view_padding_end"
                         android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:visibility="visible" />
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        >
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present2_quiet_time_notice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/snooze_view_snooze_present2_quiet_time_notice_baseline"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present1"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/secondary_text"
-                        android:visibility="gone" />
+                        <TextView
+                            android:id="@+id/snooze_view_snooze_8h"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_view_snooze_present1"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="OnButtonSnoozeClick"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/snooze_preset_1_hour"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text" />
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present3_quiet_time_notice_baseline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present2"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:visibility="visible" />
+                            android:text="@string/_8_h"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present3_quiet_time_notice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/snooze_view_snooze_present3_quiet_time_notice_baseline"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present2"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/secondary_text"
-                        android:visibility="gone" />
+                        <TextView
+                            android:id="@+id/snooze_view_snooze_1d"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_view_snooze_present2"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="OnButtonSnoozeClick"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/snooze_preset_4_hours"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text" />
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
 
+                            android:text="@string/_1_d"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present4_quiet_time_notice_baseline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present3"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:visibility="visible" />
+                        <TextView
+                            android:id="@+id/snooze_view_snooze_minus_5m"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present4_quiet_time_notice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/snooze_view_snooze_present4_quiet_time_notice_baseline"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present3"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/secondary_text"
-                        android:visibility="gone" />
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present4"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_view_snooze_present3"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="OnButtonSnoozeClick"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/snooze_preset_1_day"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text" />
+                            android:text="@string/minus_5_m"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
 
+                    </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present5_quiet_time_notice_baseline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present4"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:visibility="visible" />
-
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present5_quiet_time_notice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/snooze_view_snooze_present5_quiet_time_notice_baseline"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present4"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/secondary_text"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_view_snooze_present4"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="OnButtonSnoozeClick"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/snooze_preset_1_day"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text" />
-
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present6_quiet_time_notice_baseline"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present5"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:visibility="visible" />
-
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present6_quiet_time_notice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/snooze_view_snooze_present6_quiet_time_notice_baseline"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/snooze_view_snooze_present5"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="false"
-                        android:gravity="end"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="0dp"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/secondary_text"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_present6"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_view_snooze_present5"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="OnButtonSnoozeClick"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/snooze_preset_1_day"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:visibility="gone" />
-
-
-                    <ImageView
-                        android:id="@+id/snooze_view_img_custom_period"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_view_snooze_present6"
-                        android:importantForAccessibility="no"
-                        android:longClickable="false"
-                        android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                        android:paddingStart="@dimen/snooze_view_img_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:src="@drawable/baseline_repeat_white_24dp"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_custom"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_view_snooze_present6"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="OnButtonCustomSnoozeClick"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/for_a_custom_time"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text" />
-
-                    <ImageView
-                        android:id="@+id/snooze_view_img_until"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_view_snooze_custom"
-                        android:importantForAccessibility="no"
-                        android:longClickable="false"
-                        android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                        android:paddingStart="@dimen/snooze_view_img_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:src="@drawable/baseline_date_range_white_24dp"
-                        android:visibility="gone" />
-
-                    <TextView
-                        android:id="@+id/snooze_view_snooze_until"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/snooze_view_snooze_custom"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:clickable="true"
-                        android:onClick="OnButtonSnoozeUntilClick"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:text="@string/until_specific_time"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text" />
                 </RelativeLayout>
 
                 <View
@@ -777,6 +546,7 @@
                     android:visibility="gone">
 
                     <ImageView
+                        android:id="@+id/snooze_view_move_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:longClickable="false"
@@ -802,76 +572,154 @@
                         android:background="?android:attr/selectableItemBackground"
                         />
 
-                    <TextView
+
+                    <LinearLayout
+                        android:id="@+id/snooze_view_snooze_sub_layout_3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_reschedule_present1"
-                        android:text="@string/one_hour_from_now"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:orientation="horizontal"
+                        android:layout_alignParentEnd="true"
+                        android:layout_toEndOf="@id/snooze_view_move_icon"
                         android:layout_below="@id/snooze_reschedule_for"
-                        android:clickable="true"
-                        android:onClick="OnButtonRescheduleClick"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:visibility="gone"
-                        android:focusable="true" />
 
-                    <TextView
+                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingStart="0dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        >
+
+                        <TextView
+                            android:id="@+id/snooze_view_move_1h"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
+
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
+
+                            android:text="@string/p_1h"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
+
+                        <TextView
+                            android:id="@+id/snooze_view_move_2h"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
+
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
+
+                            android:text="@string/p_2h"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
+
+                        <TextView
+                            android:id="@+id/snooze_view_move_4h"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
+
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
+
+                            android:text="@string/p_4h"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/snooze_view_snooze_sub_layout_4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_reschedule_present2"
-                        android:text="@string/same_time_tomorrow"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
+                        android:orientation="horizontal"
+                        android:layout_alignParentEnd="true"
+                        android:layout_toEndOf="@id/snooze_view_move_icon"
+                        android:layout_below="@id/snooze_view_snooze_sub_layout_3"
+
                         android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingStart="0dp"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        >
 
-                        android:layout_below="@id/snooze_view_reschedule_present1"
-                        android:clickable="true"
-                        android:onClick="OnButtonRescheduleClick"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:focusable="true" />
+                        <TextView
+                            android:id="@+id/snooze_view_move_1d"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_reschedule_present3"
-                        android:text="@string/next_week_same_day"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
 
-                        android:layout_below="@id/snooze_view_reschedule_present2"
-                        android:clickable="true"
-                        android:onClick="OnButtonRescheduleClick"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:focusable="true" />
+                            android:text="@string/p_1d"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_reschedule_present4"
-                        android:text="@string/move_four_weeks"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:paddingTop="@dimen/snooze_view_spacing"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:layout_below="@id/snooze_view_reschedule_present3"
-                        android:clickable="true"
-                        android:onClick="OnButtonRescheduleClick"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:focusable="true" />
+                        <TextView
+                            android:id="@+id/snooze_view_move_7d"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
+
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
+
+                            android:text="@string/p_7d"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
+
+                        <TextView
+                            android:id="@+id/snooze_view_move_30d"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:onClick="OnButtonSnoozeClick"
+
+                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingEnd="30dp"
+                            android:paddingStart="30dp"
+                            android:paddingTop="@dimen/snooze_view_spacing"
+
+                            android:text="@string/p_30d"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:layout_weight="1"
+                            />
+
+                    </LinearLayout>
 
                 </RelativeLayout>
 

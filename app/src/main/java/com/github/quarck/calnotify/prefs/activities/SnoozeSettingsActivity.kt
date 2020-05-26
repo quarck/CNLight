@@ -49,44 +49,10 @@ class SnoozeSettingsActivity : AppCompatActivity() {
 
         preferences(this) {
 
-            item(R.string.snooze_presets_title,
-                    R.string.snooze_presets_summary) {
-                onCreateSnoozePresetsDialog().show()
-            }
-
             switch (R.string.always_use_extenal_editor, R.string.always_use_external_editor_summary) {
                 initial (settings.alwaysUseExternalEditor)
                 onChange { settings.alwaysUseExternalEditor = it }
             }
-
-            switch(R.string.view_after_edit, R.string.view_after_edit_summary) {
-                initial(settings.viewAfterEdit)
-                onChange { settings.viewAfterEdit = it }
-            }
-
-        }
-    }
-
-    private fun onNewValue(newText: String) {
-        val presets = PreferenceUtils.parseSnoozePresets(newText)
-        if (presets != null) {
-            if (presets.size == 0) {
-                settings.snoozePresetsRaw = Settings.DEFAULT_SNOOZE_PRESET
-            }
-            else {
-                settings.snoozePresetsRaw =
-                        newText.split(',')
-                                .map { it.trim() }
-                                .filter { !it.isEmpty() }
-                                .joinToString(", ")
-            }
-
-            if (presets.size > Consts.MAX_SUPPORTED_PRESETS) {
-                showMessage(R.string.error_too_many_presets)
-            }
-        }
-        else {
-            showMessage(R.string.error_cannot_parse_preset)
         }
     }
 
@@ -98,29 +64,6 @@ class SnoozeSettingsActivity : AppCompatActivity() {
                 .setPositiveButton(android.R.string.ok) { _, _ -> }
 
         builder.create().show()
-    }
-
-    private fun onCreateSnoozePresetsDialog(): Dialog {
-        val builder = AlertDialog.Builder(this)
-        // Get the layout inflater
-        val inflater = this.layoutInflater
-
-        // Inflate and set the layout for the dialog
-        // Pass null as the parent view because its going in the dialog layout
-        val rootView: View = inflater.inflate(R.layout.dialog_snooze_presets, null)
-
-        val editText = rootView.findOrThrow<EditText>(R.id.edit_text_snooze_presets)
-        editText.setText(settings.snoozePresetsRaw)
-
-        builder.setView(rootView)
-                .setPositiveButton(R.string.ok, DialogInterface.OnClickListener {
-                    _, _ ->
-                    onNewValue(editText.text.toString())
-                })
-                .setNegativeButton(R.string.cancel, DialogInterface.OnClickListener {
-                    _, _ ->
-                })
-        return builder.create()
     }
 }
 

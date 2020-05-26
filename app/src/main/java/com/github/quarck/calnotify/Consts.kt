@@ -84,7 +84,14 @@ object Consts {
 
     const val DISMISS_ALL_THRESHOLD = 3000L
 
-    val DEFAULT_SNOOZE_PRESETS = longArrayOf(15 * 60 * 1000, 60 * 60 * 1000, 4 * 60 * 60 * 1000, 24 * 60 * 60 * 1000)
+    val DEFAULT_SNOOZE_PRESETS = longArrayOf(
+            15 * 60 * 1000,
+            60 * 60 * 1000,
+            4 * 60 * 60 * 1000,
+            8 * 60 * 60 * 1000,
+            24 * 60 * 60 * 1000,
+            -5 * 60 * 1000
+    ) // 15m ,1h, 4h, 8h, 1d, -5m
 
     const val MAX_SUPPORTED_PRESETS = 6
 

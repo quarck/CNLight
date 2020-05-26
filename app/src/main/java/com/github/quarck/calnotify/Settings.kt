@@ -72,13 +72,9 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         get() = getBoolean(NOTIFICATION_ADD_EMPTY_ACTION_KEY, false)
         set(value) = setBoolean(NOTIFICATION_ADD_EMPTY_ACTION_KEY, value)
 
-    var viewAfterEdit: Boolean
-        get() = getBoolean(VIEW_AFTER_EDIT_KEY, true)
-        set(value) = setBoolean(VIEW_AFTER_EDIT_KEY, value)
+    val viewAfterEdit: Boolean = false
 
-    var snoozePresetsRaw: String
-        get() = getString(SNOOZE_PRESET_KEY, DEFAULT_SNOOZE_PRESET)
-        set(value) = setString(SNOOZE_PRESET_KEY, value)
+    val snoozePresetsRaw: String = DEFAULT_SNOOZE_PRESET
 
     val snoozePresets: LongArray
         get() {
@@ -353,7 +349,7 @@ class Settings(context: Context) : PersistentStorageBase(context) {
         private const val MANUAL_QUIET_PERIOD_UNTIL = "manual_quiet_until"
 
         // Default values
-        internal const val DEFAULT_SNOOZE_PRESET = "15m, 1h, 4h, 1d, -5m"
+        internal const val DEFAULT_SNOOZE_PRESET = "15m ,1h, 4h, 8h, 1d, -5m"
         internal const val DEFAULT_REMINDER_INTERVAL_MINUTES = 10
         internal const val DEFAULT_REMINDER_INTERVAL_SECONDS = 600
         internal const val DEFAULT_MAX_REMINDERS = "0"

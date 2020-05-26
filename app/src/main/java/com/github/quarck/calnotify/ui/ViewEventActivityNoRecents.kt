@@ -127,32 +127,14 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
     var snoozeFromMainActivity = false
 
-    val snoozePresetControlIds = intArrayOf(
-            R.id.snooze_view_snooze_present1,
-            R.id.snooze_view_snooze_present2,
-            R.id.snooze_view_snooze_present3,
-            R.id.snooze_view_snooze_present4,
-            R.id.snooze_view_snooze_present5,
-            R.id.snooze_view_snooze_present6
-    )
-
-    val snoozePresentQuietTimeReminderControlIds = intArrayOf(
-            R.id.snooze_view_snooze_present1_quiet_time_notice,
-            R.id.snooze_view_snooze_present2_quiet_time_notice,
-            R.id.snooze_view_snooze_present3_quiet_time_notice,
-            R.id.snooze_view_snooze_present4_quiet_time_notice,
-            R.id.snooze_view_snooze_present5_quiet_time_notice,
-            R.id.snooze_view_snooze_present6_quiet_time_notice
-    )
-
-    var baselineIds = intArrayOf(
-            R.id.snooze_view_snooze_present1_quiet_time_notice_baseline,
-            R.id.snooze_view_snooze_present2_quiet_time_notice_baseline,
-            R.id.snooze_view_snooze_present3_quiet_time_notice_baseline,
-            R.id.snooze_view_snooze_present4_quiet_time_notice_baseline,
-            R.id.snooze_view_snooze_present5_quiet_time_notice_baseline,
-            R.id.snooze_view_snooze_present6_quiet_time_notice_baseline
-    )
+//    val snoozePresetControlIds = intArrayOf(
+//            R.id.snooze_view_snooze_15m,
+//            R.id.snooze_view_snooze_60m,
+//            R.id.snooze_view_snooze_240m,
+//            R.id.snooze_view_snooze_8h,
+//            R.id.snooze_view_snooze_1d,
+//            R.id.snooze_view_snooze_minus_5m
+//    )
 
     private val undoManager by lazy { UndoManager }
 
@@ -242,36 +224,6 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
                 QuietHoursManager.isInsideQuietPeriod(
                         settings,
                         snoozePresets.map { it -> currentTime + it }.toLongArray())
-
-        // Populate snooze controls
-        for ((idx, id) in snoozePresetControlIds.withIndex()) {
-            val snoozeLable = findOrThrow<TextView>(id);
-            val quietTimeNotice = findOrThrow<TextView>(snoozePresentQuietTimeReminderControlIds[idx])
-            val quietTimeNoticeBaseline = findOrThrow<TextView>(baselineIds[idx])
-
-            if (idx < snoozePresets.size) {
-                snoozeLable.text = formatPreset(snoozePresets[idx])
-                snoozeLable.visibility = View.VISIBLE;
-                quietTimeNoticeBaseline.visibility = View.VISIBLE
-
-                if (isQuiet[idx])
-                    quietTimeNotice.visibility = View.VISIBLE
-                else
-                    quietTimeNotice.visibility = View.GONE
-            }
-            else {
-                snoozeLable.visibility = View.GONE;
-                quietTimeNotice.visibility = View.GONE
-                quietTimeNoticeBaseline.visibility = View.GONE
-            }
-        }
-
-        // need to hide these guys
-        val showCustomSnoozeVisibility = View.VISIBLE
-        findOrThrow<TextView>(R.id.snooze_view_snooze_custom).visibility = showCustomSnoozeVisibility
-        val snoozeCustom = find<TextView?>(R.id.snooze_view_snooze_until)
-        if (snoozeCustom != null)
-            snoozeCustom.visibility = showCustomSnoozeVisibility
 
         val location = event.location;
         if (location != "") {
@@ -388,9 +340,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
             fab.backgroundTintList = ColorStateList(states, colors)
         }
-        else  {
-            fab.visibility = View.GONE
-        }
+
 
         val menuButton = find<ImageView?>(R.id.snooze_view_menu)
         menuButton?.setOnClickListener { showDismissEditPopup(menuButton) }
@@ -569,11 +519,13 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         if (v == null)
             return
 
-        for ((idx, id) in snoozePresetControlIds.withIndex()) {
-            if (id == v.id) {
-                snoozeEvent(snoozePresets[idx]);
-                break;
-            }
+        when (v.id) {
+            R.id.snooze_view_snooze_15m -> snoozeEvent(snoozePresets[0])
+            R.id.snooze_view_snooze_60m -> snoozeEvent(snoozePresets[1])
+            R.id.snooze_view_snooze_240m -> snoozeEvent(snoozePresets[2])
+            R.id.snooze_view_snooze_8h -> snoozeEvent(snoozePresets[3])
+            R.id.snooze_view_snooze_1d -> snoozeEvent(snoozePresets[4])
+            R.id.snooze_view_snooze_minus_5m -> snoozeEvent(snoozePresets[5])
         }
     }
 
@@ -888,14 +840,18 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             return
 
         when (v.id) {
-            R.id.snooze_view_reschedule_present1 ->
-                reschedule(Consts.HOUR_IN_SECONDS * 1000L)
-            R.id.snooze_view_reschedule_present2 ->
-                reschedule(Consts.DAY_IN_SECONDS * 1000L)
-            R.id.snooze_view_reschedule_present3 ->
+            R.id.snooze_view_move_1h ->
+                reschedule(Consts.HOUR_IN_SECONDS * 1L * 1000L)
+            R.id.snooze_view_move_2h ->
+                reschedule(Consts.HOUR_IN_SECONDS * 2L * 1000L)
+            R.id.snooze_view_move_4h ->
+                reschedule(Consts.HOUR_IN_SECONDS * 4L * 1000L)
+            R.id.snooze_view_move_1d ->
+                reschedule(Consts.DAY_IN_SECONDS * 1L * 1000L)
+            R.id.snooze_view_move_7d ->
                 reschedule(Consts.DAY_IN_SECONDS * 7L * 1000L)
-            R.id.snooze_view_reschedule_present4 ->
-                reschedule(Consts.DAY_IN_SECONDS * 28L * 1000L)
+            R.id.snooze_view_move_30d ->
+                reschedule(Consts.DAY_IN_SECONDS * 30L * 1000L)
         }
     }
 
