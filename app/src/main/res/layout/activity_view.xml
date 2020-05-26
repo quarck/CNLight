@@ -572,6 +572,24 @@
                         android:background="?android:attr/selectableItemBackground"
                         />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/enable_snooze_reschedule"
+                        android:layout_below="@id/snooze_reschedule_for"
+                        android:text="--- SHOW ---"
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textColor="@color/primary_text"
+                        android:paddingBottom="@dimen/snooze_view_spacing"
+                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/snooze_view_padding_start"
+                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:gravity="center"
+
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:onClick="OnEnableMove"
+                        />
 
                     <LinearLayout
                         android:id="@+id/snooze_view_snooze_sub_layout_3"
@@ -586,6 +604,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
+                        android:visibility="gone"
                         >
 
                         <TextView
@@ -660,6 +679,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
+                        android:visibility="gone"
                         >
 
                         <TextView

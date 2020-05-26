@@ -514,6 +514,16 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         finish()
     }
 
+    fun OnEnableMove(v: View?) {
+        val btnEnable = findOrThrow<TextView>(R.id.enable_snooze_reschedule)
+        val layout1 = findOrThrow<TextView>(R.id.snooze_view_snooze_sub_layout_3)
+        val layout2 = findOrThrow<TextView>(R.id.snooze_view_snooze_sub_layout_4)
+        btnEnable.visibility = View.GONE
+        layout1.visibility = View.VISIBLE
+        layout2.visibility = View.VISIBLE
+
+    }
+
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonSnoozeClick(v: View?) {
         if (v == null)
