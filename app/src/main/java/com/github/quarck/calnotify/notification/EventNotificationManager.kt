@@ -78,10 +78,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
             removeNotification(context, event.notificationId)
         }
 
-        if (!hasActiveEvents) {
-            removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
-        }
-
         if (postNotifications) {
             postEventNotifications(context, formatter)
         }
@@ -202,24 +198,15 @@ class EventNotificationManager : EventNotificationManagerInterface {
         EventsStorage(context).use {
             db ->
 
-            //val notificationSettings =
-             //       settings.notificationSettingsSnapshot
-
-            val activeEvents = db.events.filter { it.isNotSnoozed && it.isNotSpecial }
-
-            //val lastStatusChange = activeEvents.map { it.lastStatusChangeTime }.max() ?: 0L
+            val activeEvents = db.events.filter { it.isNotSnoozed && it.isNotSpecial && it.isAlarm }
 
             if (activeEvents.count() > 0) {
                 postEventNotifications(context, isReminder = true)
-            }
-            else {
-                context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
             }
         }
     }
 
     override fun cleanupEventReminder(context: Context) {
-        context.notificationManager.cancel(Consts.NOTIFICATION_ID_REMINDER)
     }
 
     data class EventAlertNotificationRecord(
@@ -284,6 +271,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             // currently not displayed or forced -- post notifications
             val isPrimary = event.eventId == primaryEventId
             val isNew = isPrimary || (event.displayStatus == EventDisplayStatus.Hidden)
+            val isAlarm = event.isAlarm
 
             val soundState =
                     if (event.isAlarm)
@@ -299,10 +287,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     soundState,
                     isPrimary,
                     isNew,
-                    firstReminder,
+                    isReminder = isAlarm && firstReminder,
                     alertOnlyOnce = !firstReminder || isRepost))
 
-            firstReminder = false
+            if (isAlarm) {
+                firstReminder = false
+            }
             didAnySound = true
         }
 
@@ -421,37 +411,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
     }
 
-//    private fun collapseDisplayedNotifications(
-//            context: Context, db: EventsStorage,
-//            events: List<EventAlertRecord>, settings: Settings,
-//            force: Boolean,
-//            isQuietPeriodActive: Boolean) {
-//
-//        DevLog.debug(LOG_TAG, "Hiding notifications for ${events.size} notification")
-//
-//        if (events.isEmpty()) {
-//            hideCollapsedEventsNotification(context)
-//            return
-//        }
-//
-//        for (event in events) {
-//            if ((event.displayStatus != EventDisplayStatus.Hidden) || force) {
-//                //DevLog.debug(LOG_TAG, "Hiding notification id ${event.notificationId}, eventId ${event.eventId}")
-//                removeNotification(context, event.notificationId)
-//            }
-//            else {
-//                //DevLog.debug(LOG_TAG, "Skipping collapsing notification id ${event.notificationId}, eventId ${event.eventId} - already collapsed")
-//            }
-//
-//            if (event.snoozedUntil != 0L || event.displayStatus != EventDisplayStatus.DisplayedCollapsed) {
-//                db.updateEvent(event,
-//                        snoozedUntil = 0L,
-//                        displayStatus = EventDisplayStatus.DisplayedCollapsed)
-//            }
-//        }
-//
-//        postNumNotificationsCollapsed(context, db, settings, events, isQuietPeriodActive)
-//    }
 
     // isRepost - if true - would re-post all active notifications. Normally only new notifications are posted to
     // avoid excessive blinking in the notifications area. Forced notifications are posted without sound or vibra
@@ -481,10 +440,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
             )
         }
 
-        removeNotification(context, Consts.NOTIFICATION_ID_BUNDLED_GROUP)
-
-        val snooze0time = settings.firstNonNegativeSnoozeTime
-
         for (ntf in notificationRecords) {
 
             if (!isRepost && !ntf.isReminder && !ntf.newNotification) {
@@ -501,9 +456,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     snoozePresetsNotFiltered = snoozePresets,
                     isReminder = ntf.isReminder,
                     alertOnlyOnce = ntf.alertOnlyOnce,
-                    soundState = ntf.soundState,
-                    snooze0Time = snooze0time,
-                    settings = settings
+                    soundState = ntf.soundState
             )
 
         }
@@ -552,26 +505,9 @@ class EventNotificationManager : EventNotificationManagerInterface {
             snoozePresetsNotFiltered: LongArray,
             isReminder: Boolean,
             alertOnlyOnce: Boolean,
-            soundState: NotificationChannelManager.SoundState,
-            snooze0Time: Long,
-            settings: Settings
+            soundState: NotificationChannelManager.SoundState
     ) {
         val notificationManager = ctx.notificationManager
-
-//        val calendarIntent = CalendarIntents.getCalendarViewIntent(event)
-//
-//        val calendarPendingIntent =
-//                TaskStackBuilder.create(ctx)
-//                        .addNextIntentWithParentStack(calendarIntent)
-//                        .getPendingIntent(
-//                                event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_OPEN_OFFSET,
-//                                PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val snoozeActivityIntent =
-                pendingActivityIntent(ctx,
-                        snoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
-                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_SNOOOZE_OFFSET
-                )
 
         val dismissPendingIntent =
                 pendingServiceIntent(ctx,
@@ -630,8 +566,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         if (snoozePresets.isEmpty())
             snoozePresets = longArrayOf(Consts.DEFAULT_SNOOZE_TIME)
-
-
 
         val dismissAction =
                 NotificationCompat.Action.Builder(
