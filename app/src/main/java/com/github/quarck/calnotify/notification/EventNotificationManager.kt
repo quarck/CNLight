@@ -509,6 +509,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
     ) {
         val notificationManager = ctx.notificationManager
 
+        val snoozeActivityIntent =
+                pendingActivityIntent(ctx,
+                        snoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
+                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_SNOOOZE_OFFSET
+                )
+
         val dismissPendingIntent =
                 pendingServiceIntent(ctx,
                         dismissOrDeleteIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
@@ -531,19 +537,13 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         DevLog.info(LOG_TAG, "SortKey: ${event.eventId} -> ${event.lastStatusChangeTime} -> $sortKey")
 
-        val primaryPendingIntent =
-                pendingActivityIntent(ctx,
-                        CalendarIntents.calendarViewIntent(ctx, event),
-                        event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_SNOOOZE_OFFSET
-                )
-
         val channel = NotificationChannelManager.createNotificationChannel(ctx, soundState)
 
         val builder = NotificationCompat.Builder(ctx, channel.channelId)
                 .setContentTitle(title)
                 .setContentText(notificationTextString)
                 .setSmallIcon(R.drawable.stat_notify_calendar)
-                .setContentIntent(primaryPendingIntent)
+                .setContentIntent(snoozeActivityIntent)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(notificationTextString))
@@ -574,53 +574,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                         dismissPendingIntent
                 ).build()
 
-        val extender = NotificationCompat.WearableExtender()
-
         builder.addAction(dismissAction)
-
-        for ((idx, snoozePreset) in snoozePresets.withIndex()) {
-            if (idx == 0)
-                continue
-
-            if (idx >= EVENT_CODE_DEFAULT_SNOOOZE_MAX_ITEMS)
-                break
-
-            if (snoozePreset <= 0L) {
-                val targetTime = event.displayedStartTime - Math.abs(snoozePreset)
-                if (targetTime - System.currentTimeMillis() < 5 * 60 * 1000L) // at least minutes left until target
-                    continue
-            }
-
-            val snoozeIntent =
-                    pendingServiceIntent(ctx,
-                            defaultSnoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId, snoozePreset),
-                            event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET + idx
-                    )
-
-            val action =
-                    NotificationCompat.Action.Builder(
-                            R.drawable.ic_update_white_24dp,
-                            ctx.getString(com.github.quarck.calnotify.R.string.snooze) + " " +
-                                    PreferenceUtils.formatSnoozePreset(snoozePreset),
-                            snoozeIntent
-                    ).build()
-
-            extender.addAction(action)
-        }
-
-        // In this combination of settings dismissing the notification would actually snooze it, so
-        // add another "Dismiss Event" wearable action so to make it possible to actually dismiss
-        // the event form wearable
-        val dismissEventAction =
-                NotificationCompat.Action.Builder(
-                        R.drawable.ic_clear_white_24dp,
-                        ctx.getString(com.github.quarck.calnotify.R.string.dismiss_event),
-                        dismissPendingIntent
-                ).build()
-
-        extender.addAction(dismissEventAction)
-
-        builder.extend(extender)
 
         builder.setColor(event.color.adjustCalendarColor(false))
 
