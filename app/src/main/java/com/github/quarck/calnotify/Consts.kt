@@ -30,6 +30,8 @@ object Consts {
 
     const val DATA_UPDATED_BROADCAST = BuildConfig.APPLICATION_ID + ".dataupdated"
 
+    const val ALARM_REMINDER_INTERVAL: Long = 60L * 1000L
+
     const val DAY_IN_MILLISECONDS = 24L * 3600L * 1000L
     const val DAY_IN_SECONDS: Long = 3600L * 24
     const val DAY_IN_MINUTES: Int = 60*24
@@ -66,7 +68,7 @@ object Consts {
     const val INTENT_MUTE_ACTION = "muteAction"
 
     // max number of notifications displayed on the screen at all the times
-    const val MAX_NOTIFICATIONS = 12
+    const val MAX_NOTIFICATIONS = 24
 
     const val DEFAULT_NOTIFICATIONS = 32
 
@@ -104,8 +106,6 @@ object Consts {
     const val ALERTS_DB_REMOVE_AFTER = 3L * 24L * 3600L * 1000L
 
     const val CALENDAR_RESCAN_INTERVAL = 30L * 60L * 1000L // 30 mins
-
-    const val MAX_UNCOLLAPSED_NOTIFICATIONS= 6
 
     const val MAX_DUE_ALERTS_FOR_MANUAL_SCAN = 512
     const val MAX_SCAN_BACKWARD_DAYS = 31L

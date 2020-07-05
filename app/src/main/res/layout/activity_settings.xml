@@ -75,38 +75,6 @@
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
-                android:onClick="onButtonSnoozeSettings"
-                android:paddingBottom="@dimen/dimen_main_settings_padding_bottom"
-                android:paddingEnd="@dimen/dimen_main_settings_padding_end"
-                android:paddingStart="@dimen/dimen_main_settings_padding_start"
-                android:paddingTop="@dimen/dimen_main_settings_padding_top"
-                android:text="@string/snooze_presets"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                android:focusable="true" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:onClick="onButtonQuietHoursSettings"
-                android:paddingBottom="@dimen/dimen_main_settings_padding_bottom"
-                android:paddingEnd="@dimen/dimen_main_settings_padding_end"
-                android:paddingStart="@dimen/dimen_main_settings_padding_start"
-                android:paddingTop="@dimen/dimen_main_settings_padding_top"
-                android:text="@string/quiet_hours_section"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                android:focusable="true" />
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
                 android:onClick="onButtonBehaviourSettings"
                 android:paddingBottom="@dimen/dimen_main_settings_padding_bottom"
                 android:paddingEnd="@dimen/dimen_main_settings_padding_end"

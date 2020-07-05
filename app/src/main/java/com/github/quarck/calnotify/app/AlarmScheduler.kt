@@ -32,7 +32,6 @@ import com.github.quarck.calnotify.calendar.isSnoozed
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.persistentState
-import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
@@ -44,7 +43,7 @@ object AlarmScheduler : AlarmSchedulerInterface {
 
     const val LOG_TAG = "AlarmScheduler"
 
-    override fun rescheduleAlarms(context: Context, settings: Settings, quietHoursManager: QuietHoursManagerInterface) {
+    override fun rescheduleAlarms(context: Context, settings: Settings) {
 
         DevLog.debug(LOG_TAG, "rescheduleAlarms called");
 
@@ -94,46 +93,16 @@ object AlarmScheduler : AlarmSchedulerInterface {
             // Schedule reminders alarm
             var reminderAlarmNextFire: Long? = null
 
-            val quietHoursOneTimeReminderEnabled =
-                    reminderState.quietHoursOneTimeReminderEnabled
-
-            if (settings.remindersEnabled || quietHoursOneTimeReminderEnabled) {
-
-                val activeEvents = events.filter {
-                    it.isNotSnoozed && it.isNotSpecial && !it.isMuted && !it.isTask
-                }
-
-                val hasActiveNotifications = activeEvents.any()
-                val hasActiveAlarms = activeEvents.any { it.isAlarm }
-
-                if (hasActiveNotifications) {
-
-                    reminderAlarmNextFire = System.currentTimeMillis() +
-                            settings.reminderIntervalMillisForIndex(reminderState.currentReminderPatternIndex)
-
-                    if (quietHoursOneTimeReminderEnabled) {
-                        // a little bit of a hack to set it to fire "as soon as possible after quiet hours"
-                        reminderAlarmNextFire = System.currentTimeMillis() + Consts.ALARM_THRESHOLD
-                    }
-
-                    if (!hasActiveAlarms) {
-                        val quietUntil = quietHoursManager.getSilentUntil(settings, reminderAlarmNextFire)
-                        if (quietUntil != 0L) {
-                            DevLog.info(LOG_TAG, "Reminder alarm moved: $reminderAlarmNextFire -> ${quietUntil + Consts.ALARM_THRESHOLD}, reason: quiet hours");
-                            // give a little extra delay, so if requests would fire precisely at the
-                            // quietUntil, reminders would wait a bit longer
-                            reminderAlarmNextFire = quietUntil + Consts.ALARM_THRESHOLD
-                        }
-                    }
-
-                    DevLog.info(LOG_TAG, "Reminder Alarm next fire: $reminderAlarmNextFire")
-                }
-                else {  // if (hasActiveNotifications)
-                    DevLog.info(LOG_TAG, "no active requests")
-                }
+            val activeAlarmEvents = events.filter {
+                it.isNotSnoozed && it.isNotSpecial && it.isAlarm
             }
-            else { // if (settings.remindersEnabled || settings.quietHoursOneTimeReminderEnabled) {
-                DevLog.info(LOG_TAG, "reminders are not enabled")
+
+            if (activeAlarmEvents.any()) {
+                reminderAlarmNextFire = System.currentTimeMillis() + Consts.ALARM_REMINDER_INTERVAL
+                DevLog.info(LOG_TAG, "Reminder Alarm next fire: $reminderAlarmNextFire")
+            }
+            else {  // if (hasActiveNotifications)
+                DevLog.info(LOG_TAG, "no active requests")
             }
 
             if (reminderAlarmNextFire != null) {

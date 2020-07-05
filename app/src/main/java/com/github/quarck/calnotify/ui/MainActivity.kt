@@ -58,7 +58,6 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
-import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
@@ -84,8 +83,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private lateinit var recyclerView: RecyclerView
     private lateinit var reloadLayout: RelativeLayout
 
-    private lateinit var quietHoursLayout: RelativeLayout
-    private lateinit var quietHoursTextView: TextView
     private var refreshLayout: SwipeRefreshLayout? = null
 
     private lateinit var floatingAddEvent: FloatingActionButton
@@ -147,9 +144,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         adapter.recyclerView = recyclerView
 
         reloadLayout = findOrThrow<RelativeLayout>(R.id.activity_main_reload_layout)
-
-        quietHoursLayout = findOrThrow<RelativeLayout>(R.id.activity_main_quiet_hours_info_layout)
-        quietHoursTextView = findOrThrow<TextView>(R.id.activity_main_quiet_hours)
 
         calendarRescanEnabled = settings.enableCalendarRescan
 
@@ -320,49 +314,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 .show()
     }
 
-    private fun onCustomQuietHours() {
-
-        if (!ApplicationController.isCustomQuietHoursActive(this)) {
-
-            val intervalValues: IntArray = resources.getIntArray(R.array.custom_quiet_hours_interval_values)
-            val intervalNames: Array<String> = resources.getStringArray(R.array.custom_quiet_hours_interval_names)
-
-            val builder = AlertDialog.Builder(this)
-            val adapter = ArrayAdapter<String>(this, R.layout.simple_list_item_medium)
-
-            builder.setTitle(getString(R.string.start_quiet_hours_dialog_title))
-            adapter.addAll(intervalNames.toMutableList())
-            builder.setCancelable(true)
-            builder.setAdapter(adapter) { _, which ->
-                if (which in 0 until intervalValues.size) {
-                    ApplicationController.applyCustomQuietHoursForSeconds(this, intervalValues[which])
-                    reloadData()
-                }
-            }
-
-            builder.show()
-
-        } else {
-            ApplicationController.applyCustomQuietHoursForSeconds(this, 0)
-            reloadData()
-        }
-    }
-
-    private fun onMuteAll() {
-        AlertDialog.Builder(this)
-                .setMessage(R.string.mute_all_events_question)
-                .setCancelable(false)
-                .setPositiveButton(android.R.string.yes) {
-                    _, _ ->
-                    doMuteAll()
-                }
-                .setNegativeButton(R.string.cancel) {
-                    _, _ ->
-                }
-                .create()
-                .show()
-    }
-
     private fun doDismissAll() {
 
         ApplicationController.dismissAllButRecentAndSnoozed(
@@ -374,14 +325,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         onNumEventsUpdated()
     }
 
-    private fun doMuteAll() {
-        ApplicationController.muteAllVisibleEvents(this);
-
-        reloadData()
-        lastEventDismissalScrollPosition = null
-
-        onNumEventsUpdated()
-    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
@@ -394,12 +337,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
         }
 
-        val muteAllMenuItem = menu.findItem(R.id.action_mute_all)
-        if (muteAllMenuItem != null) {
-            muteAllMenuItem.isVisible = true
-            muteAllMenuItem.isEnabled = adapter.anyForMute
-        }
-
         val dismissedEventsMenuItem = menu.findItem(R.id.action_dismissed_events)
         if (dismissedEventsMenuItem != null) {
             dismissedEventsMenuItem.isEnabled = true
@@ -409,26 +346,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         val dismissAll = menu.findItem(R.id.action_dismiss_all)
         if (dismissAll != null) {
             dismissAll.isEnabled = adapter.anyForDismissAllButRecentAndSnoozed
-        }
-
-        val customQuiet = menu.findItem(R.id.action_custom_quiet_interval)
-        if (customQuiet != null) {
-            if (settings.allowMuteAndAlarm) {
-                customQuiet.isVisible = true
-                customQuiet.title =
-                        resources.getString(
-                                if (ApplicationController.isCustomQuietHoursActive(this))
-                                    R.string.stop_quiet_hours
-                                else
-                                    R.string.start_quiet_hours)
-            } else {
-              customQuiet.isVisible = false
-            }
-        }
-
-        val muteAll = menu.findItem(R.id.action_mute_all)
-        if (muteAll != null) {
-            muteAll.isVisible = settings.allowMuteAndAlarm
         }
 
         if (settings.devModeEnabled) {
@@ -451,9 +368,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
-            R.id.action_mute_all ->
-                onMuteAll()
-
             R.id.action_dismissed_events ->
                 startActivity(
                         Intent(this, DismissedEventsActivity::class.java)
@@ -473,9 +387,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             R.id.action_dismiss_all ->
                 onDismissAll()
-
-            R.id.action_custom_quiet_interval ->
-                onCustomQuietHours()
 
             R.id.action_test_page ->
                 startActivity(
@@ -514,27 +425,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 }).toTypedArray()
                     }
 
-            val quietPeriodUntil = QuietHoursManager.getSilentUntil(settings)
-
             runOnUiThread {
                 adapter.setEventsToDisplay(events);
                 onNumEventsUpdated()
-
-                if (quietPeriodUntil > 0L) {
-                    quietHoursTextView.text =
-                            String.format(resources.getString(R.string.quiet_hours_main_activity_status),
-                                    DateUtils.formatDateTime(this, quietPeriodUntil,
-                                            if (DateUtils.isToday(quietPeriodUntil))
-                                                DateUtils.FORMAT_SHOW_TIME
-                                            else
-                                                DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE))
-
-                    quietHoursLayout.visibility = View.VISIBLE;
-                }
-                else {
-                    quietHoursLayout.visibility = View.GONE;
-                }
-
                 refreshLayout?.isRefreshing = false
             }
         }

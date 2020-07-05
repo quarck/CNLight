@@ -21,8 +21,7 @@ package com.github.quarck.calnotify.app
 
 import android.content.Context
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 
 interface AlarmSchedulerInterface {
-    fun rescheduleAlarms(context: Context, settings: Settings, quietHoursManager: QuietHoursManagerInterface)
+    fun rescheduleAlarms(context: Context, settings: Settings)
 }

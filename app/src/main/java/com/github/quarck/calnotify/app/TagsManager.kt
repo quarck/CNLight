@@ -49,14 +49,10 @@ class TagsManager : TagsManagerInterface {
 
     override fun parseEventTags(context: Context, settings: Settings, event: EventAlertRecord) {
 
-        event.isMuted = event.hasTag(MUTE_TAG)
-        event.isTask = event.hasTag(TASK_TAG)
         event.isAlarm = event.hasTag(ALARM_TAG)
     }
 
     companion object {
-        const val MUTE_TAG = "#mute"
-        const val TASK_TAG = "#task"
         const val ALARM_TAG = "#alarm"
     }
 }

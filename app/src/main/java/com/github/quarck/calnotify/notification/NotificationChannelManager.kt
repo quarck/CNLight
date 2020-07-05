@@ -67,9 +67,6 @@ class NotificationChannelAttributes(
 
 fun NotificationManager.createNotificationChannel(attr: NotificationChannelAttributes) {
 
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-        return
-
     val translatedImportance =
             when (importance){
                 NotificationChannelAttributes.IMPORTANCE_NONE ->
@@ -179,9 +176,6 @@ fun NotificationCompat.Builder.applyChannelAttributes(attr: NotificationChannelA
         NotificationManager.IMPORTANCE_HIGH ->
             this.setPriority(NotificationCompat.PRIORITY_MAX)
     }
-
-//    if (attr.bypassDnd != null)
-//        channel.setBypassDnd(attr.bypassDnd ?: false)
 }
 
 object NotificationChannelManager {
@@ -189,58 +183,14 @@ object NotificationChannelManager {
     // Note: don't forget to change notification_preferences.xml and reminder_preferences.xml if
     // channel name is changed!
 
-    const val NOTIFICATION_CHANNEL_ID_DEFAULT = "com.github.calnotify.notify.v1.cal"
-    const val NOTIFICATION_CHANNEL_ID_ALARM = "com.github.calnotify.notify.v1.calalrm"
-    const val NOTIFICATION_CHANNEL_ID_SILENT = "com.github.calnotify.notify.v1.calquiet"
-    const val NOTIFICATION_CHANNEL_ID_REMINDER = "com.github.calnotify.notify.v1.rem"
-    const val NOTIFICAITON_CHANNEL_ID_REMINDER_ALARM = "com.github.calnotify.notify.v1.remalrm"
+    const val NOTIFICATION_CHANNEL_ID_DEFAULT = "com.github.calnotify.notify.v2.cal"
+    const val NOTIFICATION_CHANNEL_ID_ALARM = "com.github.calnotify.notify.v2.calalrm"
 
     const val MAX_NOTIFICATION_IDS = Int.MAX_VALUE -1
 
-//    const val NOTIFICATION_CHANNEL_ID_REAL_ALARM = "com.github.calnotify.notify.realalarm"
-//    const val NOTIFICATION_CHANNEL_ID_REAL_ALARM_OFS = 5
-
-    fun createDefaultNotificationChannelDebug(context: Context): NotificationChannelAttributes {
-
-        val channelId = NOTIFICATION_CHANNEL_ID_DEFAULT
-
-//        val settings = Settings(context)
-
-        val notificationChannel =
-                NotificationChannelAttributes(
-                        channelId,
-                        context.getString(R.string.debug_notifications),
-                        NotificationChannelAttributes.IMPORTANCE_DEFAULT
-                )
-
-        // Configure the notification channel.
-        notificationChannel.description = context.getString(R.string.debug_notifications_description)
-
-        notificationChannel.enableLights = true
-        notificationChannel.lightColor = Consts.DEFAULT_LED_COLOR
-
-        notificationChannel.enableVibration = true
-        notificationChannel.vibrationPattern = Consts.VIBRATION_PATTERN_DEFAULT
-
-        notificationChannel.importance = NotificationChannelAttributes.IMPORTANCE_DEFAULT;
-
-        val attribBuilder = AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
-
-        attribBuilder.setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
-
-        notificationChannel.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        notificationChannel.audioAttributes = attribBuilder.build()
-
-        context.notificationManager.createNotificationChannel(notificationChannel)
-
-        return notificationChannel
-    }
-
     enum class SoundState {
         Normal,
-        Alarm,
-        Silent
+        Alarm
     }
 
     private fun createNotificationChannelForSoundState(
@@ -251,9 +201,6 @@ object NotificationChannelManager {
         val channelId: String
         val channelName: String
         val channelDesc: String
-        //val channelOffset: Int
-
-//        val settings = Settings(context)
 
         var importance = NotificationChannelAttributes.IMPORTANCE_DEFAULT
 
@@ -272,95 +219,9 @@ object NotificationChannelManager {
                 channelDesc = context.getString(R.string.notification_channel_alarm_desc)
                 importance = NotificationChannelAttributes.IMPORTANCE_HIGH
             }
-            NotificationChannelManager.SoundState.Silent -> {
-                channelId = NOTIFICATION_CHANNEL_ID_SILENT
-
-                channelName = context.getString(R.string.notification_channel_silent)
-                channelDesc = context.getString(R.string.notification_channel_silent_desc)
-                importance = NotificationChannelAttributes.IMPORTANCE_LOW
-            }
         }
 
         DevLog.info(LOG_TAG, "Notification channel for state $soundState " +
-                " -> channel ID $channelId, importance $importance")
-
-        // Configure the notification channel.
-        val notificationChannel = NotificationChannelAttributes(channelId, channelName, importance)
-        notificationChannel.description = channelDesc
-
-        // If we don't enable it now (at channel creation) - no way to enable it later
-        notificationChannel.enableLights = true
-        notificationChannel.lightColor = Consts.DEFAULT_LED_COLOR
-
-        val attribBuilder = AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
-
-        if (soundState == SoundState.Alarm) {
-            attribBuilder
-                    .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-                    .setLegacyStreamType(AudioManager.STREAM_ALARM)
-                    .setUsage(AudioAttributes.USAGE_ALARM)
-                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-
-            notificationChannel.bypassDnd = true
-            notificationChannel.legacyStreamType = AudioManager.STREAM_ALARM
-
-            DevLog.info(LOG_TAG, "Alarm attributes applied")
-        }
-        else {
-            attribBuilder.setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT)
-        }
-
-        if (soundState != SoundState.Silent) {
-            notificationChannel.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            notificationChannel.audioAttributes = attribBuilder.build()
-
-            notificationChannel.enableVibration = true
-
-            if (soundState == SoundState.Normal)
-                notificationChannel.vibrationPattern = Consts.VIBRATION_PATTERN_DEFAULT
-            else {
-                notificationChannel.vibrationPattern = Consts.VIBRATION_PATTERN_ALARM
-                notificationChannel.legacyStreamType = AudioManager.STREAM_ALARM
-            }
-        }
-
-        context.notificationManager.createNotificationChannel(notificationChannel)
-
-        return notificationChannel
-    }
-
-    private fun createReminderNotificationChannelForSoundState(
-            context: Context,
-            soundState: SoundState
-    ): NotificationChannelAttributes {
-
-        val channelId: String
-        val channelName: String
-        val channelDesc: String
-        //val channelOffset: Int
-
-//        val settings = Settings(context)
-
-        val importance: Int
-
-        // Reminder notification
-        // isRepost is ignored
-        if (soundState == SoundState.Alarm) {
-            // use alarm reminder channel
-            channelId = NOTIFICAITON_CHANNEL_ID_REMINDER_ALARM
-            channelName = context.getString(R.string.notification_channel_alarm_reminders)
-            channelDesc = context.getString(R.string.notification_channel_alarm_reminders_desc)
-            importance = NotificationChannelAttributes.IMPORTANCE_HIGH
-        }
-        else { // if (soundState == SoundState.Alarm) {
-            // use regular channel - there are no silent reminders
-            channelId = NOTIFICATION_CHANNEL_ID_REMINDER
-            channelName = context.getString(R.string.notification_channel_reminders)
-            channelDesc = context.getString(R.string.notification_channel_reminders_desc)
-            importance = NotificationChannelAttributes.IMPORTANCE_DEFAULT
-        }
-
-        DevLog.info(LOG_TAG, "Notification channel for reminder state $soundState" +
                 " -> channel ID $channelId, importance $importance")
 
         // Configure the notification channel.
@@ -395,9 +256,9 @@ object NotificationChannelManager {
         notificationChannel.enableVibration = true
 
         if (soundState == SoundState.Normal)
-            notificationChannel.vibrationPattern = Consts.VIBRATION_PATTERN_REMINDER
+            notificationChannel.vibrationPattern = Consts.VIBRATION_PATTERN_DEFAULT
         else {
-            notificationChannel.vibrationPattern = Consts.VIBRATION_PATTERN_ALARM_REMINDER
+            notificationChannel.vibrationPattern = Consts.VIBRATION_PATTERN_ALARM
             notificationChannel.legacyStreamType = AudioManager.STREAM_ALARM
         }
 
@@ -406,80 +267,16 @@ object NotificationChannelManager {
         return notificationChannel
     }
 
-    fun createNotificationChannel(
-            context: Context,
-            soundState: SoundState,
-            isReminder: Boolean,
-            settings: Settings
-    ) : NotificationChannelAttributes  {
+    fun createNotificationChannel(context: Context, soundState: SoundState)
+            = createNotificationChannelForSoundState(context, soundState)
 
-        val allowedSoundState =
-                if (settings.allowMuteAndAlarm)
-                    soundState
-                else
-                    SoundState.Normal
+    fun launchSystemSettingForChannel(context: Context, soundState: SoundState) {
 
-        return when {
-            isReminder ->
-                createReminderNotificationChannelForSoundState(context, allowedSoundState)
-            else ->
-                createNotificationChannelForSoundState(context, allowedSoundState)
-        }
-    }
-
-//    fun createNotificationChannelForRealAlarms(
-//            context: Context
-//    ): NotificationChannelAttributes {
-//
-//        val importance = NotificationChannelAttributes.IMPORTANCE_HIGH
-//
-//        val channelId = NOTIFICATION_CHANNEL_ID_REAL_ALARM
-//        val channelIdOffset = NOTIFICATION_CHANNEL_ID_REAL_ALARM_OFS
-//        val channelName = context.getString(R.string.real_alarms_title_please_dont_translate)
-//        val channelDesc = context.getString(R.string.empty)
-//
-//        // Configure the notification channel.
-//        val notificationChannel = NotificationChannelAttributes(channelId, channelName,
-//                importance, channelIdOffset, NUM_CHANNELS)
-//        notificationChannel.description = channelDesc
-//
-//        // If we don't enable it now (at channel creation) - no way to enable it later
-//        notificationChannel.enableLights = true
-//        notificationChannel.lightColor = Consts.DEFAULT_LED_COLOR
-//
-//        val attribBuilder = AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
-//
-//        attribBuilder
-//                .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
-//                .setLegacyStreamType(AudioManager.STREAM_ALARM)
-//                .setUsage(AudioAttributes.USAGE_ALARM)
-//                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-//
-//        notificationChannel.bypassDnd = true
-//
-//        DevLog.info(context, LOG_TAG, "Alarm attributes applied")
-//
-//        notificationChannel.sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-//        notificationChannel.audioAttributes = attribBuilder.build()
-//
-//        notificationChannel.enableVibration = true
-//
-//        notificationChannel.vibrationPattern = Consts.VIBRATION_PATTERN_REAL_ALARM
-//
-//        context.notificationManager.createNotificationChannel(notificationChannel)
-//
-//        return notificationChannel
-//    }
-
-    fun launchSystemSettingForChannel(context: Context, soundState: SoundState, isReminder: Boolean) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = createNotificationChannel(context, soundState, isReminder, Settings(context))
-            val intent = Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
-            intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
-            intent.putExtra(android.provider.Settings.EXTRA_CHANNEL_ID, channel.channelId)
-            context.startActivity(intent)
-        }
+        val channel = createNotificationChannel(context, soundState)
+        val intent = Intent(android.provider.Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS)
+        intent.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, context.packageName)
+        intent.putExtra(android.provider.Settings.EXTRA_CHANNEL_ID, channel.channelId)
+        context.startActivity(intent)
     }
 
     private const val LOG_TAG = "NotificationChannelManager"

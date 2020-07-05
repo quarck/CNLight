@@ -37,7 +37,6 @@ import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
-import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.utils.*
@@ -132,11 +131,6 @@ open class SnoozeAllActivity : AppCompatActivity() {
         // and when event time has passed already
         snoozePresets = settings.snoozePresets.filter { it > 0L }.toLongArray()
 
-        val isQuiet =
-                QuietHoursManager.isInsideQuietPeriod(
-                        settings,
-                        snoozePresets.map { it -> currentTime + it }.toLongArray())
-
         // Populate snooze controls
         for ((idx, id) in snoozePresetControlIds.withIndex()) {
             val snoozeLable = findOrThrow<TextView>(id);
@@ -147,11 +141,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
                 snoozeLable.text = formatPreset(snoozePresets[idx])
                 snoozeLable.visibility = View.VISIBLE;
                 quietTimeNoticeBaseline.visibility = View.VISIBLE
-
-                if (isQuiet[idx])
-                    quietTimeNotice.visibility = View.VISIBLE
-                else
-                    quietTimeNotice.visibility = View.GONE
+                quietTimeNotice.visibility = View.GONE
             }
             else {
                 snoozeLable.visibility = View.GONE;

@@ -32,7 +32,6 @@ import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.persistentState
-import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
@@ -52,101 +51,48 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
 
-        wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, REMINDER_WAKE_LOCK_NAME) {
+        if (!ApplicationController.hasActiveEventsToRemind(context)) {
+            DevLog.info(LOG_TAG, "Reminder broadcast alarm received: no active requests")
+            return
+        }
 
-            if (!ApplicationController.hasActiveEventsToRemind(context)) {
-                DevLog.info(LOG_TAG, "Reminder broadcast alarm received: no active requests")
-                return@wakeLocked
-            }
+        wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, REMINDER_WAKE_LOCK_NAME) {
 
             val settings = Settings(context)
             val reminderState = ReminderState(context)
 
-            val (currentReminderInterval, nextReminderInterval) =
-                    settings.currentAndNextReminderIntervalsMillis(reminderState.currentReminderPatternIndex)
-
             val currentTime = System.currentTimeMillis()
 
             val hasActiveAlarms = EventsStorage(context).use {
-                db -> db.events.any { it.isActiveAlarm && !it.isMuted && !it.isTask }
-            }
-
-            val silentUntil =
-                    if (hasActiveAlarms)
-                        0L
-                    else
-                        QuietHoursManager.getSilentUntil(settings)
-
-            if (hasActiveAlarms) {
-                DevLog.info(LOG_TAG, "Quiet hours overriden by #alarm tag")
+                db -> db.events.any { it.isActiveAlarm }
             }
 
             var nextFireAt = 0L
             var shouldFire = false
-            var itIsAfterQuietHoursReminder = false
+            val itIsAfterQuietHoursReminder = false
 
-            if (reminderState.quietHoursOneTimeReminderEnabled) {
+            val lastFireTime = Math.max(
+                    context.persistentState.notificationLastFireTime,
+                    reminderState.reminderLastFireTime)
 
-                if (silentUntil == 0L) {
-                    DevLog.info(LOG_TAG, "One-shot enabled, not in quiet hours, firing")
+            val sinceLastFire = currentTime - lastFireTime;
 
-                    shouldFire = true
-                    itIsAfterQuietHoursReminder = true
+            DevLog.info(LOG_TAG, "Reminders are enabled, lastFire=$lastFireTime, sinceLastFire=$sinceLastFire")
 
-                    // Check if regular reminders are enabled and schedule reminder if necessary
-                    if (settings.remindersEnabled) {
-                        nextFireAt = currentTime + currentReminderInterval
-                        DevLog.info(LOG_TAG, "Regular reminders enabled, arming next fire at $nextFireAt")
-                    }
+            if (Consts.ALARM_REMINDER_INTERVAL - sinceLastFire > Consts.ALARM_THRESHOLD) {
+                // Schedule actual time to fire based on how long ago we have fired
+                val leftMillis = Consts.ALARM_REMINDER_INTERVAL - sinceLastFire;
+                nextFireAt = currentTime + leftMillis
 
-                }
-                else {
-                    nextFireAt = silentUntil
-                    DevLog.info(LOG_TAG, "One-shot enabled, inside quiet hours, postpone until $silentUntil")
-                }
-
-            }
-            else if (settings.remindersEnabled) {
-
-                val lastFireTime = Math.max(
-                        context.persistentState.notificationLastFireTime,
-                        reminderState.reminderLastFireTime)
-
-                val sinceLastFire = currentTime - lastFireTime;
-
-                val numRemindersFired = reminderState.numRemindersFired
-                val maxFires = settings.maxNumberOfReminders
-
-                DevLog.info(LOG_TAG, "Reminders are enabled, lastFire=$lastFireTime, sinceLastFire=$sinceLastFire, numFired=$numRemindersFired, maxFires=$maxFires")
-
-                if (maxFires == 0 || numRemindersFired < maxFires) {
-
-                    if (silentUntil != 0L) {
-                        DevLog.info(LOG_TAG, "Reminder postponed until $silentUntil due to quiet hours");
-                        nextFireAt = silentUntil
-
-                    }
-                    else if (currentReminderInterval - sinceLastFire > Consts.ALARM_THRESHOLD) {
-                        // Schedule actual time to fire based on how long ago we have fired
-                        val leftMillis = currentReminderInterval - sinceLastFire;
-                        nextFireAt = currentTime + leftMillis
-
-                        DevLog.info(LOG_TAG, "Early alarm: since last: ${sinceLastFire}, interval[current]: ${currentReminderInterval}, thr: ${Consts.ALARM_THRESHOLD}, left: ${leftMillis}, moving alarm to $nextFireAt");
-                    }
-                    else {
-                        nextFireAt = currentTime + nextReminderInterval
-                        shouldFire = true
-
-                        DevLog.info(LOG_TAG, "Good to fire, since last: ${sinceLastFire}, interval[next]: ${nextReminderInterval}, next fire expected at $nextFireAt")
-                    }
-                }
-                else {
-                    DevLog.info(LOG_TAG, "Exceeded max fires $maxFires, fired $numRemindersFired times")
-                }
+                DevLog.info(LOG_TAG, "Early alarm: since last: ${sinceLastFire}, interval[current]: ${Consts.ALARM_REMINDER_INTERVAL}, thr: ${Consts.ALARM_THRESHOLD}, left: ${leftMillis}, moving alarm to $nextFireAt");
             }
             else {
-                DevLog.info(LOG_TAG, "Reminders are disabled")
+                nextFireAt = currentTime + Consts.ALARM_REMINDER_INTERVAL
+                shouldFire = true
+
+                DevLog.info(LOG_TAG, "Good to fire, since last: ${sinceLastFire}, interval[next]: ${Consts.ALARM_REMINDER_INTERVAL}, next fire expected at $nextFireAt")
             }
+
 
             if (nextFireAt != 0L) {
                 context.alarmManager.setExactAndAlarm(

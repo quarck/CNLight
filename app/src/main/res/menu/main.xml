@@ -17,20 +17,6 @@
         app:showAsAction="never"
         android:title="@string/deleted_events" />
 
-    <item android:id="@+id/action_custom_quiet_interval"
-        android:orderInCategory="120"
-        app:showAsAction="never"
-        android:title="@string/start_quiet_hours"
-        />
-
-    <item
-        android:id="@+id/action_mute_all"
-        android:orderInCategory="140"
-        app:showAsAction="never"
-        android:icon="@drawable/ic_volume_off_white_24dp"
-        android:title="@string/mute_all"
-        android:visible="false"/>
-
     <item
         android:id="@+id/action_dismiss_all"
         android:orderInCategory="160"

@@ -36,8 +36,6 @@ interface EventNotificationManagerInterface {
 
     fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int);
 
-    fun onEventMuteToggled(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord);
-
     fun onAllEventsSnoozed(context: Context)
 
     fun postEventNotifications(
@@ -53,12 +51,4 @@ interface EventNotificationManagerInterface {
     fun cleanupEventReminder(context: Context)
 
     fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord)
-
-    fun postNotificationsAutoDismissedDebugMessage(context: Context)
-
-    fun postNearlyMissedNotificationDebugMessage(context: Context)
-
-    fun postNotificationsAlarmDelayDebugMessage(context: Context, title: String, text: String)
-
-    fun postNotificationsSnoozeAlarmDelayDebugMessage(context: Context, title: String, text: String)
 }

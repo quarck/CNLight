@@ -173,13 +173,7 @@
     <string name="context_policy">
 PRIVACY POLICY\n
 \n
-In order to operate, this app would receive and keep locally the information about calendar events fired by the Android Calendar\n
-\n
-Any details are stored completely within the app and deleted forever once app is uninstalled
-\n
-This app does not transmit or share any of your personal data to/with anyone\n
-\n
-If you create a new calendar event using this app or update the existing one, event would be synced by your device according to your device sync settings\n
+THIS APP DOESN\'T STEAL YOUR DATA
     </string>
 
     <string name="use_set_alarm_clock_title">Use setAlarmClock for reminders</string>
@@ -323,43 +317,26 @@ If you create a new calendar event using this app or update the existing one, ev
     <string name="custom_pattern">Custom pattern</string>
     <string name="reminder_pattern">Comma-separated list of reminder intervals with values like \'15s\' (min value), \'15m\', \'2h\' or \'3d\'\nPattern would be repeated in cycle\nNew or \'un-snoozed\' events would start pattern over</string>
 
-    <string name="un_mute_notification">Un-Mute</string>
-    <string name="mute_notification">Mute</string>
-    <string name="mute_all">Mute all visible</string>
-    <string name="mute_all_events_question">Mute all visible events? (Tasks excluded)</string>
-
-    <string name="done">Done</string>
-    <string name="notification_is_muted">Notification is muted</string>
     <string name="calendar_handling_options">Calendar handling options</string>
-    <string name="task_tag">#task</string>
-    <string name="mute_tag">#mute</string>
-    <string name="alarm_tag">#alarm</string>
+
     <string name="create_event">Create Event</string>
 
     <string name="notification_channel_default">Calendar Events</string>
     <string name="notification_channel_default_desc">Default channel for calendar events</string>
     <string name="notification_channel_alarm">Alarm Notifications</string>
-    <string name="notification_channel_alarm_desc">Notifications using Alarm tone</string>
-    <string name="notification_channel_silent">Silent Notifications</string>
-    <string name="notification_channel_silent_desc">Notifications using no sound or vibration</string>
+    <string name="notification_channel_alarm_desc">Notifications that behave like an alarm (with #alarm tag)</string>
 
-    <string name="notification_channel_reminders">Reminder notifications</string>
-    <string name="notification_channel_reminders_desc">Reminders for missed events</string>
-    <string name="notification_channel_alarm_reminders">Alarm Reminders</string>
-    <string name="notification_channel_alarm_reminders_desc">Reminders for missed events played with alarm volume</string>
+
     <string name="event_snoozed_by" formatted="false">Event snoozed by %s</string>
     <string name="debug_notifications">Debug notifications</string>
     <string name="debug_notifications_description">Used for app debugging</string>
     <string name="plus_more" formatted="false">+%d more events</string>
-    <string name="delete_event">Delete</string>
-    <string name="delete_event_question">Delete Event?</string>
+
     <string name="view_event">View Event</string>
     <string name="content_desc_menu">menu</string>
     <string name="regular_notification_settings">Main channel settings</string>
-    <string name="quiet_hours_notification_settings">Quiet hours channel settings</string>
     <string name="alarm_notification_settings">Alarms channel settings</string>
-    <string name="reminder_notification_settings">Reminders channel settings</string>
-    <string name="alarm_reminder_notification_settings">Alarm reminders channel settings</string>
+
     <string name="content_desc_navigate_back">navigate back</string>
     <string name="main_notifications">Notification channels</string>
     <string name="reminder_notifications">Reminder notificaiton channels</string>
@@ -394,16 +371,13 @@ If you create a new calendar event using this app or update the existing one, ev
 
     <string name="always_collapse">Always collapse</string>
     <string name="always_collapse_detail">Always collapse multiple notifications into large summary one</string>
-    <string name="start_quiet_hours">Start Quiet Period</string>
-    <string name="stop_quiet_hours">End Quiet Period</string>
-    <string name="start_quiet_hours_dialog_title">Start Quiet Hours for:</string>
     <string name="donation_offers_are_rejected">Any donation offers would be rejected</string>
 
     <string name="N_calendar_events" formatted="false">%d events</string>
     <string name="calendar">Calendar</string>
     <string name="group_notifications">Group notifications</string>
     <string name="group_notifications_summary">Group notifications under a single expandable notification\r\nNOTE: disabling this setting would still make app to group all the notification into one big notification when number of notifications exceeds certain limit, this is done to prevent app from crashing over violation of max notifications limit</string>
-    <string name="group_notifications_android_oreo_gore">WARNING:\n\nEnabling notifications grouping on Oreo+ would disable/limit functionality related to event muting, #alarm tag handling and quiet hours\n\nThis is due to unexpected/unreliable behavior of system notifications when grouping notifications from different channels (muted and #alarm notifications has to be posted into a separate from main channels)</string>
+    <string name="group_notifications_android_oreo_gore">WARNING:\n\nEnabling notifications grouping on Oreo+ would disable/limit functionality related to event muting, #alarm tag handling and quiet hours\n\nThis is due to unexpected/unreliable behavior of system notifications when grouping notifications from different channels</string>
 
     <string name="pre_oreo_notification_channels_explanation_v2">Where is everything? Please read:\nhttps://github.com/quarck/CalendarNotification/issues/322</string>
     <string name="kill_google_calendar_notifications">Kill Google Calendar Notifications</string>
@@ -415,12 +389,11 @@ If you create a new calendar event using this app or update the existing one, ev
     <string name="_8_h">8h</string>
     <string name="_1_d">1d</string>
     <string name="minus_5_m">- 5m</string>
-    <string name="p_1h">+ 1h</string>
-    <string name="p_2h">+ 2h</string>
-    <string name="p_4h">+ 4h</string>
-    <string name="p_1d">+ 1d</string>
-    <string name="p_7d">+ 7d</string>
-    <string name="p_30d">+30d</string>
+    <string name="next_day">Next Day</string>
+    <string name="next_week">Next Week</string>
+    <string name="next_month_30d">Next month (+30d)</string>
+
+    <string name="move_event_confirm" formatted="false">Move event by %d days?</string>
 
 </resources>
 

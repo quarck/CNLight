@@ -36,8 +36,6 @@ import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.notification.EventNotificationManagerInterface
 import com.github.quarck.calnotify.persistentState
-import com.github.quarck.calnotify.quiethours.QuietHoursManager
-import com.github.quarck.calnotify.quiethours.QuietHoursManagerInterface
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifier
@@ -64,8 +62,6 @@ object ApplicationController : EventMovedHandler {
     private val notificationManager: EventNotificationManagerInterface = EventNotificationManager()
 
     private val alarmScheduler: AlarmSchedulerInterface = AlarmScheduler
-
-    private val quietHoursManager: QuietHoursManagerInterface = QuietHoursManager
 
     private val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
 
@@ -94,7 +90,7 @@ object ApplicationController : EventMovedHandler {
     fun hasActiveEventsToRemind(context: Context) =
             EventsStorage(context).use {
                 //val settings = Settings(context)
-                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && !it.isMuted && !it.isTask }.any()
+                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && it.isAlarm }.any()
             }
 
 
@@ -107,7 +103,7 @@ object ApplicationController : EventMovedHandler {
 
         context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context)
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager)
+        alarmScheduler.rescheduleAlarms(context, getSettings(context))
     }
 
     fun onAppUpdated(context: Context) {
@@ -115,8 +111,8 @@ object ApplicationController : EventMovedHandler {
         DevLog.info(LOG_TAG, "Application updated")
 
         // this will post event notifications for existing known requests
-        notificationManager.postEventNotifications(context, isRepost = true);
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+        notificationManager.postEventNotifications(context, isRepost = true)
+        alarmScheduler.rescheduleAlarms(context, getSettings(context))
         CalendarMonitorPeriodicJobService.schedule(context)
     }
 
@@ -127,7 +123,7 @@ object ApplicationController : EventMovedHandler {
         // this will post event notifications for existing known requests
         notificationManager.postEventNotifications(context, isRepost = true);
 
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+        alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
         CalendarMonitorPeriodicJobService.schedule(context)
     }
@@ -149,7 +145,7 @@ object ApplicationController : EventMovedHandler {
         if (changes) {
             notificationManager.postEventNotifications(context, isRepost = true)
 
-            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
             val isUserAction = (System.currentTimeMillis() < userActionUntil)
             UINotifier.notify(context, isUserAction)
@@ -172,7 +168,7 @@ object ApplicationController : EventMovedHandler {
         if (changes) {
             notificationManager.postEventNotifications(context, isRepost = true)
 
-            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager)
+            alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
             val isUserAction = (System.currentTimeMillis() < userActionUntil)
             UINotifier.notify(context, isUserAction)
@@ -221,7 +217,7 @@ object ApplicationController : EventMovedHandler {
     // some housekeeping that we have to do after firing calendar event
     fun afterCalendarEventFired(context: Context) {
 
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+        alarmScheduler.rescheduleAlarms(context, getSettings(context))
         UINotifier.notify(context, false)
     }
 
@@ -272,7 +268,7 @@ object ApplicationController : EventMovedHandler {
 
         tagsManager.parseEventTags(context, settings, event)
 
-        DevLog.info(LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}, muted: ${event.isMuted}, task: ${event.isTask}")
+        DevLog.info(LOG_TAG, "registerNewEvent: Event fired: calId ${event.calendarId}, eventId ${event.eventId}, instanceStart ${event.instanceStartTime}, alertTime ${event.alertTime}")
 
         // 1st step - save event into DB
         EventsStorage(context).use {
@@ -567,44 +563,6 @@ object ApplicationController : EventMovedHandler {
         return ret
     }
 
-    fun toggleMuteForEvent(context: Context, eventId: Long, instanceStartTime: Long, muteAction: Int): Boolean {
-
-        var ret: Boolean = false
-
-        //val currentTime = System.currentTimeMillis()
-
-        val mutedEvent: EventAlertRecord? =
-                EventsStorage(context).use {
-                    db ->
-                    var event = db.getEvent(eventId, instanceStartTime)
-
-                    if (event != null) {
-
-                        val (success, newEvent) = db.updateEvent(event, isMuted = muteAction == 0)
-                        event = if (success) newEvent else null
-                    }
-
-                    event;
-                }
-
-        if (mutedEvent != null) {
-            ret = true;
-
-            notificationManager.onEventMuteToggled(context, EventFormatter(context), mutedEvent)
-
-            ReminderState(context).onUserInteraction(System.currentTimeMillis())
-
-            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-
-            DevLog.info(LOG_TAG, "Event ${eventId} / ${instanceStartTime} mute toggled: ${mutedEvent.isMuted}: $ret")
-        }
-        else {
-            DevLog.info(LOG_TAG, "Event ${eventId} / ${instanceStartTime} - failed to snooze evend by $muteAction")
-        }
-
-        return ret
-    }
-
     fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): SnoozeResult? {
 
         var ret: SnoozeResult? = null
@@ -644,11 +602,9 @@ object ApplicationController : EventMovedHandler {
 
             ReminderState(context).onUserInteraction(System.currentTimeMillis())
 
-            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
-            val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedEvent.snoozedUntil)
-
-            ret = SnoozeResult(SnoozeType.Snoozed, snoozedEvent.snoozedUntil, silentUntil)
+            ret = SnoozeResult(SnoozeType.Snoozed, snoozedEvent.snoozedUntil)
 
             DevLog.info(LOG_TAG, "Event ${eventId} / ${instanceStartTime} snoozed: by $snoozeDelay: $ret")
         }
@@ -715,11 +671,9 @@ object ApplicationController : EventMovedHandler {
 
             notificationManager.onAllEventsSnoozed(context)
 
-            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
-            val silentUntil = QuietHoursManager.getSilentUntil(getSettings(context), snoozedUntil)
-
-            ret = SnoozeResult(SnoozeType.Snoozed, snoozedUntil, silentUntil)
+            ret = SnoozeResult(SnoozeType.Snoozed, snoozedUntil)
 
             DevLog.info(LOG_TAG, "Snooze all by $snoozeDelay: success, $ret")
         }
@@ -749,14 +703,6 @@ object ApplicationController : EventMovedHandler {
     }
 
     fun onMainActivityCreate(context: Context?) {
-        if (context != null) {
-            val settings = getSettings(context)
-
-            if (settings.versionCodeFirstInstalled == 0L) {
-                val pInfo = context.packageManager.getPackageInfo(context.packageName, 0);
-                settings.versionCodeFirstInstalled = pInfo.longVersionCode
-            }
-        }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -779,7 +725,7 @@ object ApplicationController : EventMovedHandler {
                 context.globalState?.lastNotificationRePost = System.currentTimeMillis()
             }
 
-            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
             // this might fire new notifications
             // This would automatically launch the rescan of calendar and monitor
@@ -789,7 +735,7 @@ object ApplicationController : EventMovedHandler {
     }
 
     fun onTimeChanged(context: Context) {
-        alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+        alarmScheduler.rescheduleAlarms(context, getSettings(context))
         calendarMonitorInternal.onSystemTimeChange(context)
     }
 
@@ -819,7 +765,7 @@ object ApplicationController : EventMovedHandler {
 
             ReminderState(context).onUserInteraction(System.currentTimeMillis())
 
-            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
             if (notifyActivity)
                 UINotifier.notify(context, true)
@@ -855,30 +801,6 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
-    fun muteAllVisibleEvents(context: Context) {
-
-        EventsStorage(context).use {
-            db ->
-            val eventsToMute = db.events.filter {
-                event -> (event.snoozedUntil == 0L) && event.isNotSpecial && !event.isTask
-            }
-
-            if (eventsToMute.isNotEmpty()) {
-
-                val mutedEvents = eventsToMute.map { it.isMuted = true; it }
-                db.updateEvents(mutedEvents)
-
-                val formatter = EventFormatter(context)
-                for (mutedEvent in mutedEvents)
-                    notificationManager.onEventMuteToggled(context, formatter, mutedEvent)
-
-                ReminderState(context).onUserInteraction(System.currentTimeMillis())
-
-                alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
-            }
-        }
-    }
-
     fun dismissEvent(
             context: Context,
             db: EventsStorageInterface,
@@ -903,7 +825,7 @@ object ApplicationController : EventMovedHandler {
 
             ReminderState(context).onUserInteraction(System.currentTimeMillis())
 
-            alarmScheduler.rescheduleAlarms(context, getSettings(context), quietHoursManager);
+            alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
             if (notifyActivity)
                 UINotifier.notify(context, true)
@@ -922,17 +844,6 @@ object ApplicationController : EventMovedHandler {
             db ->
             dismissEvent(context, db, event, dismissType, false)
         }
-    }
-
-    fun dismissAndDeleteEvent(context: Context, dismissType: EventDismissType, event: EventAlertRecord): Boolean {
-        var ret = false
-
-        if (calendarProvider.deleteEvent(context, event.eventId)) {
-            dismissEvent(context, dismissType, event)
-            ret = true
-        }
-
-        return ret
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1039,36 +950,5 @@ object ApplicationController : EventMovedHandler {
     @Suppress("unused")
     fun forceRepostNotifications(context: Context) {
         notificationManager.postEventNotifications(context, isRepost = true)
-    }
-
-    // used for debug purpose
-    @Suppress("unused")
-    fun postNotificationsAutoDismissedDebugMessage(context: Context) {
-        notificationManager.postNotificationsAutoDismissedDebugMessage(context)
-    }
-
-    fun postNearlyMissedNotificationDebugMessage(context: Context) {
-        notificationManager.postNearlyMissedNotificationDebugMessage(context)
-    }
-
-    fun isCustomQuietHoursActive(ctx: Context): Boolean {
-        return quietHoursManager.isCustomQuietHoursActive(getSettings(ctx))
-    }
-
-    /// Set quietForSeconds to 0 to disable
-    fun applyCustomQuietHoursForSeconds(ctx: Context, quietForSeconds: Int) {
-
-        val settings = getSettings(ctx)
-
-        if (quietForSeconds > 0) {
-            quietHoursManager.startManualQuietPeriod(
-                    settings,
-                    System.currentTimeMillis() + quietForSeconds*1000L
-            )
-            alarmScheduler.rescheduleAlarms(ctx, getSettings(ctx), quietHoursManager)
-        } else {
-            quietHoursManager.stopManualQuietPeriod(settings)
-            alarmScheduler.rescheduleAlarms(ctx, getSettings(ctx), quietHoursManager)
-        }
     }
 }

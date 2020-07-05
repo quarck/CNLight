@@ -96,8 +96,6 @@ enum class AttendanceStatus(val code: Int) {
 }
 
 object EventAlertFlags {
-    const val IS_MUTED = 1L
-    const val IS_TASK = 2L
     const val IS_ALARM = 4L
 }
 
@@ -139,20 +137,12 @@ data class EventAlertRecord(
     fun toPublicString() =
             "EventAlertRecord($calendarId,$eventId,$isAllDay,$isRepeating,$alertTime,$notificationId,$startTime,$endTime,$instanceStartTime,$instanceEndTime,$lastStatusChangeTime,$snoozedUntil,$displayStatus,$origin,$timeFirstSeen,$flags)"
 
-    var isMuted: Boolean
-        get() = flags.isFlagSet(EventAlertFlags.IS_MUTED)
-        set(value) { flags = flags.setFlag(EventAlertFlags.IS_MUTED, value) }
-
-    var isTask: Boolean
-        get() = flags.isFlagSet(EventAlertFlags.IS_TASK)
-        set(value) { flags = flags.setFlag(EventAlertFlags.IS_TASK, value) }
-
     var isAlarm: Boolean
         get() = flags.isFlagSet(EventAlertFlags.IS_ALARM)
         set(value) { flags = flags.setFlag(EventAlertFlags.IS_ALARM, value) }
 
-    val isUnmutedAlarm: Boolean
-        get() = isAlarm && !isMuted
+//    val isUnmutedAlarm: Boolean
+//        get() = isAlarm
 
     val key: EventAlertRecordKey
         get() = EventAlertRecordKey(eventId, instanceStartTime)

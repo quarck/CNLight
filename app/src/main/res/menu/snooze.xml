@@ -9,29 +9,7 @@
         android:title="@string/dismiss" />
 
     <item
-        android:id="@+id/action_done_event"
-        android:title="@string/done"
-        android:visible="false"/>
-
-    <item
-        android:id="@+id/action_mute_event"
-        android:title="@string/mute_notification"
-        android:visible="false"
-        />
-
-    <item
-        android:id="@+id/action_unmute_event"
-        android:title="@string/un_mute_notification"
-        android:visible="false"
-        />
-
-    <item
         android:id="@+id/action_open_in_calendar"
         android:title="@string/open_in_calendar" />
-
-    <item android:id="@+id/action_delete_event"
-        android:title="@string/delete_event"
-        android:visible="false"
-        />
 
 </menu>

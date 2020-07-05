@@ -37,7 +37,6 @@ import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
-import com.github.quarck.calnotify.quiethours.QuietHoursManager
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.utils.*
@@ -220,11 +219,6 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         if (event.displayedStartTime < currentTime)
             snoozePresets = snoozePresets.filter { it > 0L }.toLongArray()
 
-        val isQuiet =
-                QuietHoursManager.isInsideQuietPeriod(
-                        settings,
-                        snoozePresets.map { it -> currentTime + it }.toLongArray())
-
         val location = event.location;
         if (location != "") {
             findOrThrow<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
@@ -313,7 +307,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         val fab = findOrThrow<FloatingActionButton>(R.id.floating_edit_button)
 
         if (!calendar.isReadOnly) {
-            if (!event.isRepeating && !settings.alwaysUseExternalEditor) {
+            if (!event.isRepeating) {
 
                 fab.setOnClickListener { _ ->
                     val intent = Intent(this, EditEventActivity::class.java)
@@ -355,90 +349,15 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         val inflater = popup.menuInflater
         inflater.inflate(R.menu.snooze, popup.menu)
 
-        val menuItem = popup.menu.findItem(R.id.action_delete_event)
-        if (menuItem != null) {
-            menuItem.isVisible = !event.isRepeating
-        }
-
-        val menuItemMute = popup.menu.findItem(R.id.action_mute_event)
-        if (menuItemMute != null) {
-            menuItemMute.isVisible = !event.isMuted && !event.isTask && settings.allowMuteAndAlarm
-        }
-
-        val menuItemUnMute = popup.menu.findItem(R.id.action_unmute_event)
-        if (menuItemUnMute != null) {
-            menuItemUnMute.isVisible = event.isMuted
-        }
-
-        if (event.isTask) {
-            val menuItemDismiss = popup.menu.findItem(R.id.action_dismiss_event)
-            val menuItemDone = popup.menu.findItem(R.id.action_done_event)
-            if (menuItemDismiss != null && menuItemDone != null) {
-                menuItemDismiss.isVisible = false
-                menuItemDone.isVisible = true
-            }
-        }
-
-        /*    <item
-        android:id="@+id/action_mute_event"
-        android:title="@string/mute_notification"
-        android:visible="false"
-        />
-
-    <item
-        android:id="@+id/action_unmute_event"
-        android:title="@string/un_mute_notification"
-        android:visible="false"
-        />*/
-
         popup.setOnMenuItemClickListener {
             item ->
 
             when (item.itemId) {
-                R.id.action_dismiss_event, R.id.action_done_event -> {
+                R.id.action_dismiss_event -> {
                     ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event)
                     undoManager.addUndoState(
                             UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, event) }))
                     finish()
-                    true
-                }
-
-                R.id.action_delete_event -> {
-
-                    AlertDialog.Builder(this)
-                            .setMessage(getString(R.string.delete_event_question))
-                            .setCancelable(false)
-                            .setPositiveButton(android.R.string.yes) { _, _ ->
-
-                                DevLog.info(LOG_TAG, "Deleting event ${event.eventId} per user request")
-
-                                val success = ApplicationController.dismissAndDeleteEvent(
-                                        this, EventDismissType.ManuallyDismissedFromActivity, event
-                                )
-                                if (success) {
-                                    undoManager.addUndoState(
-                                            UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, event) }))
-                                }
-                                finish()
-                            }
-                            .setNegativeButton(R.string.cancel) { _, _ ->
-                            }
-                            .create()
-                            .show()
-
-                    true
-                }
-
-                R.id.action_mute_event -> {
-                    ApplicationController.toggleMuteForEvent(this, event.eventId, event.instanceStartTime, 0)
-                    event.isMuted = true
-
-                    true
-                }
-
-                R.id.action_unmute_event -> {
-                    ApplicationController.toggleMuteForEvent(this, event.eventId, event.instanceStartTime, 1)
-                    event.isMuted = false
                     true
                 }
 
@@ -516,10 +435,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
     fun OnEnableMove(v: View?) {
         val btnEnable = findOrThrow<TextView>(R.id.enable_snooze_reschedule)
-        val layout1 = findOrThrow<LinearLayout>(R.id.snooze_view_snooze_sub_layout_3)
         val layout2 = findOrThrow<LinearLayout>(R.id.snooze_view_snooze_sub_layout_4)
         btnEnable.visibility = View.GONE
-        layout1.visibility = View.VISIBLE
         layout2.visibility = View.VISIBLE
 
     }
@@ -798,6 +715,20 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         builder.create().show()
     }
 
+    fun confirmAndReschedule(addDays: Long) {
+
+        AlertDialog.Builder(this)
+                .setMessage(getString(R.string.move_event_confirm).format(addDays))
+                .setCancelable(true)
+                .setPositiveButton(android.R.string.yes) { _, _ ->
+                    reschedule(addTime = addDays * Consts.DAY_IN_SECONDS * 1000L)
+                }
+                .setNegativeButton(R.string.cancel) { _, _ ->
+                }
+                .create()
+                .show()
+    }
+
     fun reschedule(addTime: Long) {
 
         DevLog.info(LOG_TAG, "Moving event ${event.eventId} by ${addTime / 1000L} seconds, isRepeating = ${event.isRepeating}");
@@ -814,7 +745,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
                     }, 100)
                 }
                 else {
-                    SnoozeResult(SnoozeType.Moved, event.startTime, 0L).toast(this)
+                    SnoozeResult(SnoozeType.Moved, event.startTime).toast(this)
                     // terminate ourselves
                     finish();
                 }
@@ -834,7 +765,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
                     }, 100)
                 }
                 else {
-                    SnoozeResult(SnoozeType.Moved, event.startTime, 0L).toast(this)
+                    SnoozeResult(SnoozeType.Moved, event.startTime).toast(this)
                     // terminate ourselves
                     finish();
                 }
@@ -850,18 +781,12 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             return
 
         when (v.id) {
-            R.id.snooze_view_move_1h ->
-                reschedule(Consts.HOUR_IN_SECONDS * 1L * 1000L)
-            R.id.snooze_view_move_2h ->
-                reschedule(Consts.HOUR_IN_SECONDS * 2L * 1000L)
-            R.id.snooze_view_move_4h ->
-                reschedule(Consts.HOUR_IN_SECONDS * 4L * 1000L)
             R.id.snooze_view_move_1d ->
-                reschedule(Consts.DAY_IN_SECONDS * 1L * 1000L)
+                confirmAndReschedule(addDays = 1)
             R.id.snooze_view_move_7d ->
-                reschedule(Consts.DAY_IN_SECONDS * 7L * 1000L)
+                confirmAndReschedule(addDays = 7)
             R.id.snooze_view_move_30d ->
-                reschedule(Consts.DAY_IN_SECONDS * 30L * 1000L)
+                confirmAndReschedule(addDays = 30)
         }
     }
 

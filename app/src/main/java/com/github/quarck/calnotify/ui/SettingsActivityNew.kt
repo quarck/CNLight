@@ -40,18 +40,6 @@ class SettingsActivityNew : AppCompatActivity() {
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun onButtonSnoozeSettings(v: View?) =
-            startActivity(
-                    Intent(this, SnoozeSettingsActivity::class.java)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onButtonQuietHoursSettings(v: View?) =
-            startActivity(
-                    Intent(this, QuietHoursSettingsActivity::class.java)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-
-    @Suppress("unused", "UNUSED_PARAMETER")
     fun onButtonBehaviourSettings(v: View?) =
             startActivity(
                     Intent(this, BehaviorSettingsActivity::class.java)

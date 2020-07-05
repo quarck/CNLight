@@ -77,9 +77,6 @@ class EventListAdapter(
 
         var undoButton: Button?
 
-        var muteImage: ImageView?
-        var taskImage: ImageView?
-
         var calendarColor: ColorDrawable
 
         init {
@@ -96,9 +93,6 @@ class EventListAdapter(
             compactViewCalendarColor = itemView.find<View?>(R.id.compact_view_calendar_color)
 
             undoButton = itemView.find<Button?>(R.id.card_view_button_undo)
-
-            muteImage = itemView.find<ImageView?>(R.id.imageview_is_muted_indicator)
-            taskImage = itemView.find<ImageView?>(R.id.imageview_is_task_indicator)
 
             calendarColor = ColorDrawable(0)
 
@@ -319,10 +313,6 @@ class EventListAdapter(
             holder.eventId = event.eventId;
 
             holder.eventTitleText.text = event.titleAsOneLine
-
-            holder.muteImage?.visibility = if (event.isMuted) View.VISIBLE else View.GONE
-
-            holder.taskImage?.visibility = if (event.isTask) View.VISIBLE else View.GONE
 
             holder.undoLayout?.visibility = View.GONE
             holder.compactViewContentLayout?.visibility = View.VISIBLE

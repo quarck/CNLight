@@ -29,7 +29,7 @@ enum class SnoozeType {
     Moved
 }
 
-data class SnoozeResult(val type: SnoozeType, val snoozedUntil: Long, val quietUntil: Long)
+data class SnoozeResult(val type: SnoozeType, val snoozedUntil: Long)
 
 fun SnoozeResult.toast(context: Context) {
 
@@ -39,18 +39,9 @@ fun SnoozeResult.toast(context: Context) {
 
     if (this.type == SnoozeType.Snoozed) {
 
-        if (this.quietUntil != 0L) {
-
-            val dateTime = dateToStr(context, this.quietUntil)
-            val quietUntilFmt = context.resources.getString(R.string.snoozed_time_inside_quiet_hours)
-            msg = String.Companion.format(quietUntilFmt, dateTime)
-        }
-        else {
-
-            val dateTime = dateToStr(context, this.snoozedUntil)
-            val snoozedUntil = context.resources.getString(R.string.snoozed_until_string)
-            msg = "$snoozedUntil $dateTime"
-        }
+        val dateTime = dateToStr(context, this.snoozedUntil)
+        val snoozedUntil = context.resources.getString(R.string.snoozed_until_string)
+        msg = "$snoozedUntil $dateTime"
     }
     else if (this.type == SnoozeType.Moved) {
         val dateTime = dateToStr(context, this.snoozedUntil)

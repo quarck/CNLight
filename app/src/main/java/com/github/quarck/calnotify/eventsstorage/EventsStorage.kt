@@ -55,8 +55,6 @@ class EventsStorage(val context: Context)
         val implOld =
                 when (oldVersion) {
                     DATABASE_VERSION_V8 -> EventsStorageImplV8(context)
-                    DATABASE_VERSION_V7 -> EventsStorageImplV7()
-                    DATABASE_VERSION_V6 -> EventsStorageImplV6()
                     else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
                 }
 
@@ -107,14 +105,8 @@ class EventsStorage(val context: Context)
                              lastStatusChangeTime: Long?,
                              displayStatus: EventDisplayStatus?,
                              color: Int?,
-                             isRepeating: Boolean?,
-                             isMuted: Boolean?
+                             isRepeating: Boolean?
     ): Pair<Boolean, EventAlertRecord> {
-
-        var newFlags = event.flags
-        if (isMuted != null) {
-            newFlags = event.flags.setFlag(EventAlertFlags.IS_MUTED, isMuted)
-        }
 
         val newEvent =
                 event.copy(
@@ -128,7 +120,7 @@ class EventsStorage(val context: Context)
                         displayStatus = displayStatus ?: event.displayStatus,
                         color = color ?: event.color,
                         isRepeating = isRepeating ?: event.isRepeating,
-                        flags = newFlags
+                        flags = event.flags
                 );
 
         val success = updateEvent(newEvent)
@@ -206,8 +198,6 @@ class EventsStorage(val context: Context)
     companion object {
         private const val LOG_TAG = "EventsStorage"
 
-        private const val DATABASE_VERSION_V6 = 6
-        private const val DATABASE_VERSION_V7 = 7
         private const val DATABASE_VERSION_V8 = 8
         private const val DATABASE_VERSION_V9 = 9
 
