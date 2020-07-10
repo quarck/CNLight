@@ -95,8 +95,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private var shouldRemindForEventsWithNoReminders = true
 
-    private var shouldForceRepost = false
-
     private val undoDisappearSensitivity: Float by lazy {
         resources.getDimension(R.dimen.undo_dismiss_sensitivity)
     }
@@ -122,8 +120,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         window.navigationBarColor = resources.getColor(android.R.color.black)
-
-        shouldForceRepost = (System.currentTimeMillis() - (globalState?.lastNotificationRePost ?: 0L)) > Consts.MIN_FORCE_REPOST_INTERVAL
 
         refreshLayout = find<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)
 
@@ -203,8 +199,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
 
         background {
-            ApplicationController.onMainActivityResumed(this, shouldForceRepost, monitorSettingsChanged)
-            shouldForceRepost = false
+            ApplicationController.onMainActivityResumed(this, monitorSettingsChanged)
         }
 
         if (undoManager.canUndo) {
@@ -374,7 +369,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             R.id.action_settings -> {
-                shouldForceRepost = true // so onResume would re-post everything
                 startActivity(
                         Intent(this, SettingsActivityNew::class.java)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))

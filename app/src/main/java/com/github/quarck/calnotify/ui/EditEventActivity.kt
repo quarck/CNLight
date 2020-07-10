@@ -113,75 +113,6 @@ fun EventReminderRecord.toLocalizedString(ctx: Context, isAllDay: Boolean): Stri
     return ret.toString()
 }
 
-data class EditEventActivityState(
-        var eventId: Long,
-        var title: String,
-        var location: String,
-        var note: String,
-        var from: Calendar,
-        var to: Calendar,
-        var isAllDay: Boolean,
-        var reminders: List<EventReminderRecord>,
-        var allDayReminders: List<EventReminderRecord>,
-        var selectedCalendar: Long
-) {
-    fun toBundle(bundle: Bundle) {
-        bundle.putLong(KEY_EVENT_ID, eventId)
-        bundle.putString(KEY_TITLE, title)
-        bundle.putString(KEY_LOCATION, location)
-        bundle.putString(KEY_NOTE, note)
-        bundle.putLong(KEY_FROM, from.timeInMillis)
-        bundle.putLong(KEY_TO, to.timeInMillis)
-        bundle.putBoolean(KEY_IS_ALL_DAY, isAllDay)
-        bundle.putString(KEY_REMINDERS, reminders.serialize())
-        bundle.putString(KEY_ALL_DAY_REMINDERS, allDayReminders.serialize())
-        bundle.putLong(KEY_SELECTED_CALENDAR, selectedCalendar)
-    }
-
-    companion object {
-        fun fromBundle(bundle: Bundle): EditEventActivityState {
-
-            val id = bundle.getLong(KEY_EVENT_ID, -1L)
-            val title = bundle.getString(KEY_TITLE, "")
-            val loc = bundle.getString(KEY_LOCATION, "")
-            val note = bundle.getString(KEY_NOTE, "")
-
-            val from = bundle.getLong(KEY_FROM)
-            val to = bundle.getLong(KEY_TO)
-
-            val isAllDay = bundle.getBoolean(KEY_IS_ALL_DAY, false)
-            val reminders = bundle.getString(KEY_REMINDERS, "").deserializeCalendarEventReminders()
-            val allDayReminders = bundle.getString(KEY_ALL_DAY_REMINDERS, "").deserializeCalendarEventReminders()
-            val selectedCalendar = bundle.getLong(KEY_SELECTED_CALENDAR)
-
-            return EditEventActivityState(
-                    id,
-                    title,
-                    loc,
-                    note,
-                    DateTimeUtils.createCalendarTime(from),
-                    DateTimeUtils.createCalendarTime(to),
-                    isAllDay,
-                    reminders,
-                    allDayReminders,
-                    selectedCalendar
-                    )
-        }
-
-        const val KEY_EVENT_ID = "eventId"
-        const val KEY_TITLE = "title"
-        const val KEY_LOCATION = "loc"
-        const val KEY_NOTE = "note"
-        const val KEY_FROM = "from"
-        const val KEY_TO = "to"
-        const val KEY_IS_ALL_DAY = "aday"
-        const val KEY_REMINDERS = "reminders"
-        const val KEY_ALL_DAY_REMINDERS = "adayreminders"
-        const val KEY_SELECTED_CALENDAR = "cal"
-    }
-}
-
-
 open class EditEventActivity : AppCompatActivity() {
 
     data class ReminderWrapper(val view: TextView, var reminder: EventReminderRecord, val isForAllDay: Boolean)
@@ -405,48 +336,7 @@ open class EditEventActivity : AppCompatActivity() {
 
         val eventToEdit = originalEvent
 
-        if (savedInstanceState != null) {
-            val state = EditEventActivityState.fromBundle(savedInstanceState)
-
-            originalEvent =
-                    if (state.eventId != -1L)
-                        calendarProvider.getEvent(this, state.eventId)
-                    else
-                        null
-
-            calendar = calendars.find { it.calendarId == state.selectedCalendar } ?: calendars[0]
-
-            accountName.text = calendar.name
-
-
-            val color = originalEvent?.color ?: calendar.color
-            eventTitleLayout.background = ColorDrawable(color.invertColor().scaleColor(0.1f))
-            eventTitleText.background = ColorDrawable(color.invertColor().scaleColor(0.1f))
-
-            eventTitleText.setTextColor(ColorStateList.valueOf(color.scaleColor(1.8f)))
-
-            window.statusBarColor = 0
-
-            from = state.from
-            to = state.to
-            eventTitleText.setText(state.title)
-            note.setText(state.note)
-            eventLocation.setText(state.location)
-            switchAllDay.isChecked = state.isAllDay
-            isAllDay = state.isAllDay
-
-            for (reminder in state.reminders) {
-                addReminder(reminder, false)
-            }
-
-            for (reminder in state.allDayReminders) {
-                addReminder(reminder, true)
-            }
-
-            updateDateTimeUI();
-            updateReminders()
-        }
-        else if (eventToEdit != null) {
+        if (eventToEdit != null) {
 
             //val details = eventToEdit.details
 
@@ -535,31 +425,12 @@ open class EditEventActivity : AppCompatActivity() {
             addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER), false)
             addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER), true)
 
+            val emailMethod = CalendarContract.Reminders.METHOD_EMAIL
+            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, method=emailMethod), false)
+            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, method=emailMethod), true)
+
             updateReminders()
         }
-    }
-
-    public override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        val regularReminders = reminders.filter { it.isForAllDay == false }.map { it.reminder }.toList();
-        val allDayReminders = reminders.filter { it.isForAllDay == true }.map { it.reminder }.toList()
-
-        val state =
-                EditEventActivityState(
-                        originalEvent?.eventId ?: -1L,
-                        eventTitleText.text.toString(),
-                        eventLocation.text.toString(),
-                        note.text.toString(),
-                        from,
-                        to,
-                        isAllDay,
-                        regularReminders,
-                        allDayReminders,
-                        calendar.calendarId
-                )
-
-        state.toBundle(outState)
     }
 
     fun updateDateTimeUI() {

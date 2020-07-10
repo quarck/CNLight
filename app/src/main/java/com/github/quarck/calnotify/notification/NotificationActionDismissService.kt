@@ -69,8 +69,6 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
         else {
             DevLog.error(LOG_TAG, "Intent is null!")
         }
-
-        ApplicationController.cleanupEventReminder(this)
     }
 
     companion object {

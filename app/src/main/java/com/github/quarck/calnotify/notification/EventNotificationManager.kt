@@ -37,13 +37,13 @@ import com.github.quarck.calnotify.ui.ViewEventActivityNoRecents
 import com.github.quarck.calnotify.utils.*
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
-class EventNotificationManager : EventNotificationManagerInterface {
+class EventNotificationManager {
 
-    override fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
-        postEventNotifications(ctx, formatter, isRepost = false, primaryEventId = event.eventId)
+    fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
+        postEventNotifications(ctx, formatter, primaryEventId = event.eventId)
     }
 
-    override fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
+    fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
 
         if (event.displayStatus != EventDisplayStatus.Hidden) {
             EventsStorage(context).use {
@@ -51,23 +51,23 @@ class EventNotificationManager : EventNotificationManagerInterface {
             }
         }
 
-        postEventNotifications(context, formatter, isRepost = true)
+        postEventNotifications(context, formatter)
     }
 
-    override fun onEventDismissing(context: Context, eventId: Long, notificationId: Int) {
+    fun onEventDismissing(context: Context, eventId: Long, notificationId: Int) {
         removeNotification(context, notificationId)
     }
 
-    override fun onEventsDismissing(context: Context, events: Collection<EventAlertRecord>) {
+    fun onEventsDismissing(context: Context, events: Collection<EventAlertRecord>) {
         removeNotifications(context, events)
     }
 
-    override fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
+    fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
         removeNotification(context, notificationId)
         postEventNotifications(context, formatter)
     }
 
-    override fun onEventsDismissed(context: Context,
+    fun onEventsDismissed(context: Context,
                                    formatter: EventFormatterInterface,
                                    events: Collection<EventAlertRecord>,
                                    postNotifications: Boolean,
@@ -83,12 +83,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
     }
 
-    override fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
+    fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
         removeNotification(context, notificationId)
         postEventNotifications(context, formatter)
     }
 
-    override fun onAllEventsSnoozed(context: Context) {
+    fun onAllEventsSnoozed(context: Context) {
         context.notificationManager.cancelAll()
     }
 
@@ -134,12 +134,11 @@ class EventNotificationManager : EventNotificationManagerInterface {
         return sortEvents(getEventsAndUnSnooze(context, db), settings)
     }
 
-    override fun postEventNotifications(
+    fun postEventNotifications(
             context: Context,
-            formatter: EventFormatterInterface?,
-            isRepost: Boolean,
-            primaryEventId: Long?,
-            isReminder: Boolean
+            formatter: EventFormatterInterface? = null,
+            primaryEventId: Long? = null,
+            isReminder: Boolean = false
     ) {
 
         val formatterLocal = formatter ?: EventFormatter(context)
@@ -155,9 +154,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     context = context,
                     events = events,
                     primaryEventId = primaryEventId,
-                    settings = settings,
-                    isReminder = isReminder,
-                    isRepost = isRepost
+                    isReminder = isReminder
             )
 
             if (!allCollapsed) {
@@ -170,7 +167,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                             settings = settings,
                             formatter = formatterLocal,
                             notificationRecords = notificationRecords,
-                            isRepost = isRepost,
                             primaryEventId = primaryEventId,
                             isReminder = isReminder
                     )
@@ -188,7 +184,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
         }
     }
 
-    override fun fireEventReminder(
+    fun fireEventReminder(
             context: Context, itIsAfterQuietHoursReminder: Boolean,
             hasActiveAlarms: Boolean) {
 
@@ -204,9 +200,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
                 postEventNotifications(context, isReminder = true)
             }
         }
-    }
-
-    override fun cleanupEventReminder(context: Context) {
     }
 
     data class EventAlertNotificationRecord(
@@ -253,9 +246,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
             context: Context,
             events: List<EventAlertRecord>,
             primaryEventId: Long?,
-            settings: Settings,
-            isReminder: Boolean,
-            isRepost: Boolean
+            isReminder: Boolean
     ): MutableList<EventAlertNotificationRecord> {
 
         val ret = mutableListOf<EventAlertNotificationRecord>()
@@ -265,7 +256,6 @@ class EventNotificationManager : EventNotificationManagerInterface {
         val eventsSorted = events.sortedByDescending { it.instanceStartTime }
 
         var firstReminder = isReminder
-        var didAnySound = false
 
         for (event in eventsSorted) {
             // currently not displayed or forced -- post notifications
@@ -288,15 +278,14 @@ class EventNotificationManager : EventNotificationManagerInterface {
                     isPrimary,
                     isNew,
                     isReminder = isAlarm && firstReminder,
-                    alertOnlyOnce = !firstReminder || isRepost))
+                    alertOnlyOnce = !firstReminder))
 
             if (isAlarm) {
                 firstReminder = false
             }
-            didAnySound = true
         }
 
-        if (!isRepost && didAnySound) {
+        if (isReminder && events.isNotEmpty()) {
             context.persistentState.notificationLastFireTime = System.currentTimeMillis()
         }
 
@@ -412,16 +401,12 @@ class EventNotificationManager : EventNotificationManagerInterface {
     }
 
 
-    // isRepost - if true - would re-post all active notifications. Normally only new notifications are posted to
-    // avoid excessive blinking in the notifications area. Forced notifications are posted without sound or vibra
-    @Suppress("UNUSED_PARAMETER")
     private fun postDisplayedEventNotifications(
             context: Context,
             db: EventsStorage,
             settings: Settings,
             formatter: EventFormatterInterface,
             notificationRecords: MutableList<EventAlertNotificationRecord>,
-            isRepost: Boolean,
             primaryEventId: Long?,
             isReminder: Boolean
     ) {
@@ -442,7 +427,7 @@ class EventNotificationManager : EventNotificationManagerInterface {
 
         for (ntf in notificationRecords) {
 
-            if (!isRepost && !ntf.isReminder && !ntf.newNotification) {
+            if (!ntf.isReminder && !ntf.newNotification) {
                 // not a reminder and not a new notification
                 // not need to post already visible notification, unless it is a repost where
                 // we want to post everything

@@ -98,7 +98,6 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
             DevLog.error(LOG_TAG, "Intent is null!")
         }
 
-        ApplicationController.cleanupEventReminder(this)
     }
 
     private fun onSnoozedBy(duration: Long) {

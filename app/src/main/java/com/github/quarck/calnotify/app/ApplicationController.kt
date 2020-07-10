@@ -34,7 +34,6 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
-import com.github.quarck.calnotify.notification.EventNotificationManagerInterface
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.textutils.EventFormatter
@@ -59,7 +58,7 @@ object ApplicationController : EventMovedHandler {
         return settings!!
     }
 
-    private val notificationManager: EventNotificationManagerInterface = EventNotificationManager()
+    private val notificationManager = EventNotificationManager()
 
     private val alarmScheduler: AlarmSchedulerInterface = AlarmScheduler
 
@@ -106,26 +105,32 @@ object ApplicationController : EventMovedHandler {
         alarmScheduler.rescheduleAlarms(context, getSettings(context))
     }
 
-    fun onAppUpdated(context: Context) {
+    //
+    fun onPostHybernation(context: Context) {
 
-        DevLog.info(LOG_TAG, "Application updated")
+        // mark all statuses as hidden
+        EventsStorage(context).use {
+            db ->
+            val events = db.events
+            db.updateEvents(events, displayStatus=EventDisplayStatus.Hidden)
+        }
 
-        // this will post event notifications for existing known requests
-        notificationManager.postEventNotifications(context, isRepost = true)
+        // then post all fresh
+        notificationManager.postEventNotifications(context)
+
+        // schedule alarm and re-scan services
         alarmScheduler.rescheduleAlarms(context, getSettings(context))
         CalendarMonitorPeriodicJobService.schedule(context)
     }
 
+    fun onAppUpdated(context: Context) {
+        DevLog.info(LOG_TAG, "Application updated")
+        onPostHybernation(context)
+    }
+
     fun onBootComplete(context: Context) {
-
         DevLog.info(LOG_TAG, "OS boot is complete")
-
-        // this will post event notifications for existing known requests
-        notificationManager.postEventNotifications(context, isRepost = true);
-
-        alarmScheduler.rescheduleAlarms(context, getSettings(context))
-
-        CalendarMonitorPeriodicJobService.schedule(context)
+        onPostHybernation(context)
     }
 
     fun onCalendarChanged(context: Context) {
@@ -143,7 +148,7 @@ object ApplicationController : EventMovedHandler {
         }
 
         if (changes) {
-            notificationManager.postEventNotifications(context, isRepost = true)
+            notificationManager.postEventNotifications(context)
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
@@ -166,7 +171,7 @@ object ApplicationController : EventMovedHandler {
         DevLog.debug(LOG_TAG, "calendarReloadFromService: ${changes}")
 
         if (changes) {
-            notificationManager.postEventNotifications(context, isRepost = true)
+            notificationManager.postEventNotifications(context)
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
@@ -698,10 +703,6 @@ object ApplicationController : EventMovedHandler {
         notificationManager.fireEventReminder(context, itIsAfterQuietHoursReminder, hasActiveAlarms);
     }
 
-    fun cleanupEventReminder(context: Context) {
-        notificationManager.cleanupEventReminder(context);
-    }
-
     fun onMainActivityCreate(context: Context?) {
     }
 
@@ -713,24 +714,15 @@ object ApplicationController : EventMovedHandler {
 
     fun onMainActivityResumed(
             context: Context?,
-            shouldRepost: Boolean,
             monitorSettingsChanged: Boolean
     ) {
         if (context != null) {
-
-            cleanupEventReminder(context)
-
-            if (shouldRepost) {
-                notificationManager.postEventNotifications(context, isRepost = true)
-                context.globalState?.lastNotificationRePost = System.currentTimeMillis()
-            }
 
             alarmScheduler.rescheduleAlarms(context, getSettings(context))
 
             // this might fire new notifications
             // This would automatically launch the rescan of calendar and monitor
             calendarMonitorInternal.onAppResumed(context, monitorSettingsChanged)
-
         }
     }
 
@@ -944,11 +936,5 @@ object ApplicationController : EventMovedHandler {
         }
 
         return eventId
-    }
-
-    // used for debug purpose
-    @Suppress("unused")
-    fun forceRepostNotifications(context: Context) {
-        notificationManager.postEventNotifications(context, isRepost = true)
     }
 }

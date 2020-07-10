@@ -339,8 +339,6 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         val menuButton = find<ImageView?>(R.id.snooze_view_menu)
         menuButton?.setOnClickListener { showDismissEditPopup(menuButton) }
 
-        ApplicationController.cleanupEventReminder(this)
-
         restoreState(state)
     }
 
