@@ -37,21 +37,20 @@ import com.github.quarck.calnotify.utils.detailed
 import com.github.quarck.calnotify.utils.setExactAndAlarm
 
 
-class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
-        CalendarMonitorInterface {
+class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
     private val manualScanner: CalendarMonitorManual by lazy {
         CalendarMonitorManual(calendarProvider, this)
     }
 
-    override fun onSystemTimeChange(context: Context) {
+    fun onSystemTimeChange(context: Context) {
 
         DevLog.info(LOG_TAG, "onSystemTimeChange");
         //launchRescanService(context)
     }
 
     // should return true if we have fired at new requests, so UI should reload if it is open
-    override fun onAppResumed(context: Context, monitorSettingsChanged: Boolean) {
+    fun onAppResumed(context: Context, monitorSettingsChanged: Boolean) {
 
         DevLog.info(LOG_TAG, "onAppResumed")
 
@@ -63,7 +62,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         )
     }
 
-    override fun onAlarmBroadcast(context: Context, intent: Intent) {
+    fun onAlarmBroadcast(context: Context, intent: Intent) {
 
         if (!Settings(context).enableCalendarRescan) {
             DevLog.error(LOG_TAG, "onAlarmBroadcast - manual scan disabled")
@@ -113,7 +112,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
     // proper broadcast from the Calendar Provider. Normally this is a proper
     // way of receiving information about ongoing requests. Apparently not always
     // working, that's why the rest of the class is here
-    override fun onProviderReminderBroadcast(context: Context, intent: Intent) {
+    fun onProviderReminderBroadcast(context: Context, intent: Intent) {
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onProviderReminderBroadcast - no calendar permission to proceed")
@@ -190,7 +189,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
 //        )
     }
 
-    override fun onEventEditedByUs(context: Context, eventId: Long) {
+    fun onEventEditedByUs(context: Context, eventId: Long) {
 
         DevLog.info(LOG_TAG, "onEventEditedByUs")
 
@@ -242,7 +241,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
             ApplicationController.afterCalendarEventFired(context)
     }
 
-    override fun onRescanFromService(context: Context) {
+    fun onRescanFromService(context: Context) {
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onRescanFromService - no calendar permission to proceed")
@@ -328,7 +327,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         }
     }
 
-    override fun getAlertsAt(context: android.content.Context, time: Long): List<MonitorEventAlertEntry> {
+    fun getAlertsAt(context: android.content.Context, time: Long): List<MonitorEventAlertEntry> {
 
         val ret = MonitorStorage(context).use {
             db ->
@@ -338,7 +337,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         return ret
     }
 
-    override fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
+    fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
 
         val ret = MonitorStorage(context).use {
             db ->
@@ -348,7 +347,7 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         return ret
     }
 
-    override fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean) {
+    fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean) {
 
         MonitorStorage(context).use {
             db ->
@@ -378,12 +377,12 @@ class CalendarMonitor(val calendarProvider: CalendarProviderInterface) :
         }
     }
 
-    override fun getAlertWasHandled(db: MonitorStorage, ev: EventAlertRecord): Boolean {
+    fun getAlertWasHandled(db: MonitorStorage, ev: EventAlertRecord): Boolean {
         DevLog.debug(LOG_TAG, "getAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}");
         return db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)?.wasHandled ?: false
     }
 
-    override fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean {
+    fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean {
         return MonitorStorage(context).use {
             db ->
             getAlertWasHandled(db, ev)

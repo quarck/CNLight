@@ -155,7 +155,7 @@ open class EditEventActivity : AppCompatActivity() {
 
     private lateinit var persistentState: CalendarChangePersistentState
 
-    var calendarProvider: CalendarProviderInterface = CalendarProvider
+    var calendarProvider = CalendarProvider
 
     val reminders = mutableListOf<ReminderWrapper>()
 

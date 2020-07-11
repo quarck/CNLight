@@ -27,9 +27,9 @@ import com.github.quarck.calnotify.calendareditor.storage.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 
-class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarChangeManagerInterface {
+class CalendarChangeManager(val provider: CalendarProvider) {
 
-    override fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long {
+    fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long {
 
         var eventId = -1L
 
@@ -76,7 +76,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
         return eventId
     }
 
-    override fun moveEvent(context: Context, event: EventAlertRecord, addTimeMillis: Long): Boolean {
+    fun moveEvent(context: Context, event: EventAlertRecord, addTimeMillis: Long): Boolean {
 
         var ret = false
 
@@ -158,7 +158,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
         return ret
     }
 
-    override fun moveRepeatingAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTimeMillis: Long): Long {
+    fun moveRepeatingAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTimeMillis: Long): Long {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(LOG_TAG, "moveRepeatingAsCopy: no permissions");
@@ -208,7 +208,7 @@ class CalendarChangeManager(val provider: CalendarProviderInterface): CalendarCh
         return ret
     }
 
-    override fun updateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {
+    fun updateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(LOG_TAG, "updateEvent: no permissions");

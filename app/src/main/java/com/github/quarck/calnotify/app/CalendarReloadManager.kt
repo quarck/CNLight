@@ -23,11 +23,28 @@ import android.content.Context
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventWithNewInstanceTime
-import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
+import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
 
-object CalendarReloadManager : CalendarReloadManagerInterface {
+interface EventMovedHandler {
+    fun checkShouldRemoveMovedEvent(
+            context: Context,
+            eventId: Long,
+            oldStartTime: Long,
+            newStartTime: Long,
+            newAlertTime: Long
+    ): Boolean
+
+    fun checkShouldRemoveMovedEvent(
+            context: Context,
+            oldEvent: EventAlertRecord,
+            newEvent: EventRecord,
+            newAlertTime: Long
+    ): Boolean
+}
+
+object CalendarReloadManager  {
 
     private const val LOG_TAG = "CalendarReloadManager"
 
@@ -52,9 +69,9 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
     private fun reloadCalendarInternal(
             context: Context,
-            db: EventsStorageInterface,
+            db: EventsStorage,
             events: List<EventAlertRecord>,
-            calendar: CalendarProviderInterface,
+            calendar: CalendarProvider,
             movedHandler: EventMovedHandler?
     ): Boolean {
 
@@ -150,10 +167,10 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
     }
 
 
-    override fun reloadCalendar(
+    fun reloadCalendar(
             context: Context,
-            db: EventsStorageInterface,
-            calendar: CalendarProviderInterface,
+            db: EventsStorage,
+            calendar: CalendarProvider,
             movedHandler: EventMovedHandler?
     ): Boolean {
         // don't rescan manually created requests - we won't find most of them
@@ -161,10 +178,10 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
         return reloadCalendarInternal(context, db, events, calendar, movedHandler)
     }
 
-    override fun rescanForRescheduledEvents(
+    fun rescanForRescheduledEvents(
             context: Context,
-            db: EventsStorageInterface,
-            calendar: CalendarProviderInterface,
+            db: EventsStorage,
+            calendar: CalendarProvider,
             movedHandler: EventMovedHandler
     ): Boolean {
 
@@ -220,11 +237,11 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
     }
 
     // returns true if event has changed. Event is updated in place
-    override fun reloadSingleEvent(
+    fun reloadSingleEvent(
             context: Context,
-            db: EventsStorageInterface,
+            db: EventsStorage,
             event: EventAlertRecord,
-            calendar: CalendarProviderInterface,
+            calendar: CalendarProvider,
             movedHandler: EventMovedHandler?
     ): Boolean {
         return reloadCalendarInternal(context, db, listOf(event), calendar, movedHandler)
@@ -232,7 +249,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
     fun reloadCalendarEventAlert(
             context: Context,
-            calendarProvider: CalendarProviderInterface,
+            calendarProvider: CalendarProvider,
             event: EventAlertRecord,
             currentTime: Long,
             movedHandler: EventMovedHandler?
@@ -328,7 +345,7 @@ object CalendarReloadManager : CalendarReloadManagerInterface {
 
     fun reloadCalendarEventAlertFromEvent(
             context: Context,
-            calendar: CalendarProviderInterface,
+            calendar: CalendarProvider,
             event: EventAlertRecord,
             currentTime: Long
     ): ReloadCalendarResult {

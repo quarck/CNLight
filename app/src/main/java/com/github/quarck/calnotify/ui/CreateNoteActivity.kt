@@ -22,7 +22,7 @@ class CreateNoteActivity : AppCompatActivity() {
     private lateinit var persistentState: CalendarChangePersistentState
     private lateinit var calendars: List<CalendarRecord>
     private lateinit var calendar: CalendarRecord
-    var calendarProvider: CalendarProviderInterface = CalendarProvider
+    var calendarProvider = CalendarProvider
     private lateinit var settings: Settings
 
     private val REQUEST_SPEECH_RECOGNIZER = 3000

@@ -29,7 +29,7 @@ import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.detailed
 
-class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
+class CalendarChangeRequestMonitor  {
 
     enum class ValidationResultCommand {
         DeleteRequest,
@@ -38,7 +38,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
         JustSkipRequest
     }
 
-    override fun onRescanFromService(context: Context) {
+    fun onRescanFromService(context: Context) {
 
         DevLog.debug(LOG_TAG, "onRescanFromService")
 
@@ -191,7 +191,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
     private fun validateCreationRequest(
             context: Context,
-            provider: CalendarProviderInterface,
+            provider: CalendarProvider,
             event: CalendarChangeRequest,
             cleanupEventsTo: Long
     ): ValidationResultCommand {
@@ -237,7 +237,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
     private fun validateMoveRequest(
             context: Context,
-            provider: CalendarProviderInterface,
+            provider: CalendarProvider,
             event: CalendarChangeRequest,
             cleanupEventsTo: Long
     ): ValidationResultCommand {
@@ -292,7 +292,7 @@ class CalendarChangeRequestMonitor : CalendarChangeRequestMonitorInterface {
 
     private fun validateEditRequest(
             context: Context,
-            provider: CalendarProviderInterface,
+            provider: CalendarProvider,
             event: CalendarChangeRequest,
             cleanupEventsTo: Long
     ): ValidationResultCommand {

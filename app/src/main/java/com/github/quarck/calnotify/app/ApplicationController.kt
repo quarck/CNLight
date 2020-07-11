@@ -23,14 +23,11 @@ import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendareditor.CalendarChangeRequestMonitor
-import com.github.quarck.calnotify.calendareditor.CalendarChangeRequestMonitorInterface
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorInterface
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.eventsstorage.EventsStorageInterface
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
@@ -38,7 +35,6 @@ import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifier
-import com.github.quarck.calnotify.calendareditor.CalendarChangeManagerInterface
 import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorOneTimeJobService
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorPeriodicJobService
@@ -60,24 +56,24 @@ object ApplicationController : EventMovedHandler {
 
     private val notificationManager = EventNotificationManager()
 
-    private val alarmScheduler: AlarmSchedulerInterface = AlarmScheduler
+    private val alarmScheduler = AlarmScheduler
 
-    private val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
+    private val calendarReloadManager = CalendarReloadManager
 
-    private val calendarProvider: CalendarProviderInterface = CalendarProvider
+    private val calendarProvider = CalendarProvider
 
-    private val calendarChangeManager: CalendarChangeManagerInterface by lazy { CalendarChangeManager(calendarProvider)}
+    private val calendarChangeManager: CalendarChangeManager by lazy { CalendarChangeManager(calendarProvider)}
 
-    private val calendarMonitorInternal: CalendarMonitorInterface by lazy { CalendarMonitor(calendarProvider) }
+    private val calendarMonitorInternal: CalendarMonitor by lazy { CalendarMonitor(calendarProvider) }
 
-    private val addEventMonitor: CalendarChangeRequestMonitorInterface by lazy { CalendarChangeRequestMonitor() }
+    private val addEventMonitor: CalendarChangeRequestMonitor by lazy { CalendarChangeRequestMonitor() }
 
-    private val tagsManager: TagsManagerInterface by lazy { TagsManager() }
+    private val tagsManager: TagsManager by lazy { TagsManager() }
 
-    val CalendarMonitor: CalendarMonitorInterface
+    val CalendarMonitor: CalendarMonitor
         get() = calendarMonitorInternal
 
-    val AddEventMonitorInstance: CalendarChangeRequestMonitorInterface
+    val AddEventMonitorInstance: CalendarChangeRequestMonitor
         get() = addEventMonitor
 
 //    fun hasActiveEvents(context: Context) =
@@ -733,7 +729,7 @@ object ApplicationController : EventMovedHandler {
 
     fun dismissEvents(
             context: Context,
-            db: EventsStorageInterface,
+            db: EventsStorage,
             events: Collection<EventAlertRecord>,
             dismissType: EventDismissType,
             notifyActivity: Boolean
@@ -795,7 +791,7 @@ object ApplicationController : EventMovedHandler {
 
     fun dismissEvent(
             context: Context,
-            db: EventsStorageInterface,
+            db: EventsStorage,
             event: EventAlertRecord,
             dismissType: EventDismissType,
             notifyActivity: Boolean

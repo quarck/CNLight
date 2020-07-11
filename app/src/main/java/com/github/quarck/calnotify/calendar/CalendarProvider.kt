@@ -35,7 +35,7 @@ import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.detailed
 import java.util.*
 
-object CalendarProvider : CalendarProviderInterface {
+object CalendarProvider  {
     private const val LOG_TAG = "CalendarProvider"
 
     private val alertFields =
@@ -122,7 +122,7 @@ object CalendarProvider : CalendarProviderInterface {
         return Pair(state, event)
     }
 
-    override fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord> {
+    fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord> {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             DevLog.error(LOG_TAG, "getAlertByTime: has no permissions")
@@ -175,7 +175,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord? {
+    fun getAlertByEventIdAndTime(context: Context, eventId: Long, alertTime: Long): EventAlertRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             DevLog.error(LOG_TAG, "getAlertByEventIdAndTime: has no permissions")
@@ -271,7 +271,7 @@ object CalendarProvider : CalendarProviderInterface {
 //    }
 
     @SuppressLint("MissingPermission")
-    override fun getEventReminders(context: Context, eventId: Long): List<EventReminderRecord> {
+    fun getEventReminders(context: Context, eventId: Long): List<EventReminderRecord> {
 
         val ret = mutableListOf<EventReminderRecord>()
 
@@ -349,7 +349,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun getNextEventReminderTime(context: Context, eventId: Long, instanceStartTime: Long): Long {
+    fun getNextEventReminderTime(context: Context, eventId: Long, instanceStartTime: Long): Long {
 
         val instanceStart = instanceStartTime
 
@@ -364,7 +364,7 @@ object CalendarProvider : CalendarProviderInterface {
         return nextReminder ?: 0L
     }
 
-    override fun getNextEventReminderTime(context: Context, event: EventAlertRecord): Long {
+    fun getNextEventReminderTime(context: Context, event: EventAlertRecord): Long {
 
         val instanceStart = event.instanceStartTime
 
@@ -379,7 +379,7 @@ object CalendarProvider : CalendarProviderInterface {
         return nextReminder ?: 0L
     }
 
-    override fun getEvent(context: Context, eventId: Long): EventRecord? {
+    fun getEvent(context: Context, eventId: Long): EventRecord? {
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             DevLog.error(LOG_TAG, "getEvent: has no permissions")
@@ -493,7 +493,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun getEventIsDirty(context: Context, eventId: Long): Boolean? {
+    fun getEventIsDirty(context: Context, eventId: Long): Boolean? {
 
         val SYNC_IS_DIRTY = "dirty"
 
@@ -536,7 +536,7 @@ object CalendarProvider : CalendarProviderInterface {
     }
 
 
-    override fun dismissNativeEventAlert(context: Context, eventId: Long) {
+    fun dismissNativeEventAlert(context: Context, eventId: Long) {
 
         if (!PermissionsManager.hasWriteCalendar(context)) {
             DevLog.error(LOG_TAG, "dismissNativeEventAlert: has no permissions")
@@ -575,7 +575,7 @@ object CalendarProvider : CalendarProviderInterface {
     //
     // Returns event ID of the new event, or -1 on error
     //
-    override fun cloneAndMoveEvent(context: Context, event: EventAlertRecord, addTime: Long): Long {
+    fun cloneAndMoveEvent(context: Context, event: EventAlertRecord, addTime: Long): Long {
 
         var ret = -1L
 
@@ -739,7 +739,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long {
+    fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long {
 
         var eventId = -1L
 
@@ -829,7 +829,7 @@ object CalendarProvider : CalendarProviderInterface {
     private fun isRepeatingEvent(context: Context, event: EventAlertRecord)
             = isRepeatingEvent(context, event.eventId)
 
-    override fun isRepeatingEvent(context: Context, eventId: Long): Boolean? {
+    fun isRepeatingEvent(context: Context, eventId: Long): Boolean? {
 
         var ret: Boolean? = null
 
@@ -867,7 +867,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun moveEvent(context: Context, eventId: Long, newStartTime: Long, newEndTime: Long): Boolean {
+    fun moveEvent(context: Context, eventId: Long, newStartTime: Long, newEndTime: Long): Boolean {
         var ret = false
 
         DevLog.debug(LOG_TAG, "Request to reschedule event ${eventId}, newStartTime: $newStartTime, newEndTime: $newEndTime")
@@ -895,7 +895,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun updateEvent(
+    fun updateEvent(
             context: Context,
             eventId: Long,
             calendarId: Long,
@@ -1028,7 +1028,7 @@ object CalendarProvider : CalendarProviderInterface {
     }
 
 
-    override fun updateEvent(context: Context, event: EventRecord, newDetails: CalendarEventDetails): Boolean {
+    fun updateEvent(context: Context, event: EventRecord, newDetails: CalendarEventDetails): Boolean {
 
         return updateEvent(
                 context,
@@ -1097,7 +1097,7 @@ object CalendarProvider : CalendarProviderInterface {
 //        return ret;
 //    }
 
-    override fun getCalendars(context: Context): List<CalendarRecord> {
+    fun getCalendars(context: Context): List<CalendarRecord> {
 
         val ret = mutableListOf<CalendarRecord>()
 
@@ -1181,7 +1181,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun findNextAlarmTime(cr: ContentResolver, millis: Long): Long? {
+    fun findNextAlarmTime(cr: ContentResolver, millis: Long): Long? {
 
         var alarmTime: Long? = null
 
@@ -1210,7 +1210,7 @@ object CalendarProvider : CalendarProviderInterface {
         return alarmTime
     }
 
-    override fun getCalendarById(context: Context, calendarId: Long): CalendarRecord? {
+    fun getCalendarById(context: Context, calendarId: Long): CalendarRecord? {
         var ret: CalendarRecord? = null
 
         if (!PermissionsManager.hasReadCalendar(context)) {
@@ -1300,7 +1300,7 @@ object CalendarProvider : CalendarProviderInterface {
         return ret
     }
 
-    override fun createCalendarNotFoundCal(context: Context): CalendarRecord {
+    fun createCalendarNotFoundCal(context: Context): CalendarRecord {
         return CalendarRecord(
                 calendarId = -1,
                 owner = context.getString(R.string.owner_dummy_local),
@@ -1316,7 +1316,7 @@ object CalendarProvider : CalendarProviderInterface {
                 isSynced = false)
     }
 
-    override fun getHandledCalendarsIds(context: Context, settings: Settings): Set<Long> {
+    fun getHandledCalendarsIds(context: Context, settings: Settings): Set<Long> {
         val handledCalendars =
                 getCalendars(context)
                         .filter { settings.getCalendarIsHandled(it.calendarId) }
@@ -1335,7 +1335,7 @@ object CalendarProvider : CalendarProviderInterface {
 
 
     @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
-    override fun getEventAlertsForEvent(
+    fun getEventAlertsForEvent(
             context: Context,
             event: EventRecord
     ): List<MonitorEventAlertEntry> {
@@ -1456,7 +1456,7 @@ object CalendarProvider : CalendarProviderInterface {
     }
 
     @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
-    override fun getEventAlertsForInstancesInRange(
+    fun getEventAlertsForInstancesInRange(
             context: Context,
             instanceFrom: Long,
             instanceTo: Long

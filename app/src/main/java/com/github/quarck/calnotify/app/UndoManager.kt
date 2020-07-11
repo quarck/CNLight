@@ -20,32 +20,34 @@
 
 package com.github.quarck.calnotify.app
 
-object UndoManager : UndoManagerInterface {
+data class UndoState(val undo: Runnable? = null, val dismiss: Runnable? = null)
+
+object UndoManager  {
 
     var undoState: UndoState? = null
 
 
-    override fun addUndoState(state: UndoState) {
+    fun addUndoState(state: UndoState) {
         synchronized(this) {
             undoState = state
         }
     }
 
-    override fun undo() {
+    fun undo() {
         synchronized(this) {
             undoState?.undo?.run()
             undoState = null
         }
     }
 
-    override fun clearUndoState() {
+    fun clearUndoState() {
         synchronized(this) {
             undoState?.dismiss?.run()
             undoState = null
         }
     }
 
-    override val canUndo: Boolean
+    val canUndo: Boolean
         get() = synchronized(this) {
             undoState != null
         }

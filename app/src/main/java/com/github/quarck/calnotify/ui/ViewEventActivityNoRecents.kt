@@ -117,8 +117,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
     lateinit var formatter: EventFormatterInterface
 
-    val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
-    val calendarProvider: CalendarProviderInterface = CalendarProvider
+    val calendarReloadManager = CalendarReloadManager
+    val calendarProvider = CalendarProvider
 
     val handler = Handler()
 

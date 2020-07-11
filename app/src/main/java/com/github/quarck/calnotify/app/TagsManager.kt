@@ -24,7 +24,7 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 
 
-class TagsManager : TagsManagerInterface {
+class TagsManager {
 
     private fun hasTag(text: String, tag: String): Boolean {
 
@@ -47,7 +47,7 @@ class TagsManager : TagsManagerInterface {
     private fun EventAlertRecord.hasTag(tag: String) =
             hasTag(this.title, tag) || hasTag(this.desc, tag)
 
-    override fun parseEventTags(context: Context, settings: Settings, event: EventAlertRecord) {
+    fun parseEventTags(context: Context, settings: Settings, event: EventAlertRecord) {
 
         event.isAlarm = event.hasTag(ALARM_TAG)
     }

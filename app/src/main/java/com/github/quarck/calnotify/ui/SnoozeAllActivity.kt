@@ -59,8 +59,8 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
     lateinit var formatter: EventFormatterInterface
 
-    val calendarReloadManager: CalendarReloadManagerInterface = CalendarReloadManager
-    val calendarProvider: CalendarProviderInterface = CalendarProvider
+    val calendarReloadManager = CalendarReloadManager
+    val calendarProvider = CalendarProvider
 
     var snoozeAllIsChange = false
 

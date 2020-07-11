@@ -32,8 +32,8 @@ import java.util.*
 
 
 class CalendarMonitorManual(
-        val calendarProvider: CalendarProviderInterface,
-        val calendarMonitor: CalendarMonitorInterface
+        val calendarProvider: CalendarProvider,
+        val calendarMonitor: CalendarMonitor
 ) {
 
     private fun manualFireAlertList(context: Context, alerts: List<MonitorEventAlertEntry>): Boolean {

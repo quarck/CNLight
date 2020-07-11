@@ -39,11 +39,11 @@ import com.github.quarck.calnotify.utils.cancelExactAndAlarm
 import com.github.quarck.calnotify.utils.setExactAndAlarm
 
 
-object AlarmScheduler : AlarmSchedulerInterface {
+object AlarmScheduler  {
 
     const val LOG_TAG = "AlarmScheduler"
 
-    override fun rescheduleAlarms(context: Context, settings: Settings) {
+    fun rescheduleAlarms(context: Context, settings: Settings) {
 
         DevLog.debug(LOG_TAG, "rescheduleAlarms called");
 
