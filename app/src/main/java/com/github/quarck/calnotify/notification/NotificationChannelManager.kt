@@ -131,12 +131,6 @@ fun NotificationManager.createNotificationChannel(attr: NotificationChannelAttri
 
 fun NotificationCompat.Builder.applyChannelAttributes(attr: NotificationChannelAttributes) {
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-        return
-
-//    if (attr.showBadge != null)
-//        channel.setShowBadge(attr.showBadge ?: false)
-
     if (attr.sound != null)  {
         if (attr.legacyStreamType != null)
             this.setSound(attr.sound, attr.legacyStreamType ?: 0)
@@ -183,10 +177,8 @@ object NotificationChannelManager {
     // Note: don't forget to change notification_preferences.xml and reminder_preferences.xml if
     // channel name is changed!
 
-    const val NOTIFICATION_CHANNEL_ID_DEFAULT = "com.github.calnotify.notify.v2.cal"
-    const val NOTIFICATION_CHANNEL_ID_ALARM = "com.github.calnotify.notify.v2.calalrm"
-
-    const val MAX_NOTIFICATION_IDS = Int.MAX_VALUE -1
+    const val NOTIFICATION_CHANNEL_ID_DEFAULT = "com.github.calnotify.notify.v3.cal"
+    const val NOTIFICATION_CHANNEL_ID_ALARM = "com.github.calnotify.notify.v3.calalrm"
 
     enum class SoundState {
         Normal,
