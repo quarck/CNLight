@@ -177,8 +177,8 @@ object NotificationChannelManager {
     // Note: don't forget to change notification_preferences.xml and reminder_preferences.xml if
     // channel name is changed!
 
-    const val NOTIFICATION_CHANNEL_ID_DEFAULT = "com.github.calnotify.notify.v3.cal"
-    const val NOTIFICATION_CHANNEL_ID_ALARM = "com.github.calnotify.notify.v3.calalrm"
+    const val NOTIFICATION_CHANNEL_ID_DEFAULT = "com.github.calnotify.notify.v4.cal"
+    const val NOTIFICATION_CHANNEL_ID_ALARM = "com.github.calnotify.notify.v4.calalrm"
 
     enum class SoundState {
         Normal,
