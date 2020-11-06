@@ -237,6 +237,11 @@ open class EditEventActivity : AppCompatActivity() {
                 receivedSharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
             }
         }
+        else if (Intent.ACTION_PROCESS_TEXT.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                receivedSharedText = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
+            }
+        }
 
         val eventId = intent.getLongExtra(EVENT_ID, -1)
         if (eventId != -1L) {
