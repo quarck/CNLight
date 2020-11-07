@@ -394,6 +394,7 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="next_month_30d">Next month (+30d)</string>
 
     <string name="move_event_confirm" formatted="false">Move event by %d days?</string>
+    <string name="add_event">Add Event</string>
 
 </resources>
 

@@ -257,7 +257,7 @@ class CalendarMonitorManual(
 
         val settings = Settings(context)
 
-        val scanWindow = settings.manualCalWatchScanWindow
+        val scanWindow = Consts.MANUAL_SCAN_WINDOW
 
         val prevScanTo = state.prevEventScanTo
         val currentTime = System.currentTimeMillis()

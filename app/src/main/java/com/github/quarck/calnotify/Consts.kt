@@ -94,7 +94,8 @@ object Consts {
 
     const val EVENT_MOVE_THRESHOLD = 15 * 60 * 1000L
 
-    const val ALERTS_DB_REMOVE_AFTER = 3L * 24L * 3600L * 1000L
+    const val ALERTS_DB_REMOVE_AFTER = 4L * 24L * 3600L * 1000L
+    const val MANUAL_SCAN_WINDOW: Long = 4L * 24L * 3600L * 1000L
 
     const val CALENDAR_RESCAN_INTERVAL = 30L * 60L * 1000L // 30 mins
 

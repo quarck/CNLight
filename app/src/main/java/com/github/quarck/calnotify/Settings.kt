@@ -200,9 +200,6 @@ class Settings(context: Context) : PersistentStorageBase(context, "settings") {
     val defaultReminderTimeForAllDayEventWithNoreminderMillis: Long
         get() = defaultReminderTimeForAllDayEventWithNoreminderMinutes * 60L * 1000L
 
-    val manualCalWatchScanWindow: Long
-        get() = getLong(CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY, 30L * 24L * 3600L * 1000L) // 1 month by default
-
     var dontShowDeclinedEvents: Boolean
         get() = getBoolean(DONT_SHOW_DECLINED_EVENTS_KEY, false)
         set(value) = setBoolean(DONT_SHOW_DECLINED_EVENTS_KEY, value)
@@ -227,9 +224,6 @@ class Settings(context: Context) : PersistentStorageBase(context, "settings") {
         get() = getBoolean(ENABLE_CALENDAR_RESCAN_KEY, true)
         set(value) = setBoolean(ENABLE_CALENDAR_RESCAN_KEY, value)
 
-    val rescanCreatedEvent: Boolean
-        get() = true
-
     var notifyOnEmailOnlyEvents: Boolean
         get() = getBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, false)
         set(value) = setBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, value)
@@ -250,8 +244,6 @@ class Settings(context: Context) : PersistentStorageBase(context, "settings") {
         private const val SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY = "remind_events_no_rmdnrs"
         private const val DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY = "default_rminder_time"
         private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_rminder_time"
-
-        private const val CALENDAR_MANUAL_WATCH_RELOAD_WINDOW_KEY = "manual_watch_reload_window"
 
         private const val DONT_SHOW_DECLINED_EVENTS_KEY = "dont_show_declined_events"
         private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events"

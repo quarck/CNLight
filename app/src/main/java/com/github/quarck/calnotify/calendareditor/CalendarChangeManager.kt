@@ -23,15 +23,12 @@ import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.calendareditor.storage.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 
 class CalendarChangeManager(val provider: CalendarProvider) {
 
     fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long {
-
-        var eventId = -1L
 
         DevLog.info(LOG_TAG, "Request to create an event")
 
@@ -40,37 +37,14 @@ class CalendarChangeManager(val provider: CalendarProvider) {
             return -1L;
         }
 
-        val event = CalendarChangeRequest(
-                id = -1L,
-                type = EventChangeRequestType.AddNewEvent,
-                calendarOwnerAccount = calendarOwnerAccount,
-                eventId = -1L,
-                calendarId = calendarId,
-                details = details,
-                oldDetails = CalendarEventDetails.createEmpty()
-        )
-
-        CalendarChangeRequestsStorage(context).use {
-            db ->
-
-            db.add(event)
-            DevLog.info(LOG_TAG, "Event creation request logged")
-
-            eventId = provider.createEvent(context, event.calendarId, event.calendarOwnerAccount, event.details)
-
-            if (eventId != -1L) {
-                DevLog.info(LOG_TAG, "Created new event, id $eventId")
-
-                event.eventId = eventId
-                db.update(event)
-            }
-            else {
-                DevLog.info(LOG_TAG, "Failed to create a new event, will retry later")
-            }
-        }
+        val eventId = provider.createEvent(context, calendarId, calendarOwnerAccount, details)
 
         if (eventId != -1L) {
+            DevLog.info(LOG_TAG, "Created new event, id $eventId")
             ApplicationController.CalendarMonitor.onEventEditedByUs(context, eventId);
+        }
+        else {
+            DevLog.info(LOG_TAG, "Failed to create a new event")
         }
 
         return eventId
@@ -85,71 +59,52 @@ class CalendarChangeManager(val provider: CalendarProvider) {
             return false;
         }
 
-        CalendarChangeRequestsStorage(context).use {
-            db ->
+        // Get full event details from the provider, if failed - construct a failback version
+        val oldDetails =
+                provider.getEvent(context, event.eventId)?.details
+                        ?: CalendarEventDetails(
+                        title = event.title,
+                        desc = "",
+                        location = event.location,
+                        timezone = "",
+                        startTime = event.startTime,
+                        endTime = event.endTime,
+                        isAllDay = event.isAllDay,
+                        reminders = listOf<EventReminderRecord>(EventReminderRecord.minutes(15)),
+                        color = event.color
+                )
 
-            db.deleteForEventId(event.eventId)
+        val newStartTime: Long
+        val newEndTime: Long
 
-            // Get full event details from the provider, if failed - construct a failback version
-            val oldDetails =
-                    provider.getEvent(context, event.eventId)?.details
-                            ?: CalendarEventDetails(
-                            title = event.title,
-                            desc = "",
-                            location = event.location,
-                            timezone = "",
-                            startTime = event.startTime,
-                            endTime = event.endTime,
-                            isAllDay = event.isAllDay,
-                            reminders = listOf<EventReminderRecord>(EventReminderRecord.minutes(15)),
-                            color = event.color
-                    )
+        val currentTime = System.currentTimeMillis()
 
-            val newStartTime: Long
-            val newEndTime: Long
+        val numSecondsInThePast = currentTime + Consts.ALARM_THRESHOLD - event.startTime
 
-            val currentTime = System.currentTimeMillis()
+        if (numSecondsInThePast > 0) {
+            val addUnits = numSecondsInThePast / addTimeMillis + 1
 
-            val numSecondsInThePast = currentTime + Consts.ALARM_THRESHOLD - event.startTime
+            newStartTime = event.startTime + addTimeMillis * addUnits
+            newEndTime = event.endTime + addTimeMillis * addUnits
 
-            if (numSecondsInThePast > 0) {
-                val addUnits = numSecondsInThePast / addTimeMillis + 1
-
-                newStartTime = event.startTime + addTimeMillis * addUnits
-                newEndTime = event.endTime + addTimeMillis * addUnits
-
-                DevLog.warn(LOG_TAG, "Requested time is already in the past, total added time: ${addTimeMillis * addUnits}")
-            }
-            else {
-                newStartTime = event.startTime + addTimeMillis
-                newEndTime = event.endTime + addTimeMillis
-            }
-
-            DevLog.info(LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
-
-            ret = provider.moveEvent(context, event.eventId, newStartTime, newEndTime)
-            event.startTime = newStartTime
-            event.endTime = newEndTime
-
-            DevLog.info(LOG_TAG, "Provider move event for ${event.eventId} result: $ret")
-
-            val newDetails = oldDetails.copy(startTime = newStartTime, endTime = newEndTime)
-
-            DevLog.info(LOG_TAG, "Adding move request into DB: move: ${event.eventId} ${oldDetails.startTime} / ${oldDetails.endTime} -> ${newDetails.startTime} / ${newDetails.endTime}")
-
-            db.add(
-                    CalendarChangeRequest(
-                            id = -1L,
-                            type = EventChangeRequestType.MoveExistingEvent,
-                            eventId = event.eventId,
-                            calendarId = event.calendarId,
-                            calendarOwnerAccount = "",
-                            status = EventChangeStatus.Dirty,
-                            details = newDetails,
-                            oldDetails = oldDetails
-                    )
-            )
+            DevLog.warn(LOG_TAG, "Requested time is already in the past, total added time: ${addTimeMillis * addUnits}")
         }
+        else {
+            newStartTime = event.startTime + addTimeMillis
+            newEndTime = event.endTime + addTimeMillis
+        }
+
+        DevLog.info(LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
+
+        ret = provider.moveEvent(context, event.eventId, newStartTime, newEndTime)
+        event.startTime = newStartTime
+        event.endTime = newEndTime
+
+        DevLog.info(LOG_TAG, "Provider move event for ${event.eventId} result: $ret")
+
+        val newDetails = oldDetails.copy(startTime = newStartTime, endTime = newEndTime)
+
+        DevLog.info(LOG_TAG, "Adding move request into DB: move: ${event.eventId} ${oldDetails.startTime} / ${oldDetails.endTime} -> ${newDetails.startTime} / ${newDetails.endTime}")
 
         if (event.eventId != -1L) {
             ApplicationController.CalendarMonitor.onEventEditedByUs(context, event.eventId);
@@ -217,35 +172,16 @@ class CalendarChangeManager(val provider: CalendarProvider) {
 
         var ret = false
 
-        CalendarChangeRequestsStorage(context).use {
-            db ->
+        ret = provider.updateEvent(context, eventToEdit, details)
 
-            db.deleteForEventId(eventToEdit.eventId)
-
-            ret = provider.updateEvent(context, eventToEdit, details)
-
-            if (ret) {
-                DevLog.info(LOG_TAG, "Successfully updated provider, event ${eventToEdit.eventId}")
-            }
-            else {
-                DevLog.error(LOG_TAG, "Failed to updated provider, event ${eventToEdit.eventId}")
-            }
-
-            DevLog.info(LOG_TAG, "Adding edit request into DB: ${eventToEdit.eventId} ")
-
-            db.add(
-                    CalendarChangeRequest(
-                            id = -1L,
-                            type = EventChangeRequestType.EditExistingEvent,
-                            eventId = eventToEdit.eventId,
-                            calendarId = eventToEdit.calendarId,
-                            calendarOwnerAccount = "",
-                            status = EventChangeStatus.Dirty,
-                            details = details,
-                            oldDetails = eventToEdit.details
-                    )
-            )
+        if (ret) {
+            DevLog.info(LOG_TAG, "Successfully updated provider, event ${eventToEdit.eventId}")
         }
+        else {
+            DevLog.error(LOG_TAG, "Failed to updated provider, event ${eventToEdit.eventId}")
+        }
+
+        DevLog.info(LOG_TAG, "Adding edit request into DB: ${eventToEdit.eventId} ")
 
         if (ret && (eventToEdit.startTime != details.startTime)) {
 

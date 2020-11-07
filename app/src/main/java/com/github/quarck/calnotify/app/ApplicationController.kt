@@ -22,7 +22,6 @@ package com.github.quarck.calnotify.app
 import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.calendareditor.CalendarChangeRequestMonitor
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
@@ -66,21 +65,10 @@ object ApplicationController : EventMovedHandler {
 
     private val calendarMonitorInternal: CalendarMonitor by lazy { CalendarMonitor(calendarProvider) }
 
-    private val addEventMonitor: CalendarChangeRequestMonitor by lazy { CalendarChangeRequestMonitor() }
-
     private val tagsManager: TagsManager by lazy { TagsManager() }
 
     val CalendarMonitor: CalendarMonitor
         get() = calendarMonitorInternal
-
-    val AddEventMonitorInstance: CalendarChangeRequestMonitor
-        get() = addEventMonitor
-
-//    fun hasActiveEvents(context: Context) =
-//            EventsStorage(context).use {
-//                val settings = Settings(context)
-//                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && !it.isMuted && !it.isTask }.any()
-//            }
 
     fun hasActiveEventsToRemind(context: Context) =
             EventsStorage(context).use {
@@ -92,9 +80,6 @@ object ApplicationController : EventMovedHandler {
     fun onEventAlarm(context: Context) {
 
         DevLog.info(LOG_TAG, "onEventAlarm at ${System.currentTimeMillis()}");
-
-//        val alarmWasExpectedAt = context.persistentState.nextSnoozeAlarmExpectedAt
-//        val currentTime = System.currentTimeMillis()
 
         context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context)
