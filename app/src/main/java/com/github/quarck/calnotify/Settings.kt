@@ -58,7 +58,7 @@ enum class NotificationSwipeBehavior(val code: Int)
 //}
 
 
-class Settings(context: Context) : PersistentStorageBase(context) {
+class Settings(context: Context) : PersistentStorageBase(context, "settings") {
 
     var devModeEnabled: Boolean
         get() = getBoolean(DEVELOPER_MODE_KEY, false)

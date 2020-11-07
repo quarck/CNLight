@@ -27,22 +27,21 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.provider.CalendarContract
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.text.format.DateUtils
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.calendareditor.*
+import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
+import com.github.quarck.calnotify.calendareditor.CalendarChangePersistentState
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.dateToStr
@@ -234,12 +233,12 @@ open class EditEventActivity : AppCompatActivity() {
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
-                receivedSharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+                receivedSharedText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: ""
             }
         }
         else if (Intent.ACTION_PROCESS_TEXT.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
-                receivedSharedText = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT).toString()
+                receivedSharedText = intent.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)?.toString()  ?: ""
             }
         }
 

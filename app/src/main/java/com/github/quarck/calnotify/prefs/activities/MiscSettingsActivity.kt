@@ -20,9 +20,7 @@
 package com.github.quarck.calnotify.prefs.activities
 
 import android.os.Bundle
-import android.preference.PreferenceActivity
-import android.preference.PreferenceFragment
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.prefs.preferences

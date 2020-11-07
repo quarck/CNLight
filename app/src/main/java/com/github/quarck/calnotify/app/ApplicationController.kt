@@ -365,7 +365,7 @@ object ApplicationController : EventMovedHandler {
         val pairsToAdd = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
         val eventsToDismiss = arrayListOf<EventAlertRecord>()
 
-        var eventsToAdd: List<EventAlertRecord>? = null
+        var eventsToAdd: List<EventAlertRecord>?
 
         // 1st step - save event into DB
         EventsStorage(context).use {

@@ -25,9 +25,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
@@ -45,7 +45,7 @@ import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import android.text.method.ScrollingMovementMethod
 
 
@@ -112,7 +112,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         window.navigationBarColor = resources.getColor(android.R.color.black)
 
-        val currentTime = System.currentTimeMillis()
+        // val currentTime = System.currentTimeMillis()
 
         settings = Settings(this)
         formatter = EventFormatter(this)

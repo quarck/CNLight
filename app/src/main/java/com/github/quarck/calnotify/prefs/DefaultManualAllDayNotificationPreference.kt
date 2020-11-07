@@ -23,17 +23,12 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.content.res.TypedArray
-import android.preference.DialogPreference
-import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.RadioButton
 import android.widget.TimePicker
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
 
 class DefaultManualAllDayNotificationPreference(

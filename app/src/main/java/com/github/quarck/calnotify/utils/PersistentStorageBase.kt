@@ -22,61 +22,56 @@ package com.github.quarck.calnotify.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import kotlin.reflect.KProperty
 
 
-open class PersistentStorageBase(ctx: Context, prefName: String? = null) {
+open class PersistentStorageBase(ctx: Context, prefName: String) {
     protected var state: SharedPreferences
 
     init {
-        state =
-                if (prefName != null)
-                    ctx.getSharedPreferences(prefName, Context.MODE_PRIVATE)
-                else
-                    PreferenceManager.getDefaultSharedPreferences(ctx)
+        state = ctx.getSharedPreferences(prefName, Context.MODE_PRIVATE)
     }
 
     fun edit(): SharedPreferences.Editor {
         return state.edit()
     }
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("ApplySharedPref")
     fun setBoolean(key: String, value: Boolean) {
         val editor = state.edit()
         editor.putBoolean(key, value)
         editor.commit()
     }
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("ApplySharedPref")
     fun setInt(key: String, value: Int) {
         val editor = state.edit()
         editor.putInt(key, value)
         editor.commit()
     }
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("ApplySharedPref")
     fun setLong(key: String, value: Long) {
         val editor = state.edit()
         editor.putLong(key, value)
         editor.commit()
     }
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("ApplySharedPref")
     fun setFloat(key: String, value: Float) {
         val editor = state.edit()
         editor.putFloat(key, value)
         editor.commit()
     }
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("ApplySharedPref")
     fun setString(key: String, value: String) {
         val editor = state.edit()
         editor.putString(key, value)
         editor.commit()
     }
 
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint("ApplySharedPref")
     fun setStringSet(key: String, value: Set<String>) {
         val editor = state.edit()
         editor.putStringSet(key, value)

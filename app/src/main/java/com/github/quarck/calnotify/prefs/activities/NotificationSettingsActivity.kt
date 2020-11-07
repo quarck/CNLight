@@ -21,7 +21,7 @@ package com.github.quarck.calnotify.prefs.activities
 
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.notification.NotificationChannelManager
