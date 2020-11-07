@@ -318,56 +318,7 @@ val EventAlertRecord.isNotSnoozed: Boolean
     get() = snoozedUntil == 0L
 
 val EventAlertRecord.isActiveAlarm: Boolean
-    get() = isNotSnoozed && isNotSpecial && isAlarm
-
-val EventAlertRecord.isSpecial: Boolean
-    get() = instanceStartTime == Long.MAX_VALUE
-
-val EventAlertRecord.isNotSpecial: Boolean
-    get() = instanceStartTime != Long.MAX_VALUE
-
-val EventAlertRecord.specialId: Long
-    get() {
-        if (instanceStartTime == Long.MAX_VALUE)
-            return eventId
-        else
-            return -1L
-    }
-
-enum class EventAlertRecordSpecialType(val code: Int) {
-    ScanMaxOneMonth(1),
-    ScanMaxHundredOverdueEvents(2);
-
-    companion object {
-        @JvmStatic
-        fun fromInt(v: Int) = values()[v]
-    }
-}
-
-fun CreateEventAlertSpecialScanOverHundredEvents(ctx: Context, missedEvents: Int): EventAlertRecord {
-
-    val title =
-            ctx.resources.getString(R.string.special_event_title)
-
-    return EventAlertRecord(
-            calendarId = -1L,
-            eventId = EventAlertRecordSpecialType.ScanMaxHundredOverdueEvents.code.toLong(),
-            isAllDay = false,
-            isRepeating = false,
-            alertTime = missedEvents.toLong(),
-            notificationId = 0,
-            title = title,
-            desc = "",
-            startTime = 0L,
-            endTime = 0L,
-            instanceStartTime = Long.MAX_VALUE,
-            instanceEndTime = Long.MAX_VALUE,
-            location = "",
-            lastStatusChangeTime = Long.MAX_VALUE - 2,
-            snoozedUntil = 0L,
-            color = 0xffff0000.toInt()
-    )
-}
+    get() = isNotSnoozed  && isAlarm
 
 val EventAlertRecord.scanMissedTotalEvents: Long
     get() {

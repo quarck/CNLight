@@ -174,7 +174,7 @@ object CalendarReloadManager  {
             movedHandler: EventMovedHandler?
     ): Boolean {
         // don't rescan manually created requests - we won't find most of them
-        val events = db.events.filter { event -> event.origin != EventOrigin.FullManual && event.isNotSpecial }
+        val events = db.events.filter { event -> event.origin != EventOrigin.FullManual }
         return reloadCalendarInternal(context, db, events, calendar, movedHandler)
     }
 
@@ -190,7 +190,6 @@ object CalendarReloadManager  {
         val events = db.events.filter {
             event ->
             event.origin != EventOrigin.FullManual
-                    && event.isNotSpecial
                     && event.snoozedUntil != 0L
                     && !event.isRepeating
         }

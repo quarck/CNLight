@@ -195,10 +195,7 @@ class EventListAdapter(
                             val event = getEventAtPosition(swipedPosition)
 
                             if (event != null) {
-                                if (!event.isSpecial)
-                                    removeWithUndo(event)
-                                else
-                                    removeEvent(event)
+                                removeWithUndo(event)
                                 callback.onItemRemoved(event)
                             }
                             else {
@@ -317,16 +314,9 @@ class EventListAdapter(
             holder.undoLayout?.visibility = View.GONE
             holder.compactViewContentLayout?.visibility = View.VISIBLE
 
-            if (!event.isSpecial) {
-                val time = eventFormatter.formatDateTimeOneLine(event)
-                holder.eventDateText.text = time
-                holder.eventTimeText.text = ""
-            }
-            else {
-                val (detail1, detail2) = event.getSpecialDetail(context)
-                holder.eventDateText.text = detail1
-                holder.eventTimeText.text = detail2
-            }
+            val time = eventFormatter.formatDateTimeOneLine(event)
+            holder.eventDateText.text = time
+            holder.eventTimeText.text = ""
 
             if (event.snoozedUntil != 0L) {
                 holder.snoozedUntilText?.text =
@@ -477,9 +467,6 @@ class EventListAdapter(
 
     val anyForDismissAllButRecentAndSnoozed: Boolean
         get() = ApplicationController.anyForDismissAllButRecentAndSnoozed(events)
-
-    val anyForMute: Boolean
-        get() = events.any { it.snoozedUntil == 0L && it.isNotSpecial}
 
     companion object {
         private const val LOG_TAG = "EventListAdapter"

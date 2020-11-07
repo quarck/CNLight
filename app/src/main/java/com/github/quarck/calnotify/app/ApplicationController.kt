@@ -73,7 +73,7 @@ object ApplicationController : EventMovedHandler {
     fun hasActiveEventsToRemind(context: Context) =
             EventsStorage(context).use {
                 //val settings = Settings(context)
-                it.events.filter { it.snoozedUntil == 0L && it.isNotSpecial && it.isAlarm }.any()
+                it.events.filter { it.snoozedUntil == 0L && it.isAlarm }.any()
             }
 
 
@@ -260,11 +260,7 @@ object ApplicationController : EventMovedHandler {
         EventsStorage(context).use {
             db ->
 
-            if (event.isNotSpecial)
-                event.lastStatusChangeTime = System.currentTimeMillis()
-            else
-                event.lastStatusChangeTime = Long.MAX_VALUE
-
+            event.lastStatusChangeTime = System.currentTimeMillis()
             if (event.isRepeating) {
                 // repeating event - always simply add
                 db.addEvent(event) // ignoring result as we are using other way of validating
@@ -392,7 +388,7 @@ object ApplicationController : EventMovedHandler {
 
                 db.deleteEvents(eventsToDismiss)
 
-                val hasActiveEvents = db.events.any { it.snoozedUntil != 0L && !it.isSpecial }
+                val hasActiveEvents = db.events.any { it.snoozedUntil != 0L }
 
                 notificationManager.onEventsDismissed(
                         context,
@@ -613,7 +609,7 @@ object ApplicationController : EventMovedHandler {
 
         EventsStorage(context).use {
             db ->
-            val events = db.events.filter { it.isNotSpecial && filter(it) }
+            val events = db.events.filter { filter(it) }
 
             // Don't allow requests to have exactly the same "snoozedUntil", so to have
             // predicted sorting order, so add a tiny (0.001s per event) adjust to each
@@ -732,7 +728,7 @@ object ApplicationController : EventMovedHandler {
 
         if (db.deleteEvents(events) == events.size) {
 
-            val hasActiveEvents = db.events.any { it.snoozedUntil != 0L && !it.isSpecial }
+            val hasActiveEvents = db.events.any { it.snoozedUntil != 0L }
 
             notificationManager.onEventsDismissed(context, EventFormatter(context), events, true, hasActiveEvents);
 
@@ -766,9 +762,7 @@ object ApplicationController : EventMovedHandler {
             db ->
             val eventsToDismiss = db.events.filter {
                 event ->
-                (event.lastStatusChangeTime < currentTime - Consts.DISMISS_ALL_THRESHOLD) &&
-                        (event.snoozedUntil == 0L) &&
-                        event.isNotSpecial
+                (event.lastStatusChangeTime < currentTime - Consts.DISMISS_ALL_THRESHOLD) && (event.snoozedUntil == 0L)
             }
             dismissEvents(context, db, eventsToDismiss, dismissType, false)
         }
@@ -784,7 +778,7 @@ object ApplicationController : EventMovedHandler {
 
         DevLog.info(LOG_TAG, "Dismissing event id ${event.eventId} / instance ${event.instanceStartTime}")
 
-        if (dismissType.shouldKeep && event.isNotSpecial) {
+        if (dismissType.shouldKeep) {
             DismissedEventsStorage(context).use {
                 it.addEvent(dismissType, event)
             }

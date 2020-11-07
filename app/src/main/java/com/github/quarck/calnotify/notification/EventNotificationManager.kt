@@ -117,8 +117,7 @@ class EventNotificationManager {
     // everything else should be hidden and waiting for the next alarm
     private fun getCurrentEvents(db: EventsStorage, currentTime: Long)
             = db.events.filter {
-                ((it.snoozedUntil == 0L) || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD)) &&
-                        it.isNotSpecial
+                (it.snoozedUntil == 0L) || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD)
             }
 
     /**
@@ -194,7 +193,7 @@ class EventNotificationManager {
         EventsStorage(context).use {
             db ->
 
-            val activeEvents = db.events.filter { it.isNotSnoozed && it.isNotSpecial && it.isAlarm }
+            val activeEvents = db.events.filter { it.isNotSnoozed && it.isAlarm }
 
             if (activeEvents.count() > 0) {
                 postEventNotifications(context, isReminder = true)

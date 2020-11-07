@@ -27,7 +27,6 @@ import com.github.quarck.calnotify.broadcastreceivers.ReminderExactAlarmBroadcas
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.isNotSnoozed
-import com.github.quarck.calnotify.calendar.isNotSpecial
 import com.github.quarck.calnotify.calendar.isSnoozed
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
@@ -54,7 +53,7 @@ object AlarmScheduler  {
 
             // Schedule event (snooze) alarm
             var nextEventAlarm =
-                    events.filter { it.isSnoozed && it.isNotSpecial }.map { it.snoozedUntil }.min()
+                    events.filter { it.isSnoozed }.map { it.snoozedUntil }.min()
 
             if (nextEventAlarm != null) {
 
@@ -94,7 +93,7 @@ object AlarmScheduler  {
             var reminderAlarmNextFire: Long? = null
 
             val activeAlarmEvents = events.filter {
-                it.isNotSnoozed && it.isNotSpecial && it.isAlarm
+                it.isNotSnoozed && it.isAlarm
             }
 
             if (activeAlarmEvents.any()) {

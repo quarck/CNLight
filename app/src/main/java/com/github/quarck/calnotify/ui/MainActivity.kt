@@ -50,13 +50,11 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.isSpecial
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorState
 import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
 import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
-//import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.utils.background
@@ -456,7 +454,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         val event = adapter.getEventAtPosition(position, eventId)
 
-        if (event != null && !event.isSpecial) {
+        if (event != null) {
            startActivity(
                     Intent(this, ViewEventActivity::class.java)
                             .putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, event.notificationId)
