@@ -196,10 +196,6 @@ class Settings(context: Context) : PersistentStorageBase(context, "settings") {
         get() = getBoolean(DONT_SHOW_CANCELLED_EVENTS_KEY, false)
         set(value) = setBoolean(DONT_SHOW_CANCELLED_EVENTS_KEY, value)
 
-    var dontShowAllDayEvents: Boolean
-        get() = getBoolean(DONT_SHOW_ALL_DAY_EVENTS_KEY, false)
-        set(value) = setBoolean(DONT_SHOW_ALL_DAY_EVENTS_KEY, value)
-
     var enableMonitorDebug: Boolean
         get() = getBoolean(ENABLE_MONITOR_DEBUGGING_KEY, false)
         set(value) = setBoolean(ENABLE_MONITOR_DEBUGGING_KEY, value)

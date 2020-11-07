@@ -194,15 +194,13 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="ignore_cancelled_events">Ignore Cancelled events</string>
     <string name="ignore_cancelled_events_summary">Events that were cancelled by the organizer</string>
     <string name="first_day_of_week">First day of the week</string>
-    <string name="first_day_of_week_summary"></string>
+    <string name="first_day_of_week_summary" />
     <string name="use_alarm_stream">Use Alarm volume</string>
     <string name="use_alarm_stream_summary">Play notification on Alarm stream (instead of Notification)</string>
 
     <string name="on_the_day_before">On the day before</string>
     <string name="on_the_day_of_event">On the day of event</string>
     <string name="before_the_event">before the event</string>
-    <string name="ignore_all_day_events">Ignore all-day events</string>
-    <string name="ignore_all_day_events_summary">Do not remind on all day events</string>
 
     <string name="next_reminder_fmt" formatted="false">Next reminder: %s</string>
     <string name="manual_event_rescan_title">Manual calendar rescan</string>

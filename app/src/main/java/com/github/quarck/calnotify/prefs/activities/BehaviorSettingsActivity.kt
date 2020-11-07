@@ -84,11 +84,6 @@ class BehaviorSettingsActivity : AppCompatActivity() {
                 initial(settings.dontShowCancelledEvents)
                 onChange{settings.dontShowCancelledEvents = it}
             }
-
-            switch (R.string.ignore_all_day_events, R.string.ignore_all_day_events_summary) {
-                initial(settings.dontShowAllDayEvents)
-                onChange{settings.dontShowAllDayEvents = it}
-            }
         }
     }
 }
