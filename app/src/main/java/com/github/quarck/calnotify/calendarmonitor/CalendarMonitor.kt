@@ -301,7 +301,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
             context.alarmManager.setExactAndAlarm(
                     context,
-                    settings.useSetAlarmClockForFailbackEventPaths,
+                    false,
                     exactTime,
                     ManualEventAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                     ManualEventExactAlarmBroadcastReceiver::class.java,

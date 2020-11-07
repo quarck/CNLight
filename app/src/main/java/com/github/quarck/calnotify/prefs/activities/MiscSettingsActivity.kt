@@ -49,16 +49,6 @@ class MiscSettingsActivity : AppCompatActivity() {
                 settings.firstDayOfWeek = value
             }
 
-            switch(R.string.use_set_alarm_clock_title, R.string.use_set_alarm_clock_summary) {
-                initial(settings.useSetAlarmClock)
-                onChange{settings.useSetAlarmClock = it}
-            }
-
-            switch(R.string.use_set_alarm_clock_for_events, R.string.use_set_alarm_clock_for_events_summary) {
-                initial(settings.useSetAlarmClockForFailbackEventPaths)
-                onChange{settings.useSetAlarmClockForFailbackEventPaths = it}
-            }
-
 //            header(R.string.other)
 //
 //            switch(R.string.pebble_forward_reminders, R.string.pebble_forward_reminders_summary) {

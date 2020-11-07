@@ -170,18 +170,6 @@ class Settings(context: Context) : PersistentStorageBase(context, "settings") {
     fun setCalendarIsHandled(calendarId: Long, enabled: Boolean) =
             setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
 
-//    var versionCodeFirstInstalled: Long
-//        get() = getLong(VERSION_CODE_FIRST_INSTALLED_KEY, 0L)
-//        set(value) = setLong(VERSION_CODE_FIRST_INSTALLED_KEY, value)
-
-    var useSetAlarmClock: Boolean
-        get() = getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, true)
-        set(value) = setBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_KEY, value)
-
-    var useSetAlarmClockForFailbackEventPaths: Boolean
-        get() = getBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_FOR_FAILBACK_KEY, false)
-        set(value) = setBoolean(BEHAVIOR_USE_SET_ALARM_CLOCK_FOR_FAILBACK_KEY, value)
-
     var shouldRemindForEventsWithNoReminders: Boolean
         get() = getBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, false)
         set(value) = setBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, value)
@@ -237,9 +225,6 @@ class Settings(context: Context) : PersistentStorageBase(context, "settings") {
 
         // Preferences keys
         private const val CALENDAR_IS_HANDLED_KEY_PREFIX = "calendar_handled_"
-
-        private const val BEHAVIOR_USE_SET_ALARM_CLOCK_KEY = "use_set_alarm_clock"
-        private const val BEHAVIOR_USE_SET_ALARM_CLOCK_FOR_FAILBACK_KEY = "use_set_alarm_clock_for_failback"
 
         private const val SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY = "remind_events_no_rmdnrs"
         private const val DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY = "default_rminder_time"

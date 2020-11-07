@@ -118,7 +118,6 @@ fun AlarmManager.setExactAndAlarm(
     }
     else {
         setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, pendingIntentExact);
-
         DevLog.info(LOG_TAG, "alarm scheduled for $triggerAtMillis using setExactAndAllowWhileIdle(T+8s) + setExact(T+0)")
     }
 }

@@ -176,9 +176,6 @@ PRIVACY POLICY\n
 THIS APP DOESN\'T STEAL YOUR DATA
     </string>
 
-    <string name="use_set_alarm_clock_title">Use setAlarmClock for reminders</string>
-    <string name="use_set_alarm_clock_summary">Marshmallow and above only!\nThis would trigger app to use setAlarmClock API call when scheduling reminders and snoozed events\nThis would increase reminders time accuracy\nAs a side effect, user would see \'alarm\' icon on UI when there are snoozed events or active reminders</string>
-
     <string name="build_time_string_format" formatted="false">Build time: %s</string>
     <string name="dismiss_all_events">Dismiss all events</string>
     <string name="dismiss_all_events_confirmation">Dismiss all events?\n\nCANNOT BE UNDONE!\n\nSnoozed events would not be removed</string>
@@ -197,7 +194,7 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="ignore_cancelled_events">Ignore Cancelled events</string>
     <string name="ignore_cancelled_events_summary">Events that were cancelled by the organizer</string>
     <string name="first_day_of_week">First day of the week</string>
-    <string name="first_day_of_week_summary">(Android 5 and above only)</string>
+    <string name="first_day_of_week_summary"></string>
     <string name="use_alarm_stream">Use Alarm volume</string>
     <string name="use_alarm_stream_summary">Play notification on Alarm stream (instead of Notification)</string>
 
@@ -208,8 +205,6 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="ignore_all_day_events_summary">Do not remind on all day events</string>
 
     <string name="next_reminder_fmt" formatted="false">Next reminder: %s</string>
-    <string name="use_set_alarm_clock_for_events">Use setAlarmClock for events</string>
-    <string name="use_set_alarm_clock_for_events_summary">Only affects fail back event paths, don\'t need to set it if you are not missing any reminders</string>
     <string name="manual_event_rescan_title">Manual calendar rescan</string>
     <string name="manual_event_rescan_summary">Improves reliability of event reminders and allows handling events with no reminders</string>
     <string name="handle_email_only_events_title">Handle e-mail only events</string>
