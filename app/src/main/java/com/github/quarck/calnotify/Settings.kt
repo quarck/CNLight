@@ -188,14 +188,6 @@ class Settings(context: Context) : PersistentStorageBase(context, "settings") {
     val defaultReminderTimeForAllDayEventWithNoreminderMillis: Long
         get() = defaultReminderTimeForAllDayEventWithNoreminderMinutes * 60L * 1000L
 
-    var dontShowDeclinedEvents: Boolean
-        get() = getBoolean(DONT_SHOW_DECLINED_EVENTS_KEY, false)
-        set(value) = setBoolean(DONT_SHOW_DECLINED_EVENTS_KEY, value)
-
-    var dontShowCancelledEvents: Boolean
-        get() = getBoolean(DONT_SHOW_CANCELLED_EVENTS_KEY, false)
-        set(value) = setBoolean(DONT_SHOW_CANCELLED_EVENTS_KEY, value)
-
     var enableMonitorDebug: Boolean
         get() = getBoolean(ENABLE_MONITOR_DEBUGGING_KEY, false)
         set(value) = setBoolean(ENABLE_MONITOR_DEBUGGING_KEY, value)
@@ -225,10 +217,6 @@ class Settings(context: Context) : PersistentStorageBase(context, "settings") {
         private const val SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY = "remind_events_no_rmdnrs"
         private const val DEFAULT_REMINDER_TIME_FOR_EVENTS_WITH_NO_REMINDER_KEY = "default_rminder_time"
         private const val DEFAULT_REMINDER_TIME_FOR_ALL_DAY_EVENTS_WITH_NO_REMINDER = "default_all_day_rminder_time"
-
-        private const val DONT_SHOW_DECLINED_EVENTS_KEY = "dont_show_declined_events"
-        private const val DONT_SHOW_CANCELLED_EVENTS_KEY = "dont_show_cancelled_events"
-        private const val DONT_SHOW_ALL_DAY_EVENTS_KEY = "dont_show_all_day_events"
 
         private const val ENABLE_MONITOR_DEBUGGING_KEY = "enableMonitorDebug"
 

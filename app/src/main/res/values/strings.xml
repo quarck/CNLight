@@ -189,10 +189,6 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="special_event_title">Warning: due events skipped</string>
     <string name="special_event_detail_format" formatted="false">Only %d of %d due events displayed</string>
     <string name="special_event_detail2" formatted="false">Your device was switched off for long</string>
-    <string name="ignore_declined_events">Ignore Declined events</string>
-    <string name="ignore_declined_events_summary">Events that you have declined</string>
-    <string name="ignore_cancelled_events">Ignore Cancelled events</string>
-    <string name="ignore_cancelled_events_summary">Events that were cancelled by the organizer</string>
     <string name="first_day_of_week">First day of the week</string>
     <string name="first_day_of_week_summary" />
     <string name="use_alarm_stream">Use Alarm volume</string>

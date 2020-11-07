@@ -220,13 +220,13 @@ object ApplicationController : EventMovedHandler {
 
         val settings = getSettings(context)
 
-        if (event.eventStatus == EventStatus.Cancelled && settings.dontShowCancelledEvents) {
+        if (event.eventStatus == EventStatus.Cancelled) {
             // indicate that we should mark as handled in the provider and skip
             DevLog.info(LOG_TAG, "Event ${event.eventId}, status Cancelled - ignored")
             return true
         }
 
-        if (event.attendanceStatus == AttendanceStatus.Declined && settings.dontShowDeclinedEvents) {
+        if (event.attendanceStatus == AttendanceStatus.Declined) {
             // indicate that we should mark as handled in the provider and skip
             DevLog.info(LOG_TAG, "Event ${event.eventId}, status Declined - ignored")
             return true

@@ -74,16 +74,6 @@ class BehaviorSettingsActivity : AppCompatActivity() {
                     }
                 }
             }
-
-            switch (R.string.ignore_declined_events, R.string.ignore_declined_events_summary) {
-                initial(settings.dontShowDeclinedEvents)
-                onChange{settings.dontShowDeclinedEvents = it}
-            }
-
-            switch (R.string.ignore_cancelled_events, R.string.ignore_cancelled_events_summary) {
-                initial(settings.dontShowCancelledEvents)
-                onChange{settings.dontShowCancelledEvents = it}
-            }
         }
     }
 }
