@@ -21,7 +21,6 @@ package com.github.quarck.calnotify.app
 
 import android.content.Context
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.broadcastreceivers.ReminderAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.ReminderExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.SnoozeAlarmBroadcastReceiver
@@ -42,7 +41,7 @@ object AlarmScheduler  {
 
     const val LOG_TAG = "AlarmScheduler"
 
-    fun rescheduleAlarms(context: Context, settings: Settings) {
+    fun rescheduleAlarms(context: Context) {
 
         DevLog.debug(LOG_TAG, "rescheduleAlarms called");
 

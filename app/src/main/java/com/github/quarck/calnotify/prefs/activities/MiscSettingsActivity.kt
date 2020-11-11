@@ -45,7 +45,7 @@ class MiscSettingsActivity : AppCompatActivity() {
                     settings.firstDayOfWeek,
                     true
             ) {
-                name, value ->
+                _, value ->
                 settings.firstDayOfWeek = value
             }
 

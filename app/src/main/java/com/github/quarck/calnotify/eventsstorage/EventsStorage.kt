@@ -40,11 +40,7 @@ data class EventWithNewInstanceTime(
 class EventsStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable  {
 
-    private var impl: EventsStorageImplInterface
-
-    init {
-        impl = EventsStorageImplV9(context);
-    }
+    private var impl = EventsStorageImplV9(context)
 
     override fun onCreate(db: SQLiteDatabase)
             = impl.createDb(db)

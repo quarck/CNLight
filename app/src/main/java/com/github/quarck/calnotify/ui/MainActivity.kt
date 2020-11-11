@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.ui
 
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
@@ -38,21 +39,20 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.appcompat.widget.Toolbar
-import android.text.format.DateUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorState
-import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
-import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
+import com.github.quarck.calnotify.completeeventsstorage.CompleteEventsStorage
+import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -89,10 +89,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private var lastEventDismissalScrollPosition: Int? = null
 
-    private var calendarRescanEnabled = true
-
-    private var shouldRemindForEventsWithNoReminders = true
-
     private val undoDisappearSensitivity: Float by lazy {
         resources.getDimension(R.dimen.undo_dismiss_sensitivity)
     }
@@ -117,7 +113,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        window.navigationBarColor = resources.getColor(android.R.color.black)
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
         refreshLayout = find<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)
 
@@ -126,10 +122,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             reloadData()
         }
 
-        shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
-
-        adapter =
-                EventListAdapter(this, this)
+        adapter = EventListAdapter(this, this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = findOrThrow<RecyclerView>(R.id.list_events)
@@ -138,8 +131,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         adapter.recyclerView = recyclerView
 
         reloadLayout = findOrThrow<RelativeLayout>(R.id.activity_main_reload_layout)
-
-        calendarRescanEnabled = settings.enableCalendarRescan
 
         floatingAddEvent = findOrThrow<FloatingActionButton>(R.id.action_btn_add_event)
 
@@ -178,26 +169,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         registerReceiver(dataUpdatedReceiver, IntentFilter(Consts.DATA_UPDATED_BROADCAST));
 
-        if (calendarRescanEnabled != settings.enableCalendarRescan) {
-            calendarRescanEnabled = settings.enableCalendarRescan
-
-            if (!calendarRescanEnabled) {
-                CalendarMonitorState(this).firstScanEver = true
-            }
-        }
-
         reloadData()
-
         refreshReminderLastFired()
 
-        var monitorSettingsChanged = false
-        if (settings.shouldRemindForEventsWithNoReminders != shouldRemindForEventsWithNoReminders) {
-            shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders;
-            monitorSettingsChanged = true
-        }
-
         background {
-            ApplicationController.onMainActivityResumed(this, monitorSettingsChanged)
+            ApplicationController.onMainActivityResumed(this)
         }
 
         if (undoManager.canUndo) {
@@ -211,6 +187,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         invalidateOptionsMenu();
     }
 
+    @SuppressLint("BatteryLife")
     private fun checkPermissions() {
         val hasPermissions = PermissionsManager.hasAllPermissions(this)
 
@@ -245,9 +222,8 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                     AlertDialog.Builder(this)
                             .setTitle(getString(R.string.battery_optimisation_title))
                             .setMessage(getString(R.string.battery_optimisation_details))
-                            .setPositiveButton(getString(R.string.you_can_do_it)) @TargetApi(Build.VERSION_CODES.M) {
+                            .setPositiveButton(getString(R.string.you_can_do_it)) {
                                 _, _ ->
-
                                 val intent = Intent()
                                         .setAction(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
                                         .setData(Uri.parse("package:" + BuildConfig.APPLICATION_ID))
@@ -310,7 +286,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private fun doDismissAll() {
 
         ApplicationController.dismissAllButRecentAndSnoozed(
-                this, EventDismissType.ManuallyDismissedFromActivity)
+                this, EventCompletionType.ManuallyInTheApp)
 
         reloadData()
         lastEventDismissalScrollPosition = null
@@ -343,7 +319,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         if (settings.devModeEnabled) {
             menu.findItem(R.id.action_test_page)?.isVisible = true
-//            menu.findItem(R.id.action_add_event)?.isVisible = true
         }
 
         return true
@@ -392,7 +367,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private fun reloadData() {
 
         background {
-            DismissedEventsStorage(this).use { it.purgeOld(System.currentTimeMillis(), Consts.BIN_KEEP_HISTORY_MILLISECONDS) }
+            CompleteEventsStorage(this).use { it.purgeOld(System.currentTimeMillis(), Consts.BIN_KEEP_HISTORY_MILLISECONDS) }
 
             val events =
                     EventsStorage(this).use {
@@ -474,7 +449,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         if (event != null) {
             DevLog.info(LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-            ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event)
+            ApplicationController.dismissEvent(this, EventCompletionType.ManuallyInTheApp, event)
 
             undoManager.addUndoState(
                     UndoState(
@@ -497,7 +472,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     override fun onItemRemoved(event: EventAlertRecord) {
 
         DevLog.info(LOG_TAG, "onItemRemoved: Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-        ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event)
+        ApplicationController.dismissEvent(this, EventCompletionType.ManuallyInTheApp, event)
         lastEventDismissalScrollPosition = adapter.scrollPosition
         onNumEventsUpdated()
     }

@@ -32,11 +32,7 @@ import java.io.Closeable
 class MonitorStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable {
 
-    private var impl: MonitorStorageImplInterface
-
-    init {
-        impl = MonitorStorageImplV1(context);
-    }
+    private var impl = MonitorStorageImplV1(context)
 
     override fun onCreate(db: SQLiteDatabase)
             = impl.createDb(db)

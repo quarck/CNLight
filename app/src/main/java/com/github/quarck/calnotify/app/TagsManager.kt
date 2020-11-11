@@ -19,8 +19,6 @@
 
 package com.github.quarck.calnotify.app
 
-import android.content.Context
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 
 
@@ -33,12 +31,12 @@ class TagsManager {
         val pos = text.indexOf(tag, ignoreCase = true)
         if (pos != -1) {
             val nextCharAfterTag = pos + tag.length;
-            if (nextCharAfterTag < text.length) {
-                ret = !text[nextCharAfterTag].isLetterOrDigit();
-            }
-            else {
-                ret = true;
-            }
+            ret =
+                if (nextCharAfterTag < text.length)
+                    !text[nextCharAfterTag].isLetterOrDigit()
+                else
+                    true
+
         }
 
         return ret
@@ -47,8 +45,7 @@ class TagsManager {
     private fun EventAlertRecord.hasTag(tag: String) =
             hasTag(this.title, tag) || hasTag(this.desc, tag)
 
-    fun parseEventTags(context: Context, settings: Settings, event: EventAlertRecord) {
-
+    fun parseEventTags(event: EventAlertRecord) {
         event.isAlarm = event.hasTag(ALARM_TAG)
     }
 

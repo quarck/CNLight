@@ -20,9 +20,7 @@
 package com.github.quarck.calnotify.ui
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.PorterDuff
+import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -33,33 +31,32 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventAlertRecord
-import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
+import com.github.quarck.calnotify.completeeventsstorage.CompleteEventAlertRecord
+import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.dateToStr
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
 
-fun DismissedEventAlertRecord.formatReason(ctx: Context): String =
-        when (this.dismissType) {
-            EventDismissType.ManuallyDismissedFromNotification ->
-                String.format(ctx.resources.getString(R.string.dismissed_from_notification), dateToStr(ctx, this.dismissTime))
+fun CompleteEventAlertRecord.formatReason(ctx: Context): String =
+        when (this.completionType) {
+            EventCompletionType.ManuallyViaNotification ->
+                String.format(ctx.resources.getString(R.string.dismissed_from_notification), dateToStr(ctx, this.completionTime))
 
-            EventDismissType.ManuallyDismissedFromActivity ->
-                String.format(ctx.resources.getString(R.string.dismissed_from_the_app), dateToStr(ctx, this.dismissTime))
+            EventCompletionType.ManuallyInTheApp ->
+                String.format(ctx.resources.getString(R.string.dismissed_from_the_app), dateToStr(ctx, this.completionTime))
 
-            EventDismissType.AutoDismissedDueToCalendarMove ->
+            EventCompletionType.AutoDueToCalendarMove ->
                 String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
 
-            EventDismissType.EventMovedUsingApp ->
+            EventCompletionType.EventMovedInTheApp ->
                 String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
         }
 
 interface DismissedEventListCallback {
-    fun onItemClick(v: View, position: Int, entry: DismissedEventAlertRecord): Unit
-    fun onItemRemoved(entry: DismissedEventAlertRecord)
+    fun onItemClick(v: View, position: Int, entry: CompleteEventAlertRecord): Unit
+    fun onItemRemoved(entry: CompleteEventAlertRecord)
 }
 
 class DismissedEventListAdapter(
@@ -72,7 +69,7 @@ class DismissedEventListAdapter(
     inner class ViewHolder(itemView: View)
         : RecyclerView.ViewHolder(itemView) {
         //var eventId: Long = 0;
-        var entry: DismissedEventAlertRecord? = null
+        var entry: CompleteEventAlertRecord? = null
 
         var eventHolder: RelativeLayout?
         var eventTitleText: TextView
@@ -115,7 +112,7 @@ class DismissedEventListAdapter(
         }
     }
 
-    private var entries = arrayOf<DismissedEventAlertRecord>();
+    private var entries = arrayOf<CompleteEventAlertRecord>();
 
     private var _recyclerView: RecyclerView? = null
     var recyclerView: RecyclerView?
@@ -152,7 +149,7 @@ class DismissedEventListAdapter(
                     internal var xMarkMargin = context.resources.getDimension(R.dimen.ic_clear_margin).toInt()
 
                     init {
-                        xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+                        xMark.setColorFilter(BlendModeColorFilter(Color.WHITE, BlendMode.SRC_ATOP))
                     }
 
                     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
@@ -170,7 +167,8 @@ class DismissedEventListAdapter(
                     }
 
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                        val swipedPosition = viewHolder?.adapterPosition
+                        val trueViewHolder: RecyclerView.ViewHolder? = viewHolder
+                        val swipedPosition = trueViewHolder?.adapterPosition
                         if (swipedPosition != null) {
                             _recyclerView?.itemAnimator?.changeDuration = 0;
 
@@ -284,13 +282,13 @@ class DismissedEventListAdapter(
 
     override fun getItemCount(): Int = entries.size
 
-    fun setEventsToDisplay(newEntries: Array<DismissedEventAlertRecord>)
+    fun setEventsToDisplay(newEntries: Array<CompleteEventAlertRecord>)
             = synchronized(this) {
         entries = newEntries;
         notifyDataSetChanged();
     }
 
-    fun getEntryAtPosition(position: Int, expectedEventId: Long): DismissedEventAlertRecord?
+    fun getEntryAtPosition(position: Int, expectedEventId: Long): CompleteEventAlertRecord?
             = synchronized(this) {
         if (position >= 0 && position < entries.size && entries[position].event.eventId == expectedEventId)
             entries[position];
@@ -298,7 +296,7 @@ class DismissedEventListAdapter(
             null
     }
 
-    private fun getEntryAtPosition(position: Int): DismissedEventAlertRecord?
+    private fun getEntryAtPosition(position: Int): CompleteEventAlertRecord?
             = synchronized(this) {
         if (position >= 0 && position < entries.size)
             entries[position];
@@ -307,7 +305,7 @@ class DismissedEventListAdapter(
     }
 
 
-    fun removeEntry(entry: DismissedEventAlertRecord)
+    fun removeEntry(entry: CompleteEventAlertRecord)
             = synchronized(this) {
         val idx = entries.indexOf(entry)
         entries = entries.filter { ev -> ev != entry }.toTypedArray()
@@ -315,7 +313,7 @@ class DismissedEventListAdapter(
     }
 
     fun removeAll() {
-        entries = arrayOf<DismissedEventAlertRecord>()
+        entries = arrayOf<CompleteEventAlertRecord>()
         notifyDataSetChanged()
     }
 }

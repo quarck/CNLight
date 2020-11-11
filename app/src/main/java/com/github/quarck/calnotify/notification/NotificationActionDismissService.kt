@@ -23,7 +23,7 @@ import android.app.IntentService
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
+import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifier
@@ -45,7 +45,7 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
                 if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
                     ApplicationController.dismissEvent(
                             this,
-                            EventDismissType.ManuallyDismissedFromNotification,
+                            EventCompletionType.ManuallyViaNotification,
                             eventId,
                             instanceStartTime,
                             notificationId)
@@ -61,7 +61,7 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
 
                 ApplicationController.dismissAllButRecentAndSnoozed(
                         this,
-                        EventDismissType.ManuallyDismissedFromNotification)
+                        EventCompletionType.ManuallyViaNotification)
 
                 UINotifier.notify(this, true)
             }

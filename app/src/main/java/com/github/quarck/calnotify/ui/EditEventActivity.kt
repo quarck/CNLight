@@ -36,6 +36,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
@@ -223,7 +224,7 @@ open class EditEventActivity : AppCompatActivity() {
         val toolbar = find<Toolbar?>(R.id.toolbar)
         toolbar?.visibility = View.GONE
 
-        window.navigationBarColor = resources.getColor(android.R.color.black)
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
         persistentState = CalendarChangePersistentState(this)
 

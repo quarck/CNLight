@@ -31,9 +31,9 @@ import com.github.quarck.calnotify.utils.detailed
 
 //import com.github.quarck.calnotify.logs.Logger
 
-class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
+class MonitorStorageImplV1(val context: Context) {
 
-    override fun createDb(db: SQLiteDatabase) {
+    fun createDb(db: SQLiteDatabase) {
         val CREATE_PKG_TABLE =
                 "CREATE " +
                         "TABLE $TABLE_NAME " +
@@ -71,7 +71,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
 
     }
 
-    override fun addAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
+    fun addAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
 
         //DevLog.debug(LOG_TAG, "addAlert $entry")
 
@@ -92,7 +92,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         }
     }
 
-    override fun addAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
+    fun addAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
 
         try {
             db.beginTransaction()
@@ -107,7 +107,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         }
     }
 
-    override fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long) {
+    fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long) {
 
         //DevLog.debug(LOG_TAG, "deleteAlert $eventId / $alertTime")
 
@@ -122,7 +122,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         }
     }
 
-    override fun deleteAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
+    fun deleteAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
 
         try {
             db.beginTransaction()
@@ -137,7 +137,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         }
     }
 
-    override fun deleteAlertsMatching(db: SQLiteDatabase, filter: (MonitorEventAlertEntry) -> Boolean) {
+    fun deleteAlertsMatching(db: SQLiteDatabase, filter: (MonitorEventAlertEntry) -> Boolean) {
 
         try {
             val alerts = getAlerts(db)
@@ -159,7 +159,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         }
     }
 
-    override fun updateAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
+    fun updateAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
         val values = recordToContentValues(entry)
 
         //DevLog.debug(LOG_TAG, "Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
@@ -170,7 +170,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
                 arrayOf(entry.eventId.toString(), entry.alertTime.toString(), entry.instanceStartTime.toString()))
     }
 
-    override fun updateAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
+    fun updateAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
 
         //DevLog.debug(LOG_TAG, "Updating ${entries.size} alerts");
 
@@ -195,7 +195,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         }
     }
 
-    override fun getAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry? {
+    fun getAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry? {
 
         var ret: MonitorEventAlertEntry? = null
 
@@ -228,7 +228,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
     }
 
 
-    override fun getNextAlert(db: SQLiteDatabase, since: Long): Long? {
+    fun getNextAlert(db: SQLiteDatabase, since: Long): Long? {
 
         var ret: Long? = null;
 
@@ -255,7 +255,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         return ret
     }
 
-    override fun getAlertsAt(db: SQLiteDatabase, time: Long): List<MonitorEventAlertEntry> {
+    fun getAlertsAt(db: SQLiteDatabase, time: Long): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         var cursor: Cursor? = null
@@ -288,7 +288,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         return ret
     }
 
-    override fun getAlerts(db: SQLiteDatabase): List<MonitorEventAlertEntry> {
+    fun getAlerts(db: SQLiteDatabase): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         var cursor: Cursor? = null
@@ -321,7 +321,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         return ret
     }
 
-    override fun getInstanceAlerts(db: SQLiteDatabase, eventId: Long, instanceStart: Long): List<MonitorEventAlertEntry> {
+    fun getInstanceAlerts(db: SQLiteDatabase, eventId: Long, instanceStart: Long): List<MonitorEventAlertEntry> {
 
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
@@ -358,7 +358,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         return ret
     }
 
-    override fun getAlertsForInstanceStartRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
+    fun getAlertsForInstanceStartRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         var cursor: Cursor? = null
@@ -394,7 +394,7 @@ class MonitorStorageImplV1(val context: Context) : MonitorStorageImplInterface {
         return ret
     }
 
-    override fun getAlertsForAlertRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
+    fun getAlertsForAlertRange(db: SQLiteDatabase, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         var cursor: Cursor? = null

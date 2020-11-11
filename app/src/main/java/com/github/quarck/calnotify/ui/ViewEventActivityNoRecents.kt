@@ -33,7 +33,7 @@ import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
+import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.maps.MapsIntents
@@ -159,7 +159,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         setContentView(R.layout.activity_view)
 
-        window.navigationBarColor = resources.getColor(android.R.color.black)
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
         val currentTime = System.currentTimeMillis()
 
@@ -352,7 +352,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.action_dismiss_event -> {
-                    ApplicationController.dismissEvent(this, EventDismissType.ManuallyDismissedFromActivity, event)
+                    ApplicationController.dismissEvent(this, EventCompletionType.ManuallyInTheApp, event)
                     undoManager.addUndoState(
                             UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, event) }))
                     finish()
@@ -431,12 +431,12 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         finish()
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun OnEnableMove(v: View?) {
         val btnEnable = findOrThrow<TextView>(R.id.enable_snooze_reschedule)
         val layout2 = findOrThrow<LinearLayout>(R.id.snooze_view_snooze_sub_layout_4)
         btnEnable.visibility = View.GONE
         layout2.visibility = View.VISIBLE
-
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
@@ -472,7 +472,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
                     val date = Calendar.getInstance()
                     date.set(datePicker.year, datePicker.month, datePicker.dayOfMonth, 0, 0, 0)
                     state.timeAMillis = date.timeInMillis
-                    state.timeBMillis = event?.snoozedUntil ?: 0L
+                    state.timeBMillis = event.snoozedUntil
                 }
             }
             ViewEventActivityStateCode.SnoozeUntilOpenedTimePicker -> {
@@ -587,9 +587,9 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         snoozeUntilShowDatePickerDialog(event.snoozedUntil, event.snoozedUntil)
     }
 
-    fun inflateDatePickerDialog() = layoutInflater?.inflate(R.layout.dialog_date_picker, null)
+    fun inflateDatePickerDialog() = layoutInflater.inflate(R.layout.dialog_date_picker, null)
 
-    fun inflateTimePickerDialog() = layoutInflater?.inflate(R.layout.dialog_time_picker, null)
+    fun inflateTimePickerDialog() = layoutInflater.inflate(R.layout.dialog_time_picker, null)
 
     fun snoozeUntilShowDatePickerDialog(initialValueForDate: Long, initialValueForTime: Long) {
 

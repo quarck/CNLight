@@ -32,67 +32,9 @@ import com.github.quarck.calnotify.logs.DevLog
 import java.util.*
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
-class EventsStorageImplV8(val context: Context)
-    : EventsStorageImplInterface {
+class EventsStorageImplV8(val context: Context) {
 
-    @Suppress("ConvertToStringTemplate")
-    override fun createDb(db: SQLiteDatabase) {
-
-        val CREATE_PKG_TABLE =
-                "CREATE " +
-                        "TABLE $TABLE_NAME " +
-                        "( " +
-                        "$KEY_CALENDAR_ID INTEGER, " +
-                        "$KEY_EVENTID INTEGER, " +
-
-                        "$KEY_ALERT_TIME INTEGER, " +
-
-                        "$KEY_NOTIFICATIONID INTEGER, " +
-                        "$KEY_TITLE TEXT, " +
-
-                        "$KEY_START INTEGER, " +
-                        "$KEY_END INTEGER, " +
-
-                        "$KEY_INSTANCE_START INTEGER, " +
-                        "$KEY_INSTANCE_END INTEGER, " +
-
-                        "$KEY_LOCATION TEXT, " +
-                        "$KEY_SNOOZED_UNTIL INTEGER, " +
-                        "$KEY_LAST_EVENT_VISIBILITY INTEGER, " +
-                        "$KEY_DISPLAY_STATUS INTEGER, " +
-                        "$KEY_COLOR INTEGER, " +
-                        "$KEY_IS_REPEATING TEXT, " +
-
-                        "$KEY_ALL_DAY INTEGER, " +
-                        "$KEY_EVENT_ORIGIN INTEGER, " +
-                        "$KEY_TIME_FIRST_SEEN INTEGER, " +
-
-                        "$KEY_EVENT_STATUS INTEGER, " +
-                        "$KEY_EVENT_ATTENDANCE_STATUS INTEGER, " +
-
-                        "$KEY_RESERVED_INT1 INTEGER, " +
-                        "$KEY_RESERVED_INT2 INTEGER, " +
-                        "$KEY_RESERVED_INT3 INTEGER, " +
-                        "$KEY_RESERVED_INT4 INTEGER, " +
-
-                        "$KEY_RESERVED_STR1 TEXT, " +
-                        "$KEY_RESERVED_STR2 TEXT, " +
-
-                        "PRIMARY KEY ($KEY_EVENTID, $KEY_INSTANCE_START)" +
-                        " )"
-
-        DevLog.debug(LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
-
-        db.execSQL(CREATE_PKG_TABLE)
-
-        val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_INSTANCE_START)"
-
-        DevLog.debug(LOG_TAG, "Creating DB INDEX using query: " + CREATE_INDEX)
-
-        db.execSQL(CREATE_INDEX)
-    }
-
-    override fun dropAll(db: SQLiteDatabase): Boolean {
+    fun dropAll(db: SQLiteDatabase): Boolean {
 
         var ret = false
 
@@ -110,67 +52,6 @@ class EventsStorageImplV8(val context: Context)
 //        }
 
         return ret;
-    }
-
-    override fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
-        // DevLog.debug(LOG_TAG, "addEventImpl " + event.eventId)
-
-        var ret = false
-
-        if (event.notificationId == 0)
-            event.notificationId = nextNotificationId(db);
-
-        val values = eventRecordToContentValues(event, true)
-
-        try {
-            val id = db.insertOrThrow(TABLE_NAME, // table
-                    null, // nullColumnHack
-                    values) // key/value -> keys = column names/ values = column
-
-            ret = id != -1L
-            // values
-        }
-        catch (ex: SQLiteConstraintException) {
-            DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB, updating!")
-            // persist original notification id in this case
-            event.notificationId = getEventImpl(db, event.eventId, event.instanceStartTime)?.notificationId ?: event.notificationId;
-            ret = updateEventImpl(db, event)
-        }
-
-//        if (!ret) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
-
-        return ret
-    }
-
-    override fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
-
-        var ret = true
-
-        try {
-            db.beginTransaction()
-
-            for (event in events) {
-                if (!addEventImpl(db, event)) {
-                    ret = false
-                    break
-                }
-            }
-
-            if (ret)
-                db.setTransactionSuccessful()
-        }
-        finally {
-            db.endTransaction()
-        }
-
-//        if (!ret) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
-        return ret
     }
 
     private fun nextNotificationId(db: SQLiteDatabase): Int {
@@ -200,146 +81,7 @@ class EventsStorageImplV8(val context: Context)
         return ret
     }
 
-    override fun updateEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
-
-        val values = eventRecordToContentValues(event)
-
-        //DevLog.debug(LOG_TAG, "Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}");
-
-        val numRowsAffected =
-                db.update(TABLE_NAME, // table
-                        values, // column/value
-                        "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
-                        arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
-
-//        if (numRowsAffected != 1) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
-        return numRowsAffected == 1
-    }
-
-    override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
-        //DevLog.debug(LOG_TAG, "Updating ${requests.size} requests");
-
-        var ret = true
-
-        try {
-            db.beginTransaction()
-
-            for (event in events) {
-                val values = eventRecordToContentValues(event)
-
-                val numRowsAffected =
-                        db.update(TABLE_NAME, // table
-                                values, // column/value
-                                "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
-                                arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
-
-                if (numRowsAffected != 1) {
-                    ret = false
-                    break
-                }
-            }
-
-            if (ret)
-                db.setTransactionSuccessful()
-        }
-        finally {
-            db.endTransaction()
-        }
-
-//        if (!ret) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
-
-        return ret
-    }
-
-    override fun updateEventAndInstanceTimesImpl(db: SQLiteDatabase, event: EventAlertRecord, instanceStart: Long, instanceEnd: Long): Boolean {
-
-        val values = eventRecordToContentValues(
-                event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
-                includeKeyValues = true)
-
-        //DevLog.debug(LOG_TAG, "Updating event, eventId=${event.eventId}, instance=${event.instanceStartTime}->$instanceStart");
-
-        val numRowsAffected =
-                db.update(TABLE_NAME, // table
-                        values, // column/value
-                        "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
-                        arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
-
-
-//        if (numRowsAffected != 1) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
-        return numRowsAffected == 1
-    }
-
-    override fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>): Boolean {
-
-        var ret = true
-
-        try {
-            db.beginTransaction()
-
-            for ((event, instanceStart, instanceEnd) in events) {
-                val values = eventRecordToContentValues(
-                        event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
-                        includeKeyValues = true)
-
-                val numRowsAffected =
-                        db.update(TABLE_NAME, // table
-                                values, // column/value
-                                "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // selections
-                                arrayOf(event.eventId.toString(), event.instanceStartTime.toString())) // selection args
-
-                if (numRowsAffected != 1) {
-                    ret = false
-                    break
-                }
-            }
-
-            if (ret)
-                db.setTransactionSuccessful()
-        }
-        finally {
-            db.endTransaction()
-        }
-
-//        if (!ret) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
-        return ret
-    }
-
-    override fun getEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): EventAlertRecord? {
-        val cursor = db.query(TABLE_NAME, // a. table
-                SELECT_COLUMNS, // b. column names
-                " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // c. selections
-                arrayOf(eventId.toString(), instanceStartTime.toString()), // d. selections args
-                null, // e. group by
-                null, // f. having
-                null, // g. order by
-                null) // h. limit
-
-        var event: EventAlertRecord? = null
-
-        if (cursor != null) {
-            if (cursor.moveToFirst())
-                event = cursorToEventRecord(cursor)
-
-            cursor.close()
-        }
-
-        return event
-    }
-
-    override fun getEventsImpl(db: SQLiteDatabase): List<EventAlertRecord> {
+    fun getEventsImpl(db: SQLiteDatabase): List<EventAlertRecord> {
         val ret = LinkedList<EventAlertRecord>()
 
         val cursor = db.query(TABLE_NAME, // a. table
@@ -364,31 +106,7 @@ class EventsStorageImplV8(val context: Context)
         return ret
     }
 
-    override fun getEventInstancesImpl(db: SQLiteDatabase, eventId: Long): List<EventAlertRecord> {
-        val ret = LinkedList<EventAlertRecord>()
-
-        val cursor = db.query(TABLE_NAME, // a. table
-                SELECT_COLUMNS, // b. column names
-                " $KEY_EVENTID = ?", // c. selections
-                arrayOf(eventId.toString()), // d. selections args
-                null, // e. group by
-                null, // f. h aving
-                null, // g. order by
-                null) // h. limit
-
-        if (cursor.moveToFirst()) {
-            do {
-                ret.add(cursorToEventRecord(cursor))
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-
-        //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} requests")
-
-        return ret
-    }
-
-    override fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): Boolean {
+    fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): Boolean {
 
         val rowsAffected =
                 db.delete(
@@ -397,73 +115,6 @@ class EventsStorageImplV8(val context: Context)
                         arrayOf(eventId.toString(), instanceStartTime.toString()))
 
         return rowsAffected == 1
-    }
-
-    override fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>): Int {
-
-        var numRemoved = 0
-
-        try {
-            db.beginTransaction()
-
-            for (event in events) {
-
-                if (deleteEventImpl(db, event.eventId, event.instanceStartTime)) {
-                    ++numRemoved
-                }
-            }
-
-            if (numRemoved > 0)
-                db.setTransactionSuccessful()
-        }
-        finally {
-            db.endTransaction()
-        }
-
-        return numRemoved
-    }
-
-    private fun eventRecordToContentValues(event: EventAlertRecord, includeKeyValues: Boolean = false): ContentValues {
-        val values = ContentValues();
-
-        values.put(KEY_CALENDAR_ID, event.calendarId)
-
-        if (includeKeyValues)
-            values.put(KEY_EVENTID, event.eventId);
-
-        values.put(KEY_ALERT_TIME, event.alertTime)
-        values.put(KEY_NOTIFICATIONID, event.notificationId);
-        values.put(KEY_TITLE, event.title);
-        values.put(KEY_START, event.startTime);
-        values.put(KEY_END, event.endTime);
-
-        if (includeKeyValues)
-            values.put(KEY_INSTANCE_START, event.instanceStartTime);
-
-        values.put(KEY_INSTANCE_END, event.instanceEndTime);
-        values.put(KEY_LOCATION, event.location);
-        values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil);
-        values.put(KEY_LAST_EVENT_VISIBILITY, event.lastStatusChangeTime);
-        values.put(KEY_DISPLAY_STATUS, event.displayStatus.code);
-        values.put(KEY_COLOR, event.color)
-        values.put(KEY_IS_REPEATING, event.isRepeating)
-        values.put(KEY_ALL_DAY, if (event.isAllDay) 1 else 0)
-        values.put(KEY_EVENT_ORIGIN, event.origin.code)
-        values.put(KEY_TIME_FIRST_SEEN, event.timeFirstSeen)
-
-        values.put(KEY_EVENT_STATUS, event.eventStatus.code)
-        values.put(KEY_EVENT_ATTENDANCE_STATUS, event.attendanceStatus.code)
-
-        // reserved - must be filled also
-        values.put(KEY_RESERVED_INT1, 0)
-        values.put(KEY_RESERVED_INT2, 0)
-        values.put(KEY_RESERVED_INT3, 0)
-        values.put(KEY_RESERVED_INT4, 0)
-
-        values.put(KEY_RESERVED_STR1, "")
-        values.put(KEY_RESERVED_STR2, "")
-
-        return values;
     }
 
     private fun cursorToEventRecord(cursor: Cursor): EventAlertRecord {
@@ -526,15 +177,6 @@ class EventsStorageImplV8(val context: Context)
 
         private const val KEY_EVENT_STATUS = "attsts"
         private const val KEY_EVENT_ATTENDANCE_STATUS = "oattsts"
-
-
-        private const val KEY_RESERVED_INT1 = "i1"
-        private const val KEY_RESERVED_INT2 = "i2"
-        private const val KEY_RESERVED_INT3 = "i3"
-        private const val KEY_RESERVED_INT4 = "i4"
-
-        private const val KEY_RESERVED_STR1 = "s1"
-        private const val KEY_RESERVED_STR2 = "s2"
 
         private val SELECT_COLUMNS = arrayOf<String>(
                 KEY_CALENDAR_ID,

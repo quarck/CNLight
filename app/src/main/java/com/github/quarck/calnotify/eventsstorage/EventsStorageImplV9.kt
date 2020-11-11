@@ -33,11 +33,10 @@ import com.github.quarck.calnotify.utils.detailed
 import java.util.*
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
-class EventsStorageImplV9(val context: Context)
-    : EventsStorageImplInterface {
+class EventsStorageImplV9(val context: Context) {
 
     @Suppress("ConvertToStringTemplate")
-    override fun createDb(db: SQLiteDatabase) {
+    fun createDb(db: SQLiteDatabase) {
 
         val CREATE_PKG_TABLE =
                 "CREATE " +
@@ -98,7 +97,7 @@ class EventsStorageImplV9(val context: Context)
         db.execSQL(CREATE_INDEX)
     }
 
-    override fun dropAll(db: SQLiteDatabase): Boolean {
+    fun dropAll(db: SQLiteDatabase): Boolean {
 
         var ret = false
 
@@ -118,7 +117,7 @@ class EventsStorageImplV9(val context: Context)
         return ret
     }
 
-    override fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
+    fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
         // DevLog.debug(LOG_TAG, "addEventImpl " + event.eventId)
 
         var ret = false
@@ -154,7 +153,7 @@ class EventsStorageImplV9(val context: Context)
         return ret
     }
 
-    override fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
+    fun addEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
 
         var ret = true
 
@@ -205,7 +204,7 @@ class EventsStorageImplV9(val context: Context)
         return ret
     }
 
-    override fun updateEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
+    fun updateEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
 
         val values = eventRecordToContentValues(event)
 
@@ -220,7 +219,7 @@ class EventsStorageImplV9(val context: Context)
         return numRowsAffected == 1
     }
 
-    override fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
+    fun updateEventsImpl(db: SQLiteDatabase, events: List<EventAlertRecord>): Boolean {
         //DevLog.debug(LOG_TAG, "Updating ${requests.size} requests");
 
         var ret = true
@@ -253,7 +252,7 @@ class EventsStorageImplV9(val context: Context)
         return ret
     }
 
-    override fun updateEventAndInstanceTimesImpl(db: SQLiteDatabase, event: EventAlertRecord, instanceStart: Long, instanceEnd: Long): Boolean {
+    fun updateEventAndInstanceTimesImpl(db: SQLiteDatabase, event: EventAlertRecord, instanceStart: Long, instanceEnd: Long): Boolean {
 
         val values = eventRecordToContentValues(
                 event = event.copy(instanceStartTime = instanceStart, instanceEndTime = instanceEnd),
@@ -270,7 +269,7 @@ class EventsStorageImplV9(val context: Context)
         return numRowsAffected == 1
     }
 
-    override fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>): Boolean {
+    fun updateEventsAndInstanceTimesImpl(db: SQLiteDatabase, events: Collection<EventWithNewInstanceTime>): Boolean {
 
         var ret = true
 
@@ -308,7 +307,7 @@ class EventsStorageImplV9(val context: Context)
         return ret
     }
 
-    override fun getEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): EventAlertRecord? {
+    fun getEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): EventAlertRecord? {
         val cursor = db.query(TABLE_NAME, // a. table
                 SELECT_COLUMNS, // b. column names
                 " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?", // c. selections
@@ -330,7 +329,7 @@ class EventsStorageImplV9(val context: Context)
         return event
     }
 
-    override fun getEventsImpl(db: SQLiteDatabase): List<EventAlertRecord> {
+    fun getEventsImpl(db: SQLiteDatabase): List<EventAlertRecord> {
         val ret = LinkedList<EventAlertRecord>()
 
         val cursor = db.query(TABLE_NAME, // a. table
@@ -355,7 +354,7 @@ class EventsStorageImplV9(val context: Context)
         return ret
     }
 
-    override fun getEventInstancesImpl(db: SQLiteDatabase, eventId: Long): List<EventAlertRecord> {
+    fun getEventInstancesImpl(db: SQLiteDatabase, eventId: Long): List<EventAlertRecord> {
         val ret = LinkedList<EventAlertRecord>()
 
         val cursor = db.query(TABLE_NAME, // a. table
@@ -379,7 +378,7 @@ class EventsStorageImplV9(val context: Context)
         return ret
     }
 
-    override fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): Boolean {
+    fun deleteEventImpl(db: SQLiteDatabase, eventId: Long, instanceStartTime: Long): Boolean {
 
         val rowsAffected =
                 db.delete(
@@ -390,7 +389,7 @@ class EventsStorageImplV9(val context: Context)
         return rowsAffected == 1
     }
 
-    override fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>): Int {
+    fun deleteEventsImpl(db: SQLiteDatabase, events: Collection<EventAlertRecord>): Int {
 
         var numRemoved = 0
 

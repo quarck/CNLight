@@ -52,8 +52,6 @@ class CalendarChangeManager(val provider: CalendarProvider) {
 
     fun moveEvent(context: Context, event: EventAlertRecord, addTimeMillis: Long): Boolean {
 
-        var ret = false
-
         if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(LOG_TAG, "moveEvent: no permissions");
             return false;
@@ -96,7 +94,7 @@ class CalendarChangeManager(val provider: CalendarProvider) {
 
         DevLog.info(LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
 
-        ret = provider.moveEvent(context, event.eventId, newStartTime, newEndTime)
+        val ret = provider.moveEvent(context, event.eventId, newStartTime, newEndTime)
         event.startTime = newStartTime
         event.endTime = newEndTime
 
@@ -170,10 +168,7 @@ class CalendarChangeManager(val provider: CalendarProvider) {
             return false;
         }
 
-        var ret = false
-
-        ret = provider.updateEvent(context, eventToEdit, details)
-
+        val ret = provider.updateEvent(context, eventToEdit, details)
         if (ret) {
             DevLog.info(LOG_TAG, "Successfully updated provider, event ${eventToEdit.eventId}")
         }

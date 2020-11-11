@@ -21,7 +21,7 @@ package com.github.quarck.calnotify.app
 
 import android.content.Context
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
+import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
 import com.github.quarck.calnotify.eventsstorage.EventWithNewInstanceTime
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
@@ -123,7 +123,7 @@ object CalendarReloadManager  {
                     context,
                     db,
                     eventsToAutoDismiss.map { it.event },
-                    EventDismissType.AutoDismissedDueToCalendarMove,
+                    EventCompletionType.AutoDueToCalendarMove,
                     true
             )
         }
@@ -226,7 +226,7 @@ object CalendarReloadManager  {
                     context,
                     db,
                     autoDismissEvents,
-                    EventDismissType.AutoDismissedDueToCalendarMove,
+                    EventCompletionType.AutoDueToCalendarMove,
                     true
             )
 
@@ -283,13 +283,12 @@ object CalendarReloadManager  {
 
         val newEventInstance = calendarProvider.getAlertByEventIdAndTime(context, event.eventId, event.alertTime)
         if (newEventInstance != null)
-            return checkCalendarAlertHasChanged(context, event, newEventInstance)
+            return checkCalendarAlertHasChanged(event, newEventInstance)
 
         return reloadCalendarEventAlertFromEvent(context, calendarProvider, event, currentTime)
     }
 
     fun checkCalendarAlertHasChanged(
-            context: Context,
             event: EventAlertRecord,
             newEventAlert: EventAlertRecord
     ): ReloadCalendarResult {

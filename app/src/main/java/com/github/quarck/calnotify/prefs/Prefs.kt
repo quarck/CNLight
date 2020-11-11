@@ -347,6 +347,7 @@ class PrefsRoot(val context: Context, val inflater: LayoutInflater, val root: Li
                 onClick)
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     private fun itemWithValue(textMain: String, reserved: Boolean, initial: String, onClick: PrefsItem.() -> Unit): PrefsItem  {
         return PrefsItem(context, inflater, root, textMain, "", onClick, true, initial)
     }

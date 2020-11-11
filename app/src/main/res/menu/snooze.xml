@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/action_dismiss_event"
-        android:title="@string/dismiss" />
+        android:title="@string/mark_as_done" />
 
     <item
         android:id="@+id/action_open_in_calendar"

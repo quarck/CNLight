@@ -25,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.BuildConfig
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
@@ -44,7 +45,7 @@ class AboutActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        window.navigationBarColor = resources.getColor(android.R.color.black)
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
         val versionText = find<TextView?>(R.id.text_view_app_version)
         val pInfo = packageManager.getPackageInfo(packageName, 0);

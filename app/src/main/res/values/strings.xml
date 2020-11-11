@@ -13,8 +13,8 @@
 
     <string name="empty" translatable="false" />
 
-    <string name="dismiss">Dismiss</string>
-    <string name="dismiss_event">Dismiss event</string> <!-- to distinguish from dismissing the notification -->
+    <string name="done">done</string>
+    <string name="mark_as_done">Mark as done</string> <!-- to distinguish from dismissing the notification -->
     <string name="snooze">Snooze</string>
 
     <string name="empty_title">(No title)</string>

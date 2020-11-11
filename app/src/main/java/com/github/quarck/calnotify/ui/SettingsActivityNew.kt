@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.prefs.CalendarsActivity
@@ -22,7 +23,7 @@ class SettingsActivityNew : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        window.navigationBarColor = resources.getColor(android.R.color.black)
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
         DevLog.info(LOG_TAG, "onCreate")
     }

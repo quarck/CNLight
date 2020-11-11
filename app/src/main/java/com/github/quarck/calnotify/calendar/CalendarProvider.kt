@@ -895,6 +895,7 @@ object CalendarProvider  {
         return ret
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun updateEvent(
             context: Context,
             eventId: Long,

@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.dismissedeventsstorage
+package com.github.quarck.calnotify.completeeventsstorage
 
 import android.content.ContentValues
 import android.database.Cursor
@@ -29,71 +29,14 @@ import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import java.util.*
 
-class DismissedEventsStorageImplV1()
-    : DismissedEventsStorageImplInterface {
+class CompleteEventsStorageImplV1()  {
 
-    @Suppress("ConvertToStringTemplate")
-    override fun createDb(db: SQLiteDatabase) {
-
-        val CREATE_PKG_TABLE =
-                "CREATE " +
-                        "TABLE $TABLE_NAME " +
-                        "( " +
-                        "$KEY_CALENDAR_ID INTEGER, " +
-                        "$KEY_EVENTID INTEGER, " +
-
-                        "$KEY_DISMISS_TIME INTEGER, " +
-                        "$KEY_DISMISS_TYPE INTEGER, " +
-
-                        "$KEY_ALERT_TIME INTEGER, " +
-
-                        "$KEY_TITLE TEXT, " +
-
-                        "$KEY_START INTEGER, " +
-                        "$KEY_END INTEGER, " +
-
-                        "$KEY_INSTANCE_START INTEGER, " +
-                        "$KEY_INSTANCE_END INTEGER, " +
-
-                        "$KEY_LOCATION STRING, " +
-                        "$KEY_SNOOZED_UNTIL INTEGER, " +
-                        "$KEY_LAST_EVENT_VISIBILITY INTEGER, " +
-                        "$KEY_DISPLAY_STATUS INTEGER, " +
-                        "$KEY_COLOR INTEGER, " +
-                        "$KEY_IS_REPEATING TEXT, " +
-
-                        "$KEY_ALL_DAY TEXT, " +
-                        "$KEY_RESERVED_INT1 TEXT, " +
-                        "$KEY_RESERVED_INT2 TEXT, " +
-                        "$KEY_RESERVED_INT3 TEXT, " +
-                        "$KEY_RESERVED_INT4 TEXT, " +
-                        "$KEY_RESERVED_INT5 TEXT, " +
-                        "$KEY_RESERVED_INT6 TEXT, " + 
-
-                        "$KEY_RESERVED_STR1 TEXT, " +
-                        "$KEY_RESERVED_STR2 TEXT, " +
-                        "$KEY_RESERVED_STR3 TEXT, " +
-
-                        "PRIMARY KEY ($KEY_EVENTID, $KEY_INSTANCE_START)" +
-                        " )"
-
-        DevLog.debug( LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
-
-        db.execSQL(CREATE_PKG_TABLE)
-
-        val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_INSTANCE_START)"
-
-        DevLog.debug( LOG_TAG, "Creating DB INDEX using query: " + CREATE_INDEX)
-
-        db.execSQL(CREATE_INDEX)
-    }
-
-    override fun dropAll(db: SQLiteDatabase) {
+    fun dropAll(db: SQLiteDatabase) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME);
     }
 
-    override fun addEventImpl(db: SQLiteDatabase, type: EventDismissType, changeTime: Long, event: EventAlertRecord) {
+    fun addEventImpl(db: SQLiteDatabase, type: EventCompletionType, changeTime: Long, event: EventAlertRecord) {
 
 //        DevLog.debug( LOG_TAG, "addEventImpl " + event.eventId)
 
@@ -110,32 +53,8 @@ class DismissedEventsStorageImplV1()
         }
     }
 
-    override fun addEventsImpl(db: SQLiteDatabase, type: EventDismissType, changeTime: Long, events: Collection<EventAlertRecord>) {
 
-        try {
-            db.beginTransaction()
-
-            for (event in events)
-                addEventImpl(db, type, changeTime, event)
-
-            db.setTransactionSuccessful()
-        }
-        finally {
-            db.endTransaction()
-        }
-    }
-
-
-    override fun deleteEventImpl(db: SQLiteDatabase, entry: DismissedEventAlertRecord) {
-        db.delete(
-                TABLE_NAME,
-                " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
-                arrayOf(entry.event.eventId.toString(), entry.event.instanceStartTime.toString()))
-
-//        DevLog.debug( LOG_TAG, "deleteEventImpl ${entry.event.eventId}, instance=${entry.event.instanceStartTime} ")
-    }
-
-    override fun deleteEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
+    fun deleteEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
         db.delete(
                 TABLE_NAME,
                 " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
@@ -144,13 +63,9 @@ class DismissedEventsStorageImplV1()
 //        DevLog.debug( LOG_TAG, "deleteEventImpl ${event.eventId}, instance=${event.instanceStartTime} ")
     }
 
-    override fun clearHistoryImpl(db: SQLiteDatabase) {
-        db.delete(TABLE_NAME, null, null)
-    }
+    fun getEventsImpl(db: SQLiteDatabase): List<CompleteEventAlertRecord> {
 
-    override fun getEventsImpl(db: SQLiteDatabase): List<DismissedEventAlertRecord> {
-
-        val ret = LinkedList<DismissedEventAlertRecord>()
+        val ret = LinkedList<CompleteEventAlertRecord>()
 
         val cursor = db.query(TABLE_NAME, // a. table
                 SELECT_COLUMNS, // b. column names
@@ -174,7 +89,7 @@ class DismissedEventsStorageImplV1()
         return ret
     }
 
-    private fun eventRecordToContentValues(event: EventAlertRecord, time: Long, type: EventDismissType): ContentValues {
+    private fun eventRecordToContentValues(event: EventAlertRecord, time: Long, type: EventCompletionType): ContentValues {
         val values = ContentValues();
 
         values.put(KEY_CALENDAR_ID, event.calendarId)
@@ -210,7 +125,7 @@ class DismissedEventsStorageImplV1()
         return values;
     }
 
-    private fun cursorToEventRecord(cursor: Cursor): DismissedEventAlertRecord {
+    private fun cursorToEventRecord(cursor: Cursor): CompleteEventAlertRecord {
 
         val event = EventAlertRecord(
                 calendarId = (cursor.getLong(PROJECTION_KEY_CALENDAR_ID) as Long?) ?: -1L,
@@ -232,10 +147,10 @@ class DismissedEventsStorageImplV1()
                 isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0
         )
 
-        return DismissedEventAlertRecord(
+        return CompleteEventAlertRecord(
                 event,
                 cursor.getLong(PROJECTION_KEY_DISMISS_TIME),
-                EventDismissType.fromInt(cursor.getInt(PROJECTION_KEY_DISMISS_TYPE))
+                EventCompletionType.fromInt(cursor.getInt(PROJECTION_KEY_DISMISS_TYPE))
         )
     }
 

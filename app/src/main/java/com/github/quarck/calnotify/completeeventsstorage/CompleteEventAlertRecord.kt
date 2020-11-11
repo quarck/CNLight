@@ -17,30 +17,24 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.dismissedeventsstorage
+package com.github.quarck.calnotify.completeeventsstorage
 
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 
-enum class EventDismissType(val code: Int) {
-    ManuallyDismissedFromNotification(0),
-    ManuallyDismissedFromActivity(1),
-    AutoDismissedDueToCalendarMove(2),
-    EventMovedUsingApp(3);
+enum class EventCompletionType(val code: Int) {
+    ManuallyViaNotification(0),
+    ManuallyInTheApp(1),
+    AutoDueToCalendarMove(2),
+    EventMovedInTheApp(3);
 
     companion object {
         @JvmStatic
         fun fromInt(v: Int) = values()[v]
     }
-
-    val shouldKeep: Boolean
-        get() = true; // this != EventMovedUsingApp
-
-    val canBeRestored: Boolean
-        get() = this != AutoDismissedDueToCalendarMove && this != EventMovedUsingApp
 }
 
-data class DismissedEventAlertRecord(
+data class CompleteEventAlertRecord(
         val event: EventAlertRecord, // actual event that was dismissed
-        val dismissTime: Long, // when dismissal happened
-        val dismissType: EventDismissType  // type of dismiss
+        val completionTime: Long, // when dismissal happened
+        val completionType: EventCompletionType  // type of dismiss
 )

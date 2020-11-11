@@ -189,7 +189,9 @@ class CalendarMonitorOneTimeJobService : JobService()  {
 
         fun schedule(context: Context, delayMillis: Long) {
             val js = context.getSystemService(JobScheduler::class.java) ?: return
-            val jobs = js.allPendingJobs ?: return
+            val jobs: MutableList<JobInfo>? = js.allPendingJobs
+            if (jobs == null)
+                return
             if (jobs.any { j -> j.id == Consts.JobIDS.CALENDAR_RESCAN_ONCE })
                 return
 
@@ -243,14 +245,9 @@ class CalendarMonitorPeriodicJobService : JobService()  {
                     BuildConfig.APPLICATION_ID,
                     CalendarMonitorPeriodicJobService::class.java.name)
             val builder =  JobInfo.Builder(Consts.JobIDS.CALENDAR_RESCAN, component)
+            builder.setPeriodic(Consts.CALENDAR_RESCAN_INTERVAL,
+                                    Consts.CALENDAR_RESCAN_INTERVAL/2)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                builder.setPeriodic(Consts.CALENDAR_RESCAN_INTERVAL,
-                                        Consts.CALENDAR_RESCAN_INTERVAL/2)
-            }
-            else {
-                builder.setPeriodic(Consts.CALENDAR_RESCAN_INTERVAL)
-            }
             builder.setPersisted(true)
             builder.setRequiresDeviceIdle(false)
 
@@ -259,7 +256,9 @@ class CalendarMonitorPeriodicJobService : JobService()  {
 
         fun schedule(context: Context) {
             val js = context.getSystemService(JobScheduler::class.java) ?: return
-            val jobs = js.allPendingJobs ?: return
+            val jobs: MutableList<JobInfo>? = js.allPendingJobs
+            if (jobs == null)
+                return
             if (jobs.any { j -> j.id == Consts.JobIDS.CALENDAR_RESCAN })
                 return
 

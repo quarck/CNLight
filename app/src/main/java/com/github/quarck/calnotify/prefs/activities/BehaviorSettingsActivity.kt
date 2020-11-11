@@ -37,40 +37,33 @@ class BehaviorSettingsActivity : AppCompatActivity() {
         preferences(this) {
             header(R.string.calendar_handling_options)
 
-            switch(R.string.manual_event_rescan_title, R.string.manual_event_rescan_summary) {
-                initial(settings.enableCalendarRescan)
-                onChange{settings.enableCalendarRescan = it}
+            switch(R.string.handle_email_only_events_title, R.string.handle_email_only_events_summary) {
+                initial(settings.notifyOnEmailOnlyEvents)
+                onChange{settings.notifyOnEmailOnlyEvents = it}
+            }
+
+            switch(R.string.handle_events_with_no_reminders, R.string.handle_events_with_no_reminders_summary) {
+                initial(settings.shouldRemindForEventsWithNoReminders)
+                onChange{settings.shouldRemindForEventsWithNoReminders = it}
 
                 depending {
-                    switch(R.string.handle_email_only_events_title, R.string.handle_email_only_events_summary) {
-                        initial(settings.notifyOnEmailOnlyEvents)
-                        onChange{settings.notifyOnEmailOnlyEvents = it}
+
+                    item(R.string.default_reminder_time, R.string.default_reminder_time_summary_short) {
+                        DefaultManualNotificationPreference(
+                                this@BehaviorSettingsActivity,
+                                layoutInflater,
+                                settings.defaultReminderTimeForEventWithNoReminderMinutes,
+                                { settings.defaultReminderTimeForEventWithNoReminderMinutes = it }
+                        ).create().show()
                     }
 
-                    switch(R.string.handle_events_with_no_reminders, R.string.handle_events_with_no_reminders_summary) {
-                        initial(settings.shouldRemindForEventsWithNoReminders)
-                        onChange{settings.shouldRemindForEventsWithNoReminders = it}
-
-                        depending {
-
-                            item(R.string.default_reminder_time, R.string.default_reminder_time_summary_short) {
-                                DefaultManualNotificationPreference(
-                                        this@BehaviorSettingsActivity,
-                                        layoutInflater,
-                                        settings.defaultReminderTimeForEventWithNoReminderMinutes,
-                                        { settings.defaultReminderTimeForEventWithNoReminderMinutes = it }
-                                ).create().show()
-                            }
-
-                            item(R.string.default_all_day_reminder_time, R.string.default_all_day_reminder_time_summary_short) {
-                                DefaultManualAllDayNotificationPreference(
-                                        this@BehaviorSettingsActivity,
-                                        layoutInflater,
-                                        settings.defaultReminderTimeForAllDayEventWithNoreminderMinutes,
-                                        { settings.defaultReminderTimeForAllDayEventWithNoreminderMinutes = it }
-                                ).create().show()
-                            }
-                        }
+                    item(R.string.default_all_day_reminder_time, R.string.default_all_day_reminder_time_summary_short) {
+                        DefaultManualAllDayNotificationPreference(
+                                this@BehaviorSettingsActivity,
+                                layoutInflater,
+                                settings.defaultReminderTimeForAllDayEventWithNoreminderMinutes,
+                                { settings.defaultReminderTimeForAllDayEventWithNoreminderMinutes = it }
+                        ).create().show()
                     }
                 }
             }

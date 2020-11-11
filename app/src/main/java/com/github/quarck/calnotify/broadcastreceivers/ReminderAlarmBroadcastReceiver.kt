@@ -24,7 +24,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.isActiveAlarm
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -58,18 +57,12 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, REMINDER_WAKE_LOCK_NAME) {
 
-            val settings = Settings(context)
             val reminderState = ReminderState(context)
 
             val currentTime = System.currentTimeMillis()
 
-            val hasActiveAlarms = EventsStorage(context).use {
-                db -> db.events.any { it.isActiveAlarm }
-            }
-
-            var nextFireAt = 0L
+            val nextFireAt: Long
             var shouldFire = false
-            val itIsAfterQuietHoursReminder = false
 
             val lastFireTime = Math.max(
                     context.persistentState.notificationLastFireTime,
@@ -109,9 +102,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
             if (shouldFire) {
                 fireReminder(
                         context = context,
-                        currentTime = currentTime,
-                        itIsAfterQuietHoursReminder = itIsAfterQuietHoursReminder,
-                        hasActiveAlarms = hasActiveAlarms
+                        currentTime = currentTime
                 )
             }
         }
@@ -119,15 +110,10 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
     private fun fireReminder(
             context: Context,
-            currentTime: Long,
-            itIsAfterQuietHoursReminder: Boolean,
-            hasActiveAlarms: Boolean
+            currentTime: Long
     ) {
-
         DevLog.info(LOG_TAG, "Firing reminder, current time ${System.currentTimeMillis()}")
-
-        ApplicationController.fireEventReminder(context, itIsAfterQuietHoursReminder, hasActiveAlarms);
-
+        ApplicationController.fireEventReminder(context);
         ReminderState(context).onReminderFired(currentTime)
     }
 

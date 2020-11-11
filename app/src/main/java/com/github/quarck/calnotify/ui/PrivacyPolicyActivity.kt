@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.find
 
@@ -19,7 +20,7 @@ class PrivacyPolicyActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        window.navigationBarColor = resources.getColor(android.R.color.black)
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
     }
 
 }

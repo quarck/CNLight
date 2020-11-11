@@ -39,18 +39,16 @@ import java.util.*
 
 
 class CalendarMonitor(val calendarProvider: CalendarProvider) {
-    
-    fun onSystemTimeChange(context: Context) {
 
+    @Suppress("unused", "UNUSED_PARAMETER")
+    fun onSystemTimeChange(context: Context) {
         DevLog.info(LOG_TAG, "onSystemTimeChange");
-        //launchRescanService(context)
     }
 
     // should return true if we have fired at new requests, so UI should reload if it is open
-    fun onAppResumed(context: Context, monitorSettingsChanged: Boolean) {
+    fun onAppResumed(context: Context) {
 
         DevLog.info(LOG_TAG, "onAppResumed")
-
         CalendarMonitorIntentService.startRescanService(
                 context,
                 0,
@@ -59,13 +57,9 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         )
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun onAlarmBroadcast(context: Context, intent: Intent) {
-
-        if (!Settings(context).enableCalendarRescan) {
-            DevLog.error(LOG_TAG, "onAlarmBroadcast - manual scan disabled")
-            setOrCancelAlarm(context, Long.MAX_VALUE)
-            return
-        }
+        DevLog.info(LOG_TAG, "onAlarmBroadcast")
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onAlarmBroadcast - no calendar permission to proceed")
@@ -73,12 +67,8 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
             return
         }
 
-        DevLog.info(LOG_TAG, "onAlarmBroadcast")
-
         try {
-
             val state = CalendarMonitorState(context)
-
             val currentTime = System.currentTimeMillis()
 
             val nextEventFireFromScan = state.nextEventFireFromScan
@@ -94,12 +84,6 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
                     ApplicationController.afterCalendarEventFired(context)
                 }
             }
-
-
-//            launchRescanService(
-//                context,
-//                reloadCalendar = true
-//            )
         }
         catch (ex: Exception) {
             DevLog.error(LOG_TAG, "Exception in onAlarmBroadcast: $ex, ${ex.detailed}")
@@ -110,14 +94,13 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
     // way of receiving information about ongoing requests. Apparently not always
     // working, that's why the rest of the class is here
     fun onProviderReminderBroadcast(context: Context, intent: Intent) {
+        DevLog.info(LOG_TAG, "onProviderReminderBroadcast");
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onProviderReminderBroadcast - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
             return
         }
-
-        DevLog.info(LOG_TAG, "onProviderReminderBroadcast");
 
         val uri = intent.data;
 
@@ -133,9 +116,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         try {
             val events = CalendarProvider.getAlertByTime(context, alertTime, skipDismissed = false)
-
             for (event in events) {
-
                 if (getAlertWasHandled(context, event)) {
                     DevLog.info(LOG_TAG, "Broadcast: Event ${event.eventId} / ${event.instanceStartTime} was handled already")
                     continue
@@ -146,10 +127,9 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
                 event.origin = EventOrigin.ProviderBroadcast
                 event.timeFirstSeen = System.currentTimeMillis()
 
-                if (ApplicationController.shouldMarkEventAsHandledAndSkip(context, event)) {
+                if (event.isCancelledOrDeclined) {
                     eventsToSilentlyDrop.add(event)
-                }
-                else if (ApplicationController.registerNewEvent(context, event)) {
+                } else if (ApplicationController.registerNewEvent(context, event)) {
                     eventsToPost.add(event)
                 }
             }
@@ -179,11 +159,6 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         }
 
         ApplicationController.afterCalendarEventFired(context)
-
-//        launchRescanService(
-//                context,
-//                reloadCalendar = true
-//        )
     }
 
     fun onEventEditedByUs(context: Context, eventId: Long) {
@@ -191,11 +166,6 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         DevLog.info(LOG_TAG, "onEventEditedByUs")
 
         val settings = Settings(context)
-
-        if (!settings.enableCalendarRescan) {
-            DevLog.error(LOG_TAG, "onEventEditedByUs - manual scan disabled")
-            return
-        }
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onEventEditedByUs - no calendar permission to proceed")
@@ -233,6 +203,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
     }
 
     fun onRescanFromService(context: Context) {
+        DevLog.info(LOG_TAG, "onRescanFromService")
 
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onRescanFromService - no calendar permission to proceed")
@@ -240,31 +211,16 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
             return
         }
 
-//        // Always schedule it regardless of..
-//        schedulePeriodicRescanAlarm(context)
-
-        if (!Settings(context).enableCalendarRescan) {
-            DevLog.error(LOG_TAG, "onRescanFromService - manual scan disabled")
-            setOrCancelAlarm(context, Long.MAX_VALUE)
-            return
-        }
-
-        DevLog.info(LOG_TAG, "onRescanFromService")
-
         var firedAnything = false
-
         try {
 
             val t0 = System.currentTimeMillis()
-
             val state = CalendarMonitorState(context)
 
             val t1 = System.currentTimeMillis()
-
             val (nextAlarmFromManual, firedEventsManual) = scanNextEvent(context, state)
 
             val t2 = System.currentTimeMillis()
-
             setOrCancelAlarm(context, nextAlarmFromManual)
 
             val t3 = System.currentTimeMillis()
@@ -288,8 +244,6 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
     private fun setOrCancelAlarm(context: Context, time: Long) {
 
         DevLog.debug(LOG_TAG, "setOrCancelAlarm");
-
-        val settings = Settings(context)
 
         if (time != Long.MAX_VALUE && time != 0L) {
 
@@ -512,9 +466,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         if (numAlertsNotFound != 0 || numErrors != 0)
             DevLog.info(LOG_TAG, "Got ${pairs.size} pairs, num found alerts: $numAlertsFound, not found: $numAlertsNotFound, errors: $numErrors")
 
-        val pairsToAdd = pairs.filter { (_, event) ->
-            !ApplicationController.shouldMarkEventAsHandledAndSkip(context, event)
-        }
+        val pairsToAdd = pairs.filter { (_, event) ->  !event.isCancelledOrDeclined  }
 
         return ApplicationController.registerNewEvents(context, pairsToAdd)
     }

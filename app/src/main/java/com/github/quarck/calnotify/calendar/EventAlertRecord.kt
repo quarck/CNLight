@@ -23,6 +23,8 @@ import android.content.Context
 import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
+import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.logs.DevLog
 
 enum class EventOrigin(val code: Int) {
     ProviderBroadcast(0),
@@ -328,17 +330,5 @@ val EventAlertRecord.scanMissedTotalEvents: Long
             return 0L
     }
 
-
-fun EventAlertRecord.getSpecialDetail(ctx: Context): Pair<String, String> {
-
-    val detail1 =
-            String.format(
-                    ctx.resources.getString(R.string.special_event_detail_format),
-                    Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN,
-                    scanMissedTotalEvents + Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN
-            )
-
-    val detail2 = ctx.resources.getString(R.string.special_event_detail2)
-
-    return Pair(detail1, detail2)
-}
+val EventAlertRecord.isCancelledOrDeclined: Boolean
+    get() = eventStatus == EventStatus.Cancelled || attendanceStatus == AttendanceStatus.Declined

@@ -61,8 +61,8 @@ object CalendarIntents {
         return intent
     }
 
-    fun calendarViewIntent(context: Context, event: EventAlertRecord)
-            = intentForAction(Intent.ACTION_VIEW, event)
+//    fun calendarViewIntent(event: EventAlertRecord)
+//            = intentForAction(Intent.ACTION_VIEW, event)
 
     fun viewCalendarEvent(context: Context, event: EventAlertRecord)
             = context.startActivity(intentForAction(Intent.ACTION_VIEW, event))

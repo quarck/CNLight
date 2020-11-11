@@ -41,12 +41,10 @@ class ListPreference<T>(
 
         val arrayAdapter = ArrayAdapter<String>(context, android.R.layout.select_dialog_singlechoice, namesArray)
 
-        builder.setNegativeButton(R.string.cancel) {
-            dialog, which -> dialog.dismiss()
-        }
+        builder.setNegativeButton(R.string.cancel) {  dlg, _ -> dlg.dismiss() }
 
         builder.setAdapter(arrayAdapter) {
-            dialog, which ->
+            _, which ->
             if (which >= 0 && which < valuesArray.size && which < namesArray.size)
                 onNewValue(namesArray[which], valuesArray[which])
         }

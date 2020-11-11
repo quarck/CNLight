@@ -20,9 +20,7 @@
 package com.github.quarck.calnotify.ui
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.PorterDuff
+import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -161,7 +159,7 @@ class EventListAdapter(
                     internal var xMarkMargin = context.resources.getDimension(R.dimen.ic_clear_margin).toInt()
 
                     init {
-                        xMark.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP)
+                        xMark.setColorFilter(BlendModeColorFilter(Color.WHITE, BlendMode.SRC_ATOP))
                     }
 
                     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
@@ -188,7 +186,8 @@ class EventListAdapter(
                     }
 
                     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                        val swipedPosition = viewHolder.adapterPosition
+                        val trueViewHolder: RecyclerView.ViewHolder? = viewHolder
+                        val swipedPosition = trueViewHolder?.adapterPosition
                         if (swipedPosition != null) {
                             _recyclerView?.itemAnimator?.changeDuration = 0;
 

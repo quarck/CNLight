@@ -22,31 +22,22 @@ package com.github.quarck.calnotify.ui
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
+import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.dismissedeventsstorage.EventDismissType
-import com.github.quarck.calnotify.eventsstorage.EventsStorage
 //import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.maps.MapsIntents
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.permissions.PermissionsManager
-import android.content.res.ColorStateList
-import androidx.core.content.ContextCompat
-import android.text.method.ScrollingMovementMethod
 
 
 open class SnoozeAllActivity : AppCompatActivity() {
@@ -110,7 +101,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_snooze_all)
 
-        window.navigationBarColor = resources.getColor(android.R.color.black)
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
         // val currentTime = System.currentTimeMillis()
 
@@ -394,9 +385,9 @@ open class SnoozeAllActivity : AppCompatActivity() {
         snoozeUntilShowDatePickerDialog(currentlySnoozedUntil, currentlySnoozedUntil)
     }
 
-    fun inflateDatePickerDialog() = layoutInflater?.inflate(R.layout.dialog_date_picker, null)
+    fun inflateDatePickerDialog() = layoutInflater.inflate(R.layout.dialog_date_picker, null)
 
-    fun inflateTimePickerDialog() = layoutInflater?.inflate(R.layout.dialog_time_picker, null)
+    fun inflateTimePickerDialog() = layoutInflater.inflate(R.layout.dialog_time_picker, null)
 
     @SuppressLint("NewApi")
     fun snoozeUntilShowDatePickerDialog(initialValueForDate: Long, initialValueForTime: Long) {

@@ -28,8 +28,6 @@ import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.prefs.PreferenceUtils
-import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.ui.MainActivity
@@ -54,6 +52,7 @@ class EventNotificationManager {
         postEventNotifications(context, formatter)
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun onEventDismissing(context: Context, eventId: Long, notificationId: Int) {
         removeNotification(context, notificationId)
     }
@@ -62,16 +61,16 @@ class EventNotificationManager {
         removeNotifications(context, events)
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
         removeNotification(context, notificationId)
         postEventNotifications(context, formatter)
     }
 
     fun onEventsDismissed(context: Context,
-                                   formatter: EventFormatterInterface,
-                                   events: Collection<EventAlertRecord>,
-                                   postNotifications: Boolean,
-                                   hasActiveEvents: Boolean
+                          formatter: EventFormatterInterface,
+                          events: Collection<EventAlertRecord>,
+                          postNotifications: Boolean
     ) {
 
         for (event in events) {
@@ -83,6 +82,7 @@ class EventNotificationManager {
         }
     }
 
+    @Suppress("unused", "UNUSED_PARAMETER")
     fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
         removeNotification(context, notificationId)
         postEventNotifications(context, formatter)
@@ -96,10 +96,7 @@ class EventNotificationManager {
      * @param events - events to sort
      * @returns pair of boolean and list, boolean means "all collapsed"
      */
-    private fun sortEvents(
-            events: List<EventAlertRecord>,
-            settings: Settings
-    ): Pair<Boolean, List<EventAlertRecord>> {
+    private fun sortEvents(events: List<EventAlertRecord>): Pair<Boolean, List<EventAlertRecord>> {
 
         var allCollapsed = false
 
@@ -123,15 +120,7 @@ class EventNotificationManager {
     /**
      * @returns pair of boolean and list, boolean means "all collapsed"
      */
-    private fun processEvents(
-            context: Context,
-            db: EventsStorage,
-            settings: Settings
-    ): Pair<Boolean, List<EventAlertRecord>> {
-
-        //val events = getEventsAndUnSnooze(context, db)
-        return sortEvents(getEventsAndUnSnooze(context, db), settings)
-    }
+    private fun processEvents(db: EventsStorage) = sortEvents(getEventsAndUnSnooze(db))
 
     fun postEventNotifications(
             context: Context,
@@ -142,12 +131,10 @@ class EventNotificationManager {
 
         val formatterLocal = formatter ?: EventFormatter(context)
 
-        val settings = Settings(context)
-
         EventsStorage(context).use {
             db ->
 
-            val (allCollapsed, events) = processEvents(context, db, settings)
+            val (allCollapsed, events) = processEvents(db)
 
             val notificationRecords = generateNotificationRecords(
                     context = context,
@@ -163,11 +150,8 @@ class EventNotificationManager {
                     postDisplayedEventNotifications(
                             context = context,
                             db = db,
-                            settings = settings,
                             formatter = formatterLocal,
-                            notificationRecords = notificationRecords,
-                            primaryEventId = primaryEventId,
-                            isReminder = isReminder
+                            notificationRecords = notificationRecords
                     )
                 }
             }
@@ -176,25 +160,16 @@ class EventNotificationManager {
                         context = context,
                         db = db,
                         notificationRecords = notificationRecords,
-                        settings = settings,
                         isReminder = isReminder
                 )
             }
         }
     }
 
-    fun fireEventReminder(
-            context: Context, itIsAfterQuietHoursReminder: Boolean,
-            hasActiveAlarms: Boolean) {
-
-        //val settings = Settings(context)
-        //val isQuietPeriodActive = !hasActiveAlarms && (QuietHoursManager.getSilentUntil(settings) != 0L)
-
+    fun fireEventReminder(context: Context) {
         EventsStorage(context).use {
             db ->
-
             val activeEvents = db.events.filter { it.isNotSnoozed && it.isAlarm }
-
             if (activeEvents.count() > 0) {
                 postEventNotifications(context, isReminder = true)
             }
@@ -210,10 +185,7 @@ class EventNotificationManager {
             val alertOnlyOnce: Boolean
     )
 
-    private fun getEventsAndUnSnooze(
-            context: Context,
-            db: EventsStorage
-    ): List<EventAlertRecord> {
+    private fun getEventsAndUnSnooze(db: EventsStorage): List<EventAlertRecord> {
 
         var currentTime = System.currentTimeMillis()
 
@@ -299,7 +271,6 @@ class EventNotificationManager {
             context: Context,
             db: EventsStorage,
             notificationRecords: MutableList<EventAlertNotificationRecord>,
-            settings: Settings,
             isReminder: Boolean
     ) {
         if (notificationRecords.isEmpty()) {
@@ -403,15 +374,10 @@ class EventNotificationManager {
     private fun postDisplayedEventNotifications(
             context: Context,
             db: EventsStorage,
-            settings: Settings,
             formatter: EventFormatterInterface,
-            notificationRecords: MutableList<EventAlertNotificationRecord>,
-            primaryEventId: Long?,
-            isReminder: Boolean
+            notificationRecords: MutableList<EventAlertNotificationRecord>
     ) {
         DevLog.debug(LOG_TAG, "Posting ${notificationRecords.size} notifications")
-
-        val snoozePresets = settings.snoozePresets
 
         val events = notificationRecords.map {it.event}
 
@@ -437,7 +403,6 @@ class EventNotificationManager {
                     ctx = context,
                     formatter = formatter,
                     event = ntf.event,
-                    snoozePresetsNotFiltered = snoozePresets,
                     isReminder = ntf.isReminder,
                     alertOnlyOnce = ntf.alertOnlyOnce,
                     soundState = ntf.soundState
@@ -486,7 +451,6 @@ class EventNotificationManager {
             ctx: Context,
             formatter: EventFormatterInterface,
             event: EventAlertRecord,
-            snoozePresetsNotFiltered: LongArray,
             isReminder: Boolean,
             alertOnlyOnce: Boolean,
             soundState: NotificationChannelManager.SoundState
@@ -539,22 +503,10 @@ class EventNotificationManager {
 
         builder.setGroup(NOTIFICATION_GROUP)
 
-        var snoozePresets =
-                snoozePresetsNotFiltered
-                        .filter {
-                            snoozeTimeInMillis ->
-                            snoozeTimeInMillis >= 0 ||
-                                    (event.instanceStartTime + snoozeTimeInMillis + Consts.ALARM_THRESHOLD) > currentTime
-                        }
-                        .toLongArray()
-
-        if (snoozePresets.isEmpty())
-            snoozePresets = longArrayOf(Consts.DEFAULT_SNOOZE_TIME)
-
         val dismissAction =
                 NotificationCompat.Action.Builder(
                         R.drawable.ic_clear_white_24dp,
-                        ctx.getString(R.string.dismiss),
+                        ctx.getString(R.string.done),
                         dismissPendingIntent
                 ).build()
 

@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.dismissedeventsstorage
+package com.github.quarck.calnotify.completeeventsstorage
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -28,14 +28,10 @@ import com.github.quarck.calnotify.utils.detailed
 //import com.github.quarck.calnotify.logs.Logger
 import java.io.Closeable
 
-class DismissedEventsStorage(val context: Context)
+class CompleteEventsStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable {
 
-    private var impl: DismissedEventsStorageImplInterface
-
-    init {
-        impl = DismissedEventsStorageImplV2();
-    }
+    private var impl = CompleteEventsStorageImplV2()
 
     override fun onCreate(db: SQLiteDatabase)
             = impl.createDb(db)
@@ -52,7 +48,7 @@ class DismissedEventsStorage(val context: Context)
 
         val implOld =
                 when (oldVersion) {
-                    DATABASE_VERSION_V1 -> DismissedEventsStorageImplV1()
+                    DATABASE_VERSION_V1 -> CompleteEventsStorageImplV1()
                     else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
                 }
 
@@ -85,29 +81,29 @@ class DismissedEventsStorage(val context: Context)
         }
     }
 
-    fun addEvent(type: EventDismissType, event: EventAlertRecord)
+    fun addEvent(type: EventCompletionType, event: EventAlertRecord)
             = addEvent(type, System.currentTimeMillis(), event)
 
-    fun addEvent(type: EventDismissType, changeTime: Long, event: EventAlertRecord)
-            = synchronized(DismissedEventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, type, changeTime, event) } }
+    fun addEvent(type: EventCompletionType, changeTime: Long, event: EventAlertRecord)
+            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, type, changeTime, event) } }
 
-    fun addEvents(type: EventDismissType, events: Collection<EventAlertRecord>)
-            = synchronized(DismissedEventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, type, System.currentTimeMillis(), events) } }
+    fun addEvents(type: EventCompletionType, events: Collection<EventAlertRecord>)
+            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, type, System.currentTimeMillis(), events) } }
 
-    fun deleteEvent(entry: DismissedEventAlertRecord)
-            = synchronized(DismissedEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, entry) } }
+    fun deleteEvent(entry: CompleteEventAlertRecord)
+            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, entry) } }
 
     fun deleteEvent(event: EventAlertRecord)
-            = synchronized(DismissedEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, event) } }
+            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, event) } }
 
     fun clearHistory()
-            = synchronized(DismissedEventsStorage::class.java) { writableDatabase.use { impl.clearHistoryImpl(it) } }
+            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.clearHistoryImpl(it) } }
 
-    val events: List<DismissedEventAlertRecord>
-        get() = synchronized(DismissedEventsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
+    val events: List<CompleteEventAlertRecord>
+        get() = synchronized(CompleteEventsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
 
     fun purgeOld(currentTime: Long, maxLiveTime: Long)
-            = events.filter { (currentTime - it.dismissTime) > maxLiveTime }.forEach { deleteEvent(it) }
+            = events.filter { (currentTime - it.completionTime) > maxLiveTime }.forEach { deleteEvent(it) }
 
     override fun close() = super.close()
 

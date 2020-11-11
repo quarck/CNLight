@@ -10,11 +10,12 @@ import androidx.appcompat.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventAlertRecord
-import com.github.quarck.calnotify.dismissedeventsstorage.DismissedEventsStorage
+import com.github.quarck.calnotify.completeeventsstorage.CompleteEventAlertRecord
+import com.github.quarck.calnotify.completeeventsstorage.CompleteEventsStorage
 import com.github.quarck.calnotify.logs.DevLog
 //import com.github.quarck.calnotify.logs.Logger
 import com.github.quarck.calnotify.utils.background
@@ -38,7 +39,7 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        window.navigationBarColor = resources.getColor(android.R.color.black)
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
         adapter =
                 DismissedEventListAdapter(
@@ -63,9 +64,9 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
     private fun reloadData() {
         background {
             val events =
-                    DismissedEventsStorage(this).use {
+                    CompleteEventsStorage(this).use {
                         db ->
-                        db.events.sortedByDescending { it.dismissTime }.toTypedArray()
+                        db.events.sortedByDescending { it.completionTime }.toTypedArray()
                     }
             runOnUiThread {
                 adapter.setEventsToDisplay(events);
@@ -74,11 +75,11 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
     }
 
 
-    override fun onItemRemoved(entry: DismissedEventAlertRecord) {
-        DismissedEventsStorage(this).use { db -> db.deleteEvent(entry) }
+    override fun onItemRemoved(entry: CompleteEventAlertRecord) {
+        CompleteEventsStorage(this).use { db -> db.deleteEvent(entry) }
     }
 
-    override fun onItemClick(v: View, position: Int, entry: DismissedEventAlertRecord) {
+    override fun onItemClick(v: View, position: Int, entry: CompleteEventAlertRecord) {
 
         val popup = PopupMenu(this, v)
         val inflater = popup.menuInflater
@@ -123,7 +124,7 @@ class DismissedEventsActivity : AppCompatActivity(), DismissedEventListCallback 
                         .setCancelable(false)
                         .setPositiveButton(android.R.string.ok) {
                             _, _ ->
-                            DismissedEventsStorage(this).use { db -> db.clearHistory() }
+                            CompleteEventsStorage(this).use { db -> db.clearHistory() }
                             adapter.removeAll()
                         }
                         .setNegativeButton(R.string.cancel) {
