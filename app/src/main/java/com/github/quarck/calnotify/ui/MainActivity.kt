@@ -317,7 +317,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
             dismissAll.isEnabled = adapter.anyForDismissAllButRecentAndSnoozed
         }
 
-        if (settings.devModeEnabled) {
+        if (Consts.DEV_MODE_ENABLED) {
             menu.findItem(R.id.action_test_page)?.isVisible = true
         }
 

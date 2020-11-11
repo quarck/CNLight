@@ -30,6 +30,8 @@ object Consts {
 
     const val DATA_UPDATED_BROADCAST = BuildConfig.APPLICATION_ID + ".dataupdated"
 
+    const val DEV_MODE_ENABLED = false
+
     const val ALARM_REMINDER_INTERVAL: Long = 60L * 1000L
 
     const val DAY_IN_MILLISECONDS = 24L * 3600L * 1000L

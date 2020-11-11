@@ -57,7 +57,6 @@ class TestActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
         findOrThrow<TextView>(R.id.todo).visibility = View.VISIBLE;
-        findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked = settings.enableMonitorDebug
     }
 
 
@@ -256,15 +255,5 @@ class TestActivity : Activity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonToggleAlarmDelayDebugClick(v: View) {
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonToggleDebugMonitorClick(v: View) {
-        settings.enableMonitorDebug = findOrThrow<ToggleButton>(R.id.buttonTestToggleDebugMonitor).isChecked
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonDisableDevPage(v: View) {
-        Settings(this).devModeEnabled = false
     }
 }

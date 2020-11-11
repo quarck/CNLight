@@ -120,7 +120,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         // remove "MM minutes before event" snooze presents for "Snooze All"
         // and when event time has passed already
-        snoozePresets = settings.snoozePresets.filter { it > 0L }.toLongArray()
+        snoozePresets = Consts.DEFAULT_SNOOZE_PRESETS.filter { it > 0L }.toLongArray()
 
         // Populate snooze controls
         for ((idx, id) in snoozePresetControlIds.withIndex()) {

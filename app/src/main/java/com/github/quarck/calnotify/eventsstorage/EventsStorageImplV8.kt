@@ -47,10 +47,6 @@ class EventsStorageImplV8(val context: Context) {
             DevLog.error(LOG_TAG, "dropAll: $ex")
         }
 
-//        if (!ret) {
-//            DevLog.debug(LOG_TAG, "debug_me_here");
-//        }
-
         return ret;
     }
 
@@ -74,9 +70,7 @@ class EventsStorageImplV8(val context: Context) {
         cursor?.close()
 
         if (ret == 0)
-            ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM;
-
-        // DevLog.debug(LOG_TAG, "nextNotificationId, returning $ret")
+            ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM
 
         return ret
     }

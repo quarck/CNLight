@@ -22,7 +22,6 @@ package com.github.quarck.calnotify.calendarmonitor
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroadcastReceiver
@@ -165,8 +164,6 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         DevLog.info(LOG_TAG, "onEventEditedByUs")
 
-        val settings = Settings(context)
-
         if (!PermissionsManager.hasAllPermissionsNoCache(context)) {
             DevLog.error(LOG_TAG, "onEventEditedByUs - no calendar permission to proceed")
             setOrCancelAlarm(context, Long.MAX_VALUE)
@@ -182,14 +179,8 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         var firedAnything = false
 
         try {
-
-            val scanStart = System.currentTimeMillis()
-
             firedAnything = scanForSingleEvent(context, event)
-
-            val scanEnd = System.currentTimeMillis()
-
-            DevLog.info(LOG_TAG, "scanForSingleEvent, perf: ${scanEnd - scanStart}")
+            DevLog.info(LOG_TAG, "scanForSingleEvent - done")
         }
         catch (ex: java.lang.SecurityException) {
             DevLog.error(LOG_TAG, "onEventEditedByUs: SecurityException, ${ex.detailed}")
@@ -213,22 +204,11 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         var firedAnything = false
         try {
-
-            val t0 = System.currentTimeMillis()
             val state = CalendarMonitorState(context)
-
-            val t1 = System.currentTimeMillis()
             val (nextAlarmFromManual, firedEventsManual) = scanNextEvent(context, state)
-
-            val t2 = System.currentTimeMillis()
             setOrCancelAlarm(context, nextAlarmFromManual)
-
-            val t3 = System.currentTimeMillis()
-
-            DevLog.info(LOG_TAG, "Manual scan, next alarm: $nextAlarmFromManual, " +
-                    "timings: ${t3-t2},${t2-t1},${t1-t0}")
-
             firedAnything = firedEventsManual
+            DevLog.info(LOG_TAG, "Manual scan done, next alarm: $nextAlarmFromManual")
         }
         catch (ex: java.lang.SecurityException) {
             DevLog.error(LOG_TAG, "onRescanFromService: SecurityException, ${ex.detailed}")
@@ -272,25 +252,11 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         }
     }
 
-    fun getAlertsAt(context: android.content.Context, time: Long): List<MonitorEventAlertEntry> {
+    fun getAlertsAt(context: android.content.Context, time: Long): List<MonitorEventAlertEntry> =
+            MonitorStorage(context).use { db ->  db.getAlertsAt(time) }
 
-        val ret = MonitorStorage(context).use {
-            db ->
-            db.getAlertsAt(time)
-        }
-
-        return ret
-    }
-
-    fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
-
-        val ret = MonitorStorage(context).use {
-            db ->
-            db.getAlertsForAlertRange(scanFrom, scanTo)
-        }
-
-        return ret
-    }
+    fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> =
+            MonitorStorage(context).use {  db ->  db.getAlertsForAlertRange(scanFrom, scanTo)  }
 
     fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean) {
 
@@ -634,45 +600,30 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
-        val ts0 = System.currentTimeMillis()
-
         val providedAlerts = alerts.associateBy { it.key }
-
-        val ts1 = System.currentTimeMillis()
 
         MonitorStorage(context).use {
             db ->
             val knownAlerts = db.getAlertsForInstanceStartRange(scanFrom, scanTo).associateBy { it.key }
 
-            val ts2 = System.currentTimeMillis()
-
             val newAlerts = providedAlerts - knownAlerts.keys
             val disappearedAlerts = knownAlerts - providedAlerts.keys
-
-            val ts3 = System.currentTimeMillis()
 
             DevLog.info(LOG_TAG, "filterAndMergeAlerts: ${newAlerts.size} new alerts, ${disappearedAlerts.size} disappeared alerts")
 
             db.deleteAlerts(disappearedAlerts.values)
             db.addAlerts(newAlerts.values)
 
-            val ts4 = System.currentTimeMillis()
-
             // Presumably this would be faster than re-reading SQLite again
             ret.addAll((knownAlerts - disappearedAlerts.keys + newAlerts).values)
 
-            val ts5 = System.currentTimeMillis()
-
-            DevLog.debug(LOG_TAG, "filterAndMergeAlerts: performance: ${ts1 - ts0}, ${ts2 - ts1}, ${ts3 - ts2}, ${ts4 - ts3}, ${ts5 - ts4}")
+            DevLog.debug(LOG_TAG, "filterAndMergeAlerts - done")
         }
 
         return ret
     }
 
-
-
     companion object {
         private const val LOG_TAG = "CalendarMonitor"
-        //val logger = com.github.quarck.calnotify.logs.Logger(LOG_TAG)
     }
 }

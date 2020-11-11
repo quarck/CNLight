@@ -54,7 +54,7 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
             if (isSnoozeAll){
                 DevLog.info(LOG_TAG, "Snooze all from notification request")
 
-                val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
+                val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Consts.DEFAULT_SNOOZE_PRESETS[0])
 
                 if (ApplicationController.snoozeAllEvents(this, snoozeDelay, false, true) != null) {
                     DevLog.info(LOG_TAG, "all visible snoozed by $snoozeDelay")
@@ -66,7 +66,7 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
             else if (isSnoozeAllCollapsed) {
                 DevLog.info(LOG_TAG, "Snooze all collapsed from notification request")
 
-                val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
+                val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Consts.DEFAULT_SNOOZE_PRESETS[0])
 
                 if (ApplicationController.snoozeAllCollapsedEvents(this, snoozeDelay, false, true) != null) {
                     DevLog.info(LOG_TAG, "all collapsed snoozed by $snoozeDelay")
@@ -79,7 +79,7 @@ class NotificationActionSnoozeService : IntentService("NotificationActionSnoozeS
                 val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
                 val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
                 val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1)
-                val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Settings(this).snoozePresets[0])
+                val snoozeDelay = intent.getLongExtra(Consts.INTENT_SNOOZE_PRESET, Consts.DEFAULT_SNOOZE_PRESETS[0])
 
                 if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
                     if (ApplicationController.snoozeEvent(this, eventId, instanceStartTime, snoozeDelay) != null) {

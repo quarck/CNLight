@@ -212,7 +212,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         calendarAccountTextView = findOrThrow<TextView>(R.id.view_event_calendar_account)
         calendarAccountTextView.text = calendar.accountName
 
-        snoozePresets = settings.snoozePresets
+        snoozePresets = Consts.DEFAULT_SNOOZE_PRESETS
 
         // remove "MM minutes before event" snooze presents for "Snooze All"
         // and when event time has passed already
@@ -735,18 +735,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             val moved = ApplicationController.moveEvent(this, event, addTime)
 
             if (moved) {
-                // Show
-                if (Settings(this).viewAfterEdit) {
-                    handler.postDelayed({
-                        CalendarIntents.viewCalendarEvent(this, event)
-                        finish()
-                    }, 100)
-                }
-                else {
-                    SnoozeResult(SnoozeType.Moved, event.startTime).toast(this)
-                    // terminate ourselves
-                    finish();
-                }
+                SnoozeResult(SnoozeType.Moved, event.startTime).toast(this) // Show
+                finish()  // terminate ourselves
             } else {
                 DevLog.info(LOG_TAG, "snooze: Failed to move event ${event.eventId} by ${addTime / 1000L} seconds")
             }
@@ -755,18 +745,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             val newEventId = ApplicationController.moveAsCopy(this, calendar, event, addTime)
 
             if (newEventId != -1L) {
-                // Show
-                if (Settings(this).viewAfterEdit) {
-                    handler.postDelayed({
-                        CalendarIntents.viewCalendarEvent(this, newEventId)
-                        finish()
-                    }, 100)
-                }
-                else {
-                    SnoozeResult(SnoozeType.Moved, event.startTime).toast(this)
-                    // terminate ourselves
-                    finish();
-                }
+                SnoozeResult(SnoozeType.Moved, event.startTime).toast(this) // Show
+                finish() // terminate ourselves
             } else {
                 DevLog.info(LOG_TAG, "snooze: Failed to move event ${event.eventId} by ${addTime / 1000L} seconds")
             }
