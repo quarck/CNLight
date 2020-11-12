@@ -34,27 +34,6 @@ fun dateToStr(ctx: Context, time: Long)
 
 const val literals = "0123456789QWRTYPASDFGHJKLZXCVBNMqwrtypasdfghjklzxcvbnm"
 
-fun encodedMinuteTimestamp(modulo: Long = 60 * 24 * 30L): String {
-
-    val ts = System.currentTimeMillis()
-    val minutes = ts / 60L / 1000L
-
-    val numLiterals = literals.length
-
-    val sb = StringBuilder(10)
-
-    var moduloMinutes = minutes % modulo
-    var moduloVal = modulo
-
-    while (moduloVal != 0L) {
-        sb.append(literals[(moduloMinutes % numLiterals).toInt()])
-        moduloMinutes /= numLiterals
-        moduloVal /= numLiterals
-    }
-
-    return sb.toString()
-}
-
 class EventFormatter(val ctx: Context) : EventFormatterInterface {
 
     private val defaultLocale by lazy { Locale.getDefault() }

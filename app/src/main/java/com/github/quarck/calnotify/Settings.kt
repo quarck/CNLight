@@ -20,31 +20,15 @@
 package com.github.quarck.calnotify
 
 import android.content.Context
-import android.os.Build
-import com.github.quarck.calnotify.prefs.PreferenceUtils
 import com.github.quarck.calnotify.utils.PersistentStorageBase
-import com.github.quarck.calnotify.utils.toIntOrNull
-
-
-enum class NotificationSwipeBehavior(val code: Int)
-{
-    DismissEvent(0),
-    SnoozeEvent(1),
-    SwipeDisallowed(2);
-
-    companion object {
-        @JvmStatic
-        fun fromInt(v: Int) = values()[v]
-    }
-}
 
 class Settings(context: Context) : PersistentStorageBase(context, "settings") {
 
-    fun getCalendarIsHandled(calendarId: Long) =
-            getBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", true)
+    fun getCalendarIsHandled(calendarId: Long): Boolean
+            = getBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", true)
 
-    fun setCalendarIsHandled(calendarId: Long, enabled: Boolean) =
-            setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
+    fun setCalendarIsHandled(calendarId: Long, enabled: Boolean)
+            = setBoolean("$CALENDAR_IS_HANDLED_KEY_PREFIX.$calendarId", enabled)
 
     var shouldRemindForEventsWithNoReminders: Boolean
         get() = getBoolean(SHOULD_REMIND_FOR_EVENTS_WITH_NO_REMINDERS_KEY, false)

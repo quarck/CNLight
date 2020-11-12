@@ -1,6 +1,6 @@
 // Credits to https://rosettacode.org/wiki/MD5/Implementation#Kotlin
 
-package com.github.quarck.calnotify.monitorstorage
+package com.github.quarck.calnotify.utils
 
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 

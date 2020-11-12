@@ -20,7 +20,6 @@
 package com.github.quarck.calnotify.ui
 
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -28,7 +27,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -50,7 +48,6 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorState
 import com.github.quarck.calnotify.completeeventsstorage.CompleteEventsStorage
 import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
@@ -338,7 +335,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             R.id.action_dismissed_events ->
                 startActivity(
-                        Intent(this, DismissedEventsActivity::class.java)
+                        Intent(this, CompleteEventsActivity::class.java)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             R.id.action_settings -> {

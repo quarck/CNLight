@@ -42,8 +42,6 @@ object Consts {
     const val MINUTE_IN_SECONDS: Long = 60L
     const val MINUTE_IN_MILLISECONDS: Long = 60L * 1000L
 
-    const val DEFAULT_SNOOZE_TIME = 5L * 60L * 1000L
-
     const val NOTIFICATION_ID_COLLAPSED = 0
     const val NOTIFICATION_ID_DYNAMIC_FROM = 1
 
@@ -88,11 +86,7 @@ object Consts {
             -5 * 60 * 1000
     ) // 15m ,1h, 4h, 8h, 1d, -5m
 
-    const val MAX_SUPPORTED_PRESETS = 6
-
     const val DEFAULT_CALENDAR_EVENT_COLOR = 0xff0000ff.toInt()
-
-    const val MIN_FORCE_REPOST_INTERVAL = 60L * 60L * 1000L // minimum once an hour
 
     const val EVENT_MOVE_THRESHOLD = 15 * 60 * 1000L
 
@@ -113,11 +107,6 @@ object Consts {
     const val NEW_EVENT_DEFAULT_ADD_HOURS: Int = 0
     const val NEW_EVENT_MAX_ALL_DAY_REMINDER_DAYS_BEFORE: Int = 28
     const val NEW_EVENT_MAX_REMINDER_MILLISECONDS_BEFORE: Long = 28L * DAY_IN_MILLISECONDS
-    const val NEW_EVENT_MONITOR_KEEP_DAYS: Long = 3
-
-    const val NEW_EVENT_MIN_MONITOR_RETRY_MILLISECONDS: Long = 10*60L*1000L // 10 minutes
-    const val NEW_EVENT_MONITOR_MAX_RETRIES: Int = 10
-    const val MIN_REMINDER_INTERVAL_SECONDS: Int = 15
 
     const val DEFAULT_NEW_EVENT_DURATION_MINUTES: Int = 30
 

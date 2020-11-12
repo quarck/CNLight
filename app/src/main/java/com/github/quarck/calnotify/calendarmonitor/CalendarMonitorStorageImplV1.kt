@@ -18,7 +18,7 @@
 //
 
 
-package com.github.quarck.calnotify.monitorstorage
+package com.github.quarck.calnotify.calendarmonitor
 
 import android.content.ContentValues
 import android.content.Context
@@ -29,9 +29,7 @@ import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
 
-//import com.github.quarck.calnotify.logs.Logger
-
-class MonitorStorageImplV1(val context: Context) {
+class CalendarMonitorStorageImplV1(val context: Context) {
 
     fun createDb(db: SQLiteDatabase) {
         val CREATE_PKG_TABLE =

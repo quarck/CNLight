@@ -37,6 +37,7 @@
             android:excludeFromRecents="true"
             android:label="@string/view_event"
             android:noHistory="true"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
             />
@@ -89,8 +90,8 @@
             android:screenOrientation="portrait"
             />
         <activity
-            android:name=".ui.DismissedEventsActivity"
-            android:label="@string/dismissed_events"
+            android:name=".ui.CompleteEventsActivity"
+            android:label="@string/complete_events"
             android:parentActivityName=".ui.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
@@ -148,27 +149,6 @@
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait"
             />
-
-        <activity android:name=".ui.CreateNoteActivity"
-            android:theme="@style/AppTheme"
-            android:label="Create a note/reminder"
-            android:screenOrientation="portrait"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
-
-        <!--provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.github.quarck.cnlight.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/filepaths" />
-        </provider -->
 
         <service android:name=".calendarmonitor.CalendarMonitorIntentService"
             />

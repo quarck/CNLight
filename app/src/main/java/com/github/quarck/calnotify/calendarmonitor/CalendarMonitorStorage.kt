@@ -18,7 +18,7 @@
 //
 
 
-package com.github.quarck.calnotify.monitorstorage
+package com.github.quarck.calnotify.calendarmonitor
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -29,10 +29,10 @@ import com.github.quarck.calnotify.logs.DevLog
 import java.io.Closeable
 
 
-class MonitorStorage(val context: Context)
+class CalendarMonitorStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable {
 
-    private var impl = MonitorStorageImplV1(context)
+    private var impl = CalendarMonitorStorageImplV1(context)
 
     override fun onCreate(db: SQLiteDatabase)
             = impl.createDb(db)
@@ -46,49 +46,49 @@ class MonitorStorage(val context: Context)
     }
 
     fun addAlert(entry: MonitorEventAlertEntry)
-            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.addAlert(it, entry) } }
+            = synchronized(CalendarMonitorStorage::class.java) { writableDatabase.use { impl.addAlert(it, entry) } }
 
     fun addAlerts(entries: Collection<MonitorEventAlertEntry>)
-            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.addAlerts(it, entries) } }
+            = synchronized(CalendarMonitorStorage::class.java) { writableDatabase.use { impl.addAlerts(it, entries) } }
 
     fun deleteAlert(entry: MonitorEventAlertEntry)
             = deleteAlert(entry.eventId, entry.alertTime, entry.instanceStartTime)
 
     fun deleteAlerts(entries: Collection<MonitorEventAlertEntry>)
-            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlerts(it, entries) } }
+            = synchronized(CalendarMonitorStorage::class.java) { writableDatabase.use { impl.deleteAlerts(it, entries) } }
 
     fun deleteAlert(eventId: Long, alertTime: Long, instanceStart: Long)
-            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlert(it, eventId, alertTime, instanceStart) } }
+            = synchronized(CalendarMonitorStorage::class.java) { writableDatabase.use { impl.deleteAlert(it, eventId, alertTime, instanceStart) } }
 
     fun deleteAlertsMatching(filter: (MonitorEventAlertEntry) -> Boolean)
-            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.deleteAlertsMatching(it, filter) } }
+            = synchronized(CalendarMonitorStorage::class.java) { writableDatabase.use { impl.deleteAlertsMatching(it, filter) } }
 
     fun updateAlert(entry: MonitorEventAlertEntry)
-            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.updateAlert(it, entry) } }
+            = synchronized(CalendarMonitorStorage::class.java) { writableDatabase.use { impl.updateAlert(it, entry) } }
 
     fun updateAlerts(entries: Collection<MonitorEventAlertEntry>)
-            = synchronized(MonitorStorage::class.java) { writableDatabase.use { impl.updateAlerts(it, entries) } }
+            = synchronized(CalendarMonitorStorage::class.java) { writableDatabase.use { impl.updateAlerts(it, entries) } }
 
     fun getAlert(eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry?
-            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlert(it, eventId, alertTime, instanceStart) } }
+            = synchronized(CalendarMonitorStorage::class.java) { readableDatabase.use { impl.getAlert(it, eventId, alertTime, instanceStart) } }
 
     fun getInstanceAlerts(eventId: Long, instanceStart: Long): List<MonitorEventAlertEntry>
-            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getInstanceAlerts(it, eventId, instanceStart) } }
+            = synchronized(CalendarMonitorStorage::class.java) { readableDatabase.use { impl.getInstanceAlerts(it, eventId, instanceStart) } }
 
     fun getNextAlert(since: Long): Long?
-            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getNextAlert(it, since) } }
+            = synchronized(CalendarMonitorStorage::class.java) { readableDatabase.use { impl.getNextAlert(it, since) } }
 
     fun getAlertsAt(time: Long): List<MonitorEventAlertEntry>
-            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlertsAt(it, time) } }
+            = synchronized(CalendarMonitorStorage::class.java) { readableDatabase.use { impl.getAlertsAt(it, time) } }
 
     val alerts: List<MonitorEventAlertEntry>
-        get() = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlerts(it) } }
+        get() = synchronized(CalendarMonitorStorage::class.java) { readableDatabase.use { impl.getAlerts(it) } }
 
     fun getAlertsForInstanceStartRange(scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
-            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlertsForInstanceStartRange(it, scanFrom, scanTo) } }
+            = synchronized(CalendarMonitorStorage::class.java) { readableDatabase.use { impl.getAlertsForInstanceStartRange(it, scanFrom, scanTo) } }
 
     fun getAlertsForAlertRange(scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
-            = synchronized(MonitorStorage::class.java) { readableDatabase.use { impl.getAlertsForAlertRange(it, scanFrom, scanTo) } }
+            = synchronized(CalendarMonitorStorage::class.java) { readableDatabase.use { impl.getAlertsForAlertRange(it, scanFrom, scanTo) } }
 
     companion object {
         private const val LOG_TAG = "MonitorStorage"

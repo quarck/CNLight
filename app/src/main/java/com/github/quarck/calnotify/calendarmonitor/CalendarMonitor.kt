@@ -27,7 +27,6 @@ import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastR
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.logs.DevLog
-import com.github.quarck.calnotify.monitorstorage.MonitorStorage
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager
@@ -253,14 +252,14 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
     }
 
     fun getAlertsAt(context: android.content.Context, time: Long): List<MonitorEventAlertEntry> =
-            MonitorStorage(context).use { db ->  db.getAlertsAt(time) }
+            CalendarMonitorStorage(context).use { db ->  db.getAlertsAt(time) }
 
     fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> =
-            MonitorStorage(context).use {  db ->  db.getAlertsForAlertRange(scanFrom, scanTo)  }
+            CalendarMonitorStorage(context).use { db ->  db.getAlertsForAlertRange(scanFrom, scanTo)  }
 
     fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean) {
 
-        MonitorStorage(context).use {
+        CalendarMonitorStorage(context).use {
             db ->
             var alert: MonitorEventAlertEntry? = db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)
 
@@ -288,13 +287,13 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         }
     }
 
-    fun getAlertWasHandled(db: MonitorStorage, ev: EventAlertRecord): Boolean {
+    fun getAlertWasHandled(db: CalendarMonitorStorage, ev: EventAlertRecord): Boolean {
         DevLog.debug(LOG_TAG, "getAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}");
         return db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)?.wasHandled ?: false
     }
 
     fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean {
-        return MonitorStorage(context).use {
+        return CalendarMonitorStorage(context).use {
             db ->
             getAlertWasHandled(db, ev)
         }
@@ -342,7 +341,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         }
 
         var alerts =
-                MonitorStorage(context).use {
+                CalendarMonitorStorage(context).use {
                     db ->
                     if (prevEventFire == null)
                         db.getAlertsAt(nextEventFire)
@@ -439,7 +438,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
 
     private fun markAlertsAsHandledInDB(context: Context, alerts: Collection<MonitorEventAlertEntry>) {
-        MonitorStorage(context).use {
+        CalendarMonitorStorage(context).use {
             db ->
             DevLog.info(LOG_TAG, "marking ${alerts.size} alerts as handled in the manual alerts DB");
 
@@ -468,7 +467,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         var numUpdatedAlerts = 0
         var numAddedAlerts = 0
 
-        MonitorStorage(context).use {
+        CalendarMonitorStorage(context).use {
             db ->
             val knownAlerts = db.getInstanceAlerts(event.eventId, event.startTime).associateBy { it.key }
 
@@ -586,7 +585,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         // Very finally - delete requests that we are no longer interested in:
         // * requests that were handled already
         // * and old enough (before this iteration's 'scanFrom'
-        MonitorStorage(context).use {
+        CalendarMonitorStorage(context).use {
             it.deleteAlertsMatching {
                 alert ->
                 alert.instanceStartTime < scanFrom && alert.wasHandled
@@ -602,7 +601,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         val providedAlerts = alerts.associateBy { it.key }
 
-        MonitorStorage(context).use {
+        CalendarMonitorStorage(context).use {
             db ->
             val knownAlerts = db.getAlertsForInstanceStartRange(scanFrom, scanTo).associateBy { it.key }
 

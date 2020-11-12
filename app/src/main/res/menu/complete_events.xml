@@ -2,11 +2,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.DismissedEventsActivity" >
+    tools:context=".ui.CompleteEventsActivity" >
 
     <item
-        android:id="@+id/action_remove_all"
-        android:title="@string/remove_all"
-        app:showAsAction="never"/>
+        android:id="@+id/action_mark_not_complete"
+        android:title="@string/mark_not_complete" />
 
 </menu>

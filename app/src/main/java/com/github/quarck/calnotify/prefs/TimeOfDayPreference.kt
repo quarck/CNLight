@@ -79,11 +79,6 @@ class TimeOfDayPreference(
         picker.minute = timeValue.component2()
     }
 
-//    override fun onClick() {
-//        super.onClick()
-//        picker.clearFocus()
-//    }
-
     fun onDialogClosed(positiveResult: Boolean) {
 
         // When the user selects "OK", persist the new value

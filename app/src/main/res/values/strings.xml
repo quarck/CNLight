@@ -156,18 +156,15 @@
     <string name="reminder_at" formatted="false"> (reminder at %s)</string>
 
 
-    <string name="dismissed_events">Dismissed events</string>
-    <string name="deleted_events">Bin</string>
+    <string name="complete_events">Complete events</string>
+    <string name="see_complete_events">See complete events</string>
     <string name="app_behavior">Behavior</string>
 
-    <string name="dismissed_from_the_app" formatted="false">Dismissed from the app on %s</string>
-    <string name="dismissed_from_notification" formatted="false">Dismissed via notification %s</string>
+    <string name="complete_from_the_app" formatted="false">In the app on %s</string>
+    <string name="complete_from_notification" formatted="false">Via notification %s</string>
     <string name="event_moved_new_time" formatted="false">Moved, new time: %s</string>
-    <string name="restore">Restore notification</string>
-    <string name="swipe_to_delete">Swipe to delete from history</string>
-    <string name="remove_all">Remove all</string>
+    <string name="mark_not_complete">Set non-complete</string>
 
-    <string name="remove_all_confirmation">Remove all entries?</string>
     <string name="title_activity_privacy_policy">Privacy Policy</string>
     <string name="privacy_policy">PRIVACY POLICY</string>
     <string name="context_policy">
