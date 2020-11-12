@@ -28,8 +28,7 @@ import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
-import com.github.quarck.calnotify.textutils.EventFormatter
-import com.github.quarck.calnotify.textutils.EventFormatterInterface
+import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.ui.ViewEventActivityNoRecents
 import com.github.quarck.calnotify.utils.*
@@ -37,11 +36,11 @@ import com.github.quarck.calnotify.utils.*
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 class EventNotificationManager {
 
-    fun onEventAdded(ctx: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
+    fun onEventAdded(ctx: Context, formatter: EventFormatter, event: EventAlertRecord) {
         postEventNotifications(ctx, formatter, primaryEventId = event.eventId)
     }
 
-    fun onEventRestored(context: Context, formatter: EventFormatterInterface, event: EventAlertRecord) {
+    fun onEventRestored(context: Context, formatter: EventFormatter, event: EventAlertRecord) {
 
         if (event.displayStatus != EventDisplayStatus.Hidden) {
             EventsStorage(context).use {
@@ -62,13 +61,13 @@ class EventNotificationManager {
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun onEventDismissed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
+    fun onEventDismissed(context: Context, formatter: EventFormatter, eventId: Long, notificationId: Int) {
         removeNotification(context, notificationId)
         postEventNotifications(context, formatter)
     }
 
     fun onEventsDismissed(context: Context,
-                          formatter: EventFormatterInterface,
+                          formatter: EventFormatter,
                           events: Collection<EventAlertRecord>,
                           postNotifications: Boolean
     ) {
@@ -83,7 +82,7 @@ class EventNotificationManager {
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun onEventSnoozed(context: Context, formatter: EventFormatterInterface, eventId: Long, notificationId: Int) {
+    fun onEventSnoozed(context: Context, formatter: EventFormatter, eventId: Long, notificationId: Int) {
         removeNotification(context, notificationId)
         postEventNotifications(context, formatter)
     }
@@ -124,7 +123,7 @@ class EventNotificationManager {
 
     fun postEventNotifications(
             context: Context,
-            formatter: EventFormatterInterface? = null,
+            formatter: EventFormatter? = null,
             primaryEventId: Long? = null,
             isReminder: Boolean = false
     ) {
@@ -374,7 +373,7 @@ class EventNotificationManager {
     private fun postDisplayedEventNotifications(
             context: Context,
             db: EventsStorage,
-            formatter: EventFormatterInterface,
+            formatter: EventFormatter,
             notificationRecords: MutableList<EventAlertNotificationRecord>
     ) {
         DevLog.debug(LOG_TAG, "Posting ${notificationRecords.size} notifications")
@@ -449,7 +448,7 @@ class EventNotificationManager {
 
     private fun postNotification(
             ctx: Context,
-            formatter: EventFormatterInterface,
+            formatter: EventFormatter,
             event: EventAlertRecord,
             isReminder: Boolean,
             alertOnlyOnce: Boolean,

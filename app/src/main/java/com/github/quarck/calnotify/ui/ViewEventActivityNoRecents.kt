@@ -36,8 +36,7 @@ import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 //import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.utils.maps.MapsIntents
-import com.github.quarck.calnotify.textutils.EventFormatter
-import com.github.quarck.calnotify.textutils.EventFormatterInterface
+import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 import com.github.quarck.calnotify.*
@@ -115,7 +114,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
     lateinit var settings: Settings
 
-    lateinit var formatter: EventFormatterInterface
+    lateinit var formatter: EventFormatter
 
     val calendarReloadManager = CalendarReloadManager
     val calendarProvider = CalendarProvider

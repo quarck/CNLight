@@ -43,8 +43,8 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendar.CalendarEditor
 import com.github.quarck.calnotify.utils.logs.DevLog
-import com.github.quarck.calnotify.textutils.EventFormatter
-import com.github.quarck.calnotify.textutils.dateToStr
+import com.github.quarck.calnotify.utils.textutils.EventFormatter
+import com.github.quarck.calnotify.utils.textutils.dateToStr
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 

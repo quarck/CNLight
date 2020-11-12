@@ -17,7 +17,7 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.textutils
+package com.github.quarck.calnotify.utils.textutils
 
 import android.content.Context
 import android.text.format.DateUtils
@@ -32,9 +32,7 @@ import java.util.*
 fun dateToStr(ctx: Context, time: Long)
         = DateUtils.formatDateTime(ctx, time, DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE)
 
-const val literals = "0123456789QWRTYPASDFGHJKLZXCVBNMqwrtypasdfghjklzxcvbnm"
-
-class EventFormatter(val ctx: Context) : EventFormatterInterface {
+class EventFormatter(val ctx: Context) {
 
     private val defaultLocale by lazy { Locale.getDefault() }
 
@@ -48,7 +46,7 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
     private fun formatDateTimeUTC(startMillis: Long, flags: Int) =
             formatDateRangeUTC(startMillis, startMillis, flags)
 
-    override fun formatNotificationSecondaryText(event: EventAlertRecord): String {
+    fun formatNotificationSecondaryText(event: EventAlertRecord): String {
         val sb = StringBuilder()
 
         sb.append(formatDateTimeOneLine(event, false))
@@ -63,7 +61,7 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
         return sb.toString()
     }
 
-    override fun formatDateTimeTwoLines(event: EventAlertRecord, showWeekDay: Boolean): Pair<String, String> =
+    fun formatDateTimeTwoLines(event: EventAlertRecord, showWeekDay: Boolean = true): Pair<String, String> =
             when {
                 event.isAllDay ->
                     formatDateTimeTwoLinesAllDay(event, showWeekDay)
@@ -189,7 +187,7 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
         return ret
     }
 
-    override fun formatDateTimeOneLine(event: EventAlertRecord, showWeekDay: Boolean) =
+    fun formatDateTimeOneLine(event: EventAlertRecord, showWeekDay: Boolean = false) =
             when {
                 event.isAllDay ->
                     formatDateTimeOneLineAllDay(event, showWeekDay)
@@ -286,7 +284,7 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
         return ret
     }
 
-    override fun formatTimePoint(time: Long): String {
+    fun formatTimePoint(time: Long): String {
 
         val ret: String
 
@@ -318,11 +316,11 @@ class EventFormatter(val ctx: Context) : EventFormatterInterface {
         return ret
     }
 
-    override fun formatSnoozedUntil(event: EventAlertRecord): String {
+    fun formatSnoozedUntil(event: EventAlertRecord): String {
         return formatTimePoint(event.snoozedUntil)
     }
 
-    override fun formatTimeDuration(time: Long, granularity: Long): String {
+    fun formatTimeDuration(time: Long, granularity: Long = 1L): String {
         val num: Long
         val unit: String
         var timeSeconds = time / 1000L;

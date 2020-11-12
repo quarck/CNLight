@@ -28,7 +28,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.utils.logs.DevLog
-import com.github.quarck.calnotify.textutils.EventFormatter
+import com.github.quarck.calnotify.utils.textutils.EventFormatter
 //import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifier
 

@@ -22,7 +22,7 @@ package com.github.quarck.calnotify.app
 import android.content.Context
 import android.widget.Toast
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.textutils.dateToStr
+import com.github.quarck.calnotify.utils.textutils.dateToStr
 
 enum class SnoozeType {
     Snoozed,

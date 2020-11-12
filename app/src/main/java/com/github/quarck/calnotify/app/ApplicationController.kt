@@ -29,7 +29,7 @@ import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.reminders.ReminderState
-import com.github.quarck.calnotify.textutils.EventFormatter
+import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifier
 import com.github.quarck.calnotify.calendar.CalendarEditor
 import com.github.quarck.calnotify.calendarmonitor.*

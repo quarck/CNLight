@@ -13,7 +13,6 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
-//import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
@@ -52,10 +51,7 @@ class CompleteEventsActivity : AppCompatActivity(), CompleteEventListCallback {
     public override fun onResume() {
         DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
-        reloadData()
-    }
 
-    private fun reloadData() {
         background {
             val events =
                     CompleteEventsStorage(this).use {

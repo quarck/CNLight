@@ -20,11 +20,9 @@
 package com.github.quarck.calnotify.ui
 
 import android.content.Context
-import android.graphics.*
 import android.graphics.drawable.ColorDrawable
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,8 +31,8 @@ import android.widget.TextView
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
 import com.github.quarck.calnotify.calendar.EventCompletionType
-import com.github.quarck.calnotify.textutils.EventFormatter
-import com.github.quarck.calnotify.textutils.dateToStr
+import com.github.quarck.calnotify.utils.textutils.EventFormatter
+import com.github.quarck.calnotify.utils.textutils.dateToStr
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow
