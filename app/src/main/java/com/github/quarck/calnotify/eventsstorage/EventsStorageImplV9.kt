@@ -32,7 +32,6 @@ import com.github.quarck.calnotify.utils.detailed
 //import com.github.quarck.calnotify.utils.logs.Logger
 import java.util.*
 
-@Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 class EventsStorageImplV9(val context: Context) {
 
     @Suppress("ConvertToStringTemplate")
@@ -352,6 +351,14 @@ class EventsStorageImplV9(val context: Context) {
         //DevLog.debug(LOG_TAG, "eventsImpl, returnint ${ret.size} requests")
 
         return ret
+    }
+
+    fun dumpAll(db: SQLiteDatabase) {
+        DevLog.debug(LOG_TAG, "dumping current events")
+        var i = 0
+        for (event in getEventsImpl(db)) {
+            DevLog.debug(LOG_TAG, "${i++}: $event")
+        }
     }
 
     fun getEventInstancesImpl(db: SQLiteDatabase, eventId: Long): List<EventAlertRecord> {

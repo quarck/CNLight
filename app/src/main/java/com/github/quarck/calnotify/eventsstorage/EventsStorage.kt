@@ -189,6 +189,8 @@ class EventsStorage(val context: Context)
     fun deleteEvents(events: Collection<EventAlertRecord>): Int
             = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.deleteEventsImpl(it, events) } }
 
+    fun dumpAll() = synchronized(EventsStorage::class.java) { readableDatabase.use { impl.dumpAll(it) } }
+
     val events: List<EventAlertRecord>
         get() = synchronized(EventsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
 

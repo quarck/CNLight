@@ -422,11 +422,40 @@ class CalendarMonitorStorageImplV1(val context: Context) {
         finally {
             cursor?.close()
         }
-
-        //DevLog.debug(LOG_TAG, "getAlerts, returnint ${ret.size} requests")
-
         return ret
     }
+
+    fun dumpAll(db: SQLiteDatabase) {
+
+        DevLog.debug(LOG_TAG, "Dumping monitor state: ")
+
+        var cursor: Cursor? = null
+        var i = 0
+        try {
+            cursor = db.query(TABLE_NAME, // a. table
+                    SELECT_COLUMNS, // b. column names
+                    null, // selection
+                    null, // selection Args
+                    null, // e. group by
+                    null, // f. h aving
+                    null, // g. order by
+                    null) // h. limit
+
+            if (cursor != null && cursor.moveToFirst()) {
+                do {
+                    val ent = cursorToRecord(cursor)
+                    DevLog.debug(LOG_TAG, "${i++}: $ent")
+                } while (cursor.moveToNext())
+            }
+        }
+        catch (ex: Exception) {
+            DevLog.error(LOG_TAG, "dumpAll: exception ${ex.detailed}")
+        }
+        finally {
+            cursor?.close()
+        }
+    }
+
 
     private fun recordToContentValues(entry: MonitorEventAlertEntry): ContentValues {
         val values = ContentValues();
@@ -459,7 +488,6 @@ class CalendarMonitorStorageImplV1(val context: Context) {
                 wasHandled = cursor.getInt(PROJECTION_KEY_WAS_HANDLED) != 0
         )
     }
-
 
     companion object {
         private const val LOG_TAG = "MonitorStorageImplV1"

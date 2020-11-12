@@ -90,6 +90,8 @@ class CalendarMonitorStorage(val context: Context)
     fun getAlertsForAlertRange(scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry>
             = synchronized(CalendarMonitorStorage::class.java) { readableDatabase.use { impl.getAlertsForAlertRange(it, scanFrom, scanTo) } }
 
+    fun dumpAll() = synchronized(CalendarMonitorStorage::class.java) { readableDatabase.use { impl.dumpAll(it) } }
+
     companion object {
         private const val LOG_TAG = "MonitorStorage"
 

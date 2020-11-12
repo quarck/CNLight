@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.calendar
 
 import android.provider.CalendarContract
+import com.github.quarck.calnotify.utils.md5
 
 enum class EventOrigin(val code: Int) {
     ProviderBroadcast(0),
@@ -139,6 +140,12 @@ data class EventAlertRecord(
         get() = EventAlertRecordKey(eventId, instanceStartTime)
 
     val titleAsOneLine: String by lazy { title.replace("\r\n", " ").replace("\n", " ")}
+
+    val contentMD5: String
+        get() = ("$calendarId,$isAllDay,$alertTime,${title.length}," +
+                "${desc.length},${location.length},$instanceStartTime," +
+                "$instanceEndTime,$eventStatus,$attendanceStatus," +
+                "$title,$desc,$location,").md5()
 }
 
 fun EventAlertRecord.updateFrom(newEvent: EventAlertRecord): Boolean {

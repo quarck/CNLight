@@ -34,6 +34,8 @@ import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
+import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorStorage
+import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
@@ -56,7 +58,6 @@ class TestActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test)
-        findOrThrow<TextView>(R.id.todo).visibility = View.VISIBLE;
     }
 
 
@@ -112,8 +113,6 @@ class TestActivity : Activity() {
                                     id)))
         }
     }
-
-    fun clr(r: Int, g: Int, b: Int) = 0xff.shl(24) or r.shl(16) or g.shl(8) or b
 
     fun addDemoEvent(
             currentTime: Long, eventId: Long, title: String,
@@ -219,41 +218,10 @@ class TestActivity : Activity() {
         ApplicationController.afterCalendarEventFired(this)
     }
 
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonAddProvierEventClick(v: View) {
-
-        startActivity(Intent(this, EditEventActivity::class.java))
-
-//        val currentTime = System.currentTimeMillis()
-//
-//        val cal = CalendarProvider.getCalendars(this).filter { it.isPrimary }.firstOrNull()
-//
-//        if (cal != null) {
-//            val id = CalendarProvider.createTestEvent(this,
-//                    CalendarProvider.getCalendars(this)[2].calendarId,
-//                    randomTitle(currentTime),
-//                    currentTime + 3600000L, currentTime + 7200000L, 15000L)
-
-//            startActivity(
-//                    Intent(Intent.ACTION_VIEW).setData(
-//                            ContentUris.withAppendedId(
-//                                    CalendarContract.Events.CONTENT_URI,
-//                                    id)))
-
-
-
-//        }
-    }
 
     @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonToggleRemoveClick(v: View) {
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonToggleAutoDismissDebugClick(v: View) {
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun OnButtonToggleAlarmDelayDebugClick(v: View) {
+    fun OnButtonDumpMonitor(v: View) {
+        CalendarMonitorStorage(this).use { db -> db.dumpAll() }
+        EventsStorage(this).use { db -> db.dumpAll() }
     }
 }

@@ -33,18 +33,6 @@
                 android:background="?android:attr/dividerVertical"
                 android:layout_alignParentTop="true"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/material_red"
-                android:text="
-WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is purely for debuging purpose\nif you want to play with it - use it at your own risk!\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n."
-                android:id="@+id/todo"
-                android:visibility="visible"
-                android:focusable="true"
-                />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -95,49 +83,8 @@ WARNING!\n\nNo usable hidden functionality can be found here\nThis Activity is p
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ADD EVENT TO PROVIDER"
-                android:onClick="OnButtonAddProvierEventClick"
-                android:visibility="visible"
-                android:padding="14dp"
-                />
-
-
-            <ToggleButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="OnButtonToggleAutoDismissDebugClick"
-                android:visibility="visible"
-                android:textOn="DEBUGGING AUTO DISMISS"
-                android:textOff="NOT DEBUGGING AUTO DISMISS"
-                android:padding="14dp"
-                />
-
-            <ToggleButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="OnButtonToggleAlarmDelayDebugClick"
-                android:visibility="visible"
-                android:textOn="DEBUGGING ALARM DELAYS"
-                android:textOff="NOT DEBUGGING ALARM DELAYS"
-                android:padding="14dp"
-                />
-
-            <ToggleButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/buttonTestToggleDebugMonitor"
-                android:onClick="OnButtonToggleDebugMonitorClick"
-                android:visibility="visible"
-                android:textOn="DEBUGGING MONITOR"
-                android:textOff="NOT DEBUGGING MONITOR"
-                android:padding="14dp"
-                />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="HIDE THIS PAGE"
-                android:onClick="OnButtonDisableDevPage"
+                android:text="DUMP MONITOR STATE"
+                android:onClick="OnButtonDumpMonitor"
                 android:visibility="visible"
                 android:padding="14dp"
                 />

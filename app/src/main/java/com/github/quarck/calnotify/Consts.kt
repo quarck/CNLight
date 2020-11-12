@@ -22,6 +22,7 @@ package com.github.quarck.calnotify
 import com.github.quarck.calnotify.notification.NotificationChannelManager
 
 object Consts {
+    const val DEV_MODE_ENABLED = true
 
     object JobIDS {
         const val CALENDAR_RESCAN = 0
@@ -29,8 +30,6 @@ object Consts {
     }
 
     const val DATA_UPDATED_BROADCAST = BuildConfig.APPLICATION_ID + ".dataupdated"
-
-    const val DEV_MODE_ENABLED = false
 
     const val ALARM_REMINDER_INTERVAL: Long = 60L * 1000L
 
@@ -68,41 +67,43 @@ object Consts {
             VIBRATION_DURATION / 20, VIBRATION_DURATION / 20,
             VIBRATION_DURATION / 20, VIBRATION_DURATION / 6,
             VIBRATION_DURATION)
-    val VIBRATION_PATTERN_ALARM = longArrayOf(0, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 5, VIBRATION_DURATION / 3, VIBRATION_DURATION)
+
+    val VIBRATION_PATTERN_ALARM = longArrayOf(0,
+            VIBRATION_DURATION / 5, VIBRATION_DURATION / 5,
+            VIBRATION_DURATION / 5, VIBRATION_DURATION / 5,
+            VIBRATION_DURATION / 5, VIBRATION_DURATION / 3,
+            VIBRATION_DURATION)
 
     const val DEFAULT_LED_COLOR = 0x7f0000ff
 
     const val ALARM_THRESHOLD = 24 * 1000L // multiple of both, 2 and 3
 
-    const val DISMISS_ALL_THRESHOLD = 3000L
-
     val DEFAULT_SNOOZE_PRESETS = longArrayOf(
-            15 * 60 * 1000,
-            60 * 60 * 1000,
-            4 * 60 * 60 * 1000,
-            8 * 60 * 60 * 1000,
-            24 * 60 * 60 * 1000,
-            -5 * 60 * 1000
-    ) // 15m ,1h, 4h, 8h, 1d, -5m
+            15 * MINUTE_IN_MILLISECONDS,
+            1 * HOUR_IN_MILLISECONDS,
+            4 * HOUR_IN_MILLISECONDS,
+            8 * HOUR_IN_MILLISECONDS,
+            24 * HOUR_IN_MILLISECONDS,
+            -5 * MINUTE_IN_MILLISECONDS)
 
     const val DEFAULT_CALENDAR_EVENT_COLOR = 0xff0000ff.toInt()
 
-    const val EVENT_MOVE_THRESHOLD = 15 * 60 * 1000L
+    const val EVENT_MOVE_THRESHOLD = 15 * MINUTE_IN_MILLISECONDS
 
-    const val ALERTS_DB_REMOVE_AFTER = 4L * 24L * 3600L * 1000L
-    const val MANUAL_SCAN_WINDOW: Long = 4L * 24L * 3600L * 1000L
+    const val ALERTS_DB_REMOVE_AFTER = 4L * 24L * HOUR_IN_MILLISECONDS
+    const val MANUAL_SCAN_WINDOW: Long = 4L * 24L * HOUR_IN_MILLISECONDS
 
-    const val CALENDAR_RESCAN_INTERVAL = 30L * 60L * 1000L // 30 mins
+    const val CALENDAR_RESCAN_INTERVAL = 30L * MINUTE_IN_MILLISECONDS
 
     const val MAX_DUE_ALERTS_FOR_MANUAL_SCAN = 512
     const val MAX_SCAN_BACKWARD_DAYS = 31L
 
-    const val FAILBACK_SHORT_SNOOZE = 60000L
+    const val FAILBACK_SHORT_SNOOZE = 1 * MINUTE_IN_MILLISECONDS
 
     const val MAX_USER_ACTION_DELAY: Long = 3500L
 
-    const val NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER: Long = 15*60000L
-    const val NEW_EVENT_DEFAULT_ALL_DAY_REMINDER: Long = 6*60*60000L // 18:00 on the day before
+    const val NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER: Long = 15 * MINUTE_IN_MILLISECONDS
+    const val NEW_EVENT_DEFAULT_ALL_DAY_REMINDER: Long = 6 * HOUR_IN_MILLISECONDS // 18:00 on the day before
     const val NEW_EVENT_DEFAULT_ADD_HOURS: Int = 0
     const val NEW_EVENT_MAX_ALL_DAY_REMINDER_DAYS_BEFORE: Int = 28
     const val NEW_EVENT_MAX_REMINDER_MILLISECONDS_BEFORE: Long = 28L * DAY_IN_MILLISECONDS
