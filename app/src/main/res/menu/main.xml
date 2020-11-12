@@ -18,12 +18,6 @@
         android:title="@string/see_complete_events" />
 
     <item
-        android:id="@+id/action_dismiss_all"
-        android:orderInCategory="160"
-        app:showAsAction="never"
-        android:title="@string/dismiss_all_events" />
-
-    <item
         android:id="@+id/action_settings"
         android:orderInCategory="180"
         app:showAsAction="never"

@@ -28,42 +28,28 @@ import com.github.quarck.calnotify.utils.logs.DevLog
 //import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifier
 
-class NotificationActionDismissService : IntentService("NotificationActionDismissService") {
+class NotificationActionMarkDoneService : IntentService("NotificationActionMarkDoneService") {
 
     override fun onHandleIntent(intent: Intent?) {
         DevLog.debug(LOG_TAG, "onHandleIntent")
 
         if (intent != null) {
+            val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
+            val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
+            val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1)
 
-            val isDismissAll = intent.getBooleanExtra(Consts.INTENT_DISMISS_ALL_KEY, false)
-
-            if (!isDismissAll) {
-                val notificationId = intent.getIntExtra(Consts.INTENT_NOTIFICATION_ID_KEY, -1)
-                val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
-                val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1)
-
-                if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
-                    ApplicationController.dismissEvent(
-                            this,
-                            EventCompletionType.ManuallyViaNotification,
-                            eventId,
-                            instanceStartTime,
-                            notificationId)
-                    DevLog.info(LOG_TAG, "ServiceNotificationActionDismiss: event dismissed by user: $eventId")
-
-                    UINotifier.notify(this, true)
-                } else {
-                    DevLog.error(LOG_TAG, "notificationId=$notificationId, eventId=$eventId, instanceStartTime=$instanceStartTime, or type is null")
-                }
-            }
-            else {
-                DevLog.info(LOG_TAG, "ServiceNotificationActionDismiss: dismiss all")
-
-                ApplicationController.dismissAllButRecentAndSnoozed(
+            if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
+                ApplicationController.dismissEvent(
                         this,
-                        EventCompletionType.ManuallyViaNotification)
+                        EventCompletionType.ManuallyViaNotification,
+                        eventId,
+                        instanceStartTime,
+                        notificationId)
+                DevLog.info(LOG_TAG, "ServiceNotificationActionDismiss: event dismissed by user: $eventId")
 
                 UINotifier.notify(this, true)
+            } else {
+                DevLog.error(LOG_TAG, "notificationId=$notificationId, eventId=$eventId, instanceStartTime=$instanceStartTime, or type is null")
             }
         }
         else {
@@ -72,6 +58,6 @@ class NotificationActionDismissService : IntentService("NotificationActionDismis
     }
 
     companion object {
-        private const val LOG_TAG = "NotificationActionDismissService"
+        private const val LOG_TAG = "NotificationActionMarkDoneService"
     }
 }

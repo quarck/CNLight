@@ -543,7 +543,7 @@ class EventNotificationManager {
 
     private fun dismissOrDeleteIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
 
-        val intent = Intent(ctx, NotificationActionDismissService::class.java)
+        val intent = Intent(ctx, NotificationActionMarkDoneService::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)

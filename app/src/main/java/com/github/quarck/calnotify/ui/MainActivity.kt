@@ -265,33 +265,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         super.onPause()
     }
 
-    private fun onDismissAll() {
-        AlertDialog.Builder(this)
-                .setMessage(R.string.dismiss_all_events_confirmation)
-                .setCancelable(false)
-                .setPositiveButton(android.R.string.yes) {
-                    _, _ ->
-                    doDismissAll()
-                }
-                .setNegativeButton(R.string.cancel) {
-                    _, _ ->
-                }
-                .create()
-                .show()
-    }
-
-    private fun doDismissAll() {
-
-        ApplicationController.dismissAllButRecentAndSnoozed(
-                this, EventCompletionType.ManuallyInTheApp)
-
-        reloadData()
-        lastEventDismissalScrollPosition = null
-
-        onNumEventsUpdated()
-    }
-
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
 
@@ -303,15 +276,10 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
         }
 
-        val dismissedEventsMenuItem = menu.findItem(R.id.action_dismissed_events)
-        if (dismissedEventsMenuItem != null) {
-            dismissedEventsMenuItem.isEnabled = true
-            dismissedEventsMenuItem.isVisible = true
-        }
-
-        val dismissAll = menu.findItem(R.id.action_dismiss_all)
-        if (dismissAll != null) {
-            dismissAll.isEnabled = adapter.anyForDismissAllButRecentAndSnoozed
+        val completeEventsMenuItem = menu.findItem(R.id.action_dismissed_events)
+        if (completeEventsMenuItem != null) {
+            completeEventsMenuItem.isEnabled = true
+            completeEventsMenuItem.isVisible = true
         }
 
         if (Consts.DEV_MODE_ENABLED) {
@@ -348,9 +316,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                 startActivity(
                         Intent(this, AboutActivity::class.java)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-
-            R.id.action_dismiss_all ->
-                onDismissAll()
 
             R.id.action_test_page ->
                 startActivity(

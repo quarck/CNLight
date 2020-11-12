@@ -48,31 +48,6 @@ class EventsStorageImplV8(val context: Context) {
         return ret;
     }
 
-    private fun nextNotificationId(db: SQLiteDatabase): Int {
-
-        var ret = 0;
-
-        val query = "SELECT MAX($KEY_NOTIFICATIONID) FROM " + TABLE_NAME
-
-        val cursor = db.rawQuery(query, null)
-
-        if (cursor != null && cursor.moveToFirst()) {
-            try {
-                ret = cursor.getString(0).toInt() + 1
-            }
-            catch (ex: Exception) {
-                ret = 0;
-            }
-        }
-
-        cursor?.close()
-
-        if (ret == 0)
-            ret = Consts.NOTIFICATION_ID_DYNAMIC_FROM
-
-        return ret
-    }
-
     fun getEventsImpl(db: SQLiteDatabase): List<EventAlertRecord> {
         val ret = LinkedList<EventAlertRecord>()
 

@@ -463,9 +463,6 @@ class EventListAdapter(
         pendingEventRemoveRunnables.clear()
     }
 
-    val anyForDismissAllButRecentAndSnoozed: Boolean
-        get() = ApplicationController.anyForDismissAllButRecentAndSnoozed(events)
-
     companion object {
         private const val LOG_TAG = "EventListAdapter"
     }

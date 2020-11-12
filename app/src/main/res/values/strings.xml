@@ -157,7 +157,7 @@
 
 
     <string name="complete_events">Complete events</string>
-    <string name="see_complete_events">See complete events</string>
+    <string name="see_complete_events">See completed events</string>
     <string name="app_behavior">Behavior</string>
 
     <string name="complete_from_the_app" formatted="false">In the app on %s</string>
@@ -174,8 +174,6 @@ THIS APP DOESN\'T STEAL YOUR DATA
     </string>
 
     <string name="build_time_string_format" formatted="false">Build time: %s</string>
-    <string name="dismiss_all_events">Dismiss all events</string>
-    <string name="dismiss_all_events_confirmation">Dismiss all events?\n\nCANNOT BE UNDONE!\n\nSnoozed events would not be removed</string>
     <string name="handle_events_with_no_reminders">Handle events with no reminders</string>
     <string name="handle_events_with_no_reminders_summary">Notify about events with no reminder added</string>
     <string name="default_reminder_time">Default reminder time</string>

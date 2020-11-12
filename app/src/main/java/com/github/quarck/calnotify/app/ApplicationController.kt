@@ -616,28 +616,6 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
-    fun anyForDismissAllButRecentAndSnoozed(events: Array<EventAlertRecord>): Boolean {
-        val currentTime = System.currentTimeMillis()
-        val ret = events.any {
-            event ->
-            (event.lastStatusChangeTime < currentTime - Consts.DISMISS_ALL_THRESHOLD) &&
-                    (event.snoozedUntil == 0L)
-        }
-        return ret
-    }
-
-    fun dismissAllButRecentAndSnoozed(context: Context, completionType: EventCompletionType) {
-        val currentTime = System.currentTimeMillis()
-        EventsStorage(context).use {
-            db ->
-            val eventsToDismiss = db.events.filter {
-                event ->
-                (event.lastStatusChangeTime < currentTime - Consts.DISMISS_ALL_THRESHOLD) && (event.snoozedUntil == 0L)
-            }
-            dismissEvents(context, db, eventsToDismiss, completionType, false)
-        }
-    }
-
     fun dismissEvent(
             context: Context,
             db: EventsStorage,
