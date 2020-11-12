@@ -31,8 +31,8 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.completeeventsstorage.CompleteEventAlertRecord
-import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
+import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
+import com.github.quarck.calnotify.calendar.EventCompletionType
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.dateToStr
 import com.github.quarck.calnotify.utils.adjustCalendarColor
@@ -167,7 +167,7 @@ class CompleteEventListAdapter(
         entries = newEntries;
         notifyDataSetChanged();
     }
-    
+
     fun removeEntry(entry: CompleteEventAlertRecord)
             = synchronized(this) {
         val idx = entries.indexOf(entry)

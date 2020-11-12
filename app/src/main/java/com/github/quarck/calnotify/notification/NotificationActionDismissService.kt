@@ -23,9 +23,9 @@ import android.app.IntentService
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
-import com.github.quarck.calnotify.logs.DevLog
-//import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.calendar.EventCompletionType
+import com.github.quarck.calnotify.utils.logs.DevLog
+//import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifier
 
 class NotificationActionDismissService : IntentService("NotificationActionDismissService") {

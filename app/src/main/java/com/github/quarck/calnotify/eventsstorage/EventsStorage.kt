@@ -22,12 +22,10 @@ package com.github.quarck.calnotify.eventsstorage
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.github.quarck.calnotify.calendar.EventAlertFlags
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
-import com.github.quarck.calnotify.calendar.setFlag
-import com.github.quarck.calnotify.logs.DevLog
-//import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.logs.DevLog
+//import com.github.quarck.calnotify.utils.logs.Logger
 import java.io.Closeable
 
 data class EventWithNewInstanceTime(

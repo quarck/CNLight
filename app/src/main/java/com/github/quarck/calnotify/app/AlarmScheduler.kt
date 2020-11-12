@@ -28,7 +28,7 @@ import com.github.quarck.calnotify.broadcastreceivers.SnoozeExactAlarmBroadcastR
 import com.github.quarck.calnotify.calendar.isNotSnoozed
 import com.github.quarck.calnotify.calendar.isSnoozed
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivity

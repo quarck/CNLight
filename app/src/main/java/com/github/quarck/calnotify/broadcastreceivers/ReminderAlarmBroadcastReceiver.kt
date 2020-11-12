@@ -25,11 +25,9 @@ import android.content.Intent
 import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.isActiveAlarm
-import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
-import com.github.quarck.calnotify.logs.DevLog
-//import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.logs.DevLog
+//import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivity

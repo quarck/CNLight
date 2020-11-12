@@ -41,9 +41,8 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
-import com.github.quarck.calnotify.calendareditor.CalendarChangePersistentState
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.calendar.CalendarEditor
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.dateToStr
 import com.github.quarck.calnotify.utils.*
@@ -113,6 +112,11 @@ fun EventReminderRecord.toLocalizedString(ctx: Context, isAllDay: Boolean): Stri
     return ret.toString()
 }
 
+
+class EditEventActivityState(val ctx: Context): PersistentStorageBase(ctx, "add_event_state") {
+    var lastCalendar by PersistentStorageBase.LongProperty(-1, "A") // give a short name to simplify XML parsing
+}
+
 open class EditEventActivity : AppCompatActivity() {
 
     data class ReminderWrapper(val view: TextView, var reminder: EventReminderRecord, val isForAllDay: Boolean)
@@ -153,7 +157,7 @@ open class EditEventActivity : AppCompatActivity() {
     private lateinit var to: Calendar
     private var isAllDay: Boolean = false
 
-    private lateinit var persistentState: CalendarChangePersistentState
+    private lateinit var persistentState: EditEventActivityState
 
     var calendarProvider = CalendarProvider
 
@@ -226,7 +230,7 @@ open class EditEventActivity : AppCompatActivity() {
 
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
-        persistentState = CalendarChangePersistentState(this)
+        persistentState = EditEventActivityState(this)
 
         val intent = intent
         val action = intent.action
@@ -598,7 +602,7 @@ open class EditEventActivity : AppCompatActivity() {
         val eventToEdit = originalEvent
 
         if (eventToEdit == null) {
-            val eventId = CalendarChangeManager(CalendarProvider).createEvent(this, calendar.calendarId, calendar.owner, details)
+            val eventId = CalendarEditor(CalendarProvider).createEvent(this, calendar.calendarId, calendar.owner, details)
             if (eventId != -1L) {
                 DevLog.debug(LOG_TAG, "Event created: id=${eventId}")
 
@@ -625,7 +629,7 @@ open class EditEventActivity : AppCompatActivity() {
             }
         }
         else {
-            val success = CalendarChangeManager(CalendarProvider).updateEvent(this, eventToEdit, details)
+            val success = CalendarEditor(CalendarProvider).updateEvent(this, eventToEdit, details)
 
             if (success) {
                 val nextReminder = calendarProvider.getNextEventReminderTime(this, eventToEdit.eventId, details.startTime)

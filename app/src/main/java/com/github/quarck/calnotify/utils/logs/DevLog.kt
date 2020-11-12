@@ -17,24 +17,19 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.completeeventsstorage
 
-import com.github.quarck.calnotify.calendar.EventAlertRecord
+package com.github.quarck.calnotify.utils.logs
 
-enum class EventCompletionType(val code: Int) {
-    ManuallyViaNotification(0),
-    ManuallyInTheApp(1),
-    AutoDueToCalendarMove(2),
-    EventMovedInTheApp(3);
+import android.util.Log
 
-    companion object {
-        @JvmStatic
-        fun fromInt(v: Int) = values()[v]
-    }
+
+object DevLog {
+
+    fun error(tag: String, message: String) = Log.e(tag, message)
+
+    fun warn(tag: String, message: String) = Log.w(tag, message)
+
+    fun info(tag: String, message: String) =  Log.i(tag, message)
+
+    fun debug(tag: String, message: String) = Log.d(tag, message)
 }
-
-data class CompleteEventAlertRecord(
-        val event: EventAlertRecord, // actual event that was dismissed
-        val completionTime: Long, // when dismissal happened
-        val completionType: EventCompletionType  // type of dismiss
-)

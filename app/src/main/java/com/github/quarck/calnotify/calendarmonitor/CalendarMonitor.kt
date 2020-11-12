@@ -26,7 +26,7 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastReceiver
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroadcastReceiver
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.ui.MainActivity
 import com.github.quarck.calnotify.utils.alarmManager

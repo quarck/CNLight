@@ -23,14 +23,13 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
 import android.app.job.JobParameters
 import android.app.job.JobScheduler
 import android.app.job.JobInfo
 import android.content.ComponentName
 import android.app.job.JobService
-import android.os.Build
 import com.github.quarck.calnotify.BuildConfig
 import com.github.quarck.calnotify.Consts
 

@@ -27,9 +27,9 @@ import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
-//import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.utils.logs.Logger
 import java.util.*
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")

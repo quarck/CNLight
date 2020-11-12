@@ -48,10 +48,10 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.completeeventsstorage.CompleteEventsStorage
-import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
+import com.github.quarck.calnotify.calendar.EventCompletionType
+import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.utils.background

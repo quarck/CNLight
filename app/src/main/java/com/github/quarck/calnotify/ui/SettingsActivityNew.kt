@@ -7,7 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.prefs.CalendarsActivity
 import com.github.quarck.calnotify.prefs.activities.*
 import com.github.quarck.calnotify.utils.find

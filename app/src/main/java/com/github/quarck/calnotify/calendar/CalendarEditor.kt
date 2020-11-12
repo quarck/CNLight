@@ -17,16 +17,15 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.calendareditor
+package com.github.quarck.calnotify.calendar
 
 import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 
-class CalendarChangeManager(val provider: CalendarProvider) {
+class CalendarEditor(val provider: CalendarProvider) {
 
     fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long {
 

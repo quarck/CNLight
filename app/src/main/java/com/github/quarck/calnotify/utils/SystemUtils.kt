@@ -19,18 +19,15 @@
 
 package com.github.quarck.calnotify.utils
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
 import android.os.PowerManager
-import android.os.Vibrator
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.logs.DevLog
-//import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.utils.logs.DevLog
+//import com.github.quarck.calnotify.utils.logs.Logger
 
 
 @Suppress("UNCHECKED_CAST")

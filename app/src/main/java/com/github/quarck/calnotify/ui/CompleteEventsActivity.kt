@@ -10,10 +10,10 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.completeeventsstorage.CompleteEventAlertRecord
-import com.github.quarck.calnotify.completeeventsstorage.CompleteEventsStorage
-import com.github.quarck.calnotify.logs.DevLog
-//import com.github.quarck.calnotify.logs.Logger
+import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
+import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
+import com.github.quarck.calnotify.utils.logs.DevLog
+//import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.findOrThrow

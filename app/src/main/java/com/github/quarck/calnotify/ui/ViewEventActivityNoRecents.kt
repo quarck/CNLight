@@ -33,21 +33,21 @@ import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-//import com.github.quarck.calnotify.logs.Logger
-import com.github.quarck.calnotify.maps.MapsIntents
+//import com.github.quarck.calnotify.utils.logs.Logger
+import com.github.quarck.calnotify.utils.maps.MapsIntents
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 import com.github.quarck.calnotify.*
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
 import android.os.Handler
 import androidx.core.content.ContextCompat
 import android.text.method.ScrollingMovementMethod
+import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
 
 // TODO: add repeating rule and calendar name somewhere on the snooze activity
 

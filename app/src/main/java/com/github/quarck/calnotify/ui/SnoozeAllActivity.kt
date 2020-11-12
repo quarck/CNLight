@@ -31,13 +31,14 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.app.*
 import com.github.quarck.calnotify.calendar.*
-//import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.textutils.EventFormatterInterface
 import com.github.quarck.calnotify.utils.*
 import java.util.*
 import com.github.quarck.calnotify.*
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
+import com.github.quarck.calnotify.utils.logs.DevLog
 
 
 open class SnoozeAllActivity : AppCompatActivity() {

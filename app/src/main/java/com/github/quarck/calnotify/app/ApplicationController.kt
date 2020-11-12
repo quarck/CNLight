@@ -23,19 +23,16 @@ import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
-import com.github.quarck.calnotify.completeeventsstorage.CompleteEventsStorage
-import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
+import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifier
-import com.github.quarck.calnotify.calendareditor.CalendarChangeManager
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorOneTimeJobService
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorPeriodicJobService
+import com.github.quarck.calnotify.calendar.CalendarEditor
+import com.github.quarck.calnotify.calendarmonitor.*
 import com.github.quarck.calnotify.utils.detailed
 
 
@@ -60,7 +57,7 @@ object ApplicationController : EventMovedHandler {
 
     private val calendarProvider = CalendarProvider
 
-    private val calendarChangeManager: CalendarChangeManager by lazy { CalendarChangeManager(calendarProvider)}
+    private val calendarEditor: CalendarEditor by lazy { CalendarEditor(calendarProvider) }
 
     private val calendarMonitorInternal: CalendarMonitor by lazy { CalendarMonitor(calendarProvider) }
 
@@ -731,7 +728,7 @@ object ApplicationController : EventMovedHandler {
 
     fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
 
-        val moved = calendarChangeManager.moveEvent(context, event, addTime)
+        val moved = calendarEditor.moveEvent(context, event, addTime)
 
         if (moved) {
             DevLog.info(LOG_TAG, "moveEvent: Moved event ${event.eventId} by ${addTime / 1000L} seconds")
@@ -751,7 +748,7 @@ object ApplicationController : EventMovedHandler {
 
     fun moveAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTime: Long): Long {
 
-        val eventId = calendarChangeManager.moveRepeatingAsCopy(context, calendar, event, addTime)
+        val eventId = calendarEditor.moveRepeatingAsCopy(context, calendar, event, addTime)
 
         if (eventId != -1L) {
             DevLog.debug(LOG_TAG, "Event created: id=${eventId}")

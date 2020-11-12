@@ -1,4 +1,4 @@
-package com.github.quarck.calnotify.maps
+package com.github.quarck.calnotify.utils.maps
 
 import android.content.Context
 import android.content.Intent

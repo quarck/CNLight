@@ -19,12 +19,7 @@
 
 package com.github.quarck.calnotify.calendar
 
-import android.content.Context
 import android.provider.CalendarContract
-import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.logs.DevLog
 
 enum class EventOrigin(val code: Int) {
     ProviderBroadcast(0),
@@ -136,15 +131,9 @@ data class EventAlertRecord(
         var attendanceStatus: AttendanceStatus = AttendanceStatus.None,
         var flags: Long = 0
 ) {
-    fun toPublicString() =
-            "EventAlertRecord($calendarId,$eventId,$isAllDay,$isRepeating,$alertTime,$notificationId,$startTime,$endTime,$instanceStartTime,$instanceEndTime,$lastStatusChangeTime,$snoozedUntil,$displayStatus,$origin,$timeFirstSeen,$flags)"
-
     var isAlarm: Boolean
         get() = flags.isFlagSet(EventAlertFlags.IS_ALARM)
         set(value) { flags = flags.setFlag(EventAlertFlags.IS_ALARM, value) }
-
-//    val isUnmutedAlarm: Boolean
-//        get() = isAlarm
 
     val key: EventAlertRecordKey
         get() = EventAlertRecordKey(eventId, instanceStartTime)
@@ -332,3 +321,23 @@ val EventAlertRecord.scanMissedTotalEvents: Long
 
 val EventAlertRecord.isCancelledOrDeclined: Boolean
     get() = eventStatus == EventStatus.Cancelled || attendanceStatus == AttendanceStatus.Declined
+
+
+
+enum class EventCompletionType(val code: Int) {
+    ManuallyViaNotification(0),
+    ManuallyInTheApp(1),
+    AutoDueToCalendarMove(2),
+    EventMovedInTheApp(3);
+
+    companion object {
+        @JvmStatic
+        fun fromInt(v: Int) = values()[v]
+    }
+}
+
+data class CompleteEventAlertRecord(
+        val event: EventAlertRecord, // actual event that was dismissed
+        val completionTime: Long, // when dismissal happened
+        val completionType: EventCompletionType  // type of dismiss
+)

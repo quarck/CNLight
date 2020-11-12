@@ -17,15 +17,17 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.completeeventsstorage
+package com.github.quarck.calnotify.eventsstorage
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.calendar.EventCompletionType
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
-//import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.utils.logs.Logger
 import java.io.Closeable
 
 class CompleteEventsStorage(val context: Context)

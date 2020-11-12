@@ -17,14 +17,14 @@
 //   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 //
 
-package com.github.quarck.calnotify.app
+package com.github.quarck.calnotify.calendarmonitor
 
 import android.content.Context
+import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.completeeventsstorage.EventCompletionType
 import com.github.quarck.calnotify.eventsstorage.EventWithNewInstanceTime
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.logs.DevLog
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
 
 interface EventMovedHandler {

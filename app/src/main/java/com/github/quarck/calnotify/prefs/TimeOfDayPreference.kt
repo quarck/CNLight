@@ -19,7 +19,7 @@
 
 package com.github.quarck.calnotify.prefs
 
-//import com.github.quarck.calnotify.logs.Logger
+//import com.github.quarck.calnotify.utils.logs.Logger
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
