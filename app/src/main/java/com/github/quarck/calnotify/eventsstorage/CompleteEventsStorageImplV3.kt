@@ -65,7 +65,7 @@ class CompleteEventsStorageImplV3 {
 
                         "$KEY_RRULE TEXT, " +
                         "$KEY_RDATE TEXT, " +
-                        "$KEY_EXRDATE TEXT, " +
+                        "$KEY_EXRRULE TEXT, " +
                         "$KEY_EXRDATE TEXT, " +
 
                         "$KEY_ALL_DAY INTEGER, " +
@@ -265,10 +265,10 @@ class CompleteEventsStorageImplV3 {
     }
 
     companion object {
-        private const val LOG_TAG = "DismissedEventsStorageImplV3"
+        private const val LOG_TAG = "CompleteEventsStorageImplV3"
 
-        private const val TABLE_NAME = "dismissedEventsV3"
-        private const val INDEX_NAME = "dismissedEventsIdxV3"
+        private const val TABLE_NAME = "completeEventsV3"
+        private const val INDEX_NAME = "completeEventsIdxV3"
 
         private const val KEY_CALENDAR_ID = "calendarId"
         private const val KEY_EVENTID = "eventId"

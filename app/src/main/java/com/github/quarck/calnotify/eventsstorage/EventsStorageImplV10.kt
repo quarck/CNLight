@@ -64,7 +64,7 @@ class EventsStorageImplV10(val context: Context) {
 
                         "$KEY_RRULE TEXT, " +
                         "$KEY_RDATE TEXT, " +
-                        "$KEY_EXRDATE TEXT, " +
+                        "$KEY_EXRRULE TEXT, " +
                         "$KEY_EXRDATE TEXT, " +
 
                         "$KEY_ALL_DAY INTEGER, " +
