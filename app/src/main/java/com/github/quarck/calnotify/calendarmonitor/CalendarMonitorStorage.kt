@@ -32,7 +32,7 @@ import java.io.Closeable
 class CalendarMonitorStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable {
 
-    private var impl = CalendarMonitorStorageImplV1(context)
+    private var impl = CalendarMonitorStorageImplV2(context)
 
     override fun onCreate(db: SQLiteDatabase)
             = impl.createDb(db)
@@ -40,9 +40,9 @@ class CalendarMonitorStorage(val context: Context)
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         DevLog.info(LOG_TAG, "onUpgrade $oldVersion -> $newVersion")
 
-        if (oldVersion != newVersion) {
-            throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
-        }
+//        if (oldVersion != newVersion) {
+//            throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
+//        }
     }
 
     fun addAlert(entry: MonitorEventAlertEntry)
@@ -95,8 +95,8 @@ class CalendarMonitorStorage(val context: Context)
     companion object {
         private const val LOG_TAG = "MonitorStorage"
 
-        private const val DATABASE_VERSION_V1 = 1
-        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V1
+        private const val DATABASE_VERSION_V2 = 2
+        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V2
 
         private const val DATABASE_NAME = "CalendarMonitor"
     }

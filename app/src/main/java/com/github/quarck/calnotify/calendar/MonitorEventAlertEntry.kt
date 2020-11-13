@@ -20,31 +20,29 @@
 package com.github.quarck.calnotify.calendar
 
 data class MonitorEventAlertEntryKey(
-        val eventId: Long,
         val alertTime: Long,
-        val instanceStartTime: Long
+        val instanceStartTime: Long,
+        val md5a: Int, val md5b: Int, val md5c: Int, val md5d: Int
 )
 
 data class MonitorEventAlertEntry(
-        val eventId: Long,
-        val isAllDay: Boolean,
         val alertTime: Long,
         val instanceStartTime: Long,
-        val instanceEndTime: Long,
+        val md5a: Int, val md5b: Int, val md5c: Int, val md5d: Int
         var alertCreatedByUs: Boolean,
         var wasHandled: Boolean // we should keep event alerts for a little bit longer to avoid double
         // alerting when reacting to different notification sources
         // (e.g. calendar provider vs our internal manual handler)
 ) {
     val key: MonitorEventAlertEntryKey
-        get() = MonitorEventAlertEntryKey(eventId, alertTime, instanceStartTime)
+        get() = MonitorEventAlertEntryKey(alertTime, instanceStartTime, md5a, md5b, md5c, md5d)
 
     fun detailsChanged(other: MonitorEventAlertEntry): Boolean {
-
-        return (eventId != other.eventId) ||
-                (isAllDay != other.isAllDay) ||
-                (alertTime != other.alertTime) ||
+        return (alertTime != other.alertTime) ||
                 (instanceStartTime != other.instanceStartTime) ||
-                (instanceEndTime != other.instanceEndTime)
+                (md5a != other.md5a) ||
+                (md5b != other.md5b) ||
+                (md5c != other.md5c) ||
+                (md5d != other.md5d)
     }
 }

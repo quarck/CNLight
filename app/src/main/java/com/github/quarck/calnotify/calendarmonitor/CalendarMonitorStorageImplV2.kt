@@ -28,8 +28,9 @@ import android.database.sqlite.SQLiteDatabase
 import com.github.quarck.calnotify.calendar.MonitorEventAlertEntry
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
+import com.github.quarck.calnotify.utils.md5state
 
-class CalendarMonitorStorageImplV1(val context: Context) {
+class CalendarMonitorStorageImplV2(val context: Context) {
 
     fun createDb(db: SQLiteDatabase) {
         val CREATE_PKG_TABLE =
@@ -37,14 +38,15 @@ class CalendarMonitorStorageImplV1(val context: Context) {
                         "TABLE $TABLE_NAME " +
                         "( " +
                         "$KEY_CALENDAR_ID INTEGER, " +
-                        "$KEY_EVENTID INTEGER, " +
 
                         "$KEY_ALERT_TIME INTEGER, " +
 
                         "$KEY_INSTANCE_START INTEGER, " +
-                        "$KEY_INSTANCE_END INTEGER, " +
 
-                        "$KEY_ALL_DAY INTEGER, " +
+                        "$KEY_MD5A INTEGER, " +
+                        "$KEY_MD5B INTEGER, " +
+                        "$KEY_MD5C INTEGER, " +
+                        "$KEY_MD5D INTEGER, " +
 
                         "$KEY_WE_CREATED_ALERT INTEGER, " +
 
@@ -54,14 +56,14 @@ class CalendarMonitorStorageImplV1(val context: Context) {
                         "$KEY_RESERVED_INT2 INTEGER, " +
 
 
-                        "PRIMARY KEY ($KEY_EVENTID, $KEY_ALERT_TIME, $KEY_INSTANCE_START)" +
+                        "PRIMARY KEY ($KEY_MD5A, $KEY_MD5B, $KEY_MD5C, $KEY_MD5D, $KEY_ALERT_TIME, $KEY_INSTANCE_START)" +
                         " )"
 
         DevLog.debug(LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
 
         db.execSQL(CREATE_PKG_TABLE)
 
-        val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_ALERT_TIME, $KEY_INSTANCE_START)"
+        val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_MD5A, $KEY_MD5B, $KEY_MD5C, $KEY_MD5D, $KEY_ALERT_TIME, $KEY_INSTANCE_START)"
 
         DevLog.debug(LOG_TAG, "Creating DB INDEX using query: " + CREATE_INDEX)
 
@@ -82,7 +84,7 @@ class CalendarMonitorStorageImplV1(val context: Context) {
             // values
         }
         catch (ex: SQLiteConstraintException) {
-            DevLog.debug(LOG_TAG, "This entry (${entry.eventId} / ${entry.alertTime}) is already in the DB!, updating instead")
+            DevLog.debug(LOG_TAG, "This entry ($entry) is already in the DB!, updating instead")
             updateAlert(db, entry)
         }
         catch (ex: Exception) {
@@ -105,18 +107,20 @@ class CalendarMonitorStorageImplV1(val context: Context) {
         }
     }
 
-    fun deleteAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long) {
+    fun deleteAlert(db: SQLiteDatabase, a: Int, b: Int, c: Int, d: Int, alertTime: Long, instanceStart: Long) {
 
         //DevLog.debug(LOG_TAG, "deleteAlert $eventId / $alertTime")
 
         try {
             db.delete(
                     TABLE_NAME,
-                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
-                    arrayOf(eventId.toString(), alertTime.toString(), instanceStart.toString()))
+                    "$KEY_MD5A = ? AND $KEY_MD5B = ? AND $KEY_MD5C = ? AND $KEY_MD5D = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                    arrayOf(a.toString(), b.toString(),
+                            c.toString(), d.toString(),
+                            alertTime.toString(), instanceStart.toString()))
         }
         catch (ex: Exception) {
-            DevLog.error(LOG_TAG, "deleteAlert($eventId, $alertTime): exception ${ex.detailed}")
+            DevLog.error(LOG_TAG, "deleteAlert($a, $b, $c, $d, $alertTime): exception ${ex.detailed}")
         }
     }
 
@@ -126,7 +130,7 @@ class CalendarMonitorStorageImplV1(val context: Context) {
             db.beginTransaction()
 
             for (entry in entries)
-                deleteAlert(db, entry.eventId, entry.alertTime, entry.instanceStartTime)
+                deleteAlert(db, entry.md5a, entry.md5b, entry.md5c, entry.md5d, entry.alertTime, entry.instanceStartTime)
 
             db.setTransactionSuccessful()
         }
@@ -479,30 +483,32 @@ class CalendarMonitorStorageImplV1(val context: Context) {
     private fun cursorToRecord(cursor: Cursor): MonitorEventAlertEntry {
 
         return MonitorEventAlertEntry(
-                eventId = cursor.getLong(PROJECTION_KEY_EVENTID),
                 alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
                 instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),
-                instanceEndTime = cursor.getLong(PROJECTION_KEY_INSTANCE_END),
-                isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
+                md5a = cursor.getInt(PROJECTION_KEY_MD5A),
+                md5b = cursor.getInt(PROJECTION_KEY_MD5B),
+                md5c = cursor.getInt(PROJECTION_KEY_MD5C),
+                md5d = cursor.getInt(PROJECTION_KEY_MD5D),
                 alertCreatedByUs = cursor.getInt(PROJECTION_KEY_WE_CREATED_ALERT) != 0,
                 wasHandled = cursor.getInt(PROJECTION_KEY_WAS_HANDLED) != 0
         )
     }
 
     companion object {
-        private const val LOG_TAG = "MonitorStorageImplV1"
+        private const val LOG_TAG = "MonitorStorageImplV2"
 
-        private const val TABLE_NAME = "manualAlertsV1"
-        private const val INDEX_NAME = "manualAlertsV1IdxV1"
+        private const val TABLE_NAME = "manualAlertsV2"
+        private const val INDEX_NAME = "manualAlertsV1IdxV2"
 
-        private const val KEY_CALENDAR_ID = "calendarId"
-        private const val KEY_EVENTID = "eventId"
-        private const val KEY_ALL_DAY = "allDay"
-        private const val KEY_ALERT_TIME = "alertTime"
-        private const val KEY_INSTANCE_START = "instanceStart"
-        private const val KEY_INSTANCE_END = "instanceEnd"
-        private const val KEY_WE_CREATED_ALERT = "alertCreatedByUs"
-        private const val KEY_WAS_HANDLED = "wasHandled"
+        private const val KEY_CALENDAR_ID = "cid"
+        private const val KEY_ALERT_TIME = "alrt"
+        private const val KEY_INSTANCE_START = "inst"
+        private const val KEY_MD5A = "md5a"
+        private const val KEY_MD5B = "md5b"
+        private const val KEY_MD5C = "md5c"
+        private const val KEY_MD5D = "md5d"
+        private const val KEY_WE_CREATED_ALERT = "m"
+        private const val KEY_WAS_HANDLED = "h"
 
 
         private const val KEY_RESERVED_INT1 = "i1"
@@ -510,23 +516,25 @@ class CalendarMonitorStorageImplV1(val context: Context) {
 
         private val SELECT_COLUMNS = arrayOf<String>(
                 KEY_CALENDAR_ID,
-                KEY_EVENTID,
                 KEY_ALERT_TIME,
                 KEY_INSTANCE_START,
-                KEY_INSTANCE_END,
-                KEY_ALL_DAY,
+                KEY_MD5A,
+                KEY_MD5B,
+                KEY_MD5C,
+                KEY_MD5D,
                 KEY_WE_CREATED_ALERT,
                 KEY_WAS_HANDLED
         )
 
-        const val PROJECTION_KEY_CALENDAR_ID = 0;
-        const val PROJECTION_KEY_EVENTID = 1;
-        const val PROJECTION_KEY_ALERT_TIME = 2;
-        const val PROJECTION_KEY_INSTANCE_START = 3;
-        const val PROJECTION_KEY_INSTANCE_END = 4;
-        const val PROJECTION_KEY_ALL_DAY = 5;
-        const val PROJECTION_KEY_WE_CREATED_ALERT = 6;
-        const val PROJECTION_KEY_WAS_HANDLED = 7;
+        const val PROJECTION_KEY_CALENDAR_ID = 0
+        const val PROJECTION_KEY_ALERT_TIME = 1
+        const val PROJECTION_KEY_INSTANCE_START = 2
+        const val PROJECTION_KEY_MD5A = 3
+        const val PROJECTION_KEY_MD5B = 4
+        const val PROJECTION_KEY_MD5C = 5
+        const val PROJECTION_KEY_MD5D = 6
+        const val PROJECTION_KEY_WE_CREATED_ALERT = 7
+        const val PROJECTION_KEY_WAS_HANDLED = 8
     }
 
 }
