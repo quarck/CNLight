@@ -34,6 +34,7 @@ import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.detailed
 import java.util.*
 
+@SuppressLint("MissingPermission")
 object CalendarProvider  {
     private const val LOG_TAG = "CalendarProvider"
 
@@ -57,53 +58,136 @@ object CalendarProvider  {
                     CalendarContract.Events.EXRULE,
                     CalendarContract.Events.EXDATE,
                     CalendarContract.CalendarAlerts.STATUS,
-                    CalendarContract.CalendarAlerts.SELF_ATTENDEE_STATUS
+                    CalendarContract.CalendarAlerts.SELF_ATTENDEE_STATUS,
+                    CalendarContract.Events.EVENT_TIMEZONE
             )
 
-    private val PROJECTION_INDEX_EVENT_ID = 0
-    private val PROJECTION_INDEX_STATE = 1
-    private val PROJECTION_INDEX_CALENDAR_ID = 2
-    private val PROJECTION_INDEX_TITLE = 3
-    private val PROJECTION_INDEX_DESCRIPTION = 4
-    private val PROJECTION_INDEX_DTSTART = 5
-    private val PROJECTION_INDEX_DTEND = 6
-    private val PROJECTION_INDEX_LOCATION = 7
-    private val PROJECTION_INDEX_COLOR = 8
-    private val PROJECTION_INDEX_ALARM_TIME = 9
-    private val PROJECTION_INDEX_INSTANCE_BEGIN = 10
-    private val PROJECTION_INDEX_INSTANCE_END = 11
-    private val PROJECTION_INDEX_ALL_DAY = 12
-    private val PROJECTION_INDEX_RRULE = 13
-    private val PROJECTION_INDEX_RDATE = 14
-    private val PROJECTION_INDEX_EXRRULE = 15
-    private val PROJECTION_INDEX_EXRDATE = 16
-    private val PROJECTION_INDEX_STATUS = 17
-    private val PROJECTION_INDEX_ATTENDANCE_STATUS = 18
+    const val ALERT_PROJECTION_INDEX_EVENT_ID = 0
+    const val ALERT_PROJECTION_INDEX_STATE = 1
+    const val ALERT_PROJECTION_INDEX_CALENDAR_ID = 2
+    const val ALERT_PROJECTION_INDEX_TITLE = 3
+    const val ALERT_PROJECTION_INDEX_DESCRIPTION = 4
+    const val ALERT_PROJECTION_INDEX_DTSTART = 5
+    const val ALERT_PROJECTION_INDEX_DTEND = 6
+    const val ALERT_PROJECTION_INDEX_LOCATION = 7
+    const val ALERT_PROJECTION_INDEX_COLOR = 8
+    const val ALERT_PROJECTION_INDEX_ALARM_TIME = 9
+    const val ALERT_PROJECTION_INDEX_INSTANCE_BEGIN = 10
+    const val ALERT_PROJECTION_INDEX_INSTANCE_END = 11
+    const val ALERT_PROJECTION_INDEX_ALL_DAY = 12
+    const val ALERT_PROJECTION_INDEX_RRULE = 13
+    const val ALERT_PROJECTION_INDEX_RDATE = 14
+    const val ALERT_PROJECTION_INDEX_EXRRULE = 15
+    const val ALERT_PROJECTION_INDEX_EXRDATE = 16
+    const val ALERT_PROJECTION_INDEX_STATUS = 17
+    const val ALERT_PROJECTION_INDEX_ATTENDANCE_STATUS = 18
+    const val ALERT_PROJECTION_INDEX_TIMEZONE= 19
+
+    private val eventFields =
+            arrayOf(
+                    CalendarContract.Events.CALENDAR_ID,
+                    CalendarContract.Events.TITLE,
+                    CalendarContract.Events.DESCRIPTION,
+                    CalendarContract.Events.EVENT_TIMEZONE,
+                    CalendarContract.Events.DTSTART,
+                    CalendarContract.Events.DTEND,
+                    CalendarContract.Events.RRULE,
+                    CalendarContract.Events.RDATE,
+                    CalendarContract.Events.EXRULE,
+                    CalendarContract.Events.EXDATE,
+                    CalendarContract.Events.ALL_DAY,
+                    CalendarContract.Events.EVENT_LOCATION,
+                    CalendarContract.Events.DISPLAY_COLOR,
+                    CalendarContract.Events.STATUS,
+                    CalendarContract.Events.SELF_ATTENDEE_STATUS,
+                    CalendarContract.Events.LAST_SYNCED
+            )
+
+    const val EVENT_PROJECTTION_INDEX_CALENDAR_ID = 0
+    const val EVENT_PROJECTTION_INDEX_TITLE = 1
+    const val EVENT_PROJECTTION_INDEX_DESC = 2
+    const val EVENT_PROJECTTION_INDEX_TIME_ZONE = 3
+    const val EVENT_PROJECTTION_INDEX_START = 4
+    const val EVENT_PROJECTTION_INDEX_END = 5
+    const val EVENT_PROJECTTION_INDEX_RRULE = 6
+    const val EVENT_PROJECTTION_INDEX_RDATE = 7
+    const val EVENT_PROJECTTION_INDEX_EXRRULE = 8
+    const val EVENT_PROJECTTION_INDEX_EXRDATE = 9
+    const val EVENT_PROJECTTION_INDEX_ALL_DAY = 10
+    const val EVENT_PROJECTTION_INDEX_LOCATION = 11
+    const val EVENT_PROJECTTION_INDEX_COLOR = 12
+    const val EVENT_PROJECTTION_INDEX_STATUS = 13
+    const val EVENT_PROJECTTION_INDEX_ATTENDANCE = 14
+
+    private val instanceFields =
+            arrayOf(
+                    CalendarContract.Instances.EVENT_ID,
+                    CalendarContract.Events.CALENDAR_ID,
+                    CalendarContract.Instances.BEGIN,
+                    CalendarContract.Instances.END,
+                    CalendarContract.Events.TITLE,
+                    CalendarContract.Events.DESCRIPTION,
+                    CalendarContract.Events.EVENT_TIMEZONE,
+                    CalendarContract.Events.DTSTART,
+                    CalendarContract.Events.DTEND,
+                    CalendarContract.Events.RRULE,
+                    CalendarContract.Events.RDATE,
+                    CalendarContract.Events.EXRULE,
+                    CalendarContract.Events.EXDATE,
+                    CalendarContract.Events.ALL_DAY,
+                    CalendarContract.Events.EVENT_LOCATION,
+                    CalendarContract.Events.DISPLAY_COLOR,
+                    CalendarContract.Events.STATUS,
+                    CalendarContract.Events.SELF_ATTENDEE_STATUS,
+                    CalendarContract.Events.LAST_SYNCED
+            )
+
+    const val INSTANCE_PROJECTION_INDEX_EVENT_ID = 0
+    const val INSTANCE_PROJECTION_INDEX_CALENDAR_ID = 1
+    const val INSTANCE_PROJECTION_INDEX_BEGIN = 2
+    const val INSTANCE_PROJECTION_INDEX_END = 3
+    const val INSTANCE_PROJECTION_INDEX_TITLE = 4
+    const val INSTANCE_PROJECTION_INDEX_DESCRIPTION = 5
+    const val INSTANCE_PROJECTION_INDEX_EVENT_TIMEZONE = 6
+    const val INSTANCE_PROJECTION_INDEX_DTSTART = 7
+    const val INSTANCE_PROJECTION_INDEX_DTEND = 8
+    const val INSTANCE_PROJECTION_INDEX_RRULE = 9
+    const val INSTANCE_PROJECTION_INDEX_RDATE = 10
+    const val INSTANCE_PROJECTION_INDEX_EXRULE = 11
+    const val INSTANCE_PROJECTION_INDEX_EXDATE = 12
+    const val INSTANCE_PROJECTION_INDEX_ALL_DAY = 13
+    const val INSTANCE_PROJECTION_INDEX_EVENT_LOCATION = 14
+    const val INSTANCE_PROJECTION_INDEX_DISPLAY_COLOR = 15
+    const val INSTANCE_PROJECTION_INDEX_STATUS = 16
+    const val INSTANCE_PROJECTION_INDEX_SELF_ATTENDEE_STATUS = 17
+    const val INSTANCE_PROJECTION_INDEX_LAST_SYNCED = 18
 
     private fun cursorToAlertRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventAlertRecord?> {
 
-        val eventId: Long? = cursor.getLong(PROJECTION_INDEX_EVENT_ID)
-        val state: Int? = cursor.getInt(PROJECTION_INDEX_STATE)
-        val title: String? = cursor.getString(PROJECTION_INDEX_TITLE)
-        val desc: String? = cursor.getString(PROJECTION_INDEX_DESCRIPTION)
-        val startTime: Long? = cursor.getLong(PROJECTION_INDEX_DTSTART)
-        val endTime: Long? = cursor.getLong(PROJECTION_INDEX_DTEND)
-        val location: String? = cursor.getString(PROJECTION_INDEX_LOCATION)
-        val color: Int? = cursor.getInt(PROJECTION_INDEX_COLOR)
-        val newAlarmTime: Long? = cursor.getLong(PROJECTION_INDEX_ALARM_TIME)
-        val calendarId: Long? = cursor.getLong(PROJECTION_INDEX_CALENDAR_ID)
+        val eventId: Long? = cursor.getLong(ALERT_PROJECTION_INDEX_EVENT_ID)
+        val state: Int? = cursor.getInt(ALERT_PROJECTION_INDEX_STATE)
+        val title: String? = cursor.getString(ALERT_PROJECTION_INDEX_TITLE)
+        val desc: String? = cursor.getString(ALERT_PROJECTION_INDEX_DESCRIPTION)
+        val startTime: Long? = cursor.getLong(ALERT_PROJECTION_INDEX_DTSTART)
+        val endTime: Long? = cursor.getLong(ALERT_PROJECTION_INDEX_DTEND)
+        val location: String? = cursor.getString(ALERT_PROJECTION_INDEX_LOCATION)
+        val color: Int? = cursor.getInt(ALERT_PROJECTION_INDEX_COLOR)
+        val newAlarmTime: Long? = cursor.getLong(ALERT_PROJECTION_INDEX_ALARM_TIME)
+        val calendarId: Long? = cursor.getLong(ALERT_PROJECTION_INDEX_CALENDAR_ID)
 
-        val instanceStart: Long? = cursor.getLong(PROJECTION_INDEX_INSTANCE_BEGIN)
-        val instanceEnd: Long? = cursor.getLong(PROJECTION_INDEX_INSTANCE_END)
-        val allDay: Int? = cursor.getInt(PROJECTION_INDEX_ALL_DAY)
+        val instanceStart: Long? = cursor.getLong(ALERT_PROJECTION_INDEX_INSTANCE_BEGIN)
+        val instanceEnd: Long? = cursor.getLong(ALERT_PROJECTION_INDEX_INSTANCE_END)
+        val allDay: Int? = cursor.getInt(ALERT_PROJECTION_INDEX_ALL_DAY)
 
-        val rRule: String? = cursor.getString(PROJECTION_INDEX_RRULE)
-        val rDate: String? = cursor.getString(PROJECTION_INDEX_RDATE)
-        val exRRule: String? = cursor.getString(PROJECTION_INDEX_EXRRULE)
-        val exRDate: String? = cursor.getString(PROJECTION_INDEX_EXRDATE)
+        val rRule: String? = cursor.getString(ALERT_PROJECTION_INDEX_RRULE)
+        val rDate: String? = cursor.getString(ALERT_PROJECTION_INDEX_RDATE)
+        val exRRule: String? = cursor.getString(ALERT_PROJECTION_INDEX_EXRRULE)
+        val exRDate: String? = cursor.getString(ALERT_PROJECTION_INDEX_EXRDATE)
 
-        val status: Int? = cursor.getInt(PROJECTION_INDEX_STATUS)
-        val attendance: Int? = cursor.getInt(PROJECTION_INDEX_ATTENDANCE_STATUS)
+        val status: Int? = cursor.getInt(ALERT_PROJECTION_INDEX_STATUS)
+        val attendance: Int? = cursor.getInt(ALERT_PROJECTION_INDEX_ATTENDANCE_STATUS)
+
+        val timeZone: String? = cursor.getString(ALERT_PROJECTION_INDEX_TIMEZONE)
 
         if (eventId == null || state == null || title == null || startTime == null)
             return Pair(null, null)
@@ -130,11 +214,125 @@ object CalendarProvider  {
                         displayStatus = EventDisplayStatus.Hidden,
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
                         eventStatus = EventStatus.fromInt(status),
-                        attendanceStatus = AttendanceStatus.fromInt(attendance)
-
+                        attendanceStatus = AttendanceStatus.fromInt(attendance),
+                        timeZone = timeZone ?: ""
                 )
 
         return Pair(state, event)
+    }
+    private fun cursorToEventRecord(cursor: Cursor, eventId: Long): EventRecord? {
+        val calendarId: Long? = cursor.getLong(EVENT_PROJECTTION_INDEX_CALENDAR_ID)
+        val title: String? = cursor.getString(EVENT_PROJECTTION_INDEX_TITLE)
+        val desc: String? = cursor.getString(EVENT_PROJECTTION_INDEX_DESC)
+        val timeZone: String? = cursor.getString(EVENT_PROJECTTION_INDEX_TIME_ZONE)
+        val start: Long? = cursor.getLong(EVENT_PROJECTTION_INDEX_START)
+        var end: Long? = cursor.getLong(EVENT_PROJECTTION_INDEX_END)
+
+        val rRule: String? = cursor.getString(EVENT_PROJECTTION_INDEX_RRULE)
+        val rDate: String? = cursor.getString(EVENT_PROJECTTION_INDEX_RDATE)
+        val exRRule: String? = cursor.getString(EVENT_PROJECTTION_INDEX_EXRRULE)
+        val exRDate: String? = cursor.getString(EVENT_PROJECTTION_INDEX_EXRDATE)
+
+        var allDay: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_ALL_DAY)
+        val location: String? = cursor.getString(EVENT_PROJECTTION_INDEX_LOCATION)
+        val color: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_COLOR)
+        val status: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_STATUS)
+        val attendance: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_ATTENDANCE)
+
+        if (title != null && start != null) {
+
+            allDay = allDay ?: 0
+
+            if (end == null) {
+                if (allDay == 0)
+                    end = start + Consts.HOUR_IN_MILLISECONDS
+                else
+                    end = start + Consts.DAY_IN_MILLISECONDS
+            }
+
+            return EventRecord(
+                    calendarId = calendarId ?: -1L,
+                    eventId = eventId,
+                    details = CalendarEventDetails(
+                            desc = desc ?: "",
+                            location = location ?: "",
+                            timezone = timeZone ?: "",
+                            startTime = start,
+                            endTime = end,
+                            isAllDay = allDay != 0,
+                            reminders = listOf<EventReminderRecord>(),
+                            rRule = rRule ?: "",
+                            rDate = rDate ?: "",
+                            exRRule = exRRule ?: "",
+                            exRDate = exRDate ?: "",
+                            color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
+                            title = title
+                    ),
+                    eventStatus = EventStatus.fromInt(status),
+                    attendanceStatus = AttendanceStatus.fromInt(attendance)
+            )
+        }
+        return null
+    }
+
+    private fun cursorToEventInstance(cursor: Cursor): EventAlertRecord? {
+
+        val calendarId: Long? = cursor.getLong(INSTANCE_PROJECTION_INDEX_CALENDAR_ID)
+        val eventId: Long? = cursor.getLong(INSTANCE_PROJECTION_INDEX_EVENT_ID)
+        val title: String? = cursor.getString(INSTANCE_PROJECTION_INDEX_TITLE)
+        val desc: String? = cursor.getString(INSTANCE_PROJECTION_INDEX_DESCRIPTION)
+        val timeZone: String? = cursor.getString(INSTANCE_PROJECTION_INDEX_EVENT_TIMEZONE)
+        val instanceStart: Long? = cursor.getLong(INSTANCE_PROJECTION_INDEX_BEGIN)
+        var instanceEnd: Long? = cursor.getLong(INSTANCE_PROJECTION_INDEX_END)
+        var start: Long? = cursor.getLong(INSTANCE_PROJECTION_INDEX_DTSTART)
+        var end: Long? = cursor.getLong(INSTANCE_PROJECTION_INDEX_DTEND)
+
+        val rRule: String? = cursor.getString(INSTANCE_PROJECTION_INDEX_RRULE)
+        val rDate: String? = cursor.getString(INSTANCE_PROJECTION_INDEX_RDATE)
+        val exRRule: String? = cursor.getString(INSTANCE_PROJECTION_INDEX_EXRULE)
+        val exRDate: String? = cursor.getString(INSTANCE_PROJECTION_INDEX_EXDATE)
+
+        var allDay: Int? = cursor.getInt(INSTANCE_PROJECTION_INDEX_ALL_DAY)
+        val location: String? = cursor.getString(INSTANCE_PROJECTION_INDEX_EVENT_LOCATION)
+        val color: Int? = cursor.getInt(INSTANCE_PROJECTION_INDEX_DISPLAY_COLOR)
+        val status: Int? = cursor.getInt(INSTANCE_PROJECTION_INDEX_STATUS)
+        val attendance: Int? = cursor.getInt(INSTANCE_PROJECTION_INDEX_SELF_ATTENDEE_STATUS)
+
+        if (title != null && instanceStart != null && calendarId != null && eventId != null) {
+            allDay = allDay ?: 0
+            start = start ?: instanceStart
+            end = end ?: start +
+                    (if (allDay == 0)  Consts.HOUR_IN_MILLISECONDS  else Consts.DAY_IN_MILLISECONDS)
+            instanceEnd = instanceEnd ?: instanceStart +
+                    (if (allDay == 0)  Consts.HOUR_IN_MILLISECONDS  else Consts.DAY_IN_MILLISECONDS)
+
+            return EventAlertRecord(
+                    calendarId = calendarId ?: -1L,
+                    eventId = eventId ?: -1L,
+                    isAllDay = (allDay ?: 0) != 0,
+                    rRule = rRule ?: "",
+                    rDate = rDate ?: "",
+                    exRRule = exRRule ?: "",
+                    exRDate = exRDate ?: "",
+                    notificationId = 0,
+                    alertTime = 0,
+                    title = title,
+                    desc = desc ?: "",
+                    startTime = start,
+                    endTime = end,
+                    instanceStartTime = instanceStart,
+                    instanceEndTime = instanceEnd,
+                    location = location ?: "",
+                    lastStatusChangeTime = 0L,
+                    timeZone = timeZone ?: "",
+                    displayStatus = EventDisplayStatus.Hidden,
+                    color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
+                    eventStatus = EventStatus.fromInt(status),
+                    attendanceStatus = AttendanceStatus.fromInt(attendance)
+
+            )
+        }
+        return null
     }
 
     fun getAlertByTime(context: Context, alertTime: Long, skipDismissed: Boolean): List<EventAlertRecord> {
@@ -225,7 +423,6 @@ object CalendarProvider  {
         return ret
     }
 
-    @SuppressLint("MissingPermission")
     fun getEventReminders(context: Context, eventId: Long): List<EventReminderRecord> {
 
         val ret = mutableListOf<EventReminderRecord>()
@@ -345,93 +542,19 @@ object CalendarProvider  {
 
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
 
-        val fields =
-                arrayOf(
-                        CalendarContract.Events.CALENDAR_ID,
-                        CalendarContract.Events.TITLE,
-                        CalendarContract.Events.DESCRIPTION,
-                        CalendarContract.Events.EVENT_TIMEZONE,
-
-                        CalendarContract.Events.DTSTART,
-                        CalendarContract.Events.DTEND,
-
-                        CalendarContract.Events.RRULE,
-                        CalendarContract.Events.RDATE,
-                        CalendarContract.Events.EXRULE,
-                        CalendarContract.Events.EXDATE,
-
-                        CalendarContract.Events.ALL_DAY,
-                        CalendarContract.Events.EVENT_LOCATION,
-                        CalendarContract.Events.DISPLAY_COLOR,
-                        CalendarContract.Events.STATUS,
-                        CalendarContract.Events.SELF_ATTENDEE_STATUS,
-                        CalendarContract.Events.LAST_SYNCED
-                )
-
         val cursor: Cursor? =
                 context.contentResolver.query(
                         uri, // CalendarContract.CalendarAlerts.CONTENT_URI,
-                        fields,
+                        eventFields,
                         null, //selection,
                         null, //arrayOf(eventId.toString()),
                         null
                 )
 
-        if (cursor != null && cursor.moveToFirst()) {
-
-            val calendarId: Long? = cursor.getLong(0)
-            val title: String? = cursor.getString(1)
-            val desc: String? = cursor.getString(2)
-            val timeZone: String? = cursor.getString(3)
-            val start: Long? = cursor.getLong(4)
-            var end: Long? = cursor.getLong(5)
-
-            val rRule: String? = cursor.getString(6)
-            val rDate: String? = cursor.getString(7)
-            val exRRule: String? = cursor.getString(8)
-            val exRDate: String? = cursor.getString(9)
-
-            var allDay: Int? = cursor.getInt(10)
-            val location: String? = cursor.getString(11)
-            val color: Int? = cursor.getInt(12)
-            val status: Int? = cursor.getInt(13)
-            val attendance: Int? = cursor.getInt(14)
-
-            if (title != null && start != null) {
-
-                allDay = allDay ?: 0
-
-                if (end == null) {
-                    if (allDay == 0)
-                        end = start + Consts.HOUR_IN_MILLISECONDS
-                    else
-                        end = start + Consts.DAY_IN_MILLISECONDS
-                }
-
-                ret =
-                        EventRecord(
-                                calendarId = calendarId ?: -1L,
-                                eventId = eventId,
-                                details = CalendarEventDetails(
-                                        desc = desc ?: "",
-                                        location = location ?: "",
-                                        timezone = timeZone ?: "",
-                                        startTime = start,
-                                        endTime = end,
-                                        isAllDay = allDay != 0,
-                                        reminders = listOf<EventReminderRecord>(),
-                                        rRule = rRule ?: "",
-                                        rDate = rDate ?: "",
-                                        exRRule = exRRule ?: "",
-                                        exRDate = exRDate ?: "",
-                                        color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR, title = title // stub for now
-                                ),
-                                eventStatus = EventStatus.fromInt(status),
-                                attendanceStatus = AttendanceStatus.fromInt(attendance)
-                        )
-            }
+        if (cursor != null) {
+            ret = cursorToEventRecord(cursor, eventId)
         }
-        else {
+        if (ret == null) {
             DevLog.error(LOG_TAG, "Event $eventId not found")
         }
 
@@ -447,49 +570,6 @@ object CalendarProvider  {
 
         return ret
     }
-
-    fun getEventIsDirty(context: Context, eventId: Long): Boolean? {
-
-        val SYNC_IS_DIRTY = "dirty"
-
-        if (!PermissionsManager.hasReadCalendar(context)) {
-            DevLog.error(LOG_TAG, "getEvent: has no permissions")
-            return null
-        }
-
-        var ret: Boolean? = null
-
-        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
-
-        val fields = arrayOf( SYNC_IS_DIRTY ) //  CalendarContracts.SyncColumns is a private class
-
-        try {
-            val cursor: Cursor? =
-                    context.contentResolver.query(
-                            uri, // CalendarContract.CalendarAlerts.CONTENT_URI,
-                            fields,
-                            null, //selection,
-                            null, //arrayOf(eventId.toString()),
-                            null
-                    )
-
-            if (cursor != null && cursor.moveToFirst()) {
-                val isDirty: Int? = cursor.getInt(0)
-                if (isDirty != null)
-                    ret = isDirty != 0
-            } else {
-                DevLog.error(LOG_TAG, "Event $eventId not found")
-            }
-
-            cursor?.close()
-        }
-        catch (ex: Exception) {
-            ret = null
-        }
-
-        return ret
-    }
-
 
     fun dismissNativeEventAlert(context: Context, eventId: Long) {
 
@@ -522,176 +602,6 @@ object CalendarProvider  {
         catch (ex: Exception) {
             DevLog.error(LOG_TAG, "dismissNativeReminder failed: ${ex.detailed}")
         }
-    }
-
-    //
-    // Reschedule works by creating a new event with exactly the same contents but for the new date / time
-    // Original notification is dismissed after that
-    //
-    // Returns event ID of the new event, or -1 on error
-    //
-    fun cloneAndMoveEvent(context: Context, event: EventAlertRecord, addTime: Long): Long {
-
-        var ret = -1L
-
-        DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime")
-
-        if (!PermissionsManager.hasAllPermissions(context)) {
-            DevLog.error(LOG_TAG, "cloneAndMoveEvent: no permissions")
-            return -1
-        }
-
-        if (event.alertTime == 0L) {
-            DevLog.error(LOG_TAG, "cloneAndMoveEvent: alert time is zero")
-            return -1
-        }
-
-        val fields = arrayOf(
-                CalendarContract.CalendarAlerts.EVENT_ID,
-                CalendarContract.Events.TITLE,
-                CalendarContract.Events.CALENDAR_ID,
-                CalendarContract.Events.EVENT_TIMEZONE,
-                CalendarContract.Events.DESCRIPTION,
-                CalendarContract.Events.DTSTART,
-                CalendarContract.Events.DTEND,
-                CalendarContract.Events.EVENT_LOCATION,
-                CalendarContract.Events.DISPLAY_COLOR,
-                CalendarContract.Events.ACCESS_LEVEL,
-                CalendarContract.Events.AVAILABILITY,
-                CalendarContract.Events.HAS_ALARM,
-                CalendarContract.Events.ALL_DAY,
-                CalendarContract.Events.DURATION,
-                CalendarContract.Events.EVENT_END_TIMEZONE,
-                CalendarContract.Events.HAS_EXTENDED_PROPERTIES,
-                CalendarContract.Events.ORGANIZER,
-                CalendarContract.Events.CUSTOM_APP_PACKAGE,
-                CalendarContract.Events.CUSTOM_APP_URI
-        )
-
-        //
-        // First - retrieve full set of requests we are looking for
-        //
-        var values: ContentValues? = null // values for the new event
-
-        val selection = CalendarContract.CalendarAlerts.ALARM_TIME + "=?"
-
-        val cursor: Cursor? =
-                context.contentResolver.query(
-                        CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-                        fields,
-                        selection,
-                        arrayOf(event.alertTime.toString()),
-                        null
-                )
-
-        try {
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    val eventId = cursor.getLong(0)
-                    if (eventId != event.eventId)
-                        continue
-
-                    values = ContentValues()
-
-                    val title: String = (cursor.getString(1)) ?: throw Exception("Title must not be null")
-                    val calendarId: Long = (cursor.getLong(2) as Long?) ?: throw Exception("Calendar ID must not be null")
-                    val timeZone: String? = cursor.getString(3)
-                    val description: String? = cursor.getString(4)
-                    val dtStart = (cursor.getLong(5) as Long?) ?: throw Exception("dtStart must not be null")
-                    val dtEnd = (cursor.getLong(6) as Long?) ?: throw Exception("dtEnd must not be null")
-                    val location: String? = cursor.getString(7)
-                    val color: Int? = cursor.getInt(8)
-                    val accessLevel: Int? = cursor.getInt(9)
-                    val availability: Int? = cursor.getInt(10)
-                    val hasAlarm: Int? = cursor.getInt(11)
-                    val allDay: Int? = cursor.getInt(12)
-
-                    val duration: String? = cursor.getString(13) // CalendarContract.Events.DURATION
-                    val eventEndTimeZone: String? = cursor.getString(14) // CalendarContract.Events.EVENT_END_TIMEZONE
-                    val hasExtProp: Long? = cursor.getLong(15) // CalendarContract.Events.HAS_EXTENDED_PROPERTIES
-                    val organizer: String? = cursor.getString(16) // CalendarContract.Events.ORGANIZER
-                    val customAppPackage: String? = cursor.getString(17) // CalendarContract.Events.CUSTOM_APP_PACKAGE
-                    val appUri: String? = cursor.getString(18) // CalendarContract.Events.CUSTOM_APP_URI
-
-                    values.put(CalendarContract.Events.TITLE, title)
-                    values.put(CalendarContract.Events.CALENDAR_ID, calendarId)
-                    values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone)
-                    values.put(CalendarContract.Events.DESCRIPTION, description ?: "")
-
-                    values.put(CalendarContract.Events.DTSTART, dtStart + addTime)
-                    values.put(CalendarContract.Events.DTEND, dtEnd + addTime)
-
-                    if (location != null)
-                        values.put(CalendarContract.Events.EVENT_LOCATION, location)
-                    if (color != null)
-                        values.put(CalendarContract.Events.EVENT_COLOR, color)
-                    if (accessLevel != null)
-                        values.put(CalendarContract.Events.ACCESS_LEVEL, accessLevel)
-                    if (availability != null)
-                        values.put(CalendarContract.Events.AVAILABILITY, availability)
-                    if (hasAlarm != null)
-                        values.put(CalendarContract.Events.HAS_ALARM, hasAlarm)
-                    if (allDay != null)
-                        values.put(CalendarContract.Events.ALL_DAY, allDay)
-                    if (duration != null)
-                        values.put(CalendarContract.Events.DURATION, duration)
-                    if (eventEndTimeZone != null)
-                        values.put(CalendarContract.Events.EVENT_END_TIMEZONE, eventEndTimeZone)
-                    if (hasExtProp != null)
-                        values.put(CalendarContract.Events.HAS_EXTENDED_PROPERTIES, hasExtProp)
-                    if (organizer != null)
-                        values.put(CalendarContract.Events.ORGANIZER, organizer)
-                    if (customAppPackage != null)
-                        values.put(CalendarContract.Events.CUSTOM_APP_PACKAGE, customAppPackage)
-                    if (appUri != null)
-                        values.put(CalendarContract.Events.CUSTOM_APP_URI, appUri)
-
-                    values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
-                    values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
-
-                    DevLog.info(LOG_TAG, "Event details for calendarId: $calendarId / eventId: $eventId captured")
-                    break
-
-                } while (cursor.moveToNext())
-            }
-
-
-        }
-        catch (ex: Exception) {
-            DevLog.error(LOG_TAG, "Exception while reading calendar event: ${ex.detailed}")
-        }
-        finally {
-            cursor?.close()
-        }
-
-        if (values != null) {
-            try {
-                val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
-
-                // get the event ID that is the last element in the Uri
-                ret = uri?.lastPathSegment?.toLong() ?: 0L
-            }
-            catch (ex: Exception) {
-                DevLog.error(LOG_TAG, "Exception while adding new event: ${ex.detailed}")
-            }
-        }
-        else {
-            DevLog.error(LOG_TAG, "Calendar event wasn't found")
-        }
-
-        if (ret != -1L) {
-            // Now copy reminders
-            val reminders = getEventReminders(context, event.eventId)
-            for (reminder in reminders) {
-                val reminderValues = ContentValues()
-                reminderValues.put(CalendarContract.Reminders.MINUTES, reminder.millisecondsBefore / Consts.MINUTE_IN_SECONDS / 1000L)
-                reminderValues.put(CalendarContract.Reminders.EVENT_ID, event.eventId)
-                reminderValues.put(CalendarContract.Reminders.METHOD, reminder.method)
-                context.contentResolver.insert(CalendarContract.Reminders.CONTENT_URI, reminderValues)
-            }
-        }
-
-        return ret
     }
 
     fun createEvent(context: Context, calendarId: Long, calendarOwnerAccount: String, details: CalendarEventDetails): Long {
@@ -763,12 +673,7 @@ object CalendarProvider  {
                 reminderValues.put(CalendarContract.Reminders.MINUTES, (reminder.millisecondsBefore / Consts.MINUTE_IN_MILLISECONDS).toInt())
 
                 reminderValues.put(CalendarContract.Reminders.EVENT_ID, eventId)
-
                 reminderValues.put(CalendarContract.Reminders.METHOD, reminder.method)
-//                if (reminder.isEmail)
-//                    reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_EMAIL)
-//                else
-//                    reminderValues.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_DEFAULT)
 
                 context.contentResolver.insert(
                         CalendarContract.Reminders.CONTENT_URI,
@@ -778,45 +683,6 @@ object CalendarProvider  {
         }
 
         return eventId
-    }
-
-
-    fun isRepeatingEvent(context: Context, eventId: Long): Boolean? {
-
-        var ret: Boolean? = null
-
-        val fields = arrayOf(
-                CalendarContract.Events.ORIGINAL_ID,
-                CalendarContract.Events.RRULE,
-                CalendarContract.Events.RDATE
-        )
-
-        val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
-
-        val cursor: Cursor? =
-                context.contentResolver.query(
-                        uri,
-                        fields,
-                        null,
-                        null,
-                        null
-                )
-        try {
-            if (cursor != null && cursor.moveToFirst()) {
-
-                val rRule = cursor.getString(1) ?: ""
-                val rDate = cursor.getString(2) ?: ""
-
-                ret = rRule.isNotEmpty() || rDate.isNotEmpty()
-            }
-        }
-        catch (ex: Exception) {
-            ret = null
-        }
-
-        cursor?.close()
-
-        return ret
     }
 
     fun moveEvent(context: Context, eventId: Long, newStartTime: Long, newEndTime: Long): Boolean {
@@ -990,65 +856,6 @@ object CalendarProvider  {
                 event.details,
                 newDetails)
     }
-
-//    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
-//
-//        var ret = false;
-//
-//        DevLog.debug(LOG_TAG, "Request to reschedule event ${event.eventId}, addTime=$addTime");
-//
-//        if (!PermissionsManager.hasAllPermissions(context)) {
-//            DevLog.error(context, LOG_TAG, "moveEvent: no permissions");
-//            return false;
-//        }
-//
-//        try {
-//            val values = ContentValues();
-//
-//            val currentTime = System.currentTimeMillis()
-//
-//            val newStartTime: Long
-//            val newEndTime: Long
-//
-//            val numSecondsInThePast = currentTime + Consts.ALARM_THRESHOLD - event.startTime
-//
-//            if (numSecondsInThePast > 0) {
-//                val addUnits = numSecondsInThePast / addTime + 1
-//
-//                newStartTime = event.startTime + addTime * addUnits
-//                newEndTime = event.endTime + addTime * addUnits
-//
-//                if (addUnits != 1L)
-//                    DevLog.error(context, LOG_TAG, "Requested time is already in the past, total added time: ${addTime * addUnits}")
-//
-//                values.put(CalendarContract.Events.DTSTART, newStartTime);
-//                values.put(CalendarContract.Events.DTEND, newEndTime);
-//            }
-//            else {
-//                newStartTime = event.startTime + addTime
-//                newEndTime = event.endTime + addTime
-//
-//                values.put(CalendarContract.Events.DTSTART, newStartTime);
-//                values.put(CalendarContract.Events.DTEND, newEndTime);
-//            }
-//
-//            val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, event.eventId);
-//            val updated = context.contentResolver.update(updateUri, values, null, null);
-//
-//            ret = updated > 0
-//
-//            if (ret) {
-//                event.startTime = newStartTime
-//                event.endTime = newEndTime
-//            }
-//
-//        }
-//        catch (ex: Exception) {
-//            DevLog.error(context, LOG_TAG, "Exception while reading calendar event: ${ex.detailed}");
-//        }
-//
-//        return ret;
-//    }
 
     fun getCalendars(context: Context): List<CalendarRecord> {
 
@@ -1279,12 +1086,12 @@ object CalendarProvider  {
         return handledCalendars
     }
 
-    data class EventEntry(
-            val eventId: Long,
-            val instanceStart: Long,
-            val instanceEnd: Long,
-            val isAllDay: Long
-    )
+//    data class EventEntry(
+//            val eventId: Long,
+//            val instanceStart: Long,
+//            val instanceEnd: Long,
+//            val isAllDay: Long
+//    )
 
 
     @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
@@ -1350,15 +1157,7 @@ object CalendarProvider  {
 
                 val alertTime = event.startTime - reminderTime - utcOffset
 
-                val entry = MonitorEventAlertEntry(
-                        event.eventId,
-                        event.isAllDay,
-                        alertTime,
-                        event.startTime,
-                        event.endTime,
-                        false,
-                        false
-                )
+                val entry = MonitorEventAlertEntry.fromEventRecord(event, alertTime, false, false)
 
                 ret.add(entry)
                 hasAnyReminders = true
@@ -1388,15 +1187,7 @@ object CalendarProvider  {
                     DevLog.debug(LOG_TAG, "Event id ${event.eventId}, UTC offset $utcOffset applied to ${event.startTime} - $defaultReminderTimeForAllDayEventWithNoreminder")
                 }
 
-                val entry = MonitorEventAlertEntry(
-                        event.eventId,
-                        event.isAllDay,
-                        alertTime,
-                        event.startTime,
-                        event.endTime,
-                        true,
-                        false
-                )
+                val entry = MonitorEventAlertEntry.fromEventRecord(event, alertTime, true, false)
 
                 ret.add(entry)
             }
@@ -1438,31 +1229,16 @@ object CalendarProvider  {
         try {
             val timezone = TimeZone.getDefault()
 
-            val projection =
-                    arrayOf(
-                            CalendarContract.Instances.EVENT_ID,
-                            CalendarContract.Events.CALENDAR_ID,
-                            CalendarContract.Instances.BEGIN,
-                            CalendarContract.Instances.END,
-                            CalendarContract.Events.ALL_DAY
-                    )
-            val PROJECTION_INDEX_INST_EVENT_ID = 0
-            val PROJECTION_INDEX_INST_CALENDAR_ID = 1
-            val PROJECTION_INDEX_INST_BEGIN = 2
-            val PROJECTION_INDEX_INST_END = 3
-            val PROJECTION_INDEX_INST_ALL_DAY = 4
-
             DevLog.info(LOG_TAG, "getEventAlertsForInstancesInRange: Manual alerts scan started, range: from $instanceFrom to $instanceTo")
 
-
-            val intermitEvents = arrayListOf<EventEntry>()
+            val intermitEvents = arrayListOf<EventAlertRecord>()
 
             val scanStart = System.currentTimeMillis()
 
             val instanceCursor: Cursor? =
                     CalendarContract.Instances.query(
                             context.contentResolver,
-                            projection,
+                            instanceFields,
                             instanceFrom,
                             instanceTo
                     )
@@ -1470,69 +1246,43 @@ object CalendarProvider  {
             if (instanceCursor != null && instanceCursor.moveToFirst()) {
 
                 do {
-                    val eventId: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_EVENT_ID)
-                    val calendarId: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_CALENDAR_ID)
-
-                    val instanceStart: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_BEGIN)
-
-                    var instanceEnd: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_END)
-
-                    var isAllDay: Long? = instanceCursor.getLong(PROJECTION_INDEX_INST_ALL_DAY)
-
-                    if (instanceStart == null || eventId == null || calendarId == null) {
+                    val alert = cursorToEventInstance(instanceCursor)
+                    if (alert == null) {
                         DevLog.info(LOG_TAG, "Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
                         continue
                     }
 
-                    if (!handledCalendars.contains(calendarId) || calendarId == -1L) {
-                        DevLog.info(LOG_TAG, "Event id $eventId / calId $calendarId - not handling")
+                    if (!handledCalendars.contains(alert.calendarId) || alert.calendarId == -1L) {
+                        DevLog.info(LOG_TAG, "Event id ${alert.eventId} / calId ${alert.calendarId} - not handling")
                         continue
                     }
 
-                    if (instanceStart < instanceFrom) {
-                        DevLog.debug(LOG_TAG, "Event id $eventId: instanceStart $instanceStart is actully before instanceFrom $instanceFrom, skipping")
+                    if (alert.instanceStartTime < instanceFrom) {
+                        DevLog.debug(LOG_TAG, "Event id ${alert.eventId}: instanceStart ${alert.instanceStartTime} is actully before instanceFrom $instanceFrom, skipping")
                         continue
                     }
 
-                    isAllDay = isAllDay ?: 0L
-
-                    if (instanceEnd == null) {
-                        if (isAllDay == 0L)
-                            instanceEnd = instanceStart + Consts.HOUR_IN_MILLISECONDS
-                        else
-                            instanceEnd = instanceStart + Consts.DAY_IN_MILLISECONDS
-                    }
-
-                    intermitEvents.add(
-                            EventEntry(
-                                    eventId = eventId,
-                                    instanceStart = instanceStart,
-                                    instanceEnd = instanceEnd,
-                                    isAllDay = isAllDay
-                            ))
+                    intermitEvents.add(alert)
 
                 } while (instanceCursor.moveToNext())
 
                 val knownReminders =
-                        intermitEvents
-                                .map { it.eventId }
-                                .toSet()
-                                .map {
-                                    eventId ->
-                                    eventId to
-                                        getEventReminders(context, eventId)
-                                                .filter {
-                                                    it.method != CalendarContract.Reminders.METHOD_SMS
-                                                }
-                                                .map {
-                                                    Pair(
-                                                            it.method != CalendarContract.Reminders.METHOD_EMAIL,
-                                                            it.millisecondsBefore
-                                                    )
-                                                }
-                                                .toTypedArray()
-                                }
-                                .toMap()
+                        intermitEvents.map { it.eventId }.toSet().map {
+                                eventId ->
+                                eventId to
+                                    getEventReminders(context, eventId)
+                                            .filter {
+                                                it.method != CalendarContract.Reminders.METHOD_SMS
+                                            }
+                                            .map {
+                                                Pair(
+                                                        it.method != CalendarContract.Reminders.METHOD_EMAIL,
+                                                        it.millisecondsBefore
+                                                )
+                                            }
+                                            .toTypedArray()
+                            }
+                            .toMap()
 
                 for (evt in intermitEvents) {
                     val reminders = knownReminders[evt.eventId] // getEventLocalReminders(context, eventId);
@@ -1553,19 +1303,16 @@ object CalendarProvider  {
 
                             var utcOffset = 0
 
-                            if (evt.isAllDay != 0L) {
-                                utcOffset = timezone.getOffset(evt.instanceStart)
-                                DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset $utcOffset applied to ${evt.instanceStart} - $reminderTime")
+                            if (evt.isAllDay) {
+                                utcOffset = timezone.getOffset(evt.instanceStartTime)
+                                DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset $utcOffset applied to ${evt.instanceStartTime} - $reminderTime")
                             }
 
-                            val alertTime = evt.instanceStart - reminderTime - utcOffset
+                            val alertTime = evt.instanceStartTime - reminderTime - utcOffset
 
-                            val entry = MonitorEventAlertEntry(
-                                    evt.eventId,
-                                    evt.isAllDay != 0L,
+                            val entry = MonitorEventAlertEntry.fromEventAlertRecord(
+                                    evt,
                                     alertTime,
-                                    evt.instanceStart,
-                                    evt.instanceEnd,
                                     false,
                                     false
                             )
@@ -1589,21 +1336,18 @@ object CalendarProvider  {
 
                         var alertTime = 0L
 
-                        if (evt.isAllDay == 0L) {
-                            alertTime = evt.instanceStart - defaultReminderTimeForEventWithNoReminder
+                        if (evt.isAllDay) {
+                            alertTime = evt.instanceStartTime - defaultReminderTimeForEventWithNoReminder
                         }
                         else {
-                            val utcOffset = timezone.getOffset(evt.instanceStart)
-                            alertTime = evt.instanceStart + defaultReminderTimeForAllDayEventWithNoreminder - utcOffset
-                            DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset $utcOffset applied to ${evt.instanceStart} - $defaultReminderTimeForAllDayEventWithNoreminder")
+                            val utcOffset = timezone.getOffset(evt.instanceStartTime)
+                            alertTime = evt.instanceStartTime + defaultReminderTimeForAllDayEventWithNoreminder - utcOffset
+                            DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset $utcOffset applied to ${evt.instanceStartTime} - $defaultReminderTimeForAllDayEventWithNoreminder")
                         }
 
-                        val entry = MonitorEventAlertEntry(
-                                evt.eventId,
-                                evt.isAllDay != 0L,
+                        val entry = MonitorEventAlertEntry.fromEventAlertRecord(
+                                evt,
                                 alertTime,
-                                evt.instanceStart,
-                                evt.instanceEnd,
                                 true,
                                 false
                         )

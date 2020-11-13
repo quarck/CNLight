@@ -19,6 +19,8 @@
 
 package com.github.quarck.calnotify.calendar
 
+import com.github.quarck.calnotify.utils.md5state
+
 data class MonitorEventAlertEntryKey(
         val alertTime: Long,
         val instanceStartTime: Long,
@@ -28,7 +30,7 @@ data class MonitorEventAlertEntryKey(
 data class MonitorEventAlertEntry(
         val alertTime: Long,
         val instanceStartTime: Long,
-        val md5a: Int, val md5b: Int, val md5c: Int, val md5d: Int
+        val md5a: Int, val md5b: Int, val md5c: Int, val md5d: Int,
         var alertCreatedByUs: Boolean,
         var wasHandled: Boolean // we should keep event alerts for a little bit longer to avoid double
         // alerting when reacting to different notification sources
@@ -44,5 +46,29 @@ data class MonitorEventAlertEntry(
                 (md5b != other.md5b) ||
                 (md5c != other.md5c) ||
                 (md5d != other.md5d)
+    }
+
+    companion object {
+        fun fromEventRecord(event: EventRecord, alertTime: Long, alertCreatedByUs: Boolean, wasHandled: Boolean): MonitorEventAlertEntry {
+            val md5 : md5state = event.contentMd5
+            return MonitorEventAlertEntry(
+                    alertTime,
+                    event.startTime,
+                    md5.a, md5.b, md5.c, md5.d,
+                    alertCreatedByUs,
+                    wasHandled
+            )
+        }
+
+        fun fromEventAlertRecord(event: EventAlertRecord, alertTime: Long, alertCreatedByUs: Boolean, wasHandled: Boolean): MonitorEventAlertEntry {
+            val md5 : md5state = event.contentMd5
+            return MonitorEventAlertEntry(
+                    alertTime,
+                    event.startTime,
+                    md5.a, md5.b, md5.c, md5.d,
+                    alertCreatedByUs,
+                    wasHandled
+            )
+        }
     }
 }

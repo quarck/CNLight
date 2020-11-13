@@ -111,6 +111,18 @@ data class EventRecord(
         var eventStatus: EventStatus = EventStatus.Confirmed,
         var attendanceStatus: AttendanceStatus = AttendanceStatus.None
 ) {
+    val contentMd5: md5state by lazy {
+        MD5.compute((
+                "$calendarId,$isAllDay,$color," +
+                        "$startTime,$endTime,$startTime,$endTime," +
+                        "$eventStatus,$attendanceStatus," +
+                        "${title.length},${desc.length},${location.length},${timeZone.length}," +
+                        "${rRule.length},${rDate.length},${exRRule.length},${exRDate.length}," +
+                        "$title,$desc,$location,$timeZone," +
+                        "$rRule,$rDate,$exRRule,$exRDate"
+                ).toByteArray())
+    }
+
     val title: String get() = details.title
     val desc: String get() = details.desc
 
@@ -122,6 +134,8 @@ data class EventRecord(
     val endTime: Long get() = details.endTime
 
     val isAllDay: Boolean get() = details.isAllDay
+
+    val timeZone: String get() = details.timezone
 
     var reminders: List<EventReminderRecord>
         get() = details.reminders
@@ -275,6 +289,7 @@ data class EventAlertRecord(
         val instanceStartTime: Long,
         val instanceEndTime: Long,
         val location: String,
+        val timeZone: String,
         val color: Int = 0,
         val eventStatus: EventStatus = EventStatus.Confirmed,
         val attendanceStatus: AttendanceStatus = AttendanceStatus.None,
@@ -288,14 +303,15 @@ data class EventAlertRecord(
         var timeFirstSeen: Long = 0L,
         var flags: Long = 0
 ) {
+    // not including alertTime, so multiple alerts for the same event would have identical contentMd5
     val contentMd5: md5state by lazy {
         MD5.compute((
-            "$calendarId,$isAllDay,$alertTime,$color," +
+            "$calendarId,$isAllDay,$color," +
             "$startTime,$endTime,$instanceStartTime,$instanceEndTime," +
             "$eventStatus,$attendanceStatus," +
-            "${title.length},${desc.length},${location.length}," +
+            "${title.length},${desc.length},${location.length},${timeZone.length}," +
             "${rRule.length},${rDate.length},${exRRule.length},${exRDate.length}," +
-            "$title,$desc,$location," +
+            "$title,$desc,$location,$timeZone," +
             "$rRule,$rDate,$exRRule,$exRDate"
         ).toByteArray())
     }

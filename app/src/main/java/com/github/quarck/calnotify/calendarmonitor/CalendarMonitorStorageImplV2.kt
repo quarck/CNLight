@@ -124,13 +124,28 @@ class CalendarMonitorStorageImplV2(val context: Context) {
         }
     }
 
+    fun deleteAlert(db: SQLiteDatabase, e: MonitorEventAlertEntry) {
+        try {
+            db.delete(
+                    TABLE_NAME,
+                    "$KEY_MD5A = ? AND $KEY_MD5B = ? AND $KEY_MD5C = ? AND $KEY_MD5D = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                    arrayOf(e.md5a.toString(), e.md5b.toString(),
+                            e.md5c.toString(), e.md5d.toString(),
+                            e.alertTime.toString(), e.instanceStartTime.toString()))
+        }
+        catch (ex: Exception) {
+            DevLog.error(LOG_TAG, "deleteAlert($e): exception ${ex.detailed}")
+        }
+    }
+
+
     fun deleteAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
 
         try {
             db.beginTransaction()
 
             for (entry in entries)
-                deleteAlert(db, entry.md5a, entry.md5b, entry.md5c, entry.md5d, entry.alertTime, entry.instanceStartTime)
+                deleteAlert(db, entry)
 
             db.setTransactionSuccessful()
         }
@@ -147,8 +162,9 @@ class CalendarMonitorStorageImplV2(val context: Context) {
             db.beginTransaction()
 
             for (alert in alerts) {
-                if (filter(alert))
-                    deleteAlert(db, alert.eventId, alert.alertTime, alert.instanceStartTime)
+                if (filter(alert)) {
+                    deleteAlert(db, alert.md5a, alert.md5b, alert.md5c, alert.md5d, alert.alertTime, alert.instanceStartTime)
+                }
             }
 
             db.setTransactionSuccessful()
@@ -161,15 +177,16 @@ class CalendarMonitorStorageImplV2(val context: Context) {
         }
     }
 
-    fun updateAlert(db: SQLiteDatabase, entry: MonitorEventAlertEntry) {
-        val values = recordToContentValues(entry)
-
-        //DevLog.debug(LOG_TAG, "Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
+    fun updateAlert(db: SQLiteDatabase, e: MonitorEventAlertEntry) {
+        val values = recordToContentValues(e)
 
         db.update(TABLE_NAME, // table
                 values, // column/value
-                "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
-                arrayOf(entry.eventId.toString(), entry.alertTime.toString(), entry.instanceStartTime.toString()))
+                "$KEY_MD5A = ? AND $KEY_MD5B = ? AND $KEY_MD5C = ? AND $KEY_MD5D = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                arrayOf(e.md5a.toString(), e.md5b.toString(),
+                        e.md5c.toString(), e.md5d.toString(),
+                        e.alertTime.toString(), e.instanceStartTime.toString())
+        )
     }
 
     fun updateAlerts(db: SQLiteDatabase, entries: Collection<MonitorEventAlertEntry>) {
@@ -179,15 +196,17 @@ class CalendarMonitorStorageImplV2(val context: Context) {
         try {
             db.beginTransaction()
 
-            for (entry in entries) {
+            for (e in entries) {
                 //DevLog.debug(LOG_TAG, "Updating alert entry, eventId=${entry.eventId}, alertTime =${entry.alertTime}");
 
-                val values = recordToContentValues(entry)
+                val values = recordToContentValues(e)
 
                 db.update(TABLE_NAME, // table
                         values, // column/value
-                        "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
-                        arrayOf(entry.eventId.toString(), entry.alertTime.toString(), entry.instanceStartTime.toString()))
+                        "$KEY_MD5A = ? AND $KEY_MD5B = ? AND $KEY_MD5C = ? AND $KEY_MD5D = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                        arrayOf(e.md5a.toString(), e.md5b.toString(),
+                                e.md5c.toString(), e.md5d.toString(),
+                                e.alertTime.toString(), e.instanceStartTime.toString()))
             }
 
             db.setTransactionSuccessful()
@@ -197,7 +216,7 @@ class CalendarMonitorStorageImplV2(val context: Context) {
         }
     }
 
-    fun getAlert(db: SQLiteDatabase, eventId: Long, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry? {
+    fun getAlert(db: SQLiteDatabase, md5: md5state, alertTime: Long, instanceStart: Long): MonitorEventAlertEntry? {
 
         var ret: MonitorEventAlertEntry? = null
 
@@ -206,8 +225,10 @@ class CalendarMonitorStorageImplV2(val context: Context) {
         try {
             cursor = db.query(TABLE_NAME, // a. table
                     SELECT_COLUMNS, // b. column names
-                    "$KEY_EVENTID = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
-                    arrayOf(eventId.toString(), alertTime.toString(), instanceStart.toString()),
+                    "$KEY_MD5A = ? AND $KEY_MD5B = ? AND $KEY_MD5C = ? AND $KEY_MD5D = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
+                    arrayOf(md5.a.toString(), md5.b.toString(),
+                            md5.c.toString(), md5.d.toString(),
+                            alertTime.toString(), instanceStart.toString()),
                     null, // e. group by
                     null, // f. h aving
                     null, // g. order by
@@ -323,14 +344,14 @@ class CalendarMonitorStorageImplV2(val context: Context) {
         return ret
     }
 
-    fun getInstanceAlerts(db: SQLiteDatabase, eventId: Long, instanceStart: Long): List<MonitorEventAlertEntry> {
+    fun getInstanceAlerts(db: SQLiteDatabase, md5: md5state, instanceStart: Long): List<MonitorEventAlertEntry> {
 
         val ret = arrayListOf<MonitorEventAlertEntry>()
 
         var cursor: Cursor? = null
 
-        val selection = "$KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?"
-        val selectionArgs = arrayOf(eventId.toString(), instanceStart.toString())
+        val selection = "$KEY_MD5A = ? AND $KEY_MD5B = ? AND $KEY_MD5C = ? AND $KEY_MD5D = ? AND $KEY_INSTANCE_START = ?"
+        val selectionArgs = arrayOf(md5.a.toString(), md5.b.toString(), md5.c.toString(), md5.d.toString(), instanceStart.toString())
 
         try {
             cursor = db.query(TABLE_NAME, // a. table
@@ -465,11 +486,12 @@ class CalendarMonitorStorageImplV2(val context: Context) {
         val values = ContentValues();
 
         values.put(KEY_CALENDAR_ID, -1)
-        values.put(KEY_EVENTID, entry.eventId);
         values.put(KEY_ALERT_TIME, entry.alertTime)
         values.put(KEY_INSTANCE_START, entry.instanceStartTime);
-        values.put(KEY_INSTANCE_END, entry.instanceEndTime);
-        values.put(KEY_ALL_DAY, if (entry.isAllDay) 1 else 0)
+        values.put(KEY_MD5A, entry.md5a)
+        values.put(KEY_MD5B, entry.md5b)
+        values.put(KEY_MD5C, entry.md5c)
+        values.put(KEY_MD5D, entry.md5d)
         values.put(KEY_WE_CREATED_ALERT, if (entry.alertCreatedByUs) 1 else 0)
         values.put(KEY_WAS_HANDLED, if (entry.wasHandled) 1 else 0)
 
