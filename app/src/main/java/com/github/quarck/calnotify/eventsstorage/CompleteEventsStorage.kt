@@ -33,7 +33,7 @@ import java.io.Closeable
 class CompleteEventsStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable {
 
-    private var impl = CompleteEventsStorageImplV2()
+    private var impl = CompleteEventsStorageImplV3()
 
     override fun onCreate(db: SQLiteDatabase)
             = impl.createDb(db)
@@ -45,12 +45,12 @@ class CompleteEventsStorage(val context: Context)
         if (oldVersion == newVersion)
             return
 
-        if (newVersion != DATABASE_VERSION_V2)
+        if (newVersion != DATABASE_VERSION_V3)
             throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
 
         val implOld =
                 when (oldVersion) {
-                    DATABASE_VERSION_V1 -> CompleteEventsStorageImplV1()
+                    DATABASE_VERSION_V2 -> CompleteEventsStorageImplV2()
                     else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
                 }
 
@@ -112,9 +112,9 @@ class CompleteEventsStorage(val context: Context)
     companion object {
         private val LOG_TAG = "DismissedEventsStorage"
 
-        private const val DATABASE_VERSION_V1 = 1
         private const val DATABASE_VERSION_V2 = 2
-        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V2
+        private const val DATABASE_VERSION_V3 = 1
+        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V3
 
         private const val DATABASE_NAME = "DismissedEvents"
     }

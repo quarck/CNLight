@@ -397,8 +397,10 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
                             calendarId = calEvent.calendarId,
                             eventId = calEvent.eventId,
                             isAllDay = calEvent.isAllDay,
-                            isRepeating = calendarProvider.isRepeatingEvent(context, alert.eventId)
-                                    ?: false,
+                            rRule = calEvent.rRule,
+                            rDate = calEvent.rDate,
+                            exRRule = calEvent.exRRule,
+                            exRDate = calEvent.exRDate,
                             alertTime = alert.alertTime,
                             notificationId = 0,
                             title = calEvent.title,

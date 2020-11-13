@@ -49,11 +49,11 @@ class CalendarEditor(val provider: CalendarProvider) {
         return eventId
     }
 
-    fun moveEvent(context: Context, event: EventAlertRecord, addTimeMillis: Long): Boolean {
+    fun moveEvent(context: Context, event: EventAlertRecord, addTimeMillis: Long): EventAlertRecord? {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(LOG_TAG, "moveEvent: no permissions");
-            return false;
+            return null;
         }
 
         // Get full event details from the provider, if failed - construct a failback version
@@ -94,31 +94,34 @@ class CalendarEditor(val provider: CalendarProvider) {
         DevLog.info(LOG_TAG, "Moving event ${event.eventId} from ${event.startTime} / ${event.endTime} to $newStartTime / $newEndTime")
 
         val ret = provider.moveEvent(context, event.eventId, newStartTime, newEndTime)
-        event.startTime = newStartTime
-        event.endTime = newEndTime
+        if (ret) {
+            DevLog.info(LOG_TAG, "Provider move event for ${event.eventId} result: $ret")
+            DevLog.info(LOG_TAG, "Adding move request into DB: move: ${event.eventId} ${oldDetails.startTime} / ${oldDetails.endTime} -> $newStartTime / $newEndTime")
 
-        DevLog.info(LOG_TAG, "Provider move event for ${event.eventId} result: $ret")
+            if (event.eventId != -1L) {
+                ApplicationController.CalendarMonitor.onEventEditedByUs(context, event.eventId);
+            }
 
-        val newDetails = oldDetails.copy(startTime = newStartTime, endTime = newEndTime)
-
-        DevLog.info(LOG_TAG, "Adding move request into DB: move: ${event.eventId} ${oldDetails.startTime} / ${oldDetails.endTime} -> ${newDetails.startTime} / ${newDetails.endTime}")
-
-        if (event.eventId != -1L) {
-            ApplicationController.CalendarMonitor.onEventEditedByUs(context, event.eventId);
+            return event.copy(
+                    startTime = newStartTime,
+                    endTime = newEndTime,
+                    instanceStartTime = newStartTime,
+                    instanceEndTime = newEndTime
+            )
+        } else {
+            return null
         }
-
-        return ret
     }
 
-    fun moveRepeatingAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTimeMillis: Long): Long {
+    fun moveRepeatingAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTimeMillis: Long): EventAlertRecord? {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(LOG_TAG, "moveRepeatingAsCopy: no permissions");
-            return -1L
+            return null
         }
 
         // Get full event details from the provider, if failed - construct a failback version
-        val oldEvent = provider.getEvent(context, event.eventId) ?: return -1L
+        val oldEvent = provider.getEvent(context, event.eventId) ?: return null
 
         val newStartTime: Long
         val newEndTime: Long
@@ -145,19 +148,24 @@ class CalendarEditor(val provider: CalendarProvider) {
         val details = oldEvent.details.copy(
                 startTime = newStartTime,
                 endTime = newEndTime,
-                repeatingRule = "",
-                repeatingRDate = "",
-                repeatingExRule = "",
-                repeatingExRDate = ""
+                rRule = "",
+                rDate = "",
+                exRRule = "",
+                exRDate = ""
         )
 
         val ret = createEvent(context, calendar.calendarId, calendar.owner, details)
         if (ret != -1L) {
-            event.startTime = newStartTime
-            event.endTime = newEndTime
+            return event.copy(
+                    eventId = ret,
+                    startTime = newStartTime,
+                    endTime = newEndTime,
+                    instanceStartTime = newStartTime,
+                    instanceEndTime = newEndTime
+            )
         }
 
-        return ret
+        return null
     }
 
     fun updateEvent(context: Context, eventToEdit: EventRecord, details: CalendarEventDetails): Boolean {

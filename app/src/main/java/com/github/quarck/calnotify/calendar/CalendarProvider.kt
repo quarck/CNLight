@@ -52,6 +52,10 @@ object CalendarProvider  {
                     CalendarContract.CalendarAlerts.BEGIN,
                     CalendarContract.CalendarAlerts.END,
                     CalendarContract.Events.ALL_DAY,
+                    CalendarContract.Events.RRULE,
+                    CalendarContract.Events.RDATE,
+                    CalendarContract.Events.EXRULE,
+                    CalendarContract.Events.EXDATE,
                     CalendarContract.CalendarAlerts.STATUS,
                     CalendarContract.CalendarAlerts.SELF_ATTENDEE_STATUS
             )
@@ -69,8 +73,12 @@ object CalendarProvider  {
     private val PROJECTION_INDEX_INSTANCE_BEGIN = 10
     private val PROJECTION_INDEX_INSTANCE_END = 11
     private val PROJECTION_INDEX_ALL_DAY = 12
-    private val PROJECTION_INDEX_STATUS = 13
-    private val PROJECTION_INDEX_ATTENDANCE_STATUS = 14
+    private val PROJECTION_INDEX_RRULE = 13
+    private val PROJECTION_INDEX_RDATE = 14
+    private val PROJECTION_INDEX_EXRRULE = 15
+    private val PROJECTION_INDEX_EXRDATE = 16
+    private val PROJECTION_INDEX_STATUS = 17
+    private val PROJECTION_INDEX_ATTENDANCE_STATUS = 18
 
     private fun cursorToAlertRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventAlertRecord?> {
 
@@ -89,6 +97,11 @@ object CalendarProvider  {
         val instanceEnd: Long? = cursor.getLong(PROJECTION_INDEX_INSTANCE_END)
         val allDay: Int? = cursor.getInt(PROJECTION_INDEX_ALL_DAY)
 
+        val rRule: String? = cursor.getString(PROJECTION_INDEX_RRULE)
+        val rDate: String? = cursor.getString(PROJECTION_INDEX_RDATE)
+        val exRRule: String? = cursor.getString(PROJECTION_INDEX_EXRRULE)
+        val exRDate: String? = cursor.getString(PROJECTION_INDEX_EXRDATE)
+
         val status: Int? = cursor.getInt(PROJECTION_INDEX_STATUS)
         val attendance: Int? = cursor.getInt(PROJECTION_INDEX_ATTENDANCE_STATUS)
 
@@ -100,6 +113,10 @@ object CalendarProvider  {
                         calendarId = calendarId ?: -1L,
                         eventId = eventId,
                         isAllDay = (allDay ?: 0) != 0,
+                        rRule = rRule ?: "",
+                        rDate = rDate ?: "",
+                        exRRule = exRRule ?: "",
+                        exRDate = exRDate ?: "",
                         notificationId = 0,
                         alertTime = alarmTime ?: newAlarmTime ?: 0,
                         title = title,
@@ -112,7 +129,6 @@ object CalendarProvider  {
                         lastStatusChangeTime = 0L,
                         displayStatus = EventDisplayStatus.Hidden,
                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
-                        isRepeating = false, // has to be updated separately
                         eventStatus = EventStatus.fromInt(status),
                         attendanceStatus = AttendanceStatus.fromInt(attendance)
 
@@ -166,11 +182,6 @@ object CalendarProvider  {
 
         cursor?.close()
 
-        ret.forEach {
-            event ->
-            event.isRepeating = isRepeatingEvent(context, event) ?: false
-        }
-
         return ret
     }
 
@@ -211,63 +222,8 @@ object CalendarProvider  {
 
         cursor?.close()
 
-        if (ret != null)
-            ret.isRepeating = isRepeatingEvent(context, ret) ?: false
-
         return ret
     }
-
-//    override fun getEventAlerts(context: Context, eventId: Long, startingAlertTime: Long, maxEntries: Int): List<EventAlertRecord> {
-//
-//        if (!PermissionsManager.hasReadCalendar(context)) {
-//            DevLog.error(context, LOG_TAG, "getEventAlerts: has no permissions");
-//            return listOf();
-//        }
-//
-//        val ret = arrayListOf<EventAlertRecord>()
-//
-//        val selection =
-//                "${CalendarContract.CalendarAlerts.ALARM_TIME} > ? AND ${CalendarContract.CalendarAlerts.EVENT_ID} = ?"
-//
-//        val cursor: Cursor? =
-//                context.contentResolver.query(
-//                        CalendarContract.CalendarAlerts.CONTENT_URI_BY_INSTANCE,
-//                        alertFields,
-//                        selection,
-//                        arrayOf(startingAlertTime.toString(), eventId.toString()),
-//                        null
-//                );
-//
-//        var totalEntries = 0
-//
-//        if (cursor != null && cursor.moveToFirst()) {
-//            do {
-//                val eventPair = cursorToAlertRecord(cursor, null)
-//                val event = eventPair.component2()
-//
-//                if (event != null && event.eventId == eventId) {
-//                    ret.add(event)
-//                    ++totalEntries
-//                    if (totalEntries >= maxEntries)
-//                        break;
-//                }
-//
-//            } while (cursor.moveToNext())
-//
-//        }
-//        else {
-//            DevLog.error(context, LOG_TAG, "Event $eventId not found")
-//        }
-//
-//        cursor?.close()
-//
-//        ret.forEach {
-//            event ->
-//            event.isRepeating = isRepeatingEvent(context, event) ?: false
-//        }
-//
-//        return ret
-//    }
 
     @SuppressLint("MissingPermission")
     fun getEventReminders(context: Context, eventId: Long): List<EventReminderRecord> {
@@ -464,10 +420,10 @@ object CalendarProvider  {
                                         endTime = end,
                                         isAllDay = allDay != 0,
                                         reminders = listOf<EventReminderRecord>(),
-                                        repeatingRule = rRule ?: "",
-                                        repeatingRDate = rDate ?: "",
-                                        repeatingExRule = exRRule ?: "",
-                                        repeatingExRDate = exRDate ?: "",
+                                        rRule = rRule ?: "",
+                                        rDate = rDate ?: "",
+                                        exRRule = exRRule ?: "",
+                                        exRDate = exRDate ?: "",
                                         color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR, title = title // stub for now
                                 ),
                                 eventStatus = EventStatus.fromInt(status),
@@ -772,15 +728,15 @@ object CalendarProvider  {
         values.put(CalendarContract.Events.HAS_ALARM, 1)
         values.put(CalendarContract.Events.ALL_DAY, if (details.isAllDay) 1 else 0)
 
-        if (details.repeatingRule != "")
-            values.put(CalendarContract.Events.RRULE, details.repeatingRule)
-        if (details.repeatingRDate != "")
-            values.put(CalendarContract.Events.RDATE, details.repeatingRDate)
+        if (details.rRule != "")
+            values.put(CalendarContract.Events.RRULE, details.rRule)
+        if (details.rDate != "")
+            values.put(CalendarContract.Events.RDATE, details.rDate)
 
-        if (details.repeatingExRule != "")
-            values.put(CalendarContract.Events.EXRULE, details.repeatingExRule)
-        if (details.repeatingExRDate != "")
-            values.put(CalendarContract.Events.EXDATE, details.repeatingExRDate)
+        if (details.exRRule != "")
+            values.put(CalendarContract.Events.EXRULE, details.exRRule)
+        if (details.exRDate != "")
+            values.put(CalendarContract.Events.EXDATE, details.exRDate)
 
 
         values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
@@ -824,9 +780,6 @@ object CalendarProvider  {
         return eventId
     }
 
-
-    private fun isRepeatingEvent(context: Context, event: EventAlertRecord)
-            = isRepeatingEvent(context, event.eventId)
 
     fun isRepeatingEvent(context: Context, eventId: Long): Boolean? {
 
@@ -946,17 +899,17 @@ object CalendarProvider  {
             if (oldDetails.color != newDetails.color)
                 values.put(CalendarContract.Events.EVENT_COLOR, newDetails.color)
 
-            if (oldDetails.repeatingRule != newDetails.repeatingRule)
-                values.put(CalendarContract.Events.RRULE, newDetails.repeatingRule)
+            if (oldDetails.rRule != newDetails.rRule)
+                values.put(CalendarContract.Events.RRULE, newDetails.rRule)
 
-            if (oldDetails.repeatingRDate != newDetails.repeatingRDate)
-                values.put(CalendarContract.Events.RDATE, newDetails.repeatingRDate)
+            if (oldDetails.rDate != newDetails.rDate)
+                values.put(CalendarContract.Events.RDATE, newDetails.rDate)
 
-            if (oldDetails.repeatingExRule != newDetails.repeatingExRule)
-                values.put(CalendarContract.Events.EXRULE, newDetails.repeatingExRule)
+            if (oldDetails.exRRule != newDetails.exRRule)
+                values.put(CalendarContract.Events.EXRULE, newDetails.exRRule)
 
-            if (oldDetails.repeatingExRDate != newDetails.repeatingExRDate)
-                values.put(CalendarContract.Events.EXDATE, newDetails.repeatingExRDate)
+            if (oldDetails.exRDate != newDetails.exRDate)
+                values.put(CalendarContract.Events.EXDATE, newDetails.exRDate)
 
             val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
             val updated = context.contentResolver.update(updateUri, values, null, null)

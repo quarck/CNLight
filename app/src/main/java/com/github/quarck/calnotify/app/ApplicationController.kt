@@ -704,11 +704,10 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
-    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): Boolean {
+    fun moveEvent(context: Context, event: EventAlertRecord, addTime: Long): EventAlertRecord? {
 
         val moved = calendarEditor.moveEvent(context, event, addTime)
-
-        if (moved) {
+        if (moved != null) {
             DevLog.info(LOG_TAG, "moveEvent: Moved event ${event.eventId} by ${addTime / 1000L} seconds")
             EventsStorage(context).use {
                 db ->
@@ -724,12 +723,11 @@ object ApplicationController : EventMovedHandler {
         return moved
     }
 
-    fun moveAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTime: Long): Long {
+    fun moveAsCopy(context: Context, calendar: CalendarRecord, event: EventAlertRecord, addTime: Long): EventAlertRecord? {
 
-        val eventId = calendarEditor.moveRepeatingAsCopy(context, calendar, event, addTime)
-
-        if (eventId != -1L) {
-            DevLog.debug(LOG_TAG, "Event created: id=${eventId}")
+        val moved = calendarEditor.moveRepeatingAsCopy(context, calendar, event, addTime)
+        if (moved != null) {
+            DevLog.debug(LOG_TAG, "Event created: id=${moved.eventId}")
 
             EventsStorage(context).use {
                 db ->
@@ -746,6 +744,6 @@ object ApplicationController : EventMovedHandler {
             DevLog.error(LOG_TAG, "Failed to create event")
         }
 
-        return eventId
+        return moved
     }
 }

@@ -125,23 +125,21 @@ class TestActivity : Activity() {
         val end = start + duration * 60L * 1000L
 
         val event = EventAlertRecord(
-                -1L,
-                eventId,
-                allDay,
-                false,
-                currentTime,
-                0,
-                title,
-                "",
-                start,
-                end,
-                start,
-                end,
-                location,
-                currentTime,
-                0L, // snoozed
-                EventDisplayStatus.Hidden,
-                color
+                calendarId = -1L,
+                eventId = eventId,
+                isAllDay = allDay,
+                rRule = "",rDate = "",exRRule = "",exRDate = "",
+                alertTime = currentTime,
+                title = title,
+                desc = "",
+                startTime = start,
+                endTime = end,
+                instanceStartTime = start,
+                instanceEndTime = end,
+                location = location,
+                snoozedUntil = 0L, // snoozed
+                color = color,
+                displayStatus = EventDisplayStatus.Hidden
         )
         ApplicationController.postEventNotifications(this, listOf(event))
         ApplicationController.registerNewEvent(this, event);
@@ -195,9 +193,8 @@ class TestActivity : Activity() {
                 -1L,
                 eventId,
                 false,
-                false,
+                "","","","",
                 System.currentTimeMillis(),
-                0,
                 randomTitle(currentTime) + " " + ((currentTime / 100) % 10000).toString(),
                 "",
                 currentTime + 3600L * 1000L,
@@ -205,10 +202,9 @@ class TestActivity : Activity() {
                 currentTime + 3600L * 1000L,
                 currentTime + 2 * 3600L * 1000L,
                 if ((cnt % 2) == 0) "" else "Hawthorne, California, U.S.",
-                System.currentTimeMillis(),
-                0L,
-                EventDisplayStatus.Hidden,
-                0xff660066.toInt()
+                0x7f007f00,
+                displayStatus = EventDisplayStatus.Hidden
+
         )
 
         cnt++;

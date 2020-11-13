@@ -38,7 +38,7 @@ data class EventWithNewInstanceTime(
 class EventsStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable  {
 
-    private var impl = EventsStorageImplV9(context)
+    private var impl = EventsStorageImplV10(context)
 
     override fun onCreate(db: SQLiteDatabase)
             = impl.createDb(db)
@@ -50,12 +50,12 @@ class EventsStorage(val context: Context)
         if (oldVersion == newVersion)
             return
 
-        if (newVersion != DATABASE_VERSION_V9)
+        if (newVersion != DATABASE_VERSION_V10)
             throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
 
         val implOld =
                 when (oldVersion) {
-                    DATABASE_VERSION_V8 -> EventsStorageImplV8(context)
+                    DATABASE_VERSION_V9 -> EventsStorageImplV9(context)
                     else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
                 }
 
@@ -97,16 +97,19 @@ class EventsStorage(val context: Context)
             = synchronized(EventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, events) } }
 
     fun updateEvent(event: EventAlertRecord,
-                             alertTime: Long? = null,
-                             title: String? = null,
-                             snoozedUntil: Long? = null,
-                             startTime: Long? = null,
-                             endTime: Long? = null,
-                             location: String? = null,
-                             lastStatusChangeTime: Long? = null,
-                             displayStatus: EventDisplayStatus? = null,
-                             color: Int? = null,
-                             isRepeating: Boolean? = null
+                    alertTime: Long? = null,
+                    title: String? = null,
+                    snoozedUntil: Long? = null,
+                    startTime: Long? = null,
+                    endTime: Long? = null,
+                    location: String? = null,
+                    lastStatusChangeTime: Long? = null,
+                    displayStatus: EventDisplayStatus? = null,
+                    color: Int? = null,
+                    rRule: String? = null,
+                    rDate: String? = null,
+                    exRRule: String? = null,
+                    exRDate: String? = null
         ): Pair<Boolean, EventAlertRecord> {
 
         val newEvent =
@@ -120,7 +123,10 @@ class EventsStorage(val context: Context)
                         lastStatusChangeTime = lastStatusChangeTime ?: event.lastStatusChangeTime,
                         displayStatus = displayStatus ?: event.displayStatus,
                         color = color ?: event.color,
-                        isRepeating = isRepeating ?: event.isRepeating,
+                        rRule = rRule ?: event.rRule,
+                        rDate = rDate ?: event.rDate,
+                        exRRule = exRRule ?: event.exRRule,
+                        exRDate = exRDate ?: event.exRDate,
                         flags = event.flags
                 );
 
@@ -131,16 +137,19 @@ class EventsStorage(val context: Context)
 
     @Suppress("unused")
     fun updateEvents(events: List<EventAlertRecord>,
-                              alertTime: Long? = null,
-                              title: String? = null,
-                              snoozedUntil: Long? = null,
-                              startTime: Long? = null,
-                              endTime: Long? = null,
-                              location: String? = null,
-                              lastStatusChangeTime: Long? = null,
-                              displayStatus: EventDisplayStatus? = null,
-                              color: Int? = null,
-                              isRepeating: Boolean? = null): Boolean {
+                     alertTime: Long? = null,
+                     title: String? = null,
+                     snoozedUntil: Long? = null,
+                     startTime: Long? = null,
+                     endTime: Long? = null,
+                     location: String? = null,
+                     lastStatusChangeTime: Long? = null,
+                     displayStatus: EventDisplayStatus? = null,
+                     color: Int? = null,
+                     rRule: String? = null,
+                     rDate: String? = null,
+                     exRRule: String? = null,
+                     exRDate: String? = null): Boolean {
 
         val newEvents =
                 events.map {
@@ -155,7 +164,11 @@ class EventsStorage(val context: Context)
                             lastStatusChangeTime = lastStatusChangeTime ?: event.lastStatusChangeTime,
                             displayStatus = displayStatus ?: event.displayStatus,
                             color = color ?: event.color,
-                            isRepeating = isRepeating ?: event.isRepeating)
+                            rRule = rRule ?: event.rRule,
+                            rDate = rDate ?: event.rDate,
+                            exRRule = exRRule ?: event.exRRule,
+                            exRDate = exRDate ?: event.exRDate
+                    )
                 }
 
         return updateEvents(newEvents)
@@ -201,10 +214,10 @@ class EventsStorage(val context: Context)
     companion object {
         private const val LOG_TAG = "EventsStorage"
 
-        private const val DATABASE_VERSION_V8 = 8
         private const val DATABASE_VERSION_V9 = 9
+        private const val DATABASE_VERSION_V10 = 10
 
-        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V9
+        private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V10
 
         private const val DATABASE_NAME = "Events"
     }

@@ -733,7 +733,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         if (!event.isRepeating) {
             val moved = ApplicationController.moveEvent(this, event, addTime)
 
-            if (moved) {
+            if (moved != null) {
                 SnoozeResult(SnoozeType.Moved, event.startTime).toast(this) // Show
                 finish()  // terminate ourselves
             } else {
@@ -741,9 +741,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             }
         }
         else {
-            val newEventId = ApplicationController.moveAsCopy(this, calendar, event, addTime)
-
-            if (newEventId != -1L) {
+            val moved = ApplicationController.moveAsCopy(this, calendar, event, addTime)
+            if (moved != null) {
                 SnoozeResult(SnoozeType.Moved, event.startTime).toast(this) // Show
                 finish() // terminate ourselves
             } else {

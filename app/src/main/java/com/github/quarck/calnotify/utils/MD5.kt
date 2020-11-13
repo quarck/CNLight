@@ -6,8 +6,34 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 
 // version 1.1.3
 
-object MD5 {
+data class md5state(var a: Int, var b: Int, var c: Int, var d: Int) {
 
+    override fun toString() : String {
+        val sb = StringBuilder(80)
+        for (i in 0..3) {
+            var n = when (i) {0 -> a; 1 -> b; 2 -> c; else -> d }
+            for (j in 0..3) {
+                sb.append(String.format("%02x", n and 0xFF))
+                n = n ushr 8
+            }
+        }
+        return sb.toString()
+    }
+    fun toByteArray(): ByteArray {
+        val md5 = ByteArray(16)
+        var count = 0
+        for (i in 0..3) {
+            var n = when (i) {0 -> a; 1 -> b; 2 -> c; else -> d }
+            for (j in 0..3) {
+                md5[count++] = n.toByte()
+                n = n ushr 8
+            }
+        }
+        return md5
+    }
+}
+
+object MD5 {
     private val INIT_A = 0x67452301
     private val INIT_B = 0xEFCDAB89L.toInt()
     private val INIT_C = 0x98BADCFEL.toInt()
@@ -24,7 +50,7 @@ object MD5 {
         ((1L shl 32) * Math.abs(Math.sin(it + 1.0))).toLong().toInt()
     }
 
-    fun compute(message: ByteArray): ByteArray {
+    fun compute(message: ByteArray): md5state {
         val messageLenBytes = message.size
         val numBlocks = ((messageLenBytes + 8) ushr 6) + 1
         val totalLen = numBlocks shl 6
@@ -32,31 +58,30 @@ object MD5 {
         paddingBytes[0] = 0x80.toByte()
         var messageLenBits = (messageLenBytes shl 3).toLong()
 
+
         for (i in 0..7) {
             paddingBytes[paddingBytes.size - 8 + i] = messageLenBits.toByte()
             messageLenBits = messageLenBits ushr 8
         }
 
-        var a = INIT_A
-        var b = INIT_B
-        var c = INIT_C
-        var d = INIT_D
+        val s = md5state(INIT_A, INIT_B, INIT_C, INIT_D)
         val buffer = IntArray(16)
 
         for (i in 0 until numBlocks) {
             var index = i shl 6
 
             for (j in 0..63) {
-                val temp = if (index < messageLenBytes) message[index] else
-                    paddingBytes[index - messageLenBytes]
+                // temp = index < len ? message[index] : padding[index - len];
+                val temp =
+                        if (index < messageLenBytes)
+                            message[index]
+                        else
+                            paddingBytes[index - messageLenBytes]
                 buffer[j ushr 2] = (temp.toInt() shl 24) or (buffer[j ushr 2] ushr 8)
                 index++
             }
 
-            val originalA = a
-            val originalB = b
-            val originalC = c
-            val originalD = d
+            val originalS = s
 
             for (j in 0..63) {
                 val div16 = j ushr 4
@@ -64,51 +89,40 @@ object MD5 {
                 var bufferIndex = j
                 when (div16) {
                     0 -> {
-                        f = (b and c) or (b.inv() and d)
+                        f = (s.b and s.c) or (s.b.inv() and s.d)
                     }
 
                     1 -> {
-                        f = (b and d) or (c and d.inv())
+                        f = (s.b and s.d) or (s.c and s.d.inv())
                         bufferIndex = (bufferIndex * 5 + 1) and 0x0F
                     }
 
                     2 -> {
-                        f = b xor c xor d;
+                        f = s.b xor s.c xor s.d;
                         bufferIndex = (bufferIndex * 3 + 5) and 0x0F
                     }
 
                     3 -> {
-                        f = c xor (b or d.inv());
+                        f = s.c xor (s.b or s.d.inv());
                         bufferIndex = (bufferIndex * 7) and 0x0F
                     }
                 }
 
-                val temp = b + Integer.rotateLeft(a + f + buffer[bufferIndex] +
+                val temp = s.b + Integer.rotateLeft(s.a + f + buffer[bufferIndex] +
                         TABLE_T[j], SHIFT_AMTS[(div16 shl 2) or (j and 3)])
-                a = d
-                d = c
-                c = b
-                b = temp
+                s.a = s.d
+                s.d = s.c
+                s.c = s.b
+                s.b = temp
             }
 
-            a += originalA
-            b += originalB
-            c += originalC
-            d += originalD
+            s.a += originalS.a
+            s.b += originalS.b
+            s.c += originalS.c
+            s.d += originalS.d
         }
 
-        val md5 = ByteArray(16)
-        var count = 0
-
-        for (i in 0..3) {
-            var n = if (i == 0) a else (if (i == 1) b else (if (i == 2) c else d))
-
-            for (j in 0..3) {
-                md5[count++] = n.toByte()
-                n = n ushr 8
-            }
-        }
-        return md5
+        return s
     }
 }
 
@@ -118,10 +132,4 @@ fun ByteArray.toHexString(): String {
     return sb.toString()
 }
 
-fun String.md5() = MD5.compute(this.toByteArray()).toHexString()
-
-fun EventAlertRecord.fullMD5() = toString().md5()
-
-fun EventAlertRecord.essenceMD5() =
-        ("${title.length},${desc.length},${location.length}," +
-                "$$instanceStartTime,$isAllDay,$title,$desc,$location").md5()
+fun String.md5() = MD5.compute(this.toByteArray()).toString()

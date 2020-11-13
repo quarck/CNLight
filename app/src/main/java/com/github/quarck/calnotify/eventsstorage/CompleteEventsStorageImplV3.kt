@@ -31,13 +31,124 @@ import com.github.quarck.calnotify.utils.logs.DevLog
 //import com.github.quarck.calnotify.utils.logs.Logger
 import java.util.*
 
-class CompleteEventsStorageImplV2 {
+class CompleteEventsStorageImplV3 {
+
+    @Suppress("ConvertToStringTemplate")
+    fun createDb(db: SQLiteDatabase) {
+
+        val CREATE_PKG_TABLE =
+                "CREATE " +
+                        "TABLE $TABLE_NAME " +
+                        "( " +
+                        "$KEY_CALENDAR_ID INTEGER, " +
+                        "$KEY_EVENTID INTEGER, " +
+
+                        "$KEY_DISMISS_TIME INTEGER, " +
+                        "$KEY_DISMISS_TYPE INTEGER, " +
+
+                        "$KEY_ALERT_TIME INTEGER, " +
+
+                        "$KEY_TITLE TEXT, " +
+                        "$KEY_DESCRIPTION TEXT, " +
+
+                        "$KEY_START INTEGER, " +
+                        "$KEY_END INTEGER, " +
+
+                        "$KEY_INSTANCE_START INTEGER, " +
+                        "$KEY_INSTANCE_END INTEGER, " +
+
+                        "$KEY_LOCATION TEXT, " +
+                        "$KEY_SNOOZED_UNTIL INTEGER, " +
+                        "$KEY_LAST_EVENT_VISIBILITY INTEGER, " +
+                        "$KEY_DISPLAY_STATUS INTEGER, " +
+                        "$KEY_COLOR INTEGER, " +
+
+                        "$KEY_RRULE TEXT, " +
+                        "$KEY_RDATE TEXT, " +
+                        "$KEY_EXRDATE TEXT, " +
+                        "$KEY_EXRDATE TEXT, " +
+
+                        "$KEY_ALL_DAY INTEGER, " +
+                        "$KEY_FLAGS INTEGER, " +
+
+                        "$KEY_RESERVED_INT2 INTEGER, " +
+                        "$KEY_RESERVED_INT3 INTEGER, " +
+                        "$KEY_RESERVED_INT4 INTEGER, " +
+                        "$KEY_RESERVED_INT5 INTEGER, " +
+                        "$KEY_RESERVED_INT6 INTEGER, " +
+                        "$KEY_RESERVED_INT7 INTEGER, " +
+                        "$KEY_RESERVED_INT8 INTEGER, " +
+                        "$KEY_RESERVED_INT9 INTEGER, " +
+
+                        "$KEY_RESERVED_STR2 TEXT, " +
+                        "$KEY_RESERVED_STR3 TEXT, " +
+
+                        "PRIMARY KEY ($KEY_EVENTID, $KEY_INSTANCE_START)" +
+                        " )"
+
+        DevLog.debug(LOG_TAG, "Creating DB TABLE using query: " + CREATE_PKG_TABLE)
+
+        db.execSQL(CREATE_PKG_TABLE)
+
+        val CREATE_INDEX = "CREATE UNIQUE INDEX $INDEX_NAME ON $TABLE_NAME ($KEY_EVENTID, $KEY_INSTANCE_START)"
+
+        DevLog.debug(LOG_TAG, "Creating DB INDEX using query: " + CREATE_INDEX)
+
+        db.execSQL(CREATE_INDEX)
+    }
 
     fun dropAll(db: SQLiteDatabase) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
         db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME)
     }
 
+    fun addEventImpl(db: SQLiteDatabase, type: EventCompletionType, changeTime: Long, event: EventAlertRecord) {
+
+//        DevLog.debug(LOG_TAG, "addEventImpl " + event.eventId)
+
+        val values = eventRecordToContentValues(event, changeTime, type)
+
+        try {
+            db.insertOrThrow(TABLE_NAME, // table
+                    null, // nullColumnHack
+                    values) // key/value -> keys = column names/ values = column
+            // values
+        }
+        catch (ex: SQLiteConstraintException) {
+            DevLog.debug(LOG_TAG, "This entry (${event.eventId}) is already in the DB, updating!")
+
+            db.update(
+                    TABLE_NAME,
+                    values,
+                    " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
+                    arrayOf(event.eventId.toString(), event.instanceStartTime.toString()))
+        }
+    }
+
+    fun addEventsImpl(db: SQLiteDatabase, type: EventCompletionType, changeTime: Long, events: Collection<EventAlertRecord>) {
+
+        try {
+            db.beginTransaction()
+
+            for (event in events)
+                addEventImpl(db, type, changeTime, event)
+
+            db.setTransactionSuccessful()
+        }
+        finally {
+            db.endTransaction()
+        }
+    }
+
+
+    fun deleteEventImpl(db: SQLiteDatabase, entry: CompleteEventAlertRecord) {
+        db.delete(
+                TABLE_NAME,
+                " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
+                arrayOf(entry.event.eventId.toString(), entry.event.instanceStartTime.toString()))
+
+//        DevLog.debug(LOG_TAG, "deleteEventImpl ${entry.event.eventId}, instance=${entry.event.instanceStartTime} ")
+    }
 
     fun deleteEventImpl(db: SQLiteDatabase, event: EventAlertRecord) {
         db.delete(
@@ -46,6 +157,10 @@ class CompleteEventsStorageImplV2 {
                 arrayOf(event.eventId.toString(), event.instanceStartTime.toString()))
 
 //        DevLog.debug(LOG_TAG, "deleteEventImpl ${event.eventId}, instance=${event.instanceStartTime} ")
+    }
+
+    fun clearHistoryImpl(db: SQLiteDatabase) {
+        db.delete(TABLE_NAME, null, null)
     }
 
     fun getEventsImpl(db: SQLiteDatabase): List<CompleteEventAlertRecord> {
@@ -74,6 +189,48 @@ class CompleteEventsStorageImplV2 {
         return ret
     }
 
+    private fun eventRecordToContentValues(event: EventAlertRecord, time: Long, type: EventCompletionType): ContentValues {
+        val values = ContentValues()
+
+        values.put(KEY_CALENDAR_ID, event.calendarId)
+        values.put(KEY_EVENTID, event.eventId)
+        values.put(KEY_DISMISS_TIME, time)
+        values.put(KEY_DISMISS_TYPE, type.code)
+        values.put(KEY_ALERT_TIME, event.alertTime)
+        values.put(KEY_TITLE, event.title)
+        values.put(KEY_DESCRIPTION, event.desc)
+        values.put(KEY_START, event.startTime)
+        values.put(KEY_END, event.endTime)
+        values.put(KEY_INSTANCE_START, event.instanceStartTime)
+        values.put(KEY_INSTANCE_END, event.instanceEndTime)
+        values.put(KEY_LOCATION, event.location)
+        values.put(KEY_SNOOZED_UNTIL, event.snoozedUntil)
+        values.put(KEY_LAST_EVENT_VISIBILITY, event.lastStatusChangeTime)
+        values.put(KEY_DISPLAY_STATUS, event.displayStatus.code)
+        values.put(KEY_COLOR, event.color)
+        values.put(KEY_RRULE, event.rRule)
+        values.put(KEY_RDATE, event.rDate)
+        values.put(KEY_EXRRULE, event.exRRule)
+        values.put(KEY_EXRDATE, event.exRDate)
+        values.put(KEY_ALL_DAY, if (event.isAllDay) 1 else 0)
+        values.put(KEY_FLAGS, event.flags)
+
+        // Fill reserved keys with some placeholders
+        values.put(KEY_RESERVED_INT2, 0L)
+        values.put(KEY_RESERVED_INT3, 0L)
+        values.put(KEY_RESERVED_INT4, 0L)
+        values.put(KEY_RESERVED_INT5, 0L)
+        values.put(KEY_RESERVED_INT6, 0L)
+        values.put(KEY_RESERVED_INT7, 0L)
+        values.put(KEY_RESERVED_INT8, 0L)
+        values.put(KEY_RESERVED_INT9, 0L)
+
+        values.put(KEY_RESERVED_STR2, "")
+        values.put(KEY_RESERVED_STR3, "")
+
+        return values
+    }
+
     private fun cursorToEventRecord(cursor: Cursor): CompleteEventAlertRecord {
 
         val event = EventAlertRecord(
@@ -92,10 +249,10 @@ class CompleteEventsStorageImplV2 {
                 lastStatusChangeTime = cursor.getLong(PROJECTION_KEY_LAST_EVENT_VISIBILITY),
                 displayStatus = EventDisplayStatus.fromInt(cursor.getInt(PROJECTION_KEY_DISPLAY_STATUS)),
                 color = cursor.getInt(PROJECTION_KEY_COLOR),
-                rRule = if (cursor.getInt(PROJECTION_KEY_IS_REPEATING) != 0) "--non-empty--" else "",
-                rDate = if (cursor.getInt(PROJECTION_KEY_IS_REPEATING) != 0) "--non-empty--" else "",
-                exRRule = "",
-                exRDate = "",
+                rRule = cursor.getString(PROJECTION_KEY_RRULE) ?: "",
+                rDate = cursor.getString(PROJECTION_KEY_RDATE) ?: "",
+                exRRule = cursor.getString(PROJECTION_KEY_EXRRULE) ?: "",
+                exRDate = cursor.getString(PROJECTION_KEY_EXRDATE) ?: "",
                 isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
                 flags = cursor.getLong(PROJECTION_KEY_FLAGS)
         )
@@ -108,10 +265,10 @@ class CompleteEventsStorageImplV2 {
     }
 
     companion object {
-        private const val LOG_TAG = "DismissedEventsStorageImplV2"
+        private const val LOG_TAG = "DismissedEventsStorageImplV3"
 
-        private const val TABLE_NAME = "dismissedEventsV2"
-        private const val INDEX_NAME = "dismissedEventsIdxV2"
+        private const val TABLE_NAME = "dismissedEventsV3"
+        private const val INDEX_NAME = "dismissedEventsIdxV3"
 
         private const val KEY_CALENDAR_ID = "calendarId"
         private const val KEY_EVENTID = "eventId"
@@ -119,11 +276,14 @@ class CompleteEventsStorageImplV2 {
         private const val KEY_DISMISS_TIME = "dismissTime"
         private const val KEY_DISMISS_TYPE = "dismissType"
 
-        private const val KEY_IS_REPEATING = "isRepeating"
         private const val KEY_ALL_DAY = "allDay"
+        private const val KEY_RRULE = "rrule"
+        private const val KEY_RDATE = "rdate"
+        private const val KEY_EXRRULE = "exrrule"
+        private const val KEY_EXRDATE = "exrdate"
 
         private const val KEY_TITLE = "title"
-        private const val KEY_DESCRIPTION = "s1"
+        private const val KEY_DESCRIPTION = "desc"
 
         private const val KEY_START = "eventStart"
         private const val KEY_END = "eventEnd"
@@ -166,8 +326,11 @@ class CompleteEventsStorageImplV2 {
                 KEY_LAST_EVENT_VISIBILITY,
                 KEY_DISPLAY_STATUS,
                 KEY_COLOR,
-                KEY_IS_REPEATING,
                 KEY_ALL_DAY,
+                KEY_RRULE,
+                KEY_RDATE,
+                KEY_EXRRULE,
+                KEY_EXRDATE,
                 KEY_FLAGS
         )
 
@@ -187,8 +350,11 @@ class CompleteEventsStorageImplV2 {
         const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 13
         const val PROJECTION_KEY_DISPLAY_STATUS = 14
         const val PROJECTION_KEY_COLOR = 15
-        const val PROJECTION_KEY_IS_REPEATING = 16
-        const val PROJECTION_KEY_ALL_DAY = 17
-        const val PROJECTION_KEY_FLAGS = 18
+        const val PROJECTION_KEY_ALL_DAY = 16
+        const val PROJECTION_KEY_RRULE = 17
+        const val PROJECTION_KEY_RDATE = 18
+        const val PROJECTION_KEY_EXRRULE = 19
+        const val PROJECTION_KEY_EXRDATE = 20
+        const val PROJECTION_KEY_FLAGS = 21
     }
 }

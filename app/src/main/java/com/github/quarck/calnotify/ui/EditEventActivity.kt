@@ -591,10 +591,10 @@ open class EditEventActivity : AppCompatActivity() {
                         startTime = startTime,
                         endTime = endTime,
                         isAllDay = isAllDay,
-                        repeatingRule = originalEvent?.repeatingRule ?: "",
-                        repeatingRDate = originalEvent?.repeatingRDate ?: "",
-                        repeatingExRule = originalEvent?.repeatingExRule ?: "",
-                        repeatingExRDate = originalEvent?.repeatingExRDate ?: "",
+                        rRule = originalEvent?.rRule ?: "",
+                        rDate = originalEvent?.rDate ?: "",
+                        exRRule = originalEvent?.exRRule ?: "",
+                        exRDate = originalEvent?.exRDate ?: "",
                         color = originalEvent?.color ?: 0,
                         reminders = remindersToAdd
         )

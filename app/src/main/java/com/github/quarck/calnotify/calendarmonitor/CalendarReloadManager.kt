@@ -289,56 +289,41 @@ object CalendarReloadManager  {
     }
 
     fun checkCalendarAlertHasChanged(
-            event: EventAlertRecord,
-            newEventAlert: EventAlertRecord
+            oldEvent: EventAlertRecord,
+            newEvent: EventAlertRecord
     ): ReloadCalendarResult {
 
-        if (!newEventAlert.isRepeating) {
+        val merged = oldEvent.updateFrom(newEvent)
+                ?: return ReloadCalendarResult(ReloadCalendarResultCode.NoChange, oldEvent)
 
-            if (event.updateFrom(newEventAlert)) {
-
-                if (event.instanceStartTime == newEventAlert.instanceStartTime) {
-                    DevLog.info(LOG_TAG, "Non-repeating event ${event.eventId} / ${event.instanceStartTime} was updated");
-
-                    return ReloadCalendarResult(
-                            ReloadCalendarResultCode.EventDetailsUpdatedShouldUpdate,
-                            event
-                    )
-
-                }
-                else {
-                    DevLog.info(LOG_TAG, "Non-repeating event ${event.eventId} / ${event.instanceStartTime} was updated, new instance start ${newEventAlert.instanceStartTime} -- event was moved");
-
-                    return ReloadCalendarResult(
-                            ReloadCalendarResultCode.EventInstanceMovedShouldUpdate,
-                            event,
-                            newEventAlert.instanceStartTime,
-                            newEventAlert.instanceEndTime
-                    )
-                }
-
-            } /*else {
-                DevLog.info(context, LOG_TAG, "Non-repeating event ${event.eventId} / ${event.instanceStartTime} hasn't changed");
-            }*/
-        }
-        else {
-            if (event.updateFrom(newEventAlert)) {
-                // ignore updated instance times for repeating requests - they are unpredictable
-                DevLog.info(LOG_TAG, "Repeating event ${event.eventId} / ${event.instanceStartTime} was updated");
-
+        if (!newEvent.isRepeating) {
+            if (oldEvent.instanceStartTime == newEvent.instanceStartTime) {
+                DevLog.info(LOG_TAG, "Non-repeating event ${oldEvent.eventId} / ${oldEvent.instanceStartTime} was updated");
                 return ReloadCalendarResult(
                         ReloadCalendarResultCode.EventDetailsUpdatedShouldUpdate,
-                        event
+                        merged
                 )
-            } /*else {
-                DevLog.info(context, LOG_TAG, "Repeating event ${event.eventId} / ${event.instanceStartTime} hasn't changed");
-            }*/
-        }
+            }
+            else {
+                DevLog.info(LOG_TAG, "Non-repeating event ${oldEvent.eventId} / ${oldEvent.instanceStartTime} was updated, new instance start ${merged.instanceStartTime} -- event was moved");
 
-        return ReloadCalendarResult(
-                ReloadCalendarResultCode.NoChange,
-                event
-        )
+                return ReloadCalendarResult(
+                        ReloadCalendarResultCode.EventInstanceMovedShouldUpdate,
+                        merged,
+                        merged.instanceStartTime,
+                        merged.instanceEndTime
+                )
+            }
+        }
+        else {
+            // ignore updated instance times for repeating requests - they are unpredictable
+            DevLog.info(LOG_TAG, "Repeating event ${oldEvent.eventId} / ${oldEvent.instanceStartTime} was updated");
+
+            return ReloadCalendarResult(
+                    ReloadCalendarResultCode.EventDetailsUpdatedShouldUpdate,
+                    merged
+            )
+        }
     }
 
     fun reloadCalendarEventAlertFromEvent(
@@ -374,14 +359,18 @@ object CalendarReloadManager  {
             DevLog.info(LOG_TAG, "Event ${event.eventId} - move detected, ${event.startTime} != ${newEvent.startTime}")
         }
 
-        if (event.updateFrom(newEvent) || event.alertTime != newAlertTime) {
-            DevLog.info(LOG_TAG, "Event ${event.eventId} for lost instance ${event.instanceStartTime} was updated, new start time ${newEvent.startTime}, alert time ${event.alertTime} -> $newAlertTime");
-            event.alertTime = newAlertTime
-            event.displayStatus = EventDisplayStatus.Hidden
+        var merged = event.updateFrom(newEvent)
+        if (event.alertTime != newAlertTime)
+            merged = (merged ?: event).copy(alertTime = newAlertTime)
+
+        if (merged != null) {
+            DevLog.info(LOG_TAG, "Event ${event.eventId} for lost instance ${merged.instanceStartTime} was updated, new start time ${newEvent.startTime}, alert time ${event.alertTime} -> $newAlertTime");
+
+            merged.displayStatus = EventDisplayStatus.Hidden
 
             return ReloadCalendarResult(
                     ReloadCalendarResultCode.EventInstanceMovedShouldUpdate,
-                    event,
+                    merged,
                     newInstanceStartTime = newEvent.startTime,
                     newInstanceEndTime = newEvent.endTime,
                     setDisplayStatusHidden = false
