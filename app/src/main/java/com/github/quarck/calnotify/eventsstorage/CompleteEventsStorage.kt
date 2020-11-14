@@ -110,12 +110,12 @@ class CompleteEventsStorage(val context: Context)
     override fun close() = super.close()
 
     companion object {
-        private val LOG_TAG = "DismissedEventsStorage"
+        private val LOG_TAG = "CompleteEventsStorage"
 
         private const val DATABASE_VERSION_V2 = 2
         private const val DATABASE_VERSION_V3 = 1
         private const val DATABASE_CURRENT_VERSION = DATABASE_VERSION_V3
 
-        private const val DATABASE_NAME = "DismissedEvents"
+        private const val DATABASE_NAME = "CompleteEvents"
     }
 }
