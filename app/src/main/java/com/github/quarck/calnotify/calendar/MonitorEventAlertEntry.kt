@@ -39,14 +39,24 @@ data class MonitorEventAlertEntry(
     val key: MonitorEventAlertEntryKey
         get() = MonitorEventAlertEntryKey(alertTime, instanceStartTime, md5a, md5b, md5c, md5d)
 
-    fun detailsChanged(other: MonitorEventAlertEntry): Boolean {
-        return (alertTime != other.alertTime) ||
-                (instanceStartTime != other.instanceStartTime) ||
-                (md5a != other.md5a) ||
-                (md5b != other.md5b) ||
-                (md5c != other.md5c) ||
-                (md5d != other.md5d)
-    }
+    fun keyEquas(alertKey: MonitorEventAlertEntryKey) =
+            (alertTime == alertKey.alertTime) &&
+                    (instanceStartTime == alertKey.instanceStartTime) &&
+                    (md5a == alertKey.md5a) &&
+                    (md5b == alertKey.md5b) &&
+                    (md5c == alertKey.md5c) &&
+                    (md5d == alertKey.md5d)
+
+    fun keyEquas(other: MonitorEventAlertEntry) =
+            (alertTime == other.alertTime) &&
+                    (instanceStartTime == other.instanceStartTime) &&
+                    (md5a == other.md5a) &&
+                    (md5b == other.md5b) &&
+                    (md5c == other.md5c) &&
+                    (md5d == other.md5d)
+
+    fun detailsChanged(other: MonitorEventAlertEntry) = !keyEquas(other)
+
 
     companion object {
         fun fromEventRecord(event: EventRecord, alertTime: Long, alertCreatedByUs: Boolean, wasHandled: Boolean): MonitorEventAlertEntry {
@@ -60,14 +70,25 @@ data class MonitorEventAlertEntry(
             )
         }
 
-        fun fromEventAlertRecord(event: EventAlertRecord, alertTime: Long, alertCreatedByUs: Boolean, wasHandled: Boolean): MonitorEventAlertEntry {
+        fun fromEventAlertRecord(event: EventAlertRecord, alertCreatedByUs: Boolean, wasHandled: Boolean): MonitorEventAlertEntry {
             val md5 : md5state = event.contentMd5
             return MonitorEventAlertEntry(
-                    alertTime,
+                    event.alertTime,
                     event.startTime,
                     md5.a, md5.b, md5.c, md5.d,
                     alertCreatedByUs,
                     wasHandled
+            )
+        }
+    }
+}
+
+data class MonitorDataPair(val monitorEntry: MonitorEventAlertEntry, val eventEntry: EventAlertRecord) {
+    companion object {
+        fun fromEventAlertRecord(event: EventAlertRecord, alertCreatedByUs: Boolean, wasHandled: Boolean): MonitorDataPair {
+            return MonitorDataPair(
+                    MonitorEventAlertEntry.fromEventAlertRecord(event, alertCreatedByUs, wasHandled),
+                    event
             )
         }
     }

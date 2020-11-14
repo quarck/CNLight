@@ -63,6 +63,8 @@ class CompleteEventsStorageImplV3 {
                         "$KEY_DISPLAY_STATUS INTEGER, " +
                         "$KEY_COLOR INTEGER, " +
 
+                        "$KEY_TIMEZONE TEXT, " +
+
                         "$KEY_RRULE TEXT, " +
                         "$KEY_RDATE TEXT, " +
                         "$KEY_EXRRULE TEXT, " +
@@ -208,6 +210,7 @@ class CompleteEventsStorageImplV3 {
         values.put(KEY_LAST_EVENT_VISIBILITY, event.lastStatusChangeTime)
         values.put(KEY_DISPLAY_STATUS, event.displayStatus.code)
         values.put(KEY_COLOR, event.color)
+        values.put(KEY_TIMEZONE, event.timeZone)
         values.put(KEY_RRULE, event.rRule)
         values.put(KEY_RDATE, event.rDate)
         values.put(KEY_EXRRULE, event.exRRule)
@@ -249,6 +252,7 @@ class CompleteEventsStorageImplV3 {
                 lastStatusChangeTime = cursor.getLong(PROJECTION_KEY_LAST_EVENT_VISIBILITY),
                 displayStatus = EventDisplayStatus.fromInt(cursor.getInt(PROJECTION_KEY_DISPLAY_STATUS)),
                 color = cursor.getInt(PROJECTION_KEY_COLOR),
+                timeZone = cursor.getString(PROJECTION_KEY_TIMEZONE) ?: "",
                 rRule = cursor.getString(PROJECTION_KEY_RRULE) ?: "",
                 rDate = cursor.getString(PROJECTION_KEY_RDATE) ?: "",
                 exRRule = cursor.getString(PROJECTION_KEY_EXRRULE) ?: "",
@@ -294,6 +298,8 @@ class CompleteEventsStorageImplV3 {
         private const val KEY_DISPLAY_STATUS = "displayStatus"
         private const val KEY_LAST_EVENT_VISIBILITY = "lastSeen"
         private const val KEY_COLOR = "color"
+        private const val KEY_TIMEZONE = "tzone"
+
         private const val KEY_ALERT_TIME = "alertTime"
         private const val KEY_FLAGS = "i1"
 
@@ -326,6 +332,7 @@ class CompleteEventsStorageImplV3 {
                 KEY_LAST_EVENT_VISIBILITY,
                 KEY_DISPLAY_STATUS,
                 KEY_COLOR,
+                KEY_TIMEZONE,
                 KEY_ALL_DAY,
                 KEY_RRULE,
                 KEY_RDATE,
@@ -350,11 +357,12 @@ class CompleteEventsStorageImplV3 {
         const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 13
         const val PROJECTION_KEY_DISPLAY_STATUS = 14
         const val PROJECTION_KEY_COLOR = 15
-        const val PROJECTION_KEY_ALL_DAY = 16
-        const val PROJECTION_KEY_RRULE = 17
-        const val PROJECTION_KEY_RDATE = 18
-        const val PROJECTION_KEY_EXRRULE = 19
-        const val PROJECTION_KEY_EXRDATE = 20
-        const val PROJECTION_KEY_FLAGS = 21
+        const val PROJECTION_KEY_TIMEZONE = 16
+        const val PROJECTION_KEY_ALL_DAY = 17
+        const val PROJECTION_KEY_RRULE = 18
+        const val PROJECTION_KEY_RDATE = 19
+        const val PROJECTION_KEY_EXRRULE = 20
+        const val PROJECTION_KEY_EXRDATE = 21
+        const val PROJECTION_KEY_FLAGS = 22
     }
 }

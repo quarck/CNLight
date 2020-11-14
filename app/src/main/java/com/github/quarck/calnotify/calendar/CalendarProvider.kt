@@ -1094,7 +1094,6 @@ object CalendarProvider  {
 //    )
 
 
-    @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
     fun getEventAlertsForEvent(
             context: Context,
             event: EventRecord
@@ -1199,13 +1198,12 @@ object CalendarProvider  {
         return ret
     }
 
-    @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
     fun getEventAlertsForInstancesInRange(
             context: Context,
             instanceFrom: Long,
             instanceTo: Long
-    ): List<MonitorEventAlertEntry> {
-        val ret = arrayListOf<MonitorEventAlertEntry>()
+    ): List<MonitorDataPair> {
+        val ret = arrayListOf<MonitorDataPair>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             DevLog.error(LOG_TAG, "getEventAlertsForInstancesInRange: no permissions")
@@ -1290,7 +1288,6 @@ object CalendarProvider  {
                     var hasAnyReminders = false
                     var hasNonLocalReminders = false
 
-
                     if (reminders != null)
                         for ((isLocal, reminderTime) in reminders) {
 
@@ -1308,11 +1305,8 @@ object CalendarProvider  {
                                 DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset $utcOffset applied to ${evt.instanceStartTime} - $reminderTime")
                             }
 
-                            val alertTime = evt.instanceStartTime - reminderTime - utcOffset
-
-                            val entry = MonitorEventAlertEntry.fromEventAlertRecord(
-                                    evt,
-                                    alertTime,
+                            val entry = MonitorDataPair.fromEventAlertRecord(
+                                    evt.copy(alertTime = evt.instanceStartTime - reminderTime - utcOffset),
                                     false,
                                     false
                             )
@@ -1345,9 +1339,8 @@ object CalendarProvider  {
                             DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset $utcOffset applied to ${evt.instanceStartTime} - $defaultReminderTimeForAllDayEventWithNoreminder")
                         }
 
-                        val entry = MonitorEventAlertEntry.fromEventAlertRecord(
-                                evt,
-                                alertTime,
+                        val entry = MonitorDataPair.fromEventAlertRecord(
+                                evt.copy(alertTime = alertTime),
                                 true,
                                 false
                         )
@@ -1370,4 +1363,5 @@ object CalendarProvider  {
 
         return ret
     }
+
 }

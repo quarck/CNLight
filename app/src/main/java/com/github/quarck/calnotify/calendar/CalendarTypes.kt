@@ -104,6 +104,21 @@ data class CalendarEventDetails(
 ) {
 }
 
+fun eventContentHash(calendarId: Long, isAllDay: Boolean, color: Int,
+                     startTime: Long, endTime: Long,
+                     eventStatus: EventStatus, attendanceStatus: AttendanceStatus,
+                     title: String, desc: String, location: String, timeZone: String,
+                     rRule: String, rDate: String, exRRule: String, exRDate: String
+) = MD5.compute((
+        "$calendarId,$isAllDay,$color," +
+                "$startTime,$endTime,$startTime,$endTime," +
+                "$eventStatus,$attendanceStatus," +
+                "${title.length},${desc.length},${location.length},${timeZone.length}," +
+                "${rRule.length},${rDate.length},${exRRule.length},${exRDate.length}," +
+                "$title,$desc,$location,$timeZone," +
+                "$rRule,$rDate,$exRRule,$exRDate"
+        ).toByteArray())
+
 data class EventRecord(
         val calendarId: Long,
         val eventId: Long,
@@ -112,15 +127,13 @@ data class EventRecord(
         var attendanceStatus: AttendanceStatus = AttendanceStatus.None
 ) {
     val contentMd5: md5state by lazy {
-        MD5.compute((
-                "$calendarId,$isAllDay,$color," +
-                        "$startTime,$endTime,$startTime,$endTime," +
-                        "$eventStatus,$attendanceStatus," +
-                        "${title.length},${desc.length},${location.length},${timeZone.length}," +
-                        "${rRule.length},${rDate.length},${exRRule.length},${exRDate.length}," +
-                        "$title,$desc,$location,$timeZone," +
-                        "$rRule,$rDate,$exRRule,$exRDate"
-                ).toByteArray())
+        eventContentHash(
+                calendarId, isAllDay, color,
+                startTime, endTime,
+                eventStatus, attendanceStatus,
+                title, desc, location, timeZone,
+                rRule, rDate, exRRule, exRDate
+        )
     }
 
     val title: String get() = details.title
@@ -305,15 +318,13 @@ data class EventAlertRecord(
 ) {
     // not including alertTime, so multiple alerts for the same event would have identical contentMd5
     val contentMd5: md5state by lazy {
-        MD5.compute((
-            "$calendarId,$isAllDay,$color," +
-            "$startTime,$endTime,$instanceStartTime,$instanceEndTime," +
-            "$eventStatus,$attendanceStatus," +
-            "${title.length},${desc.length},${location.length},${timeZone.length}," +
-            "${rRule.length},${rDate.length},${exRRule.length},${exRDate.length}," +
-            "$title,$desc,$location,$timeZone," +
-            "$rRule,$rDate,$exRRule,$exRDate"
-        ).toByteArray())
+        eventContentHash(
+                calendarId, isAllDay, color,
+                instanceStartTime, instanceEndTime,
+                eventStatus, attendanceStatus,
+                title, desc, location, timeZone,
+                rRule, rDate, exRRule, exRDate
+        )
     }
 
     var isAlarm: Boolean

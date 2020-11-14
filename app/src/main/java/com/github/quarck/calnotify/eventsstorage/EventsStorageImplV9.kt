@@ -117,7 +117,8 @@ class EventsStorageImplV9(val context: Context) {
                 timeFirstSeen = cursor.getLong(PROJECTION_KEY_TIME_FIRST_SEEN),
                 eventStatus = EventStatus.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_STATUS)),
                 attendanceStatus = AttendanceStatus.fromInt(cursor.getInt(PROJECTION_KEY_EVENT_ATTENDANCE_STATUS)),
-                flags =  cursor.getLong(PROJECTION_KEY_FLAGS)
+                flags =  cursor.getLong(PROJECTION_KEY_FLAGS),
+                timeZone = "UTC"
         )
     }
 

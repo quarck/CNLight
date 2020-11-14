@@ -69,16 +69,11 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
             val state = CalendarMonitorState(context)
             val currentTime = System.currentTimeMillis()
 
-            val nextEventFireFromScan = state.nextEventFireFromScan
-            if (nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
-
-                DevLog.info(LOG_TAG, "onAlarmBroadcast: nextEventFireFromScan $nextEventFireFromScan is less than current" +
-                        " time $currentTime + THRS, checking what to fire")
-
-                val firedManual = manualFireEventsAt_NoHousekeeping(
-                        context, state.nextEventFireFromScan, state.prevEventFireFromScan)
-
-                if (firedManual) {
+            if (state.nextEventFireFromScan < currentTime + Consts.ALARM_THRESHOLD) {
+                val scanTo = System.currentTimeMillis() + Consts.ALARM_THRESHOLD
+                val scanFrom = scanTo - Consts.MANUAL_SCAN_WINDOW - 2 * Consts.ALARM_THRESHOLD
+                DevLog.info(LOG_TAG, "onAlarmBroadcast: time for the next manual fire, re-scanning range $scanFrom-$scanTo")
+                if (manualFireEventsInRangeWithoutHousekeeping(context, from = scanFrom, to = scanTo)) {
                     ApplicationController.afterCalendarEventFired(context)
                 }
             }
@@ -261,7 +256,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         CalendarMonitorStorage(context).use {
             db ->
-            var alert: MonitorEventAlertEntry? = db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)
+            var alert: MonitorEventAlertEntry? = db.getAlert(ev.contentMd5, ev.alertTime, ev.instanceStartTime)
 
             if (alert != null) {
 
@@ -273,12 +268,8 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
             else {
 
                 DevLog.debug(LOG_TAG, "setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: new alert, simply adding");
-                alert = MonitorEventAlertEntry(
-                        eventId = ev.eventId,
-                        alertTime = ev.alertTime,
-                        isAllDay = ev.isAllDay,
-                        instanceStartTime = ev.instanceStartTime,
-                        instanceEndTime = ev.instanceEndTime,
+                alert = MonitorEventAlertEntry.fromEventAlertRecord(
+                        ev,
                         wasHandled = true,
                         alertCreatedByUs = createdByUs
                 )
@@ -289,7 +280,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
     fun getAlertWasHandled(db: CalendarMonitorStorage, ev: EventAlertRecord): Boolean {
         DevLog.debug(LOG_TAG, "getAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}");
-        return db.getAlert(ev.eventId, ev.alertTime, ev.instanceStartTime)?.wasHandled ?: false
+        return db.getAlert(ev.contentMd5, ev.alertTime, ev.instanceStartTime)?.wasHandled ?: false
     }
 
     fun getAlertWasHandled(context: Context, ev: EventAlertRecord): Boolean {
@@ -301,57 +292,79 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
 
 
-    private fun manualFireAlertList(context: Context, alerts: List<MonitorEventAlertEntry>): Boolean {
+    private fun manualFireAlertList(context: Context, alerts: List<MonitorDataPair>): Boolean {
 
         var fired = false
 
         val firedAlerts = registerFiredEventsInDB(context, alerts)
 
-        if (!firedAlerts.isEmpty()) {
+        if (firedAlerts.isNotEmpty()) {
 
             fired = true
 
             try {
-                ApplicationController.postEventNotifications(context, firedAlerts.map { it.second })
+                ApplicationController.postEventNotifications(context, firedAlerts.map { it.eventEntry })
             }
             catch (ex: Exception) {
                 DevLog.error(LOG_TAG, "Got exception while posting notifications: ${ex.detailed}")
             }
-
-            markAlertsAsHandledInDB(context, firedAlerts.map { it.first })
-
-            val lastFiredAlert = firedAlerts.map { (alert, _) -> alert.alertTime }.max() ?: 0L
-
-            val state = CalendarMonitorState(context)
-            if (state.prevEventFireFromScan < lastFiredAlert)
-                state.prevEventFireFromScan = lastFiredAlert
-
-            DevLog.info(LOG_TAG, "${firedAlerts.size} requests were marked in DB as handled, prevEventFireFromScan was set to $lastFiredAlert")
+            markAlertsAsHandledInDB(context, firedAlerts.map { it.monitorEntry })
+            DevLog.info(LOG_TAG, "${firedAlerts.size} requests were marked in DB as handled")
         }
 
         return fired
     }
 
+    private val alertToMonitorEntrySearchRanges = listOf(2 * 1000L, 300 * 1000L, 24 * 3600 * 1000L)
+
+    fun alertToMonitorEntry(context: Context, alert: MonitorEventAlertEntry): MonitorDataPair? {
+
+        var ev: MonitorDataPair? = null
+
+        for (range in alertToMonitorEntrySearchRanges) {
+            ev = calendarProvider.getEventAlertsForInstancesInRange(
+                    context = context,
+                    instanceFrom = alert.instanceStartTime - range,
+                    instanceTo = alert.instanceStartTime + range
+            ).firstOrNull{ e -> e.monitorEntry.keyEquas(alert) }
+
+            if (ev != null)
+                break
+
+            DevLog.error(LOG_TAG, "Error: failed to find event for alert $alert while using range $range")
+        }
+
+        if (ev == null) {
+            DevLog.error(LOG_TAG, "!!!! ERROR ERROR ERROR!!!! : alertToMonitorEntry: failed to find event for alert $alert AFTER WIDE RANGE ATTEMPT!!! ")
+            DevLog.error(LOG_TAG, "!!!! ERROR ERROR ERROR!!!! : alertToMonitorEntry: failed to find event for alert $alert AFTER WIDE RANGE ATTEMPT!!! ")
+            DevLog.error(LOG_TAG, "!!!! ERROR ERROR ERROR!!!! : alertToMonitorEntry: failed to find event for alert $alert AFTER WIDE RANGE ATTEMPT!!! ")
+        }
+        return ev
+    }
+
+    fun alertListIntoMonitorPairsList(context: Context, alertList: List<MonitorEventAlertEntry>): List<MonitorDataPair> =
+            alertList.map{ alertToMonitorEntry(context, it) }.filterNotNull()
+
     // should return true if we have fired at new requests, so UI should reload if it is open
-    fun manualFireEventsAt_NoHousekeeping(context: Context, nextEventFire: Long, prevEventFire: Long? = null): Boolean {
+    fun manualFireEventsInRangeWithoutHousekeeping(context: Context, to: Long, from: Long? = null): Boolean {
 
         if (!PermissionsManager.hasAllPermissions(context)) {
             DevLog.error(LOG_TAG, "manualFireEventsAt_NoHousekeeping: no permissions");
             return false
         }
 
-        var alerts =
-                CalendarMonitorStorage(context).use {
-                    db ->
-                    if (prevEventFire == null)
-                        db.getAlertsAt(nextEventFire)
-                    else
-                        db.getAlertsForAlertRange(prevEventFire, nextEventFire)
-                }
+        val alertsInRange =
+                CalendarMonitorStorage(context)
+                        .use {
+                                db ->
+                                if (from == null)
+                                    db.getAlertsAt(to)
+                                else
+                                    db.getAlertsForAlertRange(from, to)
+                            }
+                        .filter { !it.wasHandled }
 
-        alerts = alerts
-                .filter { !it.wasHandled }
-                .sortedBy { it.alertTime }
+        val alerts = alertListIntoMonitorPairsList(context, alertsInRange).sortedBy { it.monitorEntry.alertTime }
 
         DevLog.info(LOG_TAG, "manualFireEventsAt: got ${alerts.size} alerts to fire at");
 
@@ -360,82 +373,102 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
     private fun registerFiredEventsInDB(
             context: Context,
-            alerts: Collection<MonitorEventAlertEntry>
-    ): List<Pair<MonitorEventAlertEntry, EventAlertRecord>> {
+            alerts: Collection<MonitorDataPair>
+    ): List<MonitorDataPair> {
 
-        val pairs = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
+        // val pairs = arrayListOf<MonitorDataPair>()
 
-        var numAlertsFound = 0
-        var numAlertsNotFound = 0
-        var numErrors = 0
+//        var numAlertsFound = 0
+//        var numAlertsNotFound = 0
+//        var numErrors = 0
 
-        for (alert in alerts) {
-            if (alert.wasHandled)
-                continue
-
-            DevLog.info(LOG_TAG, "registerFiredEventsInDB: $alert")
-
-            var event: EventAlertRecord? = null
-
-            if (!alert.alertCreatedByUs) {
-                // not manually created -- can read directly from the provider!
-                DevLog.info(LOG_TAG, "Alert was not created by the app, so trying to read alert off the provider")
-                event = calendarProvider.getAlertByEventIdAndTime(context, alert.eventId, alert.alertTime)
-
-                if (event != null)
-                    numAlertsFound++
-                else
-                    numAlertsNotFound++
-            }
-
-            if (event == null) {
-                DevLog.warn(LOG_TAG, "Alert not found - reading event by ID for details")
-
-                val calEvent = calendarProvider.getEvent(context, alert.eventId)
-                if (calEvent != null) {
-                    event = EventAlertRecord(
-                            calendarId = calEvent.calendarId,
-                            eventId = calEvent.eventId,
-                            isAllDay = calEvent.isAllDay,
-                            rRule = calEvent.rRule,
-                            rDate = calEvent.rDate,
-                            exRRule = calEvent.exRRule,
-                            exRDate = calEvent.exRDate,
-                            alertTime = alert.alertTime,
-                            notificationId = 0,
-                            title = calEvent.title,
-                            desc = calEvent.desc,
-                            startTime = calEvent.startTime,
-                            endTime = calEvent.endTime,
-                            instanceStartTime = alert.instanceStartTime,
-                            instanceEndTime = alert.instanceEndTime,
-                            location = calEvent.location,
-                            color = calEvent.color,
-                            lastStatusChangeTime = 0,
-                            snoozedUntil = 0
-                    )
+        val pairs = alerts
+                .filter {
+                    p -> !p.monitorEntry.wasHandled && !p.eventEntry.isCancelledOrDeclined
                 }
-            }
+                .map{
+                    p ->
+                    MonitorDataPair(
+                            p.monitorEntry,
+                            p.eventEntry.copy(origin = EventOrigin.FullManual, timeFirstSeen = System.currentTimeMillis())
+                            )
+                }
 
-            if (event != null) {
-                event.origin = EventOrigin.FullManual
-                event.timeFirstSeen = System.currentTimeMillis()
 
-                pairs.add(Pair(alert, event))
-            } else {
-                DevLog.error(LOG_TAG, "Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
-                // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
-                markAlertsAsHandledInDB(context, listOf(alert))
-                numErrors++
-            }
-        }
+//        for (p in alerts) {
+//            if (p.monitorEntry.wasHandled)
+//                continue
+//            if (p.eventEntry.isCancelledOrDeclined)
+//                continue
+//            DevLog.info(LOG_TAG, "registerFiredEventsInDB: $p")
+//
+//            var event: EventAlertRecord? = null
+//
+//            if (!p.monitorEntry.alertCreatedByUs) {
+//                // not manually created -- can read directly from the provider!
+//                DevLog.info(LOG_TAG, "Alert was not created by the app, so trying to read alert off the provider")
+//                event = calendarProvider.getAlertByEventIdAndTime(context, p.eventEntry.eventId, p.eventEntry.alertTime)
+//
+//                if (event != null)
+//                    numAlertsFound++
+//                else
+//                    numAlertsNotFound++
+//            }
+//
+//            if (event == null) {
+//                DevLog.warn(LOG_TAG, "Alert not found - reading event by ID for details")
+//
+//                val calEvent = calendarProvider.getEvent(context, p.eventEntry.eventId)
+//                if (calEvent != null) {
+//                    event = EventAlertRecord(
+//                            calendarId = calEvent.calendarId,
+//                            eventId = calEvent.eventId,
+//                            isAllDay = calEvent.isAllDay,
+//                            rRule = calEvent.rRule,
+//                            rDate = calEvent.rDate,
+//                            exRRule = calEvent.exRRule,
+//                            exRDate = calEvent.exRDate,
+//                            alertTime = p.monitorEntry.alertTime,
+//                            notificationId = 0,
+//                            title = calEvent.title,
+//                            desc = calEvent.desc,
+//                            startTime = calEvent.startTime,
+//                            endTime = calEvent.endTime,
+//                            instanceStartTime = p.monitorEntry.instanceStartTime,
+//                            instanceEndTime = p.monitorEntry.instanceStartTime + calEvent.endTime - calEvent.startTime,
+//                            location = calEvent.location,
+//                            color = calEvent.color,
+//                            timeZone = calEvent.timeZone,
+//                            lastStatusChangeTime = 0,
+//                            snoozedUntil = 0
+//                    )
+//                }
+//            }
+//
+//            pairs.add(MonitorDataPair(p.monitorEntry, p.eventEntry.copy(
+//                    origin = EventOrigin.FullManual,
+//                    timeFirstSeen = System.currentTimeMillis()
+//            )))
+//
+//
+//            if (event != null) {
+//                event.origin = EventOrigin.FullManual
+//                event.timeFirstSeen = System.currentTimeMillis()
+//                pairs.add(Pair(alert, event))
+//            } else {
+//                DevLog.error(LOG_TAG, "Alert: $alert, cant find neither alert nor event. Marking as handled and ignoring.")
+//                // all attempts failed - still, markt it as handled, so avoid repeated attempts all over again
+//                markAlertsAsHandledInDB(context, listOf(alert))
+//                numErrors++
+//            }
+//        }
 
-        if (numAlertsNotFound != 0 || numErrors != 0)
-            DevLog.info(LOG_TAG, "Got ${pairs.size} pairs, num found alerts: $numAlertsFound, not found: $numAlertsNotFound, errors: $numErrors")
+//        if (numAlertsNotFound != 0 || numErrors != 0)
+//            DevLog.info(LOG_TAG, "Got ${pairs.size} pairs, num found alerts: $numAlertsFound, not found: $numAlertsNotFound, errors: $numErrors")
 
-        val pairsToAdd = pairs.filter { (_, event) ->  !event.isCancelledOrDeclined  }
+//        val pairsToAdd = pairs.filter { (_, event) ->  !event.isCancelledOrDeclined  }
 
-        return ApplicationController.registerNewEvents(context, pairsToAdd)
+        return ApplicationController.registerNewEvents(context, pairs)
     }
 
 
@@ -448,6 +481,18 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
                 alert.wasHandled = true
 
             db.updateAlerts(alerts)
+        }
+    }
+
+    private fun markAlertPairsAsHandledInDB(context: Context, alerts: Collection<Pair<MonitorEventAlertEntry, EventAlertRecord?>>) {
+        CalendarMonitorStorage(context).use {
+            db ->
+            DevLog.info(LOG_TAG, "marking ${alerts.size} alerts as handled in the manual alerts DB");
+
+            for (alert in alerts)
+                alert.first.wasHandled = true
+
+            db.updateAlerts(alerts.map{ it.first })
         }
     }
 
@@ -471,7 +516,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         CalendarMonitorStorage(context).use {
             db ->
-            val knownAlerts = db.getInstanceAlerts(event.eventId, event.startTime).associateBy { it.key }
+            val knownAlerts = db.getInstanceAlerts(event.contentMd5, event.startTime).associateBy { it.key }
 
             // Add new alerts into DB
             for ((key, alert) in alerts) {
@@ -505,7 +550,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         if (dueAlerts.isNotEmpty()) {
             DevLog.warn(LOG_TAG, "scanForSingleEvent: ${dueAlerts.size} due alerts - nearly missed these")
-            hasFiredAnything = manualFireAlertList(context, dueAlerts)
+            hasFiredAnything = manualFireAlertList(context, alertListIntoMonitorPairsList(context, dueAlerts))
         }
 
         return hasFiredAnything
@@ -520,15 +565,10 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         var hasFiredAnything = false
 
-        val scanWindow = Consts.MANUAL_SCAN_WINDOW
-
-        val prevScanTo = state.prevEventScanTo
         val currentTime = System.currentTimeMillis()
 
-        var scanFrom = Math.min(
-                currentTime - Consts.ALERTS_DB_REMOVE_AFTER, // look backwards a little to make sure nothing is missing
-                prevScanTo // we we didn't scan for long time - do a full re-scan since last 'scanned to'
-        )
+        var scanFrom = currentTime - Consts.MANUAL_SCAN_WINDOW
+        val scanTo = currentTime + Consts.MANUAL_SCAN_WINDOW
 
         // cap scan from range to 1 month back only
         val monthAgo = currentTime - Consts.MAX_SCAN_BACKWARD_DAYS * Consts.DAY_IN_MILLISECONDS
@@ -537,14 +577,11 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
             scanFrom = monthAgo
         }
 
-        val scanTo = currentTime + scanWindow
-
         val firstScanEver = state.firstScanEver
 
-        state.prevEventScanTo = currentTime + scanWindow
-
         val alerts = calendarProvider.getEventAlertsForInstancesInRange(context, scanFrom, scanTo)
-        val alertsMerged = filterAndMergeAlerts(context, alerts, scanFrom, scanTo).sortedBy { it.alertTime }
+        val alertsMerged =
+                filterAndMergeAlerts(context, alerts, scanFrom, scanTo).sortedBy { it.first.alertTime }
 
         DevLog.info(LOG_TAG, "scanNextEvent: scan range: $scanFrom, $scanTo (${Date(scanFrom)} - ${Date(scanTo)})," +
                 " got ${alerts.size} requests off the provider, merged count: ${alertsMerged.size}")
@@ -555,12 +592,13 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         val fireAlertsUpTo = currentTime + Consts.ALARM_THRESHOLD
 
-        var dueAlerts = alertsMerged.filter { !it.wasHandled && it.alertTime <= fireAlertsUpTo }
+        var dueAlerts =
+                alertsMerged.filter { !it.first.wasHandled && it.first.alertTime <= fireAlertsUpTo }
 
         if (firstScanEver) {
             state.firstScanEver = false
             DevLog.info(LOG_TAG, "This is a first deep scan ever, not posting 'due' requests")
-            markAlertsAsHandledInDB(context, dueAlerts)
+            markAlertPairsAsHandledInDB(context, dueAlerts)
 
         }
         else if (dueAlerts.isNotEmpty()) {
@@ -568,18 +606,27 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
             if (dueAlerts.size > Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN) {
                 dueAlerts = dueAlerts
-                        .sortedBy { it.instanceStartTime }
+                        .sortedBy { it.first.instanceStartTime }
                         .takeLast(Consts.MAX_DUE_ALERTS_FOR_MANUAL_SCAN)
             }
-            if (manualFireAlertList(context, dueAlerts))
+
+            val toManualFire = dueAlerts.mapNotNull {
+                (m, e) ->
+                if (e != null)
+                    MonitorDataPair(m, e)
+                else
+                    alertToMonitorEntry(context, m)
+            }
+
+            if (manualFireAlertList(context, toManualFire))
                 hasFiredAnything = true
         }
 
         // Finally - find the next nearest alert
-        val nextAlert = alertsMerged.filter { !it.wasHandled && it.alertTime > fireAlertsUpTo }
-                .minBy { it.alertTime }
+        val nextAlert = alertsMerged.filter { !it.first.wasHandled && it.first.alertTime > fireAlertsUpTo }
+                .minBy { it.first.alertTime }
 
-        val nextAlertTime = nextAlert?.alertTime ?: Long.MAX_VALUE
+        val nextAlertTime = nextAlert?.first?.alertTime ?: Long.MAX_VALUE
         state.nextEventFireFromScan = nextAlertTime
 
         DevLog.info(LOG_TAG, "scanNextEvent: next alert $nextAlertTime");
@@ -590,30 +637,36 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         CalendarMonitorStorage(context).use {
             it.deleteAlertsMatching {
                 alert ->
-                alert.instanceStartTime < scanFrom && alert.wasHandled
+                alert.instanceStartTime < currentTime - Consts.ALERTS_DB_REMOVE_AFTER && alert.wasHandled
             }
         }
 
         return Pair(nextAlertTime, hasFiredAnything)
     }
 
-    private fun filterAndMergeAlerts(context: Context, alerts: List<MonitorEventAlertEntry>, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> {
+    private fun filterAndMergeAlerts(context: Context, alerts: List<MonitorDataPair>, scanFrom: Long, scanTo: Long)
+            : List<Pair<MonitorEventAlertEntry, EventAlertRecord?>> {
 
-        val ret = arrayListOf<MonitorEventAlertEntry>()
+        val ret = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord?>>()
 
-        val providedAlerts = alerts.associateBy { it.key }
+        val providedAlerts =
+                alerts.map{ Pair<MonitorEventAlertEntry, EventAlertRecord?>(it.monitorEntry, it.eventEntry) }
+                        .associateBy { it.first.key }
 
         CalendarMonitorStorage(context).use {
             db ->
-            val knownAlerts = db.getAlertsForInstanceStartRange(scanFrom, scanTo).associateBy { it.key }
+            val knownAlerts =
+                    db.getAlertsForInstanceStartRange(scanFrom, scanTo)
+                            .map{ Pair<MonitorEventAlertEntry, EventAlertRecord?>(it, null)}
+                            .associateBy { it.first.key }
 
             val newAlerts = providedAlerts - knownAlerts.keys
             val disappearedAlerts = knownAlerts - providedAlerts.keys
 
             DevLog.info(LOG_TAG, "filterAndMergeAlerts: ${newAlerts.size} new alerts, ${disappearedAlerts.size} disappeared alerts")
 
-            db.deleteAlerts(disappearedAlerts.values)
-            db.addAlerts(newAlerts.values)
+            db.deleteAlerts(disappearedAlerts.values.map{ it.first })
+            db.addAlerts(newAlerts.values.map{ it.first })
 
             // Presumably this would be faster than re-reading SQLite again
             ret.addAll((knownAlerts - disappearedAlerts.keys + newAlerts).values)

@@ -32,8 +32,6 @@ import com.github.quarck.calnotify.utils.detailed
 //import com.github.quarck.calnotify.utils.logs.Logger
 import java.util.*
 
-XXXX  -- add timezone!
-
 class EventsStorageImplV10(val context: Context) {
 
     @Suppress("ConvertToStringTemplate")
@@ -63,6 +61,7 @@ class EventsStorageImplV10(val context: Context) {
                         "$KEY_LAST_EVENT_VISIBILITY INTEGER, " +
                         "$KEY_DISPLAY_STATUS INTEGER, " +
                         "$KEY_COLOR INTEGER, " +
+                        "$KEY_TIMEZONE TEXT, " +
 
                         "$KEY_RRULE TEXT, " +
                         "$KEY_RDATE TEXT, " +
@@ -450,6 +449,7 @@ class EventsStorageImplV10(val context: Context) {
         values.put(KEY_LAST_EVENT_VISIBILITY, event.lastStatusChangeTime)
         values.put(KEY_DISPLAY_STATUS, event.displayStatus.code)
         values.put(KEY_COLOR, event.color)
+        values.put(KEY_TIMEZONE, event.timeZone)
         values.put(KEY_RRULE, event.rRule)
         values.put(KEY_RDATE, event.rDate)
         values.put(KEY_EXRRULE, event.exRRule)
@@ -496,6 +496,7 @@ class EventsStorageImplV10(val context: Context) {
                 lastStatusChangeTime = cursor.getLong(PROJECTION_KEY_LAST_EVENT_VISIBILITY),
                 displayStatus = EventDisplayStatus.fromInt(cursor.getInt(PROJECTION_KEY_DISPLAY_STATUS)),
                 color = cursor.getInt(PROJECTION_KEY_COLOR),
+                timeZone = cursor.getString(PROJECTION_KEY_TIMEZONE) ?: "",
                 rRule = cursor.getString(PROJECTION_KEY_RRULE) ?: "",
                 rDate = cursor.getString(PROJECTION_KEY_RDATE) ?: "",
                 exRRule = cursor.getString(PROJECTION_KEY_EXRRULE) ?: "",
@@ -540,6 +541,7 @@ class EventsStorageImplV10(val context: Context) {
         private const val KEY_DISPLAY_STATUS = "dsts"
         private const val KEY_LAST_EVENT_VISIBILITY = "ls"
         private const val KEY_COLOR = "clr"
+        private const val KEY_TIMEZONE = "tzone"
         private const val KEY_ALERT_TIME = "altm"
         private const val KEY_EVENT_ORIGIN = "ogn"
         private const val KEY_TIME_FIRST_SEEN = "fsn"
@@ -575,6 +577,7 @@ class EventsStorageImplV10(val context: Context) {
                 KEY_LAST_EVENT_VISIBILITY,
                 KEY_DISPLAY_STATUS,
                 KEY_COLOR,
+                KEY_TIMEZONE,
                 KEY_RRULE,
                 KEY_RDATE,
                 KEY_EXRRULE,
@@ -602,15 +605,16 @@ class EventsStorageImplV10(val context: Context) {
         const val PROJECTION_KEY_LAST_EVENT_VISIBILITY = 12
         const val PROJECTION_KEY_DISPLAY_STATUS = 13
         const val PROJECTION_KEY_COLOR = 14
-        const val PROJECTION_KEY_RRULE = 15
-        const val PROJECTION_KEY_RDATE = 16
-        const val PROJECTION_KEY_EXRRULE = 17
-        const val PROJECTION_KEY_EXRDATE = 18
-        const val PROJECTION_KEY_ALL_DAY = 19
-        const val PROJECTION_KEY_EVENT_ORIGIN = 20
-        const val PROJECTION_KEY_TIME_FIRST_SEEN = 21
-        const val PROJECTION_KEY_EVENT_STATUS = 22
-        const val PROJECTION_KEY_EVENT_ATTENDANCE_STATUS = 23
-        const val PROJECTION_KEY_FLAGS = 24
+        const val PROJECTION_KEY_TIMEZONE = 15
+        const val PROJECTION_KEY_RRULE = 16
+        const val PROJECTION_KEY_RDATE = 17
+        const val PROJECTION_KEY_EXRRULE = 18
+        const val PROJECTION_KEY_EXRDATE = 19
+        const val PROJECTION_KEY_ALL_DAY = 20
+        const val PROJECTION_KEY_EVENT_ORIGIN = 21
+        const val PROJECTION_KEY_TIME_FIRST_SEEN = 22
+        const val PROJECTION_KEY_EVENT_STATUS = 23
+        const val PROJECTION_KEY_EVENT_ATTENDANCE_STATUS = 24
+        const val PROJECTION_KEY_FLAGS = 25
     }
 }

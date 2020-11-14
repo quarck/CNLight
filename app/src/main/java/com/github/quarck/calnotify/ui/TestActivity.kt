@@ -139,7 +139,8 @@ class TestActivity : Activity() {
                 location = location,
                 snoozedUntil = 0L, // snoozed
                 color = color,
-                displayStatus = EventDisplayStatus.Hidden
+                displayStatus = EventDisplayStatus.Hidden,
+                timeZone = "UTC"
         )
         ApplicationController.postEventNotifications(this, listOf(event))
         ApplicationController.registerNewEvent(this, event);
@@ -202,6 +203,7 @@ class TestActivity : Activity() {
                 currentTime + 3600L * 1000L,
                 currentTime + 2 * 3600L * 1000L,
                 if ((cnt % 2) == 0) "" else "Hawthorne, California, U.S.",
+                "UTC",
                 0x7f007f00,
                 displayStatus = EventDisplayStatus.Hidden
 

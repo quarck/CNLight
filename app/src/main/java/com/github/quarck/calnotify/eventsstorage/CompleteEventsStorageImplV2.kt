@@ -97,7 +97,8 @@ class CompleteEventsStorageImplV2 {
                 exRRule = "",
                 exRDate = "",
                 isAllDay = cursor.getInt(PROJECTION_KEY_ALL_DAY) != 0,
-                flags = cursor.getLong(PROJECTION_KEY_FLAGS)
+                flags = cursor.getLong(PROJECTION_KEY_FLAGS),
+                timeZone = "UTC"
         )
 
         return CompleteEventAlertRecord(

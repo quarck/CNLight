@@ -286,8 +286,8 @@ object ApplicationController : EventMovedHandler {
 
     fun registerNewEvents(
             context: Context,
-            pairs: List<Pair<MonitorEventAlertEntry, EventAlertRecord>>
-    ): ArrayList<Pair<MonitorEventAlertEntry, EventAlertRecord>> {
+            pairs: List<MonitorDataPair>
+    ): ArrayList<MonitorDataPair> {
 
         val settings = getSettings(context)
 
@@ -372,7 +372,7 @@ object ApplicationController : EventMovedHandler {
         // * is not set as visible
         // * is not snoozed
 
-        val validPairs = arrayListOf<Pair<MonitorEventAlertEntry, EventAlertRecord>>()
+        val validPairs = arrayListOf<MonitorDataPair>()
 
         EventsStorage(context).use {
             db ->
@@ -386,7 +386,7 @@ object ApplicationController : EventMovedHandler {
                     val dbEvent = db.getEvent(event.eventId, event.instanceStartTime)
 
                     if (dbEvent != null && dbEvent.snoozedUntil == 0L) {
-                        validPairs.add(Pair(alert, event))
+                        validPairs.add(MonitorDataPair(alert, event))
                     }
                     else {
                         DevLog.error(LOG_TAG, "Failed to add event ${event.eventId} ${event.alertTime} ${event.instanceStartTime} into DB properly")
@@ -399,7 +399,7 @@ object ApplicationController : EventMovedHandler {
                     val dbEvents = db.getEventInstances(event.eventId)
 
                     if (dbEvents.size == 1 && dbEvents[0].snoozedUntil == 0L) {
-                        validPairs.add(Pair(alert, event))
+                        validPairs.add(MonitorDataPair(alert, event))
                     }
                     else {
                         DevLog.error(LOG_TAG, "Failed to add event ${event.eventId} ${event.alertTime} ${event.instanceStartTime} into DB properly")
