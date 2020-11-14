@@ -23,8 +23,8 @@ import android.content.Context
 import com.github.quarck.calnotify.utils.PersistentStorageBase
 
 class CalendarMonitorState(ctx: Context) : PersistentStorageBase(ctx, PREFS_NAME) {
-    var nextEventFireFromScan by LongProperty(Long.MAX_VALUE, "C")
-    var firstScanEver by BooleanProperty(true, "F")
+    var nextEventFireFromScan by LongProperty(Long.MAX_VALUE, "D")
+    var firstScanEver by BooleanProperty(true, "G")
     companion object {
         const val PREFS_NAME: String = "cal_monitor"
     }
