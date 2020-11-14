@@ -20,12 +20,31 @@
 package com.github.quarck.calnotify.calendar
 
 import com.github.quarck.calnotify.utils.md5state
+import com.github.quarck.calnotify.utils.toHexString
 
 data class MonitorEventAlertEntryKey(
         val alertTime: Long,
         val instanceStartTime: Long,
         val md5a: Int, val md5b: Int, val md5c: Int, val md5d: Int
-)
+) {
+    override fun toString(): String {
+        val sb = StringBuilder(128)
+        sb.append(instanceStartTime/1000L);sb.append(";")
+        sb.append((instanceStartTime-alertTime)/1000L);sb.append(";")
+        for (i in 0 until 4)
+            sb.append(String.format("%02x", (md5a ushr (i * 8)) and 0xFF))
+        sb.append(':')
+        for (i in 0 until 4)
+            sb.append(String.format("%02x", (md5b ushr (i * 8)) and 0xFF))
+        sb.append(':')
+        for (i in 0 until 4)
+            sb.append(String.format("%02x", (md5c ushr (i * 8)) and 0xFF))
+        sb.append(':')
+        for (i in 0 until 4)
+            sb.append(String.format("%02x", (md5d ushr (i * 8)) and 0xFF))
+        return sb.toString()
+    }
+}
 
 data class MonitorEventAlertEntry(
         val alertTime: Long,
@@ -38,6 +57,32 @@ data class MonitorEventAlertEntry(
 ) {
     val key: MonitorEventAlertEntryKey
         get() = MonitorEventAlertEntryKey(alertTime, instanceStartTime, md5a, md5b, md5c, md5d)
+
+    override fun toString(): String {
+        val sb = StringBuilder(128)
+        if (wasHandled)
+            sb.append("H:") // handled
+        else
+            sb.append("U:") // unhandled
+        if (alertCreatedByUs)
+            sb.append("M:") // manual
+        else
+            sb.append("A:") // automatic
+        sb.append(instanceStartTime/1000L);sb.append(";")
+        sb.append((instanceStartTime-alertTime)/1000L);sb.append(";")
+        for (i in 0 until 4)
+            sb.append(String.format("%02x", (md5a ushr (i * 8)) and 0xFF))
+        sb.append(':')
+        for (i in 0 until 4)
+            sb.append(String.format("%02x", (md5b ushr (i * 8)) and 0xFF))
+        sb.append(':')
+        for (i in 0 until 4)
+            sb.append(String.format("%02x", (md5c ushr (i * 8)) and 0xFF))
+        sb.append(':')
+        for (i in 0 until 4)
+            sb.append(String.format("%02x", (md5d ushr (i * 8)) and 0xFF))
+        return sb.toString()
+    }
 
     fun keyEquas(alertKey: MonitorEventAlertEntryKey) =
             (alertTime == alertKey.alertTime) &&
@@ -74,7 +119,7 @@ data class MonitorEventAlertEntry(
             val md5 : md5state = event.contentMd5
             return MonitorEventAlertEntry(
                     event.alertTime,
-                    event.startTime,
+                    event.instanceStartTime,
                     md5.a, md5.b, md5.c, md5.d,
                     alertCreatedByUs,
                     wasHandled

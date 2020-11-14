@@ -85,7 +85,7 @@ object CalendarProvider  {
 
     private val eventFields =
             arrayOf(
-                    CalendarContract.Events.CALENDAR_ID,
+                    CalendarContract.Events.CALENDAR_ID,            // 0
                     CalendarContract.Events.TITLE,
                     CalendarContract.Events.DESCRIPTION,
                     CalendarContract.Events.EVENT_TIMEZONE,
@@ -99,8 +99,7 @@ object CalendarProvider  {
                     CalendarContract.Events.EVENT_LOCATION,
                     CalendarContract.Events.DISPLAY_COLOR,
                     CalendarContract.Events.STATUS,
-                    CalendarContract.Events.SELF_ATTENDEE_STATUS,
-                    CalendarContract.Events.LAST_SYNCED
+                    CalendarContract.Events.SELF_ATTENDEE_STATUS
             )
 
     const val EVENT_PROJECTTION_INDEX_CALENDAR_ID = 0
@@ -218,6 +217,7 @@ object CalendarProvider  {
 
         return Pair(state, event)
     }
+
     private fun cursorToEventRecord(cursor: Cursor, eventId: Long): EventRecord? {
         val calendarId: Long? = cursor.getLong(EVENT_PROJECTTION_INDEX_CALENDAR_ID)
         val title: String? = cursor.getString(EVENT_PROJECTTION_INDEX_TITLE)
@@ -549,7 +549,7 @@ object CalendarProvider  {
                         null
                 )
 
-        if (cursor != null) {
+        if (cursor != null && cursor.moveToFirst()) {
             ret = cursorToEventRecord(cursor, eventId)
         }
         if (ret == null) {
