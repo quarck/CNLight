@@ -138,8 +138,7 @@ object CalendarProvider  {
                     CalendarContract.Events.EVENT_LOCATION,
                     CalendarContract.Events.DISPLAY_COLOR,
                     CalendarContract.Events.STATUS,
-                    CalendarContract.Events.SELF_ATTENDEE_STATUS,
-                    CalendarContract.Events.LAST_SYNCED
+                    CalendarContract.Events.SELF_ATTENDEE_STATUS
             )
 
     const val INSTANCE_PROJECTION_INDEX_EVENT_ID = 0
@@ -160,7 +159,6 @@ object CalendarProvider  {
     const val INSTANCE_PROJECTION_INDEX_DISPLAY_COLOR = 15
     const val INSTANCE_PROJECTION_INDEX_STATUS = 16
     const val INSTANCE_PROJECTION_INDEX_SELF_ATTENDEE_STATUS = 17
-    const val INSTANCE_PROJECTION_INDEX_LAST_SYNCED = 18
 
     private fun cursorToAlertRecord(cursor: Cursor, alarmTime: Long?): Pair<Int?, EventAlertRecord?> {
 
