@@ -568,10 +568,6 @@ object ApplicationController : EventMovedHandler {
 
     fun fireEventReminder(context: Context) = notificationManager.fireEventReminder(context)
 
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onMainActivityCreate(context: Context?) {
-    }
-
     fun onMainActivityStarted(context: Context?) {
         if (context != null)
             CalendarMonitorPeriodicJobService.schedule(context)
@@ -583,7 +579,7 @@ object ApplicationController : EventMovedHandler {
         alarmScheduler.rescheduleAlarms(context)
         // this might fire new notifications
         // This would automatically launch the rescan of calendar and monitor
-        calendarMonitorInternal.onAppResumed(context)
+        calendarMonitorInternal.startRescanService(context)
     }
 
     fun onTimeChanged(context: Context) {

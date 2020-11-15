@@ -79,5 +79,7 @@
     <dimen name="dimen_main_settings_padding_start">20dp</dimen>
     <dimen name="dimen_main_settings_padding_top">15dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+    <dimen name="nav_header_height">176dp</dimen>
 
 </resources>

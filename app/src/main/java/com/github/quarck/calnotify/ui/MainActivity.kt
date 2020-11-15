@@ -62,11 +62,8 @@ import org.jetbrains.annotations.NotNull
 import java.util.*
 
 class DataUpdatedReceiver(val activity: MainActivity): BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-
-        val isUserCaused = intent?.getBooleanExtra(Consts.INTENT_IS_USER_ACTION, false) ?: false
-        activity.onDataUpdated(causedByUser = isUserCaused)
-    }
+    override fun onReceive(context: Context?, intent: Intent?) =
+            activity.onDataUpdated(causedByUser = intent?.getBooleanExtra(Consts.INTENT_IS_USER_ACTION, false) ?: false)
 }
 
 class MainActivity : AppCompatActivity(), EventListCallback {
@@ -99,8 +96,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         super.onCreate(savedInstanceState)
 
         DevLog.debug(LOG_TAG, "onCreateView")
-
-        ApplicationController.onMainActivityCreate(this)
 
         setContentView(R.layout.activity_main)
 
@@ -151,11 +146,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private fun refreshReminderLastFired() {
         // avoid firing reminders when UI is active and user is interacting with it
         ReminderState(applicationContext).reminderLastFireTime = System.currentTimeMillis()
-    }
-
-    public override fun onStop() {
-        DevLog.info(LOG_TAG, "onStop()")
-        super.onStop()
     }
 
     public override fun onResume() {
@@ -276,7 +266,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
         }
 
-        val completeEventsMenuItem = menu.findItem(R.id.action_dismissed_events)
+        val completeEventsMenuItem = menu.findItem(R.id.action_complete_events)
         if (completeEventsMenuItem != null) {
             completeEventsMenuItem.isEnabled = true
             completeEventsMenuItem.isVisible = true
@@ -301,7 +291,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
-            R.id.action_dismissed_events ->
+            R.id.action_complete_events ->
                 startActivity(
                         Intent(this, CompleteEventsActivity::class.java)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
@@ -403,6 +393,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
     }
 
+    // TODO: KILL UNDO MANAGER
+    // TODO: KILL THIS METHOD ALSO
+    // TODO: NOT USED IN THE MODERN VERSION OF THE APP
     // user clicks on 'dismiss' button, item still in the list
     override fun onItemDismiss(v: View, position: Int, eventId: Long) {
         DevLog.info(LOG_TAG, "onItemDismiss, pos=$position, eventId=$eventId");

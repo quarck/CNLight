@@ -26,7 +26,7 @@ class CompleteEventsActivity : AppCompatActivity(), CompleteEventListCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dismissed_events)
+        setContentView(R.layout.activity_complete_events)
 
         setSupportActionBar(find<Toolbar?>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

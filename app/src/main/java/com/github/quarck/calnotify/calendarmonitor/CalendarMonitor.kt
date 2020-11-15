@@ -44,7 +44,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
     }
 
     // should return true if we have fired at new requests, so UI should reload if it is open
-    fun onAppResumed(context: Context) {
+    fun startRescanService(context: Context) {
 
         DevLog.info(LOG_TAG, "onAppResumed")
         CalendarMonitorIntentService.startRescanService(

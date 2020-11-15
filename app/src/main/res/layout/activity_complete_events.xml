@@ -27,6 +27,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/content_dismissed_events"/>
+    <include layout="@layout/content_complete_events"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

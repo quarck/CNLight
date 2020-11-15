@@ -1,8 +1,6 @@
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.MainActivity" >
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_snooze_all"
@@ -10,12 +8,6 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/ic_update_white_24dp"
         android:title="@string/snooze_all" />
-
-    <item
-        android:id="@+id/action_complete_events"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="@string/complete_events" />
 
     <item
         android:id="@+id/action_settings"
@@ -36,7 +28,6 @@
         android:orderInCategory="10000"
         app:showAsAction="never"
         android:title="Dev page"
-        tools:ignore="HardcodedText"
         android:visible="false"
         />
 </menu>
