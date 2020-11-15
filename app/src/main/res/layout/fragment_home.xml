@@ -87,4 +87,22 @@
         android:textColor="@color/secondary_text"
         android:text="@string/no_calendar_permissions_main" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:src="@drawable/ic_add_white_24dp"
+        android:id="@+id/action_btn_add_event"
+        app:fabSize="normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:visibility="visible"
+        android:elevation="@dimen/toolbar_elevation"
+        app:backgroundTint="#134093"
+        tools:targetApi="m"
+        android:contentDescription="@string/add_event"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
+
+
+
 </RelativeLayout>

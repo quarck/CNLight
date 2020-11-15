@@ -50,9 +50,6 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
     lateinit var formatter: EventFormatter
 
-    val calendarReloadManager = CalendarReloadManager
-    val calendarProvider = CalendarProvider
-
     var snoozeAllIsChange = false
 
     var snoozeFromMainActivity = false
@@ -112,7 +109,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         snoozeFromMainActivity = intent.getBooleanExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, false)
 
-        val toolbar = find<Toolbar?>(R.id.toolbar)
+        val toolbar = findViewById<Toolbar?>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
@@ -124,9 +121,9 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         // Populate snooze controls
         for ((idx, id) in snoozePresetControlIds.withIndex()) {
-            val snoozeLable = findOrThrow<TextView>(id);
-            val quietTimeNotice = findOrThrow<TextView>(snoozePresentQuietTimeReminderControlIds[idx])
-            val quietTimeNoticeBaseline = findOrThrow<TextView>(baselineIds[idx])
+            val snoozeLable = findViewById<TextView>(id);
+            val quietTimeNotice = findViewById<TextView>(snoozePresentQuietTimeReminderControlIds[idx])
+            val quietTimeNoticeBaseline = findViewById<TextView>(baselineIds[idx])
 
             if (idx < snoozePresets.size) {
                 snoozeLable.text = formatPreset(snoozePresets[idx])
@@ -143,19 +140,19 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         // need to hide these guys
         val showCustomSnoozeVisibility = View.VISIBLE
-        findOrThrow<TextView>(R.id.snooze_view_snooze_custom).visibility = showCustomSnoozeVisibility
-        val snoozeCustom = find<TextView?>(R.id.snooze_view_snooze_until)
+        findViewById<TextView>(R.id.snooze_view_snooze_custom).visibility = showCustomSnoozeVisibility
+        val snoozeCustom = findViewById<TextView?>(R.id.snooze_view_snooze_until)
         if (snoozeCustom != null)
             snoozeCustom.visibility = showCustomSnoozeVisibility
 
-        findOrThrow<TextView>(R.id.snooze_snooze_for).text =
+        findViewById<TextView>(R.id.snooze_snooze_for).text =
                 if (!snoozeAllIsChange)
                     this.resources.getString(R.string.snooze_all_events)
                 else
                     this.resources.getString(R.string.change_all_events)
 
-        find<ImageView?>(R.id.snooze_view_img_custom_period)?.visibility = View.VISIBLE
-        find<ImageView?>(R.id.snooze_view_img_until)?.visibility = View.VISIBLE
+        findViewById<ImageView?>(R.id.snooze_view_img_custom_period)?.visibility = View.VISIBLE
+        findViewById<ImageView?>(R.id.snooze_view_img_until)?.visibility = View.VISIBLE
 
 
         this.title =
@@ -394,7 +391,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         val dialogDate = inflateDatePickerDialog() ?: return
 
-        val datePicker = dialogDate.findOrThrow<DatePicker>(R.id.datePickerCustomSnooze)
+        val datePicker = dialogDate.findViewById<DatePicker>(R.id.datePickerCustomSnooze)
 
         state.state = ViewEventActivityStateCode.SnoozeUntilOpenedDatePicker
         snoozeUntil_DatePicker = datePicker
@@ -447,7 +444,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         val dialogTime = inflateTimePickerDialog() ?: return
 
-        val timePicker: TimePicker = dialogTime.findOrThrow<TimePicker>(R.id.timePickerCustomSnooze)
+        val timePicker: TimePicker = dialogTime.findViewById<TimePicker>(R.id.timePickerCustomSnooze)
         timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
 
         state.state = ViewEventActivityStateCode.SnoozeUntilOpenedTimePicker
@@ -463,7 +460,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
             timePicker.minute = cal.get(Calendar.MINUTE)
         }
 
-        val title = dialogTime.findOrThrow<TextView>(R.id.textViewSnoozeUntilDate)
+        val title = dialogTime.findViewById<TextView>(R.id.textViewSnoozeUntilDate)
         title.text =
                 String.format(
                         resources.getString(R.string.choose_time),

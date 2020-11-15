@@ -10,7 +10,6 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.prefs.CalendarsActivity
 import com.github.quarck.calnotify.prefs.activities.*
-import com.github.quarck.calnotify.utils.find
 
 class SettingsActivityNew : AppCompatActivity() {
 
@@ -19,7 +18,7 @@ class SettingsActivityNew : AppCompatActivity() {
 
         setContentView(R.layout.activity_settings)
 
-        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        setSupportActionBar(findViewById<Toolbar?>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 

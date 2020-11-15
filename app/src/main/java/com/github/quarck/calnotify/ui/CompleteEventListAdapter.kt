@@ -34,8 +34,6 @@ import com.github.quarck.calnotify.calendar.EventCompletionType
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.textutils.dateToStr
 import com.github.quarck.calnotify.utils.adjustCalendarColor
-import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.findOrThrow
 
 fun CompleteEventAlertRecord.formatReason(ctx: Context): String =
         when (this.completionType) {
@@ -83,18 +81,18 @@ class CompleteEventListAdapter(
         var calendarColor: ColorDrawable
 
         init {
-            eventHolder = itemView.find<RelativeLayout>(R.id.card_view_main_holder)
-            eventTitleText = itemView.findOrThrow<TextView>(R.id.card_view_event_name)
-            //eventTitleLayout = itemView.findOrThrow<RelativeLayout?>(R.id.card_view_event_title_layout)
+            eventHolder = itemView.findViewById<RelativeLayout>(R.id.card_view_main_holder)
+            eventTitleText = itemView.findViewById<TextView>(R.id.card_view_event_name)
+            //eventTitleLayout = itemView.findViewById<RelativeLayout?>(R.id.card_view_event_title_layout)
 
-            eventDateText = itemView.findOrThrow<TextView>(R.id.card_view_event_date)
-            eventTimeText = itemView.findOrThrow<TextView>(R.id.card_view_event_time)
-            snoozedUntilText = itemView.find<TextView>(R.id.card_view_snoozed_until)
+            eventDateText = itemView.findViewById<TextView>(R.id.card_view_event_date)
+            eventTimeText = itemView.findViewById<TextView>(R.id.card_view_event_time)
+            snoozedUntilText = itemView.findViewById<TextView>(R.id.card_view_snoozed_until)
 
-            undoLayout = itemView.find<RelativeLayout?>(R.id.event_card_undo_layout)
+            undoLayout = itemView.findViewById<RelativeLayout?>(R.id.event_card_undo_layout)
 
-            compactViewContentLayout = itemView.find<RelativeLayout?>(R.id.compact_view_content_layout)
-            compactViewCalendarColor = itemView.find<View?>(R.id.compact_view_calendar_color)
+            compactViewContentLayout = itemView.findViewById<RelativeLayout?>(R.id.compact_view_content_layout)
+            compactViewCalendarColor = itemView.findViewById<View?>(R.id.compact_view_calendar_color)
 
             calendarColor = ColorDrawable(0)
 

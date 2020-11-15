@@ -27,8 +27,6 @@ import android.widget.TextView
 import android.widget.*
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.findOrThrow
 
 class TimeIntervalPickerController(
         val view: View,
@@ -46,8 +44,8 @@ class TimeIntervalPickerController(
     var timeUnitsSpinners: Spinner
 
     init {
-        numberPicker = view.findOrThrow<NumberPicker>(R.id.numberPickerTimeInterval)
-        timeUnitsSpinners = view.findOrThrow<Spinner>(R.id.spinnerTimeIntervalUnit)
+        numberPicker = view.findViewById<NumberPicker>(R.id.numberPickerTimeInterval)
+        timeUnitsSpinners = view.findViewById<Spinner>(R.id.spinnerTimeIntervalUnit)
 
         if (allowSubMinuteIntervals) {
             timeUnitsSpinners.adapter =
@@ -72,7 +70,7 @@ class TimeIntervalPickerController(
 
         timeUnitsSpinners.onItemSelectedListener = this
 
-        val label: TextView? = view.find<TextView>(R.id.textViewTimeIntervalTitle)
+        val label: TextView? = view.findViewById<TextView>(R.id.textViewTimeIntervalTitle)
         if (titleId != null)
             label?.setText(titleId)
         else

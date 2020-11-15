@@ -36,7 +36,6 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitorStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.toLongOrNull
 import java.util.*
 
@@ -100,7 +99,7 @@ class TestActivity : Activity() {
     private var cnt = 0;
 
     private val filterText: String
-        get() = findOrThrow<EditText>(R.id.edittext_debug_event_id).text.toString()
+        get() = findViewById<EditText>(R.id.edittext_debug_event_id).text.toString()
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnButtonViewClick(v: View) {

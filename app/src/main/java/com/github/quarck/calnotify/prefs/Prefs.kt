@@ -4,32 +4,32 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.Switch
 import android.widget.TextView
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.utils.findOrThrow
 import java.text.DateFormat
 import java.util.*
 
 //class ButtonPreference(parent: AppCompatActivity, id: Int, f: () -> Unit) {
 //    init {
-//        parent.findOrThrow<View>(id).setOnClickListener({ f() })
+//        parent.findViewById<View>(id).setOnClickListener({ f() })
 //    }
 //}
 
 //class ButtonPreferenceTwoLine(parent: AppCompatActivity, id1: Int, id2: Int, f: () -> Unit) {
 //    init {
-//        parent.findOrThrow<View>(id1).setOnClickListener({ f() })
-//        parent.findOrThrow<View>(id2).setOnClickListener({ f() })
+//        parent.findViewById<View>(id1).setOnClickListener({ f() })
+//        parent.findViewById<View>(id2).setOnClickListener({ f() })
 //    }
 //}
 
 //class ButtonPreferenceMultipleIDs(parent: AppCompatActivity, ids: IntArray, f: () -> Unit) {
 //    init {
 //        for (id in ids) {
-//            parent.findOrThrow<View>(id).setOnClickListener({ f() })
+//            parent.findViewById<View>(id).setOnClickListener({ f() })
 //        }
 //    }
 //}
@@ -40,7 +40,7 @@ import java.util.*
 //        initialValue: Boolean,
 //        onChange: (Boolean) -> Unit
 //) {
-//    val switch: Switch = parent.findOrThrow(id)
+//    val switch: Switch = parent.findViewById(id)
 //    init {
 //        switch.isChecked = initialValue
 //
@@ -59,7 +59,7 @@ import java.util.*
 //        onChange: (Boolean) -> Unit,
 //        updateLayout: (Boolean) -> Unit
 //) {
-//    val switch: Switch = parent.findOrThrow(id)
+//    val switch: Switch = parent.findViewById(id)
 //    init {
 //        switch.isChecked = initialValue
 //
@@ -88,8 +88,8 @@ class PrefsSwitch(
 
     init {
         val child = inflater.inflate(R.layout.pref_switch_with_text, null)
-        switch = child.findOrThrow<Switch>(R.id.pref_switch_generic)
-        text = child.findOrThrow<TextView>(R.id.pref_switch_generic_small_text)
+        switch = child.findViewById<Switch>(R.id.pref_switch_generic)
+        text = child.findViewById<TextView>(R.id.pref_switch_generic_small_text)
 
         switch.text = textMain
 
@@ -154,10 +154,10 @@ class PrefsItem(
                 else
                     R.layout.pref_item_with_value,
                 null)
-        main = child.findOrThrow<TextView>(R.id.pref_item_generic_text)
-        secondary = child.findOrThrow<TextView>(R.id.pref_item_generic_text_summary)
+        main = child.findViewById<TextView>(R.id.pref_item_generic_text)
+        secondary = child.findViewById<TextView>(R.id.pref_item_generic_text_summary)
 
-        valueField = if (shouldUseValue) child.findOrThrow(R.id.pref_item_generic_value) else null
+        valueField = if (shouldUseValue) child.findViewById(R.id.pref_item_generic_value) else null
         if (initialValue != null)
             valueField?.text = initialValue
 
@@ -200,10 +200,10 @@ class PrefsItem(
 //    init {
 //        val child = inflater.inflate(R.layout.pref_notification_behavior, null)
 //
-//        radioDismiss = child.findOrThrow<RadioButton>(R.id.pref_notification_swipe_dismiss)
-//        radioSnooze = child.findOrThrow<RadioButton>(R.id.pref_notification_swipe_snoozes)
-//        radioDisallow = child.findOrThrow<RadioButton>(R.id.pref_notification_swipe_disallowed)
-//        title = child.findOrThrow<TextView>(R.id.pref_item_notification_swipe_behavior_title)
+//        radioDismiss = child.findViewById<RadioButton>(R.id.pref_notification_swipe_dismiss)
+//        radioSnooze = child.findViewById<RadioButton>(R.id.pref_notification_swipe_snoozes)
+//        radioDisallow = child.findViewById<RadioButton>(R.id.pref_notification_swipe_disallowed)
+//        title = child.findViewById<TextView>(R.id.pref_item_notification_swipe_behavior_title)
 //
 //        dismissTitle?.apply { radioDismiss.text = this }
 //        snoozeTitle?.apply { radioSnooze.text = this }
@@ -242,7 +242,7 @@ class PrefsItem(
 class PrefsHeader(val inflater: LayoutInflater, val root: LinearLayout, text: String) {
     init {
         val child = inflater.inflate(R.layout.pref_header, null)
-        child.findOrThrow<TextView>(R.id.pref_header_generic_text).text = text
+        child.findViewById<TextView>(R.id.pref_header_generic_text).text = text
         root.addView(child)
     }
 }
@@ -250,7 +250,7 @@ class PrefsHeader(val inflater: LayoutInflater, val root: LinearLayout, text: St
 class RedNotice(val inflater: LayoutInflater, val root: LinearLayout, text: String) {
     init {
         val child = inflater.inflate(R.layout.red_notice, null)
-        child.findOrThrow<TextView>(R.id.red_notice_text).text = text
+        child.findViewById<TextView>(R.id.red_notice_text).text = text
         root.addView(child)
     }
 }
@@ -258,7 +258,7 @@ class RedNotice(val inflater: LayoutInflater, val root: LinearLayout, text: Stri
 class PrefsSmallprint(val inflater: LayoutInflater, val root: LinearLayout, text: String) {
     init {
         val child = inflater.inflate(R.layout.pref_smallprint, null)
-        child.findOrThrow<TextView>(R.id.pref_smallprint_text).text = text
+        child.findViewById<TextView>(R.id.pref_smallprint_text).text = text
         root.addView(child)
     }
 }
@@ -455,16 +455,12 @@ class PrefsRoot(val context: Context, val inflater: LayoutInflater, val root: Li
                             context,
                             textMainId,
                             arrayNames,
-                            arrayValues,
-                            {
-                                name, value ->
-
-                                if (showValue)
-                                    this@PrefsItem.setValue(name)
-
-                                onNewValue(name, value)
-                            }
-                    ).create()
+                            arrayValues
+                    ) { name, value ->
+                        if (showValue)
+                            this@PrefsItem.setValue(name)
+                        onNewValue(name, value)
+                    }.create()
                 },
                 shouldUseValue = showValue,
                 initialValue = if (showValue && currentIndex >= 0 && currentIndex < arrayNames.size)
@@ -505,7 +501,21 @@ fun preferences(activity: AppCompatActivity, initFunc: PrefsRoot.() -> Unit): Pr
     return PrefsRoot(
             activity,
             activity.layoutInflater,
-            activity.findOrThrow<LinearLayout>(R.id.notification_pref_root),
+            activity.findViewById<LinearLayout>(R.id.notification_pref_root),
             initFunc
+    )
+}
+
+fun preferences(context: Context, layoutInflater: LayoutInflater, container: ViewGroup?, initFunc: PrefsRoot.() -> Unit): Pair<PrefsRoot, View> {
+
+    val root = layoutInflater.inflate(R.layout.activity_pref_root, container, false)
+    return Pair(
+            PrefsRoot(
+            context,
+            layoutInflater,
+            root.findViewById<LinearLayout>(R.id.notification_pref_root),
+            initFunc
+            ),
+            root
     )
 }

@@ -39,8 +39,6 @@ import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.adjustCalendarColor
-import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.findOrThrow
 
 interface EventListCallback {
     fun onItemClick(v: View, position: Int, eventId: Long): Unit
@@ -79,19 +77,19 @@ class EventListAdapter(
         var calendarColor: ColorDrawable
 
         init {
-            eventHolder = itemView.find<RelativeLayout>(R.id.card_view_main_holder)
-            eventTitleText = itemView.findOrThrow<TextView>(R.id.card_view_event_name)
+            eventHolder = itemView.findViewById<RelativeLayout>(R.id.card_view_main_holder)
+            eventTitleText = itemView.findViewById<TextView>(R.id.card_view_event_name)
 
-            eventDateText = itemView.findOrThrow<TextView>(R.id.card_view_event_date)
-            eventTimeText = itemView.findOrThrow<TextView>(R.id.card_view_event_time)
-            snoozedUntilText = itemView.find<TextView>(R.id.card_view_snoozed_until)
+            eventDateText = itemView.findViewById<TextView>(R.id.card_view_event_date)
+            eventTimeText = itemView.findViewById<TextView>(R.id.card_view_event_time)
+            snoozedUntilText = itemView.findViewById<TextView>(R.id.card_view_snoozed_until)
 
-            undoLayout = itemView.find<RelativeLayout?>(R.id.event_card_undo_layout)
+            undoLayout = itemView.findViewById<RelativeLayout?>(R.id.event_card_undo_layout)
 
-            compactViewContentLayout = itemView.find<RelativeLayout?>(R.id.compact_view_content_layout)
-            compactViewCalendarColor = itemView.find<View?>(R.id.compact_view_calendar_color)
+            compactViewContentLayout = itemView.findViewById<RelativeLayout?>(R.id.compact_view_content_layout)
+            compactViewCalendarColor = itemView.findViewById<View?>(R.id.compact_view_calendar_color)
 
-            undoButton = itemView.find<Button?>(R.id.card_view_button_undo)
+            undoButton = itemView.findViewById<Button?>(R.id.card_view_button_undo)
 
             calendarColor = ColorDrawable(0)
 

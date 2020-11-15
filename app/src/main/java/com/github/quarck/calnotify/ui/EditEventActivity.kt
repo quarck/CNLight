@@ -225,7 +225,7 @@ open class EditEventActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_add_event)
 
-        val toolbar = find<Toolbar?>(R.id.toolbar)
+        val toolbar = findViewById<Toolbar?>(R.id.toolbar)
         toolbar?.visibility = View.GONE
 
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
@@ -259,34 +259,34 @@ open class EditEventActivity : AppCompatActivity() {
         }
         else {
             if (receivedSharedText.isEmpty())
-                findOrThrow<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
+                findViewById<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
         }
 
-        eventTitleLayout = find<RelativeLayout?>(R.id.snooze_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
+        eventTitleLayout = findViewById<RelativeLayout?>(R.id.snooze_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
 
         // get all the objects first
-        eventTitleText = find<EditText?>(R.id.add_event_title) ?: throw Exception("Can't find add_event_title")
+        eventTitleText = findViewById<EditText?>(R.id.add_event_title) ?: throw Exception("Can't find add_event_title")
 
-        buttonSave = find<Button?>(R.id.add_event_save) ?: throw Exception("Can't find add_event_save")
-        buttonCancel = find<ImageView?>(R.id.add_event_view_cancel) ?: throw Exception("Can't find add_event_view_cancel")
+        buttonSave = findViewById<Button?>(R.id.add_event_save) ?: throw Exception("Can't find add_event_save")
+        buttonCancel = findViewById<ImageView?>(R.id.add_event_view_cancel) ?: throw Exception("Can't find add_event_view_cancel")
 
-        accountName = find<TextView?>(R.id.account_name) ?: throw Exception("Can't find account_name")
+        accountName = findViewById<TextView?>(R.id.account_name) ?: throw Exception("Can't find account_name")
 
-        switchAllDay = find<Switch?>(R.id.switch_all_day) ?: throw Exception("Can't find switch_all_day")
+        switchAllDay = findViewById<Switch?>(R.id.switch_all_day) ?: throw Exception("Can't find switch_all_day")
 
-        dateFrom = find<Button?>(R.id.add_event_date_from) ?: throw Exception("Can't find add_event_date_from")
-        timeFrom = find<Button?>(R.id.add_event_time_from) ?: throw Exception("Can't find add_event_time_from")
+        dateFrom = findViewById<Button?>(R.id.add_event_date_from) ?: throw Exception("Can't find add_event_date_from")
+        timeFrom = findViewById<Button?>(R.id.add_event_time_from) ?: throw Exception("Can't find add_event_time_from")
 
-        dateTo = find<Button?>(R.id.add_event_date_to) ?: throw Exception("Can't find add_event_date_to")
-        timeTo = find<Button?>(R.id.add_event_time_to) ?: throw Exception("Can't find add_event_time_to")
+        dateTo = findViewById<Button?>(R.id.add_event_date_to) ?: throw Exception("Can't find add_event_date_to")
+        timeTo = findViewById<Button?>(R.id.add_event_time_to) ?: throw Exception("Can't find add_event_time_to")
 
-        eventLocation = find<EditText?>(R.id.event_location) ?: throw Exception("Can't find event_location")
+        eventLocation = findViewById<EditText?>(R.id.event_location) ?: throw Exception("Can't find event_location")
 
-        notificationsLayout = find<LinearLayout?>(R.id.notifications) ?: throw Exception("Can't find notifications")
-        notificationPrototype = find<TextView?>(R.id.notificationPrototype) ?: throw Exception("Can't find notificationPrototype")
-        addNotification = find<TextView?>(R.id.add_notification) ?: throw Exception("Can't find add_notification")
+        notificationsLayout = findViewById<LinearLayout?>(R.id.notifications) ?: throw Exception("Can't find notifications")
+        notificationPrototype = findViewById<TextView?>(R.id.notificationPrototype) ?: throw Exception("Can't find notificationPrototype")
+        addNotification = findViewById<TextView?>(R.id.add_notification) ?: throw Exception("Can't find add_notification")
 
-        note = find<EditText?>(R.id.event_note) ?: throw Exception("Can't find event_note")
+        note = findViewById<EditText?>(R.id.event_note) ?: throw Exception("Can't find event_note")
 
         notificationPrototype.visibility = View.GONE
 
@@ -814,7 +814,7 @@ open class EditEventActivity : AppCompatActivity() {
                 Consts.NEW_EVENT_MAX_REMINDER_MILLISECONDS_BEFORE, false)
         timeIntervalPicker.intervalMilliseconds = currentReminder.millisecondsBefore
 
-        val isEmailCb = dialogView.find<CheckBox?>(R.id.checkbox_as_email)
+        val isEmailCb = dialogView.findViewById<CheckBox?>(R.id.checkbox_as_email)
 
         val builder = AlertDialog.Builder(this)
 
@@ -914,9 +914,9 @@ open class EditEventActivity : AppCompatActivity() {
 
         val dialogView = this.layoutInflater.inflate(R.layout.dialog_add_event_allday_notification, null);
 
-        val numberPicker = dialogView.findOrThrow<NumberPicker>(R.id.number_picker_days_before)
-        val timePicker = dialogView.findOrThrow<TimePicker>(R.id.time_picker_notification_time_of_day)
-        val isEmailCb = dialogView.findOrThrow<CheckBox>(R.id.checkbox_as_email)
+        val numberPicker = dialogView.findViewById<NumberPicker>(R.id.number_picker_days_before)
+        val timePicker = dialogView.findViewById<TimePicker>(R.id.time_picker_notification_time_of_day)
+        val isEmailCb = dialogView.findViewById<CheckBox>(R.id.checkbox_as_email)
 
         numberPicker.minValue = 0
         numberPicker.maxValue = Consts.NEW_EVENT_MAX_ALL_DAY_REMINDER_DAYS_BEFORE

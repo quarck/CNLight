@@ -14,8 +14,7 @@ import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.background
-import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.findOrThrow
+
 
 class CompleteEventsActivity : AppCompatActivity(), CompleteEventListCallback {
 
@@ -28,7 +27,7 @@ class CompleteEventsActivity : AppCompatActivity(), CompleteEventListCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_complete_events)
 
-        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        setSupportActionBar(findViewById<Toolbar?>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
@@ -41,7 +40,7 @@ class CompleteEventsActivity : AppCompatActivity(), CompleteEventListCallback {
                         this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        recyclerView = findOrThrow<RecyclerView>(R.id.list_events)
+        recyclerView = findViewById<RecyclerView>(R.id.list_events)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
         adapter.recyclerView = recyclerView

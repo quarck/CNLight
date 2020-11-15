@@ -44,7 +44,6 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.permissions.PermissionsManager
-import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.powerManager
 import org.jetbrains.annotations.NotNull
@@ -67,13 +66,6 @@ class MainActivityNG : AppCompatActivity() {
 
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
-        findOrThrow<FloatingActionButton>(R.id.action_btn_add_event).setOnClickListener {
-            startActivity(
-                    Intent(this, EditEventActivity::class.java)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            )
-        }
-
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
@@ -82,7 +74,9 @@ class MainActivityNG : AppCompatActivity() {
                 setOf(
                     R.id.nav_home,
                     R.id.nav_oncoming,
-                    R.id.nav_complete
+                    R.id.nav_complete,
+                    R.id.nav_about,
+                    R.id.nav_settings
                 ),
                 drawerLayout)
 
@@ -112,8 +106,9 @@ class MainActivityNG : AppCompatActivity() {
 
         checkPermissions()
 
-        val navController = findNavController(R.id.nav_host_fragment)
-        navController.navigate(R.id.nav_home)
+        // do this only when we are in the activity launched form the notification?
+//        val navController = findNavController(R.id.nav_host_fragment)
+//        navController.navigate(R.id.nav_home)
     }
 
 

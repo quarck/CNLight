@@ -28,7 +28,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TimePicker
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.utils.findOrThrow
 
 // val context: Context, val settings: Settings, var inflater: LayoutInflater
 
@@ -72,7 +71,7 @@ class TimeOfDayPreference(
     }
 
     fun onBindDialogView(view: View) {
-        picker = view.findOrThrow<TimePicker>(R.id.time_picker_pref_time_of_day)
+        picker = view.findViewById<TimePicker>(R.id.time_picker_pref_time_of_day)
 
         picker.setIs24HourView(isTwentyFourHour)
         picker.hour = timeValue.component1()

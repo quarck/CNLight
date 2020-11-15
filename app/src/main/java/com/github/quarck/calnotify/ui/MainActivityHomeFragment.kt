@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -40,8 +41,8 @@ import com.github.quarck.calnotify.calendar.EventCompletionType
 import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.background
-import com.github.quarck.calnotify.utils.find
 import com.github.quarck.calnotify.utils.logs.DevLog
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
 class DataUpdatedReceiverNG(val fragment: MainActivityHomeFragment): BroadcastReceiver() {
@@ -80,7 +81,7 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
 
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
-        refreshLayout = root.find<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)
+        refreshLayout = root.findViewById<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)
         refreshLayout?.setOnRefreshListener {
             reloadLayout.visibility = View.GONE;
             reloadData()
@@ -99,6 +100,15 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
         reloadLayout = root.findViewById<RelativeLayout>(R.id.activity_main_reload_layout)
 
         emptyView = root.findViewById(R.id.empty_view)
+
+        this.activity?.let {
+            act ->
+            root.findViewById<FloatingActionButton>(R.id.action_btn_add_event).setOnClickListener {
+                act.startActivity(
+                        Intent(act, EditEventActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                )
+            }
+        }
 
         return root
     }
@@ -150,12 +160,6 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
             menuItem.title =
                     resources.getString(
                             if (adapter?.hasActiveEvents == true) R.string.snooze_all else R.string.change_all)
-        }
-
-        val completeEventsMenuItem = menu.findItem(R.id.action_complete_events)
-        if (completeEventsMenuItem != null) {
-            completeEventsMenuItem.isEnabled = true
-            completeEventsMenuItem.isVisible = true
         }
 
         if (Consts.DEV_MODE_ENABLED) {

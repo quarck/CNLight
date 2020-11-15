@@ -55,8 +55,6 @@ import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.utils.background
-import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.findOrThrow
 import com.github.quarck.calnotify.utils.powerManager
 import org.jetbrains.annotations.NotNull
 import java.util.*
@@ -101,13 +99,13 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
-        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        setSupportActionBar(findViewById<Toolbar?>(R.id.toolbar))
         //supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
-        refreshLayout = find<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)
+        refreshLayout = findViewById<SwipeRefreshLayout?>(R.id.cardview_refresh_layout)
 
         refreshLayout?.setOnRefreshListener {
             reloadLayout.visibility = View.GONE;
@@ -117,14 +115,14 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         adapter = EventListAdapter(this, this)
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        recyclerView = findOrThrow<RecyclerView>(R.id.list_events)
+        recyclerView = findViewById<RecyclerView>(R.id.list_events)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
         adapter.recyclerView = recyclerView
 
-        reloadLayout = findOrThrow<RelativeLayout>(R.id.activity_main_reload_layout)
+        reloadLayout = findViewById<RelativeLayout>(R.id.activity_main_reload_layout)
 
-        floatingAddEvent = findOrThrow<FloatingActionButton>(R.id.action_btn_add_event)
+        floatingAddEvent = findViewById<FloatingActionButton>(R.id.action_btn_add_event)
 
         //floatingAddEvent.visibility = if (settings.enableAddEvent) View.VISIBLE else View.GONE
 
@@ -164,7 +162,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         }
 
         if (undoManager.canUndo) {
-            val coordinatorLayout = findOrThrow<CoordinatorLayout>(R.id.main_activity_coordinator)
+            val coordinatorLayout = findViewById<CoordinatorLayout>(R.id.main_activity_coordinator)
 
             Snackbar.make(coordinatorLayout, resources.getString(R.string.event_dismissed), Snackbar.LENGTH_LONG)
                     .setAction(resources.getString(R.string.undo)) { onUndoButtonClick(null) }
@@ -371,7 +369,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
     private fun onNumEventsUpdated() {
         val hasEvents = adapter.itemCount > 0
-        findOrThrow<TextView>(R.id.empty_view).visibility = if (hasEvents) View.GONE else View.VISIBLE;
+        findViewById<TextView>(R.id.empty_view).visibility = if (hasEvents) View.GONE else View.VISIBLE;
         this.invalidateOptionsMenu();
     }
 
@@ -415,7 +413,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
             onNumEventsUpdated()
 
-            val coordinatorLayout = findOrThrow<CoordinatorLayout>(R.id.main_activity_coordinator)
+            val coordinatorLayout = findViewById<CoordinatorLayout>(R.id.main_activity_coordinator)
 
             Snackbar.make(coordinatorLayout, resources.getString(R.string.event_dismissed), Snackbar.LENGTH_LONG)
                     .setAction(resources.getString(R.string.undo)) { onUndoButtonClick(null) }

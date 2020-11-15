@@ -28,7 +28,6 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.BuildConfig
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.utils.find
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,40 +40,30 @@ class AboutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
 
-        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        setSupportActionBar(findViewById<Toolbar?>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
-        val versionText = find<TextView?>(R.id.text_view_app_version)
         val pInfo = packageManager.getPackageInfo(packageName, 0);
 
-        versionText?.text = pInfo.versionName
+        findViewById<TextView?>(R.id.text_view_app_version)?.text = pInfo.versionName
+        findViewById<TextView?>(R.id.text_view_app_build_time)?.text = String.format(resources.getString(R.string.build_time_string_format), getBuildDate())
 
-        val buildTime = find<TextView?>(R.id.text_view_app_build_time)
-        buildTime?.text = String.format(resources.getString(R.string.build_time_string_format), getBuildDate())
+        findViewById<TextView?>(R.id.about_button_privacy_policy)?.setOnClickListener {
+            startActivity(Intent(this, PrivacyPolicyActivity::class.java))
+        }
+
+        findViewById<TextView?>(R.id.about_button_github)?.setOnClickListener {
+            startActivity(Intent.parseUri(githubUri, 0))
+        }
     }
 
-    fun getBuildDate(): String {
-        return SimpleDateFormat.getInstance().format(Date(BuildConfig.TIMESTAMP));
-    }
-
-    @Suppress("UNUSED_PARAMETER", "unused")
-    fun OnTextViewCreditsClick(v: View) = startActivity(Intent.parseUri(imageCreditUri, 0))
-
-    @Suppress("UNUSED_PARAMETER", "unused")
-    fun OnTextViewKotlinClick(v: View) = startActivity(Intent.parseUri(kotlinUri, 0))
-
-    @Suppress("UNUSED_PARAMETER", "unused")
-    fun OnTextViewGitHubClick(v: View) = startActivity(Intent.parseUri(githubUri, 0))
-
-    @Suppress("UNUSED_PARAMETER", "unused")
-    fun onPrivacyPolicy(v: View) = startActivity(Intent(this, PrivacyPolicyActivity::class.java))
+    fun getBuildDate(): String =
+            SimpleDateFormat.getInstance().format(Date(BuildConfig.TIMESTAMP))
 
     companion object {
-        val imageCreditUri = "http://cornmanthe3rd.deviantart.com/"
-        val kotlinUri = "https://kotlinlang.org/"
         val githubUri = "https://github.com/quarck/CNLight"
     }
 }

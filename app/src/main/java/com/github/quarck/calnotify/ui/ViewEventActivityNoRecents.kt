@@ -173,7 +173,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         snoozeFromMainActivity = intent.getBooleanExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, false)
 
-        find<Toolbar?>(R.id.toolbar)?.visibility = View.GONE
+        findViewById<Toolbar?>(R.id.toolbar)?.visibility = View.GONE
 
         // load event if it is not a "snooze all"
         EventsStorage(this).use {
@@ -205,10 +205,10 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         calendar = calendarProvider.getCalendarById(this, event.calendarId)
                 ?: calendarProvider.createCalendarNotFoundCal(this)
 
-        calendarNameTextView = findOrThrow<TextView>(R.id.view_event_calendar_name)
+        calendarNameTextView = findViewById<TextView>(R.id.view_event_calendar_name)
         calendarNameTextView.text = calendar.displayName
 
-        calendarAccountTextView = findOrThrow<TextView>(R.id.view_event_calendar_account)
+        calendarAccountTextView = findViewById<TextView>(R.id.view_event_calendar_account)
         calendarAccountTextView.text = calendar.accountName
 
         snoozePresets = Consts.DEFAULT_SNOOZE_PRESETS
@@ -220,19 +220,19 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         val location = event.location;
         if (location != "") {
-            findOrThrow<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
-            val locationView = findOrThrow<TextView>(R.id.snooze_view_location)
+            findViewById<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
+            val locationView = findViewById<TextView>(R.id.snooze_view_location)
             locationView.text = location;
             locationView.setOnClickListener { MapsIntents.openLocation(this, event.location) }
         }
 
-        val title = findOrThrow<TextView>(R.id.snooze_view_title)
+        val title = findViewById<TextView>(R.id.snooze_view_title)
         title.text = if (event.title.isNotEmpty()) event.title else this.resources.getString(R.string.empty_title);
 
         val (line1, line2) = formatter.formatDateTimeTwoLines(event);
 
-        val dateTimeFirstLine = findOrThrow<TextView>(R.id.snooze_view_event_date_line1)
-        val dateTimeSecondLine = findOrThrow<TextView>(R.id.snooze_view_event_date_line2)
+        val dateTimeFirstLine = findViewById<TextView>(R.id.snooze_view_event_date_line1)
+        val dateTimeSecondLine = findViewById<TextView>(R.id.snooze_view_event_date_line2)
 
         dateTimeFirstLine.text = line1;
 
@@ -255,8 +255,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         if (event.desc.isNotEmpty()) {
             // Show the event desc
-            findOrThrow<RelativeLayout>(R.id.layout_event_description).visibility = View.VISIBLE
-            findOrThrow<TextView>(R.id.snooze_view_event_description).text = event.desc
+            findViewById<RelativeLayout>(R.id.layout_event_description).visibility = View.VISIBLE
+            findViewById<TextView>(R.id.snooze_view_event_description).text = event.desc
         }
 
         var color: Int = event.color.adjustCalendarColor()
@@ -264,7 +264,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             color = ContextCompat.getColor(this, R.color.primary)
 
         val colorDrawable = ColorDrawable(color.invertColor().scaleColor(0.1f))
-        findOrThrow<RelativeLayout>(R.id.snooze_view_event_details_layout).background = colorDrawable
+        findViewById<RelativeLayout>(R.id.snooze_view_event_details_layout).background = colorDrawable
         title.setTextColor(ColorStateList.valueOf(color.scaleColor(1.8f)))
 
         window.statusBarColor = color.scaleColor(0.7f)
@@ -272,21 +272,21 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 //        val shouldOfferMove = (!event.isRepeating) && (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
         val shouldOfferMove = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
         if (shouldOfferMove) {
-            findOrThrow<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
+            findViewById<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
             if (event.isRepeating) {
-                findOrThrow<TextView>(R.id.snooze_reschedule_for).text = getString(R.string.change_event_time_repeating_event)
+                findViewById<TextView>(R.id.snooze_reschedule_for).text = getString(R.string.change_event_time_repeating_event)
             }
         }
         else {
-            find<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
+            findViewById<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
         }
 
         if (event.snoozedUntil != 0L) {
-            findOrThrow<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.change_snooze_to)
+            findViewById<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.change_snooze_to)
         }
 
-        val nextReminderLayout: RelativeLayout? = find<RelativeLayout>(R.id.layout_next_reminder)
-        val nextReminderText: TextView? = find<TextView>(R.id.snooze_view_next_reminder)
+        val nextReminderLayout: RelativeLayout? = findViewById<RelativeLayout>(R.id.layout_next_reminder)
+        val nextReminderText: TextView? = findViewById<TextView>(R.id.snooze_view_next_reminder)
 
         if (nextReminderLayout != null && nextReminderText != null) {
 
@@ -303,7 +303,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         }
 
 
-        val fab = findOrThrow<FloatingActionButton>(R.id.floating_edit_button)
+        val fab = findViewById<FloatingActionButton>(R.id.floating_edit_button)
 
         if (!calendar.isReadOnly) {
             if (!event.isRepeating) {
@@ -335,7 +335,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         }
 
 
-        val menuButton = find<ImageView?>(R.id.snooze_view_menu)
+        val menuButton = findViewById<ImageView?>(R.id.snooze_view_menu)
         menuButton?.setOnClickListener { showDismissEditPopup(menuButton) }
 
         restoreState(state)
@@ -432,8 +432,8 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun OnEnableMove(v: View?) {
-        val btnEnable = findOrThrow<TextView>(R.id.enable_snooze_reschedule)
-        val layout2 = findOrThrow<LinearLayout>(R.id.snooze_view_snooze_sub_layout_4)
+        val btnEnable = findViewById<TextView>(R.id.enable_snooze_reschedule)
+        val layout2 = findViewById<LinearLayout>(R.id.snooze_view_snooze_sub_layout_4)
         btnEnable.visibility = View.GONE
         layout2.visibility = View.VISIBLE
     }
@@ -594,7 +594,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         val dialogDate = inflateDatePickerDialog() ?: return
 
-        val datePicker = dialogDate.findOrThrow<DatePicker>(R.id.datePickerCustomSnooze)
+        val datePicker = dialogDate.findViewById<DatePicker>(R.id.datePickerCustomSnooze)
 
         state.state = ViewEventActivityStateCode.SnoozeUntilOpenedDatePicker
         snoozeUntil_DatePicker = datePicker
@@ -647,7 +647,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
         val dialogTime = inflateTimePickerDialog() ?: return
 
-        val timePicker: TimePicker = dialogTime.findOrThrow<TimePicker>(R.id.timePickerCustomSnooze)
+        val timePicker: TimePicker = dialogTime.findViewById<TimePicker>(R.id.timePickerCustomSnooze)
         timePicker.setIs24HourView(android.text.format.DateFormat.is24HourFormat(this))
 
         state.state = ViewEventActivityStateCode.SnoozeUntilOpenedTimePicker
@@ -663,7 +663,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             timePicker.minute = cal.get(Calendar.MINUTE)
         }
 
-        val title = dialogTime.findOrThrow<TextView>(R.id.textViewSnoozeUntilDate)
+        val title = dialogTime.findViewById<TextView>(R.id.textViewSnoozeUntilDate)
         title.text =
                 String.format(
                         resources.getString(R.string.choose_time),

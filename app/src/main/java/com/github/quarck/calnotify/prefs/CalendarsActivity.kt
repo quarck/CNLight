@@ -39,8 +39,6 @@ import com.github.quarck.calnotify.calendar.CalendarRecord
 import com.github.quarck.calnotify.utils.logs.DevLog
 //import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.utils.background
-import com.github.quarck.calnotify.utils.find
-import com.github.quarck.calnotify.utils.findOrThrow
 
 enum class CalendarListEntryType {Header, Calendar, Divider }
 
@@ -72,13 +70,13 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
         var spacingView: View
 
         init {
-            view = itemView.findOrThrow<LinearLayout>(R.id.linearLyaoutCalendarView)
+            view = itemView.findViewById<LinearLayout>(R.id.linearLyaoutCalendarView)
 
-            calendarAccountName = view.findOrThrow<TextView>(R.id.textViewCalendarOwner)
-            checkboxCalendarName = view.findOrThrow<CheckBox>(R.id.checkBoxCalendarSelection)
-            colorView = view.findOrThrow<View>(R.id.viewCalendarColor)
-            calendarEntryLayout = view.findOrThrow<LinearLayout>(R.id.linearLayoutCalendarEntry)
-            spacingView = view.findOrThrow<View>(R.id.viewCalendarsSpacing)
+            calendarAccountName = view.findViewById<TextView>(R.id.textViewCalendarOwner)
+            checkboxCalendarName = view.findViewById<CheckBox>(R.id.checkBoxCalendarSelection)
+            colorView = view.findViewById<View>(R.id.viewCalendarColor)
+            calendarEntryLayout = view.findViewById<LinearLayout>(R.id.linearLayoutCalendarEntry)
+            spacingView = view.findViewById<View>(R.id.viewCalendarsSpacing)
 
             checkboxCalendarName.setOnClickListener {
                 view ->
@@ -151,7 +149,7 @@ class CalendarsActivity : AppCompatActivity() {
         DevLog.debug(LOG_TAG, "onCreate")
 
         setContentView(R.layout.activity_calendars)
-        setSupportActionBar(find<Toolbar?>(R.id.toolbar))
+        setSupportActionBar(findViewById<Toolbar?>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
@@ -167,11 +165,11 @@ class CalendarsActivity : AppCompatActivity() {
         }
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
-        recyclerView = findOrThrow<RecyclerView>(R.id.list_calendars)
+        recyclerView = findViewById<RecyclerView>(R.id.list_calendars)
         recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
 
-        noCalendarsText = findOrThrow<TextView>(R.id.no_calendars_text)
+        noCalendarsText = findViewById<TextView>(R.id.no_calendars_text)
     }
 
     override fun onResume() {
