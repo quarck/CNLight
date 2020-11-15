@@ -12,16 +12,21 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
+import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.background
+import com.github.quarck.calnotify.utils.textutils.EventFormatter
 
 
-class CompleteEventsActivity : AppCompatActivity(), CompleteEventListCallback {
+class CompleteEventsActivity : AppCompatActivity(), SimpleEventListCallback<CompleteEventAlertRecord> {
 
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
 
-    private lateinit var adapter: CompleteEventListAdapter
+    private lateinit var adapter: SimpleEventListAdapter<CompleteEventAlertRecord>
+
+    private val primaryColor: Int? = ContextCompat.getColor(this, R.color.primary)
+    private val eventFormatter = EventFormatter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +39,7 @@ class CompleteEventsActivity : AppCompatActivity(), CompleteEventListCallback {
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
 
         adapter =
-                CompleteEventListAdapter(
+                SimpleEventListAdapter(
                         this,
                         R.layout.event_card_compact,
                         this)
@@ -56,7 +61,7 @@ class CompleteEventsActivity : AppCompatActivity(), CompleteEventListCallback {
                     CompleteEventsStorage(this).use {
                         db ->
                         db.events.sortedByDescending { it.completionTime }.toTypedArray()
-                    }
+                    }.toMutableList()
             runOnUiThread {
                 adapter.setEventsToDisplay(events);
             }
@@ -86,6 +91,16 @@ class CompleteEventsActivity : AppCompatActivity(), CompleteEventListCallback {
 
         popup.show()
     }
+
+
+    override fun getItemTitle(entry: CompleteEventAlertRecord): String =  entry.event.title
+    override fun getItemMiddleLine(entry: CompleteEventAlertRecord): String = eventFormatter.formatDateTimeOneLine(entry.event)
+    override fun getItemBottomLine(entry: CompleteEventAlertRecord): String = entry.formatReason(this)
+    override fun getItemColor(entry: CompleteEventAlertRecord): Int =
+            if (entry.event.color != 0)
+                entry.event.color.adjustCalendarColor()
+            else
+                primaryColor ?: 0x7fff0000;
 
     companion object {
         private const val LOG_TAG = "DismissedEventsActivity"

@@ -23,8 +23,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -32,15 +32,20 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
 import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
+import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
+import com.github.quarck.calnotify.utils.textutils.EventFormatter
 
-class MainActivityCompleteEventsFragment : Fragment(), CompleteEventListCallback {
+class MainActivityCompleteEventsFragment : Fragment(), SimpleEventListCallback<CompleteEventAlertRecord> {
 
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
 
-    private var adapter: CompleteEventListAdapter? = null
+    private var adapter: SimpleEventListAdapter<CompleteEventAlertRecord>? = null
+
+    private val primaryColor: Int? = context?.let{ ContextCompat.getColor(it, R.color.primary) }
+    private val eventFormatter = context?.let{ EventFormatter(it) }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -54,7 +59,7 @@ class MainActivityCompleteEventsFragment : Fragment(), CompleteEventListCallback
         this.context?.let {
             ctx ->
             adapter =
-                    CompleteEventListAdapter(
+                    SimpleEventListAdapter(
                             ctx,
                             R.layout.event_card_compact,
                             this)
@@ -84,7 +89,7 @@ class MainActivityCompleteEventsFragment : Fragment(), CompleteEventListCallback
                         CompleteEventsStorage(activity).use {
                             db ->
                             db.events.sortedByDescending { it.completionTime }.toTypedArray()
-                        }
+                        }.toMutableList()
                 activity.runOnUiThread {
                     adapter?.setEventsToDisplay(events)
                 }
@@ -121,6 +126,15 @@ class MainActivityCompleteEventsFragment : Fragment(), CompleteEventListCallback
             popup.show()
         }
     }
+
+    override fun getItemTitle(entry: CompleteEventAlertRecord): String =  entry.event.title
+    override fun getItemMiddleLine(entry: CompleteEventAlertRecord): String = eventFormatter?.formatDateTimeOneLine(entry.event) ?: "_NO_FORMATTER_"
+    override fun getItemBottomLine(entry: CompleteEventAlertRecord): String = context?.let{ entry.formatReason(it) } ?: "_NO_CONTEXT_"
+    override fun getItemColor(entry: CompleteEventAlertRecord): Int =
+            if (entry.event.color != 0)
+                entry.event.color.adjustCalendarColor()
+            else
+                primaryColor ?: 0x7fff0000;
 
 
     override fun onPause() {
