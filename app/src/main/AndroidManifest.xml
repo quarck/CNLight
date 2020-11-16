@@ -94,8 +94,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.CompleteEventsActivity"
-            android:label="@string/complete_events"
+            android:name=".ui.FinishedEventsActivity"
+            android:label="@string/finished_events"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />

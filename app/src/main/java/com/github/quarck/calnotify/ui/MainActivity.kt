@@ -48,8 +48,8 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.UndoManager
 import com.github.quarck.calnotify.app.UndoState
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventCompletionType
-import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
+import com.github.quarck.calnotify.calendar.EventFinishType
+import com.github.quarck.calnotify.eventsstorage.FinishedEventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
@@ -264,11 +264,11 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                             if (adapter.hasActiveEvents) R.string.snooze_all else R.string.change_all)
         }
 
-        val completeEventsMenuItem = menu.findItem(R.id.action_complete_events)
-        if (completeEventsMenuItem != null) {
-            completeEventsMenuItem.isEnabled = true
-            completeEventsMenuItem.isVisible = true
-        }
+//        val finishedEventsMenuItem = menu.findItem(R.id.action_finished_events)
+//        if (finishedEventsMenuItem != null) {
+//            finishedEventsMenuItem.isEnabled = true
+//            finishedEventsMenuItem.isVisible = true
+//        }
 
         if (Consts.DEV_MODE_ENABLED) {
             menu.findItem(R.id.action_test_page)?.isVisible = true
@@ -289,9 +289,9 @@ class MainActivity : AppCompatActivity(), EventListCallback {
                                 .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
-            R.id.action_complete_events ->
+            R.id.action_finished_events ->
                 startActivity(
-                        Intent(this, CompleteEventsActivity::class.java)
+                        Intent(this, FinishedEventsActivity::class.java)
                                 .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
             R.id.action_settings -> {
@@ -317,7 +317,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     private fun reloadData() {
 
         background {
-            CompleteEventsStorage(this).use { it.purgeOld(System.currentTimeMillis(), Consts.BIN_KEEP_HISTORY_MILLISECONDS) }
+            FinishedEventsStorage(this).use { it.purgeOld(System.currentTimeMillis(), Consts.BIN_KEEP_HISTORY_MILLISECONDS) }
 
             val events =
                     EventsStorage(this).use {
@@ -402,7 +402,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
 
         if (event != null) {
             DevLog.info(LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-            ApplicationController.dismissEvent(this, EventCompletionType.ManuallyInTheApp, event)
+            ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
 
             undoManager.addUndoState(
                     UndoState(
@@ -425,7 +425,7 @@ class MainActivity : AppCompatActivity(), EventListCallback {
     override fun onItemRemoved(event: EventAlertRecord) {
 
         DevLog.info(LOG_TAG, "onItemRemoved: Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-        ApplicationController.dismissEvent(this, EventCompletionType.ManuallyInTheApp, event)
+        ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
         lastEventDismissalScrollPosition = adapter.scrollPosition
         onNumEventsUpdated()
     }

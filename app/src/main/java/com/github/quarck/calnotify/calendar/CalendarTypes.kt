@@ -111,12 +111,12 @@ fun eventContentHash(calendarId: Long, isAllDay: Boolean, color: Int,
                      rRule: String, rDate: String, exRRule: String, exRDate: String
 ) = MD5.compute((
         "$calendarId,$isAllDay,$color," +
-                "$startTime,$endTime,$startTime,$endTime," +
+                "$startTime,$endTime," +
                 "$eventStatus,$attendanceStatus," +
                 "${title.length},${desc.length},${location.length},${timeZone.length}," +
-                "${rRule.length},${rDate.length},${exRRule.length},${exRDate.length}," +
-                "$title,$desc,$location,$timeZone," +
-                "$rRule,$rDate,$exRRule,$exRDate"
+                // "${rRule.length},${rDate.length},${exRRule.length},${exRDate.length}," +
+                "$title,$desc,$location,$timeZone,"// +
+                //"$rRule,$rDate,$exRRule,$exRDate"
         ).toByteArray())
 
 data class EventRecord(
@@ -443,7 +443,7 @@ val EventAlertRecord.isCancelledOrDeclined: Boolean
     get() = eventStatus == EventStatus.Cancelled || attendanceStatus == AttendanceStatus.Declined
 
 
-enum class EventCompletionType(val code: Int) {
+enum class EventFinishType(val code: Int) {
     ManuallyViaNotification(0),
     ManuallyInTheApp(1),
     AutoDueToCalendarMove(2),
@@ -455,8 +455,8 @@ enum class EventCompletionType(val code: Int) {
     }
 }
 
-data class CompleteEventAlertRecord(
+data class FinishedEventAlertRecord(
         val event: EventAlertRecord, // actual event that was dismissed
-        val completionTime: Long, // when dismissal happened
-        val completionType: EventCompletionType  // type of dismiss
+        val finishTime: Long, // when dismissal happened
+        val finishType: EventFinishType  // type of dismiss
 )

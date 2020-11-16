@@ -8,35 +8,39 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.appcompat.widget.Toolbar
 import android.view.View
 import androidx.core.content.ContextCompat
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
-import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
+import com.github.quarck.calnotify.calendar.FinishedEventAlertRecord
+import com.github.quarck.calnotify.eventsstorage.FinishedEventsStorage
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 
 
-class CompleteEventsActivity : AppCompatActivity(), SimpleEventListCallback<CompleteEventAlertRecord> {
+class FinishedEventsActivity : AppCompatActivity(), SimpleEventListCallback<FinishedEventAlertRecord> {
 
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
 
-    private lateinit var adapter: SimpleEventListAdapter<CompleteEventAlertRecord>
+    private lateinit var adapter: SimpleEventListAdapter<FinishedEventAlertRecord>
 
-    private val primaryColor: Int? = ContextCompat.getColor(this, R.color.primary)
-    private val eventFormatter = EventFormatter(this)
+    private var primaryColor: Int = Consts.DEFAULT_CALENDAR_EVENT_COLOR
+    private lateinit var eventFormatter: EventFormatter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_complete_events)
+        setContentView(R.layout.activity_finished_events)
 
         setSupportActionBar(findViewById<Toolbar?>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
 
         window.navigationBarColor = ContextCompat.getColor(this, android.R.color.black)
+
+        primaryColor = ContextCompat.getColor(this, R.color.primary)
+        eventFormatter = EventFormatter(this)
 
         adapter =
                 SimpleEventListAdapter(
@@ -58,28 +62,28 @@ class CompleteEventsActivity : AppCompatActivity(), SimpleEventListCallback<Comp
 
         background {
             val events =
-                    CompleteEventsStorage(this).use {
+                    FinishedEventsStorage(this).use {
                         db ->
-                        db.events.sortedByDescending { it.completionTime }.toTypedArray()
-                    }.toMutableList()
+                        db.events.sortedByDescending { it.finishTime }.toMutableList()
+                    }
             runOnUiThread {
                 adapter.setEventsToDisplay(events);
             }
         }
     }
 
-    override fun onItemClick(v: View, position: Int, entry: CompleteEventAlertRecord) {
+    override fun onItemClick(v: View, position: Int, entry: FinishedEventAlertRecord) {
 
         val popup = PopupMenu(this, v)
         val inflater = popup.menuInflater
 
-        inflater.inflate(R.menu.complete_events, popup.menu)
+        inflater.inflate(R.menu.finished_event_popup, popup.menu)
 
         popup.setOnMenuItemClickListener {
             item ->
 
             when (item.itemId) {
-                R.id.action_mark_not_complete -> {
+                R.id.action_mark_not_finished -> {
                     ApplicationController.restoreEvent(this, entry.event)
                     adapter.removeEntry(entry)
                     true
@@ -92,15 +96,17 @@ class CompleteEventsActivity : AppCompatActivity(), SimpleEventListCallback<Comp
         popup.show()
     }
 
+    override fun getItemTitle(entry: FinishedEventAlertRecord): String =  entry.event.title
 
-    override fun getItemTitle(entry: CompleteEventAlertRecord): String =  entry.event.title
-    override fun getItemMiddleLine(entry: CompleteEventAlertRecord): String = eventFormatter.formatDateTimeOneLine(entry.event)
-    override fun getItemBottomLine(entry: CompleteEventAlertRecord): String = entry.formatReason(this)
-    override fun getItemColor(entry: CompleteEventAlertRecord): Int =
+    override fun getItemMiddleLine(entry: FinishedEventAlertRecord): String = eventFormatter.formatDateTimeOneLine(entry.event)
+
+    override fun getItemBottomLine(entry: FinishedEventAlertRecord): String = entry.formatReason(this)
+
+    override fun getItemColor(entry: FinishedEventAlertRecord): Int =
             if (entry.event.color != 0)
                 entry.event.color.adjustCalendarColor()
             else
-                primaryColor ?: 0x7fff0000;
+                primaryColor
 
     companion object {
         private const val LOG_TAG = "DismissedEventsActivity"

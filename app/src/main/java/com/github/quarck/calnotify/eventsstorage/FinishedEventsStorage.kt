@@ -22,18 +22,18 @@ package com.github.quarck.calnotify.eventsstorage
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
+import com.github.quarck.calnotify.calendar.FinishedEventAlertRecord
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventCompletionType
+import com.github.quarck.calnotify.calendar.EventFinishType
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
 //import com.github.quarck.calnotify.utils.logs.Logger
 import java.io.Closeable
 
-class CompleteEventsStorage(val context: Context)
+class FinishedEventsStorage(val context: Context)
     : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_CURRENT_VERSION), Closeable {
 
-    private var impl = CompleteEventsStorageImplV3()
+    private var impl = FinishedEventsStorageImplV3()
 
     override fun onCreate(db: SQLiteDatabase)
             = impl.createDb(db)
@@ -50,7 +50,7 @@ class CompleteEventsStorage(val context: Context)
 
         val implOld =
                 when (oldVersion) {
-                    DATABASE_VERSION_V2 -> CompleteEventsStorageImplV2()
+                    DATABASE_VERSION_V2 -> FinishedEventsStorageImplV2()
                     else -> throw Exception("DB storage error: upgrade from $oldVersion to $newVersion is not supported")
                 }
 
@@ -83,34 +83,34 @@ class CompleteEventsStorage(val context: Context)
         }
     }
 
-    fun addEvent(type: EventCompletionType, event: EventAlertRecord)
+    fun addEvent(type: EventFinishType, event: EventAlertRecord)
             = addEvent(type, System.currentTimeMillis(), event)
 
-    fun addEvent(type: EventCompletionType, changeTime: Long, event: EventAlertRecord)
-            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, type, changeTime, event) } }
+    fun addEvent(type: EventFinishType, changeTime: Long, event: EventAlertRecord)
+            = synchronized(FinishedEventsStorage::class.java) { writableDatabase.use { impl.addEventImpl(it, type, changeTime, event) } }
 
-    fun addEvents(type: EventCompletionType, events: Collection<EventAlertRecord>)
-            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, type, System.currentTimeMillis(), events) } }
+    fun addEvents(type: EventFinishType, events: Collection<EventAlertRecord>)
+            = synchronized(FinishedEventsStorage::class.java) { writableDatabase.use { impl.addEventsImpl(it, type, System.currentTimeMillis(), events) } }
 
-    fun deleteEvent(entry: CompleteEventAlertRecord)
-            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, entry) } }
+    fun deleteEvent(entry: FinishedEventAlertRecord)
+            = synchronized(FinishedEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, entry) } }
 
     fun deleteEvent(event: EventAlertRecord)
-            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, event) } }
+            = synchronized(FinishedEventsStorage::class.java) { writableDatabase.use { impl.deleteEventImpl(it, event) } }
 
     fun clearHistory()
-            = synchronized(CompleteEventsStorage::class.java) { writableDatabase.use { impl.clearHistoryImpl(it) } }
+            = synchronized(FinishedEventsStorage::class.java) { writableDatabase.use { impl.clearHistoryImpl(it) } }
 
-    val events: List<CompleteEventAlertRecord>
-        get() = synchronized(CompleteEventsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
+    val events: List<FinishedEventAlertRecord>
+        get() = synchronized(FinishedEventsStorage::class.java) { readableDatabase.use { impl.getEventsImpl(it) } }
 
     fun purgeOld(currentTime: Long, maxLiveTime: Long)
-            = events.filter { (currentTime - it.completionTime) > maxLiveTime }.forEach { deleteEvent(it) }
+            = events.filter { (currentTime - it.finishTime) > maxLiveTime }.forEach { deleteEvent(it) }
 
     override fun close() = super.close()
 
     companion object {
-        private val LOG_TAG = "CompleteEventsStorage"
+        private val LOG_TAG = "FinishedEventsStorage"
 
         private const val DATABASE_VERSION_V2 = 2
         private const val DATABASE_VERSION_V3 = 1

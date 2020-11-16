@@ -156,13 +156,12 @@
     <string name="reminder_at" formatted="false"> (reminder at %s)</string>
 
 
-    <string name="complete_events">Complete Events</string>
     <string name="app_behavior">Behavior</string>
 
     <string name="complete_from_the_app" formatted="false">In the app on %s</string>
     <string name="complete_from_notification" formatted="false">Via notification %s</string>
     <string name="event_moved_new_time" formatted="false">Moved, new time: %s</string>
-    <string name="mark_not_complete">Set non-complete</string>
+    <string name="mark_not_finished">Mark not finished</string>
 
     <string name="title_activity_privacy_policy">Privacy Policy</string>
     <string name="privacy_policy">PRIVACY POLICY</string>
@@ -386,11 +385,15 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Active</string>
-    <string name="menu_upcoming">Upcoming</string>
-    <string name="menu_complete">Complete</string>
+    <string name="menu_home">Active Events</string>
+    <string name="menu_upcoming">Upcoming Events</string>
+    <string name="menu_finished">Finished Events</string>
     <string name="active_events">Active Events</string>
     <string name="upcoming_events">Upcoming Events</string>
+    <string name="finished_events">Finished Events</string>
+    <string name="event_was_marked_as_finished">MARKED AS FINISHED</string>
+    <string name="mark_finished">Mark as finished</string>
+    <string name="view_event_details">View event details</string>
 
 </resources>
 

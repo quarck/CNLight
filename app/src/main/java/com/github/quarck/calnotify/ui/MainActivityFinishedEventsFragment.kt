@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,24 +29,43 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
-import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
+import com.github.quarck.calnotify.calendar.FinishedEventAlertRecord
+import com.github.quarck.calnotify.calendar.EventFinishType
+import com.github.quarck.calnotify.eventsstorage.FinishedEventsStorage
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
+import com.github.quarck.calnotify.utils.textutils.dateToStr
 
-class MainActivityCompleteEventsFragment : Fragment(), SimpleEventListCallback<CompleteEventAlertRecord> {
+
+fun FinishedEventAlertRecord.formatReason(ctx: Context): String =
+        when (this.finishType) {
+            EventFinishType.ManuallyViaNotification ->
+                String.format(ctx.resources.getString(R.string.complete_from_notification), dateToStr(ctx, this.finishTime))
+
+            EventFinishType.ManuallyInTheApp ->
+                String.format(ctx.resources.getString(R.string.complete_from_the_app), dateToStr(ctx, this.finishTime))
+
+            EventFinishType.AutoDueToCalendarMove ->
+                String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
+
+            EventFinishType.EventMovedInTheApp ->
+                String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
+        }
+
+class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<FinishedEventAlertRecord> {
 
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
 
-    private var adapter: SimpleEventListAdapter<CompleteEventAlertRecord>? = null
+    private var adapter: SimpleEventListAdapter<FinishedEventAlertRecord>? = null
 
-    private val primaryColor: Int? = context?.let{ ContextCompat.getColor(it, R.color.primary) }
-    private val eventFormatter = context?.let{ EventFormatter(it) }
+    private var primaryColor: Int? = Consts.DEFAULT_CALENDAR_EVENT_COLOR
+    private var eventFormatter: EventFormatter? = null
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -54,10 +74,12 @@ class MainActivityCompleteEventsFragment : Fragment(), SimpleEventListCallback<C
     ): View? {
         DevLog.info(LOG_TAG, "onCreateView")
 
-        val root = inflater.inflate(R.layout.fragment_complete, container, false)
+        val root = inflater.inflate(R.layout.fragment_finished, container, false)
 
         this.context?.let {
             ctx ->
+            primaryColor = ContextCompat.getColor(ctx, R.color.primary)
+            eventFormatter  = EventFormatter(ctx)
             adapter =
                     SimpleEventListAdapter(
                             ctx,
@@ -86,10 +108,10 @@ class MainActivityCompleteEventsFragment : Fragment(), SimpleEventListCallback<C
             activity ->
             background {
                 val events =
-                        CompleteEventsStorage(activity).use {
+                        FinishedEventsStorage(activity).use {
                             db ->
-                            db.events.sortedByDescending { it.completionTime }.toTypedArray()
-                        }.toMutableList()
+                            db.events.sortedByDescending { it.finishTime }.toMutableList()
+                        }
                 activity.runOnUiThread {
                     adapter?.setEventsToDisplay(events)
                 }
@@ -99,7 +121,7 @@ class MainActivityCompleteEventsFragment : Fragment(), SimpleEventListCallback<C
     }
 
     // TODO: add an option to view the event, not only to restore it
-    override fun onItemClick(v: View, position: Int, entry: CompleteEventAlertRecord) {
+    override fun onItemClick(v: View, position: Int, entry: FinishedEventAlertRecord) {
 
         this.context?.let {
             ctx ->
@@ -107,13 +129,13 @@ class MainActivityCompleteEventsFragment : Fragment(), SimpleEventListCallback<C
             val popup = PopupMenu(ctx, v)
             val inflater = popup.menuInflater
 
-            inflater.inflate(R.menu.complete_events, popup.menu)
+            inflater.inflate(R.menu.finished_event_popup, popup.menu)
 
             popup.setOnMenuItemClickListener {
                 item ->
 
                 when (item.itemId) {
-                    R.id.action_mark_not_complete -> {
+                    R.id.action_mark_not_finished -> {
                         ApplicationController.restoreEvent(ctx, entry.event)
                         adapter?.removeEntry(entry)
                         true
@@ -127,14 +149,17 @@ class MainActivityCompleteEventsFragment : Fragment(), SimpleEventListCallback<C
         }
     }
 
-    override fun getItemTitle(entry: CompleteEventAlertRecord): String =  entry.event.title
-    override fun getItemMiddleLine(entry: CompleteEventAlertRecord): String = eventFormatter?.formatDateTimeOneLine(entry.event) ?: "_NO_FORMATTER_"
-    override fun getItemBottomLine(entry: CompleteEventAlertRecord): String = context?.let{ entry.formatReason(it) } ?: "_NO_CONTEXT_"
-    override fun getItemColor(entry: CompleteEventAlertRecord): Int =
+    override fun getItemTitle(entry: FinishedEventAlertRecord): String =  entry.event.title
+
+    override fun getItemMiddleLine(entry: FinishedEventAlertRecord): String = eventFormatter?.formatDateTimeOneLine(entry.event) ?: "_NO_FORMATTER_"
+
+    override fun getItemBottomLine(entry: FinishedEventAlertRecord): String = context?.let{ entry.formatReason(it) } ?: "_NO_CONTEXT_"
+
+    override fun getItemColor(entry: FinishedEventAlertRecord): Int =
             if (entry.event.color != 0)
                 entry.event.color.adjustCalendarColor()
             else
-                primaryColor ?: 0x7fff0000;
+                primaryColor ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
 
 
     override fun onPause() {
@@ -148,6 +173,6 @@ class MainActivityCompleteEventsFragment : Fragment(), SimpleEventListCallback<C
     }
 
     companion object {
-        private const val LOG_TAG = "SlideshowFragment"
+        private const val LOG_TAG = "FinishedEventsFragment"
     }
 }

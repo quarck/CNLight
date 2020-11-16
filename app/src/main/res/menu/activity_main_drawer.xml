@@ -9,13 +9,13 @@
             android:icon="@android:drawable/ic_menu_agenda"
             android:title="@string/menu_home" />
         <item
-            android:id="@+id/nav_oncoming"
+            android:id="@+id/nav_upcoming"
             android:icon="@android:drawable/ic_menu_month"
             android:title="@string/menu_upcoming" />
         <item
-            android:id="@+id/nav_complete"
+            android:id="@+id/nav_finished"
             android:icon="@android:drawable/ic_menu_today"
-            android:title="@string/menu_complete" />
+            android:title="@string/menu_finished" />
     </group>
 
     <group android:id="@+id/group_about_n_settings"

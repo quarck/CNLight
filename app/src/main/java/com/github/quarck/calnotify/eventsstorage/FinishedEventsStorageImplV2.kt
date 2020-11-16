@@ -19,19 +19,17 @@
 
 package com.github.quarck.calnotify.eventsstorage
 
-import android.content.ContentValues
 import android.database.Cursor
-import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
-import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
+import com.github.quarck.calnotify.calendar.FinishedEventAlertRecord
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventCompletionType
+import com.github.quarck.calnotify.calendar.EventFinishType
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.utils.logs.DevLog
 //import com.github.quarck.calnotify.utils.logs.Logger
 import java.util.*
 
-class CompleteEventsStorageImplV2 {
+class FinishedEventsStorageImplV2 {
 
     fun dropAll(db: SQLiteDatabase) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
@@ -48,9 +46,9 @@ class CompleteEventsStorageImplV2 {
 //        DevLog.debug(LOG_TAG, "deleteEventImpl ${event.eventId}, instance=${event.instanceStartTime} ")
     }
 
-    fun getEventsImpl(db: SQLiteDatabase): List<CompleteEventAlertRecord> {
+    fun getEventsImpl(db: SQLiteDatabase): List<FinishedEventAlertRecord> {
 
-        val ret = LinkedList<CompleteEventAlertRecord>()
+        val ret = LinkedList<FinishedEventAlertRecord>()
 
         val cursor = db.query(TABLE_NAME, // a. table
                 SELECT_COLUMNS, // b. column names
@@ -74,7 +72,7 @@ class CompleteEventsStorageImplV2 {
         return ret
     }
 
-    private fun cursorToEventRecord(cursor: Cursor): CompleteEventAlertRecord {
+    private fun cursorToEventRecord(cursor: Cursor): FinishedEventAlertRecord {
 
         val event = EventAlertRecord(
                 calendarId = (cursor.getLong(PROJECTION_KEY_CALENDAR_ID) as Long?) ?: -1L,
@@ -101,10 +99,10 @@ class CompleteEventsStorageImplV2 {
                 timeZone = "UTC"
         )
 
-        return CompleteEventAlertRecord(
+        return FinishedEventAlertRecord(
                 event,
                 cursor.getLong(PROJECTION_KEY_DISMISS_TIME),
-                EventCompletionType.fromInt(cursor.getInt(PROJECTION_KEY_DISMISS_TYPE))
+                EventFinishType.fromInt(cursor.getInt(PROJECTION_KEY_DISMISS_TYPE))
         )
     }
 

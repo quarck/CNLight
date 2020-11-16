@@ -21,7 +21,6 @@ package com.github.quarck.calnotify.ui
 
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -29,25 +28,6 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
-import com.github.quarck.calnotify.calendar.EventCompletionType
-import com.github.quarck.calnotify.utils.textutils.EventFormatter
-import com.github.quarck.calnotify.utils.textutils.dateToStr
-
-fun CompleteEventAlertRecord.formatReason(ctx: Context): String =
-        when (this.completionType) {
-            EventCompletionType.ManuallyViaNotification ->
-                String.format(ctx.resources.getString(R.string.complete_from_notification), dateToStr(ctx, this.completionTime))
-
-            EventCompletionType.ManuallyInTheApp ->
-                String.format(ctx.resources.getString(R.string.complete_from_the_app), dateToStr(ctx, this.completionTime))
-
-            EventCompletionType.AutoDueToCalendarMove ->
-                String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
-
-            EventCompletionType.EventMovedInTheApp ->
-                String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
-        }
 
 interface SimpleEventListCallback<T> {
     fun getItemTitle(entry: T): String // entry.event.title

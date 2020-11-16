@@ -23,7 +23,7 @@ import android.app.IntentService
 import android.content.Intent
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.EventCompletionType
+import com.github.quarck.calnotify.calendar.EventFinishType
 import com.github.quarck.calnotify.utils.logs.DevLog
 //import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifier
@@ -41,7 +41,7 @@ class NotificationActionMarkDoneService : IntentService("NotificationActionMarkD
             if (notificationId != -1 && eventId != -1L && instanceStartTime != -1L) {
                 ApplicationController.dismissEvent(
                         this,
-                        EventCompletionType.ManuallyViaNotification,
+                        EventFinishType.ManuallyViaNotification,
                         eventId,
                         instanceStartTime,
                         notificationId)

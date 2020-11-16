@@ -2,10 +2,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.CompleteEventsActivity" >
+    tools:context=".ui.FinishedEventsActivity" >
 
     <item
-        android:id="@+id/action_mark_not_complete"
-        android:title="@string/mark_not_complete" />
+        android:id="@+id/action_mark_not_finished"
+        android:title="@string/mark_not_finished" />
 
 </menu>

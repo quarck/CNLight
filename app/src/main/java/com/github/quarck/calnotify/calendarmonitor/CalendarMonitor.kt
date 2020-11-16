@@ -252,7 +252,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
     fun getAlertsForAlertRange(context: Context, scanFrom: Long, scanTo: Long): List<MonitorEventAlertEntry> =
             CalendarMonitorStorage(context).use { db ->  db.getAlertsForAlertRange(scanFrom, scanTo)  }
 
-    fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean) {
+    fun setAlertWasHandled(context: Context, ev: EventAlertRecord, createdByUs: Boolean, handled: Boolean = true) {
 
         CalendarMonitorStorage(context).use {
             db ->
@@ -261,7 +261,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
             if (alert != null) {
 
                 DevLog.debug(LOG_TAG, "setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: seen this alert already, updating status to wasHandled");
-                alert.wasHandled = true
+                alert.wasHandled = handled
                 db.updateAlert(alert)
 
             }
@@ -270,7 +270,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
                 DevLog.debug(LOG_TAG, "setAlertWasHandled, ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}: new alert, simply adding");
                 alert = MonitorEventAlertEntry.fromEventAlertRecord(
                         ev,
-                        wasHandled = true,
+                        wasHandled = handled,
                         alertCreatedByUs = createdByUs
                 )
                 db.addAlert(alert)

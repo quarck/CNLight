@@ -12,10 +12,10 @@
         android:title="@string/snooze_all" />
 
     <item
-        android:id="@+id/action_complete_events"
+        android:id="@+id/action_finished_events"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="@string/complete_events" />
+        android:title="@string/finished_events" />
 
     <item
         android:id="@+id/action_settings"

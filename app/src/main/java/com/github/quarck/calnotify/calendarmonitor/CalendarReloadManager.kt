@@ -119,11 +119,11 @@ object CalendarReloadManager  {
         if (!eventsToAutoDismiss.isEmpty()) {
             changedDetected = true
 
-            ApplicationController.dismissEvents(
+            ApplicationController.dismissEventsNoMonitorUpdate(
                     context,
                     db,
                     eventsToAutoDismiss.map { it.event },
-                    EventCompletionType.AutoDueToCalendarMove,
+                    EventFinishType.AutoDueToCalendarMove,
                     true
             )
         }
@@ -222,11 +222,11 @@ object CalendarReloadManager  {
         if (!autoDismissEvents.isEmpty()) {
             changedDetected = true
 
-            ApplicationController.dismissEvents(
+            ApplicationController.dismissEventsNoMonitorUpdate(
                     context,
                     db,
                     autoDismissEvents,
-                    EventCompletionType.AutoDueToCalendarMove,
+                    EventFinishType.AutoDueToCalendarMove,
                     true
             )
 

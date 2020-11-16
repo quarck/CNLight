@@ -351,7 +351,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.action_dismiss_event -> {
-                    ApplicationController.dismissEvent(this, EventCompletionType.ManuallyInTheApp, event)
+                    ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
                     undoManager.addUndoState(
                             UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, event) }))
                     finish()

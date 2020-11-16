@@ -23,15 +23,15 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteDatabase
-import com.github.quarck.calnotify.calendar.CompleteEventAlertRecord
+import com.github.quarck.calnotify.calendar.FinishedEventAlertRecord
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventCompletionType
+import com.github.quarck.calnotify.calendar.EventFinishType
 import com.github.quarck.calnotify.calendar.EventDisplayStatus
 import com.github.quarck.calnotify.utils.logs.DevLog
 //import com.github.quarck.calnotify.utils.logs.Logger
 import java.util.*
 
-class CompleteEventsStorageImplV3 {
+class FinishedEventsStorageImplV3 {
 
     @Suppress("ConvertToStringTemplate")
     fun createDb(db: SQLiteDatabase) {
@@ -104,7 +104,7 @@ class CompleteEventsStorageImplV3 {
         db.execSQL("DROP INDEX IF EXISTS " + INDEX_NAME)
     }
 
-    fun addEventImpl(db: SQLiteDatabase, type: EventCompletionType, changeTime: Long, event: EventAlertRecord) {
+    fun addEventImpl(db: SQLiteDatabase, type: EventFinishType, changeTime: Long, event: EventAlertRecord) {
 
 //        DevLog.debug(LOG_TAG, "addEventImpl " + event.eventId)
 
@@ -127,7 +127,7 @@ class CompleteEventsStorageImplV3 {
         }
     }
 
-    fun addEventsImpl(db: SQLiteDatabase, type: EventCompletionType, changeTime: Long, events: Collection<EventAlertRecord>) {
+    fun addEventsImpl(db: SQLiteDatabase, type: EventFinishType, changeTime: Long, events: Collection<EventAlertRecord>) {
 
         try {
             db.beginTransaction()
@@ -143,7 +143,7 @@ class CompleteEventsStorageImplV3 {
     }
 
 
-    fun deleteEventImpl(db: SQLiteDatabase, entry: CompleteEventAlertRecord) {
+    fun deleteEventImpl(db: SQLiteDatabase, entry: FinishedEventAlertRecord) {
         db.delete(
                 TABLE_NAME,
                 " $KEY_EVENTID = ? AND $KEY_INSTANCE_START = ?",
@@ -165,9 +165,9 @@ class CompleteEventsStorageImplV3 {
         db.delete(TABLE_NAME, null, null)
     }
 
-    fun getEventsImpl(db: SQLiteDatabase): List<CompleteEventAlertRecord> {
+    fun getEventsImpl(db: SQLiteDatabase): List<FinishedEventAlertRecord> {
 
-        val ret = LinkedList<CompleteEventAlertRecord>()
+        val ret = LinkedList<FinishedEventAlertRecord>()
 
         val cursor = db.query(TABLE_NAME, // a. table
                 SELECT_COLUMNS, // b. column names
@@ -191,7 +191,7 @@ class CompleteEventsStorageImplV3 {
         return ret
     }
 
-    private fun eventRecordToContentValues(event: EventAlertRecord, time: Long, type: EventCompletionType): ContentValues {
+    private fun eventRecordToContentValues(event: EventAlertRecord, time: Long, type: EventFinishType): ContentValues {
         val values = ContentValues()
 
         values.put(KEY_CALENDAR_ID, event.calendarId)
@@ -234,7 +234,7 @@ class CompleteEventsStorageImplV3 {
         return values
     }
 
-    private fun cursorToEventRecord(cursor: Cursor): CompleteEventAlertRecord {
+    private fun cursorToEventRecord(cursor: Cursor): FinishedEventAlertRecord {
 
         val event = EventAlertRecord(
                 calendarId = (cursor.getLong(PROJECTION_KEY_CALENDAR_ID) as Long?) ?: -1L,
@@ -261,10 +261,10 @@ class CompleteEventsStorageImplV3 {
                 flags = cursor.getLong(PROJECTION_KEY_FLAGS)
         )
 
-        return CompleteEventAlertRecord(
+        return FinishedEventAlertRecord(
                 event,
                 cursor.getLong(PROJECTION_KEY_DISMISS_TIME),
-                EventCompletionType.fromInt(cursor.getInt(PROJECTION_KEY_DISMISS_TYPE))
+                EventFinishType.fromInt(cursor.getInt(PROJECTION_KEY_DISMISS_TYPE))
         )
     }
 

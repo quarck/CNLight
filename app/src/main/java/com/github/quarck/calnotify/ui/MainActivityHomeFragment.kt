@@ -27,7 +27,6 @@ import android.os.Bundle
 import android.view.*
 import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -37,8 +36,8 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventCompletionType
-import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
+import com.github.quarck.calnotify.calendar.EventFinishType
+import com.github.quarck.calnotify.eventsstorage.FinishedEventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
@@ -179,22 +178,22 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
                                     .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
-                R.id.action_complete_events ->
-                    startActivity(
-                            Intent(ctx, CompleteEventsActivity::class.java)
-                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-
-                R.id.action_settings -> {
-                    startActivity(
-                            Intent(ctx, SettingsActivityNew::class.java)
-                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                }
-
-                R.id.action_about ->
-                    startActivity(
-                            Intent(ctx, AboutActivity::class.java)
-                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-
+//                R.id.action_finished_events ->
+//                    startActivity(
+//                            Intent(ctx, FinishedEventsActivity::class.java)
+//                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+//
+//                R.id.action_settings -> {
+//                    startActivity(
+//                            Intent(ctx, SettingsActivityNew::class.java)
+//                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+//                }
+//
+//                R.id.action_about ->
+//                    startActivity(
+//                            Intent(ctx, AboutActivity::class.java)
+//                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+//
                 R.id.action_test_page ->
                     startActivity(
                             Intent(ctx, TestActivity::class.java)
@@ -219,7 +218,7 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
         this.context?.let {
             ctx ->
             background {
-                CompleteEventsStorage(ctx).use { it.purgeOld(System.currentTimeMillis(), Consts.BIN_KEEP_HISTORY_MILLISECONDS) }
+                FinishedEventsStorage(ctx).use { it.purgeOld(System.currentTimeMillis(), Consts.BIN_KEEP_HISTORY_MILLISECONDS) }
 
                 val events =
                         EventsStorage(ctx).use {
@@ -307,7 +306,7 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
             ctx ->
             if (event != null) {
                 DevLog.info(LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-                ApplicationController.dismissEvent(ctx, EventCompletionType.ManuallyInTheApp, event)
+                ApplicationController.dismissEvent(ctx, EventFinishType.ManuallyInTheApp, event)
                 adapter?.removeEvent(event)
                 lastEventDismissalScrollPosition = adapter?.scrollPosition
                 onNumEventsUpdated()
@@ -321,7 +320,7 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
         this.context?.let {
             ctx ->
             DevLog.info(LOG_TAG, "onItemRemoved: Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-            ApplicationController.dismissEvent(ctx, EventCompletionType.ManuallyInTheApp, event)
+            ApplicationController.dismissEvent(ctx, EventFinishType.ManuallyInTheApp, event)
             lastEventDismissalScrollPosition = adapter?.scrollPosition
             onNumEventsUpdated()
         }

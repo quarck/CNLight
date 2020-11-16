@@ -23,7 +23,7 @@ import android.content.Context
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.eventsstorage.CompleteEventsStorage
+import com.github.quarck.calnotify.eventsstorage.FinishedEventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.utils.logs.DevLog
@@ -177,7 +177,7 @@ object ApplicationController : EventMovedHandler {
                             context,
                             db,
                             alertRecord,
-                            EventCompletionType.EventMovedInTheApp,
+                            EventFinishType.EventMovedInTheApp,
                             false
                     )
                 }
@@ -587,18 +587,18 @@ object ApplicationController : EventMovedHandler {
         calendarMonitorInternal.onSystemTimeChange(context)
     }
 
-    fun dismissEvents(
+    fun dismissEventsNoMonitorUpdate(
             context: Context,
             db: EventsStorage,
             events: Collection<EventAlertRecord>,
-            completionType: EventCompletionType,
+            finishType: EventFinishType,
             notifyActivity: Boolean
     ) {
 
         DevLog.info(LOG_TAG, "Dismissing ${events.size}  requests")
 
-        CompleteEventsStorage(context).use {
-            it.addEvents(completionType, events)
+        FinishedEventsStorage(context).use {
+            it.addEvents(finishType, events)
         }
 
         notificationManager.onEventsDismissing(context, events)
@@ -616,14 +616,14 @@ object ApplicationController : EventMovedHandler {
             context: Context,
             db: EventsStorage,
             event: EventAlertRecord,
-            completionType: EventCompletionType,
+            finishType: EventFinishType,
             notifyActivity: Boolean
     ) {
 
         DevLog.info(LOG_TAG, "Dismissing event id ${event.eventId} / instance ${event.instanceStartTime}")
 
-        CompleteEventsStorage(context).use {
-            it.addEvent(completionType, event)
+        FinishedEventsStorage(context).use {
+            it.addEvent(finishType, event)
         }
 
         notificationManager.onEventDismissing(context, event.eventId, event.notificationId);
@@ -644,17 +644,29 @@ object ApplicationController : EventMovedHandler {
         }
     }
 
-    fun dismissEvent(context: Context, completionType: EventCompletionType, event: EventAlertRecord) {
+    fun dismissEvent(context: Context, finishType: EventFinishType, event: EventAlertRecord) {
         EventsStorage(context).use {
             db ->
-            dismissEvent(context, db, event, completionType, false)
+            dismissEvent(context, db, event, finishType, false)
+        }
+    }
+
+    fun dismissFutureEvent(context: Context, event: MonitorDataPair) {
+        FinishedEventsStorage(context).use {
+            it.addEvent(EventFinishType.ManuallyInTheApp, event.eventEntry)
+        }
+
+        CalendarMonitorStorage(context).use {
+            db ->
+            event.monitorEntry.wasHandled = true
+            db.updateAlert(event.monitorEntry)
         }
     }
 
     @Suppress("UNUSED_PARAMETER")
     fun dismissEvent(
             context: Context,
-            completionType: EventCompletionType,
+            finishType: EventFinishType,
             eventId: Long,
             instanceStartTime: Long,
             notificationId: Int,
@@ -666,7 +678,7 @@ object ApplicationController : EventMovedHandler {
             val event = db.getEvent(eventId, instanceStartTime)
             if (event != null) {
                 DevLog.info(LOG_TAG, "Dismissing event ${event.eventId} / ${event.instanceStartTime}")
-                dismissEvent(context, db, event, completionType, notifyActivity)
+                dismissEvent(context, db, event, finishType, notifyActivity)
             }
             else {
                 DevLog.error(LOG_TAG, "dismissEvent: can't find event $eventId, $instanceStartTime")
@@ -679,21 +691,34 @@ object ApplicationController : EventMovedHandler {
     }
 
     fun restoreEvent(context: Context, event: EventAlertRecord) {
-        val toRestore =
-                event.copy(
-                        notificationId = 0, // re-assign new notification ID since old one might already in use
-                        displayStatus = EventDisplayStatus.Hidden) // ensure correct visibility is set
-        val successOnAdd =
-                EventsStorage(context).use {
-                    db ->
-                    val ret = db.addEvent(toRestore)
-                    calendarReloadManager.reloadSingleEvent(context, db, toRestore, calendarProvider, null)
-                    ret
-                }
 
-        if (successOnAdd) {
-            notificationManager.onEventRestored(context, EventFormatter(context), toRestore)
-            CompleteEventsStorage(context).use {
+        if (event.instanceStartTime < System.currentTimeMillis() + Consts.ALARM_THRESHOLD) {
+            val toRestore =
+                    event.copy(
+                            notificationId = 0, // re-assign new notification ID since old one might already in use
+                            displayStatus = EventDisplayStatus.Hidden) // ensure correct visibility is set
+
+            val successOnAdd =
+                    EventsStorage(context).use {
+                        db ->
+                        val ret = db.addEvent(toRestore)
+                        calendarReloadManager.reloadSingleEvent(context, db, toRestore, calendarProvider, null)
+                        ret
+                    }
+
+            if (successOnAdd) {
+                notificationManager.onEventRestored(context, EventFormatter(context), toRestore)
+                FinishedEventsStorage(context).use {
+                    db ->
+                    db.deleteEvent(event)
+                }
+            }
+        }
+        else {
+            CalendarMonitor(CalendarProvider)
+                    .setAlertWasHandled(context, event, createdByUs = true, handled = false)
+
+            FinishedEventsStorage(context).use {
                 db ->
                 db.deleteEvent(event)
             }
@@ -711,7 +736,7 @@ object ApplicationController : EventMovedHandler {
                         context,
                         db,
                         event,
-                        EventCompletionType.EventMovedInTheApp,
+                        EventFinishType.EventMovedInTheApp,
                         true
                 )
             }
@@ -731,7 +756,7 @@ object ApplicationController : EventMovedHandler {
                         context,
                         db,
                         event,
-                        EventCompletionType.EventMovedInTheApp,
+                        EventFinishType.EventMovedInTheApp,
                         true
                 )
             }
