@@ -23,7 +23,7 @@
 
         <activity
             android:name=".ui.MainActivityNG"
-            android:label="@string/title_activity_main_n_g"
+            android:label="@string/main_activity_title"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -34,7 +34,7 @@
 
         <activity
             android:name=".ui.MainActivity"
-            android:label="@string/main_activity_title"
+            android:label="CalNotify - legacy activity"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -55,13 +55,13 @@
             android:name=".ui.ViewEventActivity"
             android:label="@string/view_event"
             android:launchMode="singleTask"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.SnoozeAllActivity"
             android:label="@string/snooze_all"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -84,7 +84,7 @@
         <activity
             android:name=".ui.AboutActivity"
             android:label="@string/menu_about"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -96,19 +96,19 @@
         <activity
             android:name=".ui.FinishedEventsActivity"
             android:label="@string/finished_events"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.EditEventActivity"
             android:label="@string/empty"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.EditEventActivityTextReceiver"
             android:label="@string/create_event"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -129,7 +129,7 @@
         <activity
             android:name=".ui.SettingsActivityNew"
             android:label="@string/settings_name"
-            android:parentActivityName=".ui.MainActivity"
+            android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
