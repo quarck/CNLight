@@ -175,7 +175,7 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
 
     override fun getItemMiddleLine(entry: MonitorDataPair): String {
         return eventFormatter?.let {
-            it.formatDateTimeOneLine(entry.eventEntry) +
+            it.formatDateTimeOneLine(entry.eventEntry) + " / "
                     (eventReminderTimeFmt ?: "%s").format(it.formatTimePoint(entry.monitorEntry.alertTime, noWeekDay = true))
         } ?: "NULL"
     }
