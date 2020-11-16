@@ -28,7 +28,7 @@ import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroad
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
-import com.github.quarck.calnotify.ui.MainActivity
+import com.github.quarck.calnotify.ui.MainActivityNG
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.cancelExactAndAlarm
 import com.github.quarck.calnotify.utils.detailed
@@ -233,7 +233,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
                     exactTime,
                     ManualEventAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                     ManualEventExactAlarmBroadcastReceiver::class.java,
-                    MainActivity::class.java // alarm info intent
+                    MainActivityNG::class.java // alarm info intent
                     )
         }
         else {
@@ -624,7 +624,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         // Finally - find the next nearest alert
         val nextAlert = alertsMerged.filter { !it.first.wasHandled && it.first.alertTime > fireAlertsUpTo }
-                .minBy { it.first.alertTime }
+                .minByOrNull { it.first.alertTime }
 
         val nextAlertTime = nextAlert?.first?.alertTime ?: Long.MAX_VALUE
         state.nextEventFireFromScan = nextAlertTime

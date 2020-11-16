@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:padding="0dp"
     android:fitsSystemWindows="true"
-    tools:context=".ui.MainActivity">
+    tools:context=".ui.MainActivityNG">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"

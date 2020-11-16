@@ -33,17 +33,6 @@
         </activity>
 
         <activity
-            android:name=".ui.MainActivity"
-            android:label="CalNotify - legacy activity"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
             android:name=".ui.ViewEventActivityNoRecents"
             android:excludeFromRecents="true"
             android:label="@string/view_event"
@@ -82,20 +71,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.AboutActivity"
-            android:label="@string/menu_about"
-            android:parentActivityName=".ui.MainActivityNG"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".ui.PrivacyPolicyActivity"
             android:label="@string/title_activity_privacy_policy"
-            android:parentActivityName=".ui.AboutActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.FinishedEventsActivity"
-            android:label="@string/finished_events"
             android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -126,30 +103,6 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.SettingsActivityNew"
-            android:label="@string/settings_name"
-            android:parentActivityName=".ui.MainActivityNG"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".prefs.activities.BehaviorSettingsActivity"
-            android:label="@string/app_behavior"
-            android:parentActivityName=".ui.SettingsActivityNew"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".prefs.activities.MiscSettingsActivity"
-            android:label="@string/misc_settings"
-            android:parentActivityName=".ui.SettingsActivityNew"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".prefs.activities.NotificationSettingsActivity"
-            android:label="@string/notification_settings"
-            android:parentActivityName=".ui.SettingsActivityNew"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
 
         <service android:name=".calendarmonitor.CalendarMonitorIntentService" />
         <service
@@ -161,7 +114,6 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <service android:name=".notification.NotificationActionMarkDoneService" />
-        <service android:name=".notification.NotificationActionSnoozeService" />
 
         <receiver android:name=".broadcastreceivers.AppUpdatedBroadcastReceiver">
             <intent-filter>

@@ -28,6 +28,7 @@ import com.github.quarck.calnotify.utils.logs.DevLog
 //import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.ui.UINotifier
 
+// TODO: Depricated
 class NotificationActionMarkDoneService : IntentService("NotificationActionMarkDoneService") {
 
     override fun onHandleIntent(intent: Intent?) {

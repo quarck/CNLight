@@ -81,8 +81,6 @@ open class SnoozeAllActivity : AppCompatActivity() {
             R.id.snooze_view_snooze_present6_quiet_time_notice_baseline
     )
 
-    private val undoManager by lazy { UndoManager }
-
     // These dialog controls moved here so saveInstanceState could store current time selection
     var customSnooze_TimeIntervalPickerController: TimeIntervalPickerController? = null
     var snoozeUntil_DatePicker: DatePicker? = null
@@ -217,7 +215,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
                         else
                             R.string.snooze_all_confirmation)
                 .setCancelable(false)
-                .setPositiveButton(android.R.string.yes) {
+                .setPositiveButton(R.string.yes) {
                     _, _ ->
 
                     DevLog.debug(LOG_TAG, "Snoozing (change=$snoozeAllIsChange) all requests, snoozeDelay=${snoozeDelay / 1000L}")

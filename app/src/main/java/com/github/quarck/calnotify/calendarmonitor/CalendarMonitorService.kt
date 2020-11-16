@@ -33,6 +33,8 @@ import android.app.job.JobService
 import com.github.quarck.calnotify.BuildConfig
 import com.github.quarck.calnotify.Consts
 
+// TODO: check if this is still required -- or all the work can be handled by jobs?
+// TODO: IntentService is depricated
 class CalendarMonitorIntentService : IntentService("CalendarMonitorIntentService") {
 
     override fun onHandleIntent(intent: Intent?) {

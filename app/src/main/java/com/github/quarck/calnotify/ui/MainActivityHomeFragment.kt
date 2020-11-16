@@ -290,30 +290,6 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
         }
     }
 
-    // TODO: THIS IS NO LONGER USED - KILL
-    // TODO: THIS IS NO LONGER USED - KILL
-    // TODO: THIS IS NO LONGER USED - KILL
-    // TODO: THIS IS NO LONGER USED - KILL
-    // TODO: THIS IS NO LONGER USED - KILL
-    // TODO: THIS IS NO LONGER USED - KILL
-    // user clicks on 'dismiss' button, item still in the list
-    override fun onItemDismiss(v: View, position: Int, eventId: Long) {
-        DevLog.info(LOG_TAG, "onItemDismiss, pos=$position, eventId=$eventId");
-
-        val event = adapter?.getEventAtPosition(position, eventId)
-
-        this.context?.let {
-            ctx ->
-            if (event != null) {
-                DevLog.info(LOG_TAG, "Removing event id ${event.eventId} from DB and dismissing notification id ${event.notificationId}")
-                ApplicationController.dismissEvent(ctx, EventFinishType.ManuallyInTheApp, event)
-                adapter?.removeEvent(event)
-                lastEventDismissalScrollPosition = adapter?.scrollPosition
-                onNumEventsUpdated()
-            }
-        }
-    }
-
     // Item was already removed from UI, we just have to dismiss it now
     override fun onItemRemoved(event: EventAlertRecord) {
 

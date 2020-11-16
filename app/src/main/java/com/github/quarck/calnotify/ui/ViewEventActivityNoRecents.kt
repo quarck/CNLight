@@ -43,7 +43,6 @@ import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
-import android.os.Handler
 import androidx.core.content.ContextCompat
 import android.text.method.ScrollingMovementMethod
 import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
@@ -119,10 +118,6 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
     val calendarReloadManager = CalendarReloadManager
     val calendarProvider = CalendarProvider
 
-    val handler = Handler()
-
-//    var snoozeAllIsChange = false
-
     var snoozeFromMainActivity = false
 
 //    val snoozePresetControlIds = intArrayOf(
@@ -133,8 +128,6 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
 //            R.id.snooze_view_snooze_1d,
 //            R.id.snooze_view_snooze_minus_5m
 //    )
-
-    private val undoManager by lazy { UndoManager }
 
     // These dialog controls moved here so saveInstanceState could store current time selection
     var customSnooze_TimeIntervalPickerController: TimeIntervalPickerController? = null
@@ -352,8 +345,6 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_dismiss_event -> {
                     ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
-                    undoManager.addUndoState(
-                            UndoState(undo = Runnable { ApplicationController.restoreEvent(applicationContext, event) }))
                     finish()
                     true
                 }
@@ -717,7 +708,7 @@ open class ViewEventActivityNoRecents : AppCompatActivity() {
         AlertDialog.Builder(this)
                 .setMessage(getString(R.string.move_event_confirm).format(addDays))
                 .setCancelable(true)
-                .setPositiveButton(android.R.string.yes) { _, _ ->
+                .setPositiveButton(R.string.yes) { _, _ ->
                     reschedule(addTime = addDays * Consts.DAY_IN_SECONDS * 1000L)
                 }
                 .setNegativeButton(R.string.cancel) { _, _ ->

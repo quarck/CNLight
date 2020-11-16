@@ -29,7 +29,7 @@ import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
-import com.github.quarck.calnotify.ui.MainActivity
+import com.github.quarck.calnotify.ui.MainActivityNG
 import com.github.quarck.calnotify.ui.ViewEventActivityNoRecents
 import com.github.quarck.calnotify.utils.*
 
@@ -294,7 +294,7 @@ class EventNotificationManager {
         }
 
         // now build actual notification and notify
-        val intent = Intent(context, MainActivity::class.java)
+        val intent = Intent(context, MainActivityNG::class.java)
         val pendingIntent = pendingActivityIntent(context, intent, MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE, clearTop = true)
 
         val numEvents = events.size
@@ -550,16 +550,6 @@ class EventNotificationManager {
         return intent
     }
 
-    private fun defaultSnoozeIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int, snoozePreset: Long): Intent {
-
-        val intent = Intent(ctx, NotificationActionSnoozeService::class.java)
-        intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
-        intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
-        intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)
-        intent.putExtra(Consts.INTENT_SNOOZE_PRESET, snoozePreset)
-        return intent
-    }
-
     private fun pendingServiceIntent(ctx: Context, intent: Intent, id: Int): PendingIntent
             = PendingIntent.getService(ctx, id, intent, PendingIntent.FLAG_CANCEL_CURRENT)
 
@@ -604,7 +594,7 @@ class EventNotificationManager {
 //    ) {
 //        DevLog.debug(LOG_TAG, "Posting collapsed view notification for ${events.size} requests")
 //
-//        val intent = Intent(context, MainActivity::class.java)
+//        val intent = Intent(context, MainActivityNG::class.java)
 //        val pendingIntent = pendingActivityIntent(context, intent, MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE, clearTop = true)
 //
 //        val numEvents = events.size

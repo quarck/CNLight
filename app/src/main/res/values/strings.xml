@@ -395,6 +395,7 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="event_was_marked_as_finished">MARKED AS FINISHED</string>
     <string name="mark_finished">Mark as finished</string>
     <string name="view_event_details">View event details</string>
+    <string name="yes">Yes</string>
 
 </resources>
 

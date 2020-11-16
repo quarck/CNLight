@@ -31,7 +31,7 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.persistentState
 import com.github.quarck.calnotify.reminders.ReminderState
-import com.github.quarck.calnotify.ui.MainActivity
+import com.github.quarck.calnotify.ui.MainActivityNG
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.cancelExactAndAlarm
 import com.github.quarck.calnotify.utils.setExactAndAlarm
@@ -52,7 +52,7 @@ object AlarmScheduler  {
 
             // Schedule event (snooze) alarm
             var nextEventAlarm =
-                    events.filter { it.isSnoozed }.map { it.snoozedUntil }.min()
+                    events.filter { it.isSnoozed }.map { it.snoozedUntil }.minOrNull()
 
             if (nextEventAlarm != null) {
 
@@ -71,7 +71,7 @@ object AlarmScheduler  {
                         nextEventAlarm,
                         SnoozeAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         SnoozeExactAlarmBroadcastReceiver::class.java,
-                        MainActivity::class.java)
+                        MainActivityNG::class.java)
 
                 context.persistentState.nextSnoozeAlarmExpectedAt = nextEventAlarm
 
@@ -110,7 +110,7 @@ object AlarmScheduler  {
                         reminderAlarmNextFire,
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         ReminderExactAlarmBroadcastReceiver::class.java,
-                        MainActivity::class.java)
+                        MainActivityNG::class.java)
 
                 reminderState.nextFireExpectedAt = reminderAlarmNextFire
 

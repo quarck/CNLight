@@ -510,7 +510,7 @@ open class EditEventActivity : AppCompatActivity() {
             AlertDialog.Builder(this)
                     .setMessage(R.string.discard_new_event)
                     .setCancelable(false)
-                    .setPositiveButton(android.R.string.yes) {
+                    .setPositiveButton(R.string.yes) {
                         _, _ ->
                         this@EditEventActivity.finish()
                     }

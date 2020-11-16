@@ -104,6 +104,7 @@ data class CalendarEventDetails(
 ) {
 }
 
+@Suppress("UNUSED_PARAMETER")
 fun eventContentHash(calendarId: Long, isAllDay: Boolean, color: Int,
                      startTime: Long, endTime: Long,
                      eventStatus: EventStatus, attendanceStatus: AttendanceStatus,

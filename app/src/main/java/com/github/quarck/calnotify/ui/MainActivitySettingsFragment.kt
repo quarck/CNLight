@@ -45,7 +45,7 @@ class MainActivitySettingsFragment : Fragment() {
         context?.let {
             ctx ->
             val settings = Settings(ctx)
-            val (prefRoot, root) = preferences(ctx, inflater, container) {
+            val (_, root) = preferences(ctx, inflater, container) {
 
                 item(R.string.title_calendars_activity) {
                     startActivity(Intent(ctx, CalendarsActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))

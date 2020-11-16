@@ -124,7 +124,7 @@ class EventsStorageImplV10(val context: Context) {
     fun addEventImpl(db: SQLiteDatabase, event: EventAlertRecord): Boolean {
         // DevLog.debug(LOG_TAG, "addEventImpl " + event.eventId)
 
-        var ret = false
+        var ret: Boolean
 
         if (event.notificationId == 0)
             event.notificationId = nextNotificationId(db)
