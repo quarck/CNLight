@@ -692,7 +692,7 @@ object ApplicationController : EventMovedHandler {
 
     fun restoreEvent(context: Context, event: EventAlertRecord) {
 
-        if (event.instanceStartTime < System.currentTimeMillis() + Consts.ALARM_THRESHOLD) {
+        if (event.alertTime < System.currentTimeMillis() + Consts.ALARM_THRESHOLD) {
             val toRestore =
                     event.copy(
                             notificationId = 0, // re-assign new notification ID since old one might already in use
