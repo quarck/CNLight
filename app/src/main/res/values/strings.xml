@@ -192,6 +192,7 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="before_the_event">before the event</string>
 
     <string name="next_reminder_fmt" formatted="false">Next reminder: %s</string>
+    <string name="reminder_at_fmt" formatted="false">&nbsp;/&nbsp;reminder: %s</string>
     <string name="manual_event_rescan_title">Manual calendar rescan</string>
     <string name="manual_event_rescan_summary">Improves reliability of event reminders and allows handling events with no reminders</string>
     <string name="handle_email_only_events_title">Handle e-mail only events</string>

@@ -284,7 +284,7 @@ class EventFormatter(val ctx: Context) {
         return ret
     }
 
-    fun formatTimePoint(time: Long): String {
+    fun formatTimePoint(time: Long, noWeekDay: Boolean = false): String {
 
         val ret: String
 
@@ -301,7 +301,10 @@ class EventFormatter(val ctx: Context) {
                         DateUtils.formatDateTime(ctx, time, DateUtils.FORMAT_SHOW_TIME)
             }
             else {
-                var flags = DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_WEEKDAY
+                var flags = DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_SHOW_DATE
+
+                if (!noWeekDay)
+                    flags = flags or DateUtils.FORMAT_SHOW_WEEKDAY
 
                 if ((time - System.currentTimeMillis()) / (Consts.DAY_IN_MILLISECONDS * 30) >= 3L) // over 3mon - show year
                     flags = flags or DateUtils.FORMAT_SHOW_YEAR

@@ -41,6 +41,7 @@ import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
+import java.lang.StringBuilder
 
 class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<MonitorDataPair> {
 
@@ -53,6 +54,7 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
     private var eventFormatter: EventFormatter? = null
 
     private var statusHandled: String? = null
+    private var eventReminderTimeFmt: String? = null
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -72,6 +74,7 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
                             this)
 
             statusHandled = ctx.resources.getString(R.string.event_was_marked_as_finished)
+            eventReminderTimeFmt = ctx.resources.getString(R.string.reminder_at_fmt)
         }
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
@@ -105,6 +108,9 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
                 val events =
                         CalendarProvider
                                 .getEventAlertsForInstancesInRange(activity, from, to)
+                                .filter {
+                                    it.monitorEntry.alertTime >= from
+                                }
                                 .map {
                                     val newMonitorEntry = monitorEntries.getOrElse(it.monitorEntry.key, {it.monitorEntry})
                                     MonitorDataPair(newMonitorEntry, it.eventEntry)
@@ -167,7 +173,12 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
 
     override fun getItemTitle(entry: MonitorDataPair): String =  entry.eventEntry.title
 
-    override fun getItemMiddleLine(entry: MonitorDataPair): String = eventFormatter?.formatDateTimeOneLine(entry.eventEntry) ?: "NULL"
+    override fun getItemMiddleLine(entry: MonitorDataPair): String {
+        return eventFormatter?.let {
+            it.formatDateTimeOneLine(entry.eventEntry) +
+                    (eventReminderTimeFmt ?: "%s").format(it.formatTimePoint(entry.monitorEntry.alertTime, noWeekDay = true))
+        } ?: "NULL"
+    }
 
     override fun getItemBottomLine(entry: MonitorDataPair): String {
         return if (entry.monitorEntry.wasHandled) statusHandled ?: "_handled_" else ""
