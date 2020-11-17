@@ -104,7 +104,7 @@ data class MonitorEventAlertEntry(
 
 
     companion object {
-        fun fromEventRecord(event: EventRecord, alertTime: Long, alertCreatedByUs: Boolean, wasHandled: Boolean): MonitorEventAlertEntry {
+        fun fromEventRecord(event: EventRecord, alertTime: Long, alertCreatedByUs: Boolean=false, wasHandled: Boolean=false): MonitorEventAlertEntry {
             val md5 : md5state = event.contentMd5
             return MonitorEventAlertEntry(
                     alertTime,
@@ -115,7 +115,7 @@ data class MonitorEventAlertEntry(
             )
         }
 
-        fun fromEventAlertRecord(event: EventAlertRecord, alertCreatedByUs: Boolean, wasHandled: Boolean): MonitorEventAlertEntry {
+        fun fromEventAlertRecord(event: EventAlertRecord, alertCreatedByUs: Boolean=false, wasHandled: Boolean=false): MonitorEventAlertEntry {
             val md5 : md5state = event.contentMd5
             return MonitorEventAlertEntry(
                     event.alertTime,

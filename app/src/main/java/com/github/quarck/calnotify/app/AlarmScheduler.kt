@@ -30,7 +30,6 @@ import com.github.quarck.calnotify.calendar.isSnoozed
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.persistentState
-import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivityNG
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.cancelExactAndAlarm
@@ -86,8 +85,6 @@ object AlarmScheduler  {
                         SnoozeExactAlarmBroadcastReceiver::class.java)
             }
 
-            val reminderState = ReminderState(context)
-
             // Schedule reminders alarm
             var reminderAlarmNextFire: Long? = null
 
@@ -111,9 +108,6 @@ object AlarmScheduler  {
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         ReminderExactAlarmBroadcastReceiver::class.java,
                         MainActivityNG::class.java)
-
-                reminderState.nextFireExpectedAt = reminderAlarmNextFire
-
             }
             else {
                 context.alarmManager.cancelExactAndAlarm(

@@ -104,7 +104,7 @@ open class ViewEventActivity : AppCompatActivity() {
             var dbEvent = db.getEvent(eventId, instanceStartTime)
 
             if (dbEvent != null) {
-                val eventDidChange = calendarReloadManager.reloadSingleEvent(this, db, dbEvent, calendarProvider, null)
+                val eventDidChange = calendarReloadManager.reloadSingleEvent(this, db, dbEvent, calendarProvider, noAutoDismiss = true)
                 if (eventDidChange) {
                     val newDbEvent = db.getEvent(eventId, instanceStartTime)
                     if (newDbEvent != null) {

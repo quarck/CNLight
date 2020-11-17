@@ -20,29 +20,13 @@
 package com.github.quarck.calnotify.calendarmonitor
 
 import android.content.Context
+import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventWithNewInstanceTime
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.detailed
-
-interface EventMovedHandler {
-    fun checkShouldRemoveMovedEvent(
-            context: Context,
-            eventId: Long,
-            oldStartTime: Long,
-            newStartTime: Long,
-            newAlertTime: Long
-    ): Boolean
-
-    fun checkShouldRemoveMovedEvent(
-            context: Context,
-            oldEvent: EventAlertRecord,
-            newEvent: EventRecord,
-            newAlertTime: Long
-    ): Boolean
-}
 
 object CalendarReloadManager  {
 
@@ -72,7 +56,7 @@ object CalendarReloadManager  {
             db: EventsStorage,
             events: List<EventAlertRecord>,
             calendar: CalendarProvider,
-            movedHandler: EventMovedHandler?
+            noAutoDismiss: Boolean = false
     ): Boolean {
 
         DevLog.debug(LOG_TAG, "Reloading calendar")
@@ -81,14 +65,14 @@ object CalendarReloadManager  {
 
         //val settings = Settings(context)
 
-        val eventsToAutoDismiss = arrayListOf<ReloadCalendarResult>()
+        val eventsMovedBy3rdParty = arrayListOf<ReloadCalendarResult>()
         val eventsToUpdate = arrayListOf<ReloadCalendarResult>()
         val eventsToUpdateWithTime = arrayListOf<ReloadCalendarResult>()
 
         for (event in events) {
 
             try {
-                val reloadResult = reloadCalendarEventAlert(context, calendar, event, currentTime, movedHandler)
+                val reloadResult = reloadCalendarEventAlert(context, calendar, event, currentTime, noAutoDismiss)
 
                 when (reloadResult.code) {
                 // nothing required
@@ -97,7 +81,7 @@ object CalendarReloadManager  {
 
                 // Should auto-dismiss
                     ReloadCalendarResultCode.EventMovedShouldAutoDismiss ->
-                        eventsToAutoDismiss.add(reloadResult)
+                        eventsMovedBy3rdParty.add(reloadResult)
 
                 // Simply update
                     ReloadCalendarResultCode.EventDetailsUpdatedShouldUpdate ->
@@ -116,15 +100,13 @@ object CalendarReloadManager  {
 
         var changedDetected = false
 
-        if (!eventsToAutoDismiss.isEmpty()) {
+        if (!eventsMovedBy3rdParty.isEmpty()) {
             changedDetected = true
 
-            ApplicationController.dismissEventsNoMonitorUpdate(
+            ApplicationController.removeEventAlertsForEventsMovedIntoTheFutureBy3rdParty(
                     context,
                     db,
-                    eventsToAutoDismiss.map { it.event },
-                    EventFinishType.AutoDueToCalendarMove,
-                    true
+                    eventsMovedBy3rdParty.map { it.event }
             )
         }
 
@@ -166,23 +148,37 @@ object CalendarReloadManager  {
         return changedDetected
     }
 
+    fun checkShouldRemoveMovedEvent(oldEvent: EventAlertRecord, newEvent: EventRecord, newAlertTime: Long): Boolean
+            = checkShouldRemoveMovedEvent(oldEvent.eventId, oldEvent.displayedStartTime, newEvent.startTime, newAlertTime)
+
+    fun checkShouldRemoveMovedEvent(
+            eventId: Long,
+            oldStartTime: Long,
+            newStartTime: Long,
+            newAlertTime: Long
+    ): Boolean {
+        val ret = (newStartTime - oldStartTime > Consts.EVENT_MOVE_THRESHOLD) && // moved enough
+                (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOLD) // into the future enough
+        if (ret) {
+            DevLog.info(LOG_TAG, "Event ${eventId} - alarm in the future confirmed, at $newAlertTime, marking for auto-dismissal")
+        }
+        return ret
+    }
 
     fun reloadCalendar(
             context: Context,
             db: EventsStorage,
-            calendar: CalendarProvider,
-            movedHandler: EventMovedHandler?
+            calendar: CalendarProvider
     ): Boolean {
         // don't rescan manually created requests - we won't find most of them
         val events = db.events.filter { event -> event.origin != EventOrigin.FullManual }
-        return reloadCalendarInternal(context, db, events, calendar, movedHandler)
+        return reloadCalendarInternal(context, db, events, calendar)
     }
 
     fun rescanForRescheduledEvents(
             context: Context,
             db: EventsStorage,
-            calendar: CalendarProvider,
-            movedHandler: EventMovedHandler
+            calendar: CalendarProvider
     ): Boolean {
 
         //val settings = Settings(context)
@@ -196,38 +192,29 @@ object CalendarReloadManager  {
 
         val currentTime = System.currentTimeMillis()
 
-        var autoDismissEvents = mutableListOf<EventAlertRecord>()
+        val movedEventsToRemove = mutableListOf<EventAlertRecord>()
 
         for (event in events) {
 
-            val newEvent = calendar.getEvent(context, event.eventId)
-
-            if (newEvent == null)
-                continue
-
+            val newEvent = calendar.getEvent(context, event.eventId) ?: continue
             val newAlertTime = newEvent.nextAlarmTime(currentTime)
 
             if (event.startTime != newEvent.startTime) {
-
                 DevLog.info(LOG_TAG, "Event ${event.eventId} - move detected, ${event.startTime} != ${newEvent.startTime}")
-
-                val shouldAutoDismiss = movedHandler.checkShouldRemoveMovedEvent(context, event, newEvent, newAlertTime)
-                if (shouldAutoDismiss)
-                    autoDismissEvents.add(event)
+                if (checkShouldRemoveMovedEvent(event, newEvent, newAlertTime))
+                    movedEventsToRemove.add(event)
             }
         }
 
         var changedDetected = false
 
-        if (!autoDismissEvents.isEmpty()) {
+        if (!movedEventsToRemove.isEmpty()) {
             changedDetected = true
 
-            ApplicationController.dismissEventsNoMonitorUpdate(
+            ApplicationController.removeEventAlertsForEventsMovedIntoTheFutureBy3rdParty(
                     context,
                     db,
-                    autoDismissEvents,
-                    EventFinishType.AutoDueToCalendarMove,
-                    true
+                    movedEventsToRemove
             )
 
         }
@@ -241,9 +228,9 @@ object CalendarReloadManager  {
             db: EventsStorage,
             event: EventAlertRecord,
             calendar: CalendarProvider,
-            movedHandler: EventMovedHandler?
+            noAutoDismiss: Boolean = false
     ): Boolean {
-        return reloadCalendarInternal(context, db, listOf(event), calendar, movedHandler)
+        return reloadCalendarInternal(context, db, listOf(event), calendar, noAutoDismiss)
     }
 
     fun reloadCalendarEventAlert(
@@ -251,13 +238,12 @@ object CalendarReloadManager  {
             calendarProvider: CalendarProvider,
             event: EventAlertRecord,
             currentTime: Long,
-            movedHandler: EventMovedHandler?
+            noAutoDismiss: Boolean
     ): ReloadCalendarResult {
 
         // Quick short-cut for non-repeating requests: quickly check if instance time is different now
         // - can't use the same for repeating requests
-        if (movedHandler != null &&
-                !event.isRepeating) {
+        if (!noAutoDismiss && !event.isRepeating) {
 
             val newEvent = calendarProvider.getEvent(context, event.eventId)
 
@@ -268,10 +254,8 @@ object CalendarReloadManager  {
 
                     DevLog.info(LOG_TAG, "Event ${event.eventId} - move detected, ${event.startTime} != ${newEvent.startTime}")
 
-                    val shouldAutoDismiss = movedHandler.checkShouldRemoveMovedEvent(context, event, newEvent, newAlertTime)
-
                     // a bit ugly here with all these multiple-returns
-                    if (shouldAutoDismiss) {
+                    if (checkShouldRemoveMovedEvent(event, newEvent, newAlertTime)) {
                         return ReloadCalendarResult(
                                 ReloadCalendarResultCode.EventMovedShouldAutoDismiss,
                                 event.copy(startTime = newEvent.startTime, endTime = newEvent.endTime)

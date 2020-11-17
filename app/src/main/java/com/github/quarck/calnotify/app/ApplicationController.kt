@@ -28,7 +28,6 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
-import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.UINotifier
 import com.github.quarck.calnotify.calendar.CalendarEditor
@@ -36,7 +35,7 @@ import com.github.quarck.calnotify.calendarmonitor.*
 import com.github.quarck.calnotify.utils.detailed
 
 
-object ApplicationController : EventMovedHandler {
+object ApplicationController  {
 
     private const val LOG_TAG = "App"
 
@@ -116,7 +115,7 @@ object ApplicationController : EventMovedHandler {
         DevLog.info(LOG_TAG, "onCalendarRescanForRescheduledFromService")
 
         val changes = EventsStorage(context).use {
-            db -> calendarReloadManager.rescanForRescheduledEvents(context, db, calendarProvider, this)
+            db -> calendarReloadManager.rescanForRescheduledEvents(context, db, calendarProvider)
         }
 
         if (changes) {
@@ -137,7 +136,7 @@ object ApplicationController : EventMovedHandler {
         DevLog.info(LOG_TAG, "calendarReloadFromService")
 
         val changes = EventsStorage(context).use {
-            db -> calendarReloadManager.reloadCalendar(context, db, calendarProvider, this)
+            db -> calendarReloadManager.reloadCalendar(context, db, calendarProvider)
         }
 
         DevLog.debug(LOG_TAG, "calendarReloadFromService: ${changes}")
@@ -160,8 +159,7 @@ object ApplicationController : EventMovedHandler {
         val newAlertTime = newEvent.nextAlarmTime(System.currentTimeMillis())
 
         val shouldAutoDismiss =
-                checkShouldRemoveMovedEvent(
-                        context,
+                calendarReloadManager.checkShouldRemoveMovedEvent(
                         oldEvent.eventId,
                         oldEvent.startTime,
                         newEvent.startTime,
@@ -278,8 +276,6 @@ object ApplicationController : EventMovedHandler {
         else {
             DevLog.debug(LOG_TAG, "event added: ${event.eventId} (cal id: ${event.calendarId})")
         }
-
-        ReminderState(context).onNewEventFired()
 
         return ret
     }
@@ -411,46 +407,7 @@ object ApplicationController : EventMovedHandler {
         if (pairs.size != validPairs.size) {
             DevLog.warn(LOG_TAG, "registerNewEvents: Added ${validPairs.size} requests out of ${pairs.size}")
         }
-
-        ReminderState(context).onNewEventFired()
-
         return validPairs
-    }
-
-    override fun checkShouldRemoveMovedEvent(
-            context: Context,
-            oldEvent: EventAlertRecord,
-            newEvent: EventRecord,
-            newAlertTime: Long
-    ): Boolean
-            = checkShouldRemoveMovedEvent(
-                    context,
-                    oldEvent.eventId,
-                    oldEvent.displayedStartTime,
-                    newEvent.startTime,
-                    newAlertTime
-            )
-
-    override fun checkShouldRemoveMovedEvent(
-            context: Context,
-            eventId: Long,
-            oldStartTime: Long,
-            newStartTime: Long,
-            newAlertTime: Long
-    ): Boolean {
-        var ret = false
-
-        if (newStartTime - oldStartTime > Consts.EVENT_MOVE_THRESHOLD) {
-            if (newAlertTime > System.currentTimeMillis() + Consts.ALARM_THRESHOLD) {
-                DevLog.info(LOG_TAG, "Event ${eventId} - alarm in the future confirmed, at $newAlertTime, marking for auto-dismissal")
-                ret = true
-            }
-            else {
-                DevLog.info(LOG_TAG, "Event ${eventId} moved by ${newStartTime - oldStartTime} ms - not enought to auto-dismiss")
-            }
-        }
-
-        return ret
     }
 
     fun snoozeEvent(context: Context, eventId: Long, instanceStartTime: Long, snoozeDelay: Long): SnoozeResult? {
@@ -489,7 +446,6 @@ object ApplicationController : EventMovedHandler {
 
         if (snoozedEvent != null) {
             notificationManager.onEventSnoozed(context, EventFormatter(context), snoozedEvent.eventId, snoozedEvent.notificationId);
-            ReminderState(context).onUserInteraction(System.currentTimeMillis())
             alarmScheduler.rescheduleAlarms(context)
             ret = SnoozeResult(SnoozeType.Snoozed, snoozedEvent.snoozedUntil)
             DevLog.info(LOG_TAG, "Event ${eventId} / ${instanceStartTime} snoozed: by $snoozeDelay: $ret")
@@ -587,39 +543,39 @@ object ApplicationController : EventMovedHandler {
         calendarMonitorInternal.onSystemTimeChange(context)
     }
 
-    fun dismissEventsNoMonitorUpdate(
+    fun removeEventAlertsForEventsMovedIntoTheFutureBy3rdParty(
             context: Context,
             db: EventsStorage,
-            events: Collection<EventAlertRecord>,
-            finishType: EventFinishType,
-            notifyActivity: Boolean
+            events: Collection<EventAlertRecord>
     ) {
 
-        DevLog.info(LOG_TAG, "Dismissing ${events.size}  requests")
+        DevLog.info(LOG_TAG, "Removing events moved into the future by 3rd party: ${events.size}")
 
         FinishedEventsStorage(context).use {
-            it.addEvents(finishType, events)
+            it.addEvents(EventFinishType.AutoDueToCalendarMove, events)
+        }
+
+        CalendarMonitorStorage(context).use {
+            monitorDb ->
+            monitorDb.deleteAlerts(events.map{ MonitorEventAlertEntry.fromEventAlertRecord(it) })
         }
 
         notificationManager.onEventsDismissing(context, events)
 
         if (db.deleteEvents(events) == events.size) {
             notificationManager.onEventsDismissed(context, EventFormatter(context), events, true);
-            ReminderState(context).onUserInteraction(System.currentTimeMillis())
             alarmScheduler.rescheduleAlarms(context)
-            if (notifyActivity)
-                UINotifier.notify(context, true)
+            UINotifier.notify(context, true)
         }
     }
 
-    fun dismissEvent(
+    private fun dismissEvent(
             context: Context,
             db: EventsStorage,
             event: EventAlertRecord,
             finishType: EventFinishType,
             notifyActivity: Boolean
     ) {
-
         DevLog.info(LOG_TAG, "Dismissing event id ${event.eventId} / instance ${event.instanceStartTime}")
 
         FinishedEventsStorage(context).use {
@@ -630,17 +586,12 @@ object ApplicationController : EventMovedHandler {
 
         if (db.deleteEvent(event.eventId, event.instanceStartTime)) {
             notificationManager.onEventDismissed(context, EventFormatter(context), event.eventId, event.notificationId);
-            ReminderState(context).onUserInteraction(System.currentTimeMillis())
             alarmScheduler.rescheduleAlarms(context)
             if (notifyActivity)
                 UINotifier.notify(context, true)
         }
         else {
             DevLog.error(LOG_TAG, "Failed to delete event id ${event.eventId} instance start ${event.instanceStartTime} from DB")
-            DevLog.error(LOG_TAG, " -- known events / instances: ")
-            for (ev in db.events) {
-                DevLog.error(LOG_TAG, " -- : ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}, ${ev.snoozedUntil}")
-            }
         }
     }
 
@@ -648,18 +599,6 @@ object ApplicationController : EventMovedHandler {
         EventsStorage(context).use {
             db ->
             dismissEvent(context, db, event, finishType, false)
-        }
-    }
-
-    fun dismissFutureEvent(context: Context, event: MonitorDataPair) {
-        FinishedEventsStorage(context).use {
-            it.addEvent(EventFinishType.ManuallyInTheApp, event.eventEntry)
-        }
-
-        CalendarMonitorStorage(context).use {
-            db ->
-            event.monitorEntry.wasHandled = true
-            db.updateAlert(event.monitorEntry)
         }
     }
 
@@ -682,11 +621,19 @@ object ApplicationController : EventMovedHandler {
             }
             else {
                 DevLog.error(LOG_TAG, "dismissEvent: can't find event $eventId, $instanceStartTime")
-                DevLog.error(LOG_TAG, " -- known events / instances: ")
-                for (ev in db.events) {
-                    DevLog.error(LOG_TAG, " -- : ${ev.eventId}, ${ev.instanceStartTime}, ${ev.alertTime}, ${ev.snoozedUntil}")
-                }
             }
+        }
+    }
+
+    fun dismissFutureEvent(context: Context, event: MonitorDataPair) {
+        FinishedEventsStorage(context).use {
+            it.addEvent(EventFinishType.ManuallyInTheApp, event.eventEntry)
+        }
+
+        CalendarMonitorStorage(context).use {
+            db ->
+            event.monitorEntry.wasHandled = true
+            db.updateAlert(event.monitorEntry)
         }
     }
 
@@ -702,7 +649,7 @@ object ApplicationController : EventMovedHandler {
                     EventsStorage(context).use {
                         db ->
                         val ret = db.addEvent(toRestore)
-                        calendarReloadManager.reloadSingleEvent(context, db, toRestore, calendarProvider, null)
+                        calendarReloadManager.reloadSingleEvent(context, db, toRestore, calendarProvider, noAutoDismiss = true)
                         ret
                     }
 
@@ -740,6 +687,9 @@ object ApplicationController : EventMovedHandler {
                         true
                 )
             }
+
+            // mark old event as unhandled
+            CalendarMonitorStorage(context).use { it.deleteAlert(MonitorEventAlertEntry.fromEventAlertRecord(event)) }
         }
         return moved
     }

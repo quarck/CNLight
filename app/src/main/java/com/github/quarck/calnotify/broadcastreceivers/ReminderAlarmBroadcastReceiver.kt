@@ -29,7 +29,6 @@ import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.utils.logs.DevLog
 //import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.persistentState
-import com.github.quarck.calnotify.reminders.ReminderState
 import com.github.quarck.calnotify.ui.MainActivityNG
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.powerManager
@@ -55,16 +54,12 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
 
         wakeLocked(context.powerManager, PowerManager.PARTIAL_WAKE_LOCK, REMINDER_WAKE_LOCK_NAME) {
 
-            val reminderState = ReminderState(context)
-
             val currentTime = System.currentTimeMillis()
 
             val nextFireAt: Long
             var shouldFire = false
 
-            val lastFireTime = Math.max(
-                    context.persistentState.notificationLastFireTime,
-                    reminderState.reminderLastFireTime)
+            val lastFireTime = context.persistentState.notificationLastFireTime
 
             val sinceLastFire = currentTime - lastFireTime;
 
@@ -93,8 +88,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         ReminderExactAlarmBroadcastReceiver::class.java,
                         MainActivityNG::class.java)
-
-                reminderState.nextFireExpectedAt = nextFireAt
             }
 
             if (shouldFire) {
@@ -112,7 +105,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
     ) {
         DevLog.info(LOG_TAG, "Firing reminder, current time ${System.currentTimeMillis()}")
         ApplicationController.fireEventReminder(context);
-        ReminderState(context).onReminderFired(currentTime)
     }
 
     companion object {
