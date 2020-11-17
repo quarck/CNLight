@@ -30,7 +30,7 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.ui.MainActivityNG
-import com.github.quarck.calnotify.ui.ViewEventActivityNoRecents
+import com.github.quarck.calnotify.ui.ViewEventActivity
 import com.github.quarck.calnotify.utils.*
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
@@ -530,7 +530,7 @@ class EventNotificationManager {
 
     private fun snoozeIntent(ctx: Context, eventId: Long, instanceStartTime: Long, notificationId: Int): Intent {
 
-        val intent = Intent(ctx, ViewEventActivityNoRecents::class.java)
+        val intent = Intent(ctx, ViewEventActivity::class.java)
         intent.putExtra(Consts.INTENT_NOTIFICATION_ID_KEY, notificationId)
         intent.putExtra(Consts.INTENT_EVENT_ID_KEY, eventId)
         intent.putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, instanceStartTime)

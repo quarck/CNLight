@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:padding="0dp"
     android:fitsSystemWindows="true"
-    tools:context=".ui.ViewEventActivityNoRecents"
+    tools:context=".ui.ViewEventActivity"
     >
 
     <com.google.android.material.appbar.AppBarLayout
@@ -399,7 +399,7 @@
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:onClick="OnButtonSnoozeClick"
+                            android:onClick="onButtonSnoozeClick"
 
                             android:paddingBottom="@dimen/snooze_view_spacing"
                             android:paddingEnd="30dp"
@@ -418,7 +418,7 @@
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:onClick="OnButtonSnoozeClick"
+                            android:onClick="onButtonSnoozeClick"
 
                             android:paddingBottom="@dimen/snooze_view_spacing"
                             android:paddingEnd="30dp"
@@ -437,7 +437,7 @@
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:onClick="OnButtonSnoozeClick"
+                            android:onClick="onButtonSnoozeClick"
 
                             android:paddingBottom="@dimen/snooze_view_spacing"
                             android:paddingEnd="30dp"
@@ -473,7 +473,7 @@
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:onClick="OnButtonSnoozeClick"
+                            android:onClick="onButtonSnoozeClick"
 
                             android:paddingBottom="@dimen/snooze_view_spacing"
                             android:paddingEnd="30dp"
@@ -492,7 +492,7 @@
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:onClick="OnButtonSnoozeClick"
+                            android:onClick="onButtonSnoozeClick"
 
                             android:paddingBottom="@dimen/snooze_view_spacing"
                             android:paddingEnd="30dp"
@@ -511,7 +511,7 @@
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:onClick="OnButtonSnoozeClick"
+                            android:onClick="onButtonSnoozeClick"
 
                             android:paddingBottom="@dimen/snooze_view_spacing"
                             android:paddingEnd="30dp"
@@ -588,7 +588,7 @@
 
                         android:background="?android:attr/selectableItemBackground"
                         android:clickable="true"
-                        android:onClick="OnEnableMove"
+                        android:onClick="onEnableMoveEvent"
                         />
 
                     <LinearLayout
@@ -613,7 +613,7 @@
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:onClick="OnButtonRescheduleClick"
+                            android:onClick="onButtonRescheduleClick"
 
                             android:paddingBottom="@dimen/snooze_view_spacing"
                             android:paddingEnd="30dp"
@@ -631,7 +631,7 @@
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:onClick="OnButtonRescheduleClick"
+                            android:onClick="onButtonRescheduleClick"
 
                             android:paddingBottom="@dimen/snooze_view_spacing"
                             android:paddingEnd="30dp"
@@ -649,7 +649,7 @@
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
-                            android:onClick="OnButtonRescheduleClick"
+                            android:onClick="onButtonRescheduleClick"
 
                             android:paddingBottom="@dimen/snooze_view_spacing"
                             android:paddingEnd="30dp"

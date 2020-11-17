@@ -25,21 +25,13 @@
             android:name=".ui.MainActivityNG"
             android:label="@string/main_activity_title"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.ViewEventActivityNoRecents"
-            android:excludeFromRecents="true"
-            android:label="@string/view_event"
-            android:launchMode="singleTask"
-            android:noHistory="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.ViewEventActivity"
             android:label="@string/view_event"
@@ -56,7 +48,7 @@
         <activity
             android:name=".prefs.CalendarsActivity"
             android:label="@string/title_calendars_activity"
-            android:parentActivityName=".ui.SettingsActivityNew"
+            android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

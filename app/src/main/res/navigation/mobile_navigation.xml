@@ -24,15 +24,15 @@
         tools:layout="@layout/fragment_finished" />
 
     <fragment
-        android:id="@+id/nav_about"
-        android:name="com.github.quarck.calnotify.ui.MainActivityAboutFragment"
-        android:label="@string/menu_about"
-        tools:layout="@layout/fragment_about" />
-
-    <fragment
         android:id="@+id/nav_settings"
         android:name="com.github.quarck.calnotify.ui.MainActivitySettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="com.github.quarck.calnotify.ui.MainActivityAboutFragment"
+        android:label="@string/menu_about"
+        tools:layout="@layout/fragment_about" />
 
 </navigation>
