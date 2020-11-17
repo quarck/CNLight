@@ -29,6 +29,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.graphics.BlendModeColorFilterCompat
@@ -73,22 +74,26 @@ class EventListAdapter(
 
         var undoButton: Button?
 
+        val alarmIcon: ImageView?
+
         var calendarColor: ColorDrawable
 
         init {
-            eventHolder = itemView.findViewById<RelativeLayout>(R.id.card_view_main_holder)
-            eventTitleText = itemView.findViewById<TextView>(R.id.card_view_event_name)
+            eventHolder = itemView.findViewById(R.id.card_view_main_holder)
+            eventTitleText = itemView.findViewById(R.id.card_view_event_name)
 
-            eventDateText = itemView.findViewById<TextView>(R.id.card_view_event_date)
-            eventTimeText = itemView.findViewById<TextView>(R.id.card_view_event_time)
-            snoozedUntilText = itemView.findViewById<TextView>(R.id.card_view_snoozed_until)
+            eventDateText = itemView.findViewById(R.id.card_view_event_date)
+            eventTimeText = itemView.findViewById(R.id.card_view_event_time)
+            snoozedUntilText = itemView.findViewById(R.id.card_view_snoozed_until)
 
-            undoLayout = itemView.findViewById<RelativeLayout?>(R.id.event_card_undo_layout)
+            undoLayout = itemView.findViewById(R.id.event_card_undo_layout)
 
-            compactViewContentLayout = itemView.findViewById<RelativeLayout?>(R.id.compact_view_content_layout)
-            compactViewCalendarColor = itemView.findViewById<View?>(R.id.compact_view_calendar_color)
+            compactViewContentLayout = itemView.findViewById(R.id.compact_view_content_layout)
+            compactViewCalendarColor = itemView.findViewById(R.id.compact_view_calendar_color)
 
-            undoButton = itemView.findViewById<Button?>(R.id.card_view_button_undo)
+            undoButton = itemView.findViewById(R.id.card_view_button_undo)
+
+            alarmIcon = itemView.findViewById(R.id.imageview_is_alarm_indicator)
 
             calendarColor = ColorDrawable(0)
 
@@ -331,6 +336,9 @@ class EventListAdapter(
                         event.color.adjustCalendarColor()
                     else
                         primaryColor
+
+            holder.alarmIcon?.visibility = if (event.isAlarm) View.VISIBLE else View.GONE
+
             holder.compactViewCalendarColor?.background = holder.calendarColor
         }
     }
