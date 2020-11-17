@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -144,6 +145,14 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
                 item ->
                 when (item.itemId) {
                     R.id.action_view_event -> {
+                        startActivity(
+                                Intent(ctx, ViewEventActivity::class.java)
+                                        .putExtra(Consts.INTENT_EVENT_ID_KEY, entry.eventEntry.eventId)
+                                        .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, entry.eventEntry.instanceStartTime)
+                                        .putExtra(Consts.INTENT_ALERT_TIME, entry.eventEntry.alertTime)
+                                        .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
+                                        .putExtra(Consts.INTENT_VIEW_FUTURE_EVENT, true)
+                                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
                         true
                     }

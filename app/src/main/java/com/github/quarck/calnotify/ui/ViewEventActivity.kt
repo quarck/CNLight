@@ -65,6 +65,7 @@ open class ViewEventActivity : AppCompatActivity() {
     private val calendarProvider = CalendarProvider
 
     var snoozeFromMainActivity = false
+    var viewForFutureEvent = false
 
     lateinit var calendarNameTextView: TextView
     lateinit var calendarAccountTextView: TextView
@@ -90,38 +91,49 @@ open class ViewEventActivity : AppCompatActivity() {
         // Populate event details
         val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
         val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1L)
-
-        //snoozeAllIsChange = intent.getBooleanExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, false)
+        val alertTime = intent.getLongExtra(Consts.INTENT_ALERT_TIME, -1L)
 
         snoozeFromMainActivity = intent.getBooleanExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, false)
+        viewForFutureEvent = intent.getBooleanExtra(Consts.INTENT_VIEW_FUTURE_EVENT, false)
 
         findViewById<Toolbar?>(R.id.toolbar)?.visibility = View.GONE
 
         // load event if it is not a "snooze all"
-        EventsStorage(this).use {
-            db ->
 
-            var dbEvent = db.getEvent(eventId, instanceStartTime)
+        if (!viewForFutureEvent) {
+            EventsStorage(this).use { db ->
 
-            if (dbEvent != null) {
-                val eventDidChange = calendarReloadManager.reloadSingleEvent(this, db, dbEvent, calendarProvider, noAutoDismiss = true)
-                if (eventDidChange) {
-                    val newDbEvent = db.getEvent(eventId, instanceStartTime)
-                    if (newDbEvent != null) {
-                        dbEvent = newDbEvent
-                    } else {
-                        DevLog.error(LOG_TAG, "ViewActivity: cannot find event after calendar reload, event $eventId, inst $instanceStartTime")
+                var dbEvent = db.getEvent(eventId, instanceStartTime)
+
+                if (dbEvent != null) {
+                    val eventDidChange = calendarReloadManager.reloadSingleEvent(this, db, dbEvent, calendarProvider, noAutoDismiss = true)
+                    if (eventDidChange) {
+                        val newDbEvent = db.getEvent(eventId, instanceStartTime)
+                        if (newDbEvent != null) {
+                            dbEvent = newDbEvent
+                        } else {
+                            DevLog.error(LOG_TAG, "ViewActivity: cannot find event after calendar reload, event $eventId, inst $instanceStartTime")
+                        }
                     }
                 }
-            }
 
-            if (dbEvent == null) {
+                if (dbEvent == null) {
+                    DevLog.error(LOG_TAG, "ViewActivity started for non-existing eveng id $eventId, st $instanceStartTime")
+                    finish()
+                    return
+                }
+
+                event = dbEvent
+            }
+        } else {
+            val calEvents = CalendarProvider.getEventAlertsForInstancesInRange(this, instanceStartTime, instanceStartTime+1)
+            val calEvent = calEvents.firstOrNull { it -> it.eventEntry.eventId == eventId && it.eventEntry.alertTime == alertTime }
+            if (calEvent == null) {
                 DevLog.error(LOG_TAG, "ViewActivity started for non-existing eveng id $eventId, st $instanceStartTime")
                 finish()
                 return
             }
-
-            event = dbEvent
+            event = calEvent.eventEntry
         }
 
         calendar = calendarProvider.getCalendarById(this, event.calendarId)
@@ -258,6 +270,7 @@ open class ViewEventActivity : AppCompatActivity() {
 
         val menuButton = findViewById<ImageView?>(R.id.snooze_view_menu)
         menuButton?.setOnClickListener { showDismissEditPopup(menuButton) }
+        menuButton?.visibility = View.VISIBLE
     }
 
     fun showDismissEditPopup(v: View) {
@@ -265,13 +278,18 @@ open class ViewEventActivity : AppCompatActivity() {
         val inflater = popup.menuInflater
         inflater.inflate(R.menu.snooze, popup.menu)
 
+        val dismissItem = popup.menu.findItem(R.id.action_dismiss_event)
+        dismissItem?.isVisible = !viewForFutureEvent
+
         popup.setOnMenuItemClickListener {
             item ->
 
             when (item.itemId) {
                 R.id.action_dismiss_event -> {
-                    ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
-                    finish()
+                    if (!viewForFutureEvent) {
+                        ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
+                        finish()
+                    }
                     true
                 }
 
