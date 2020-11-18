@@ -170,18 +170,23 @@ open class ViewEventActivity : AppCompatActivity() {
         title.setTextIsSelectable(true)
 
         // date
-        val (line1, line2) = formatter.formatDateTimeTwoLines(event);
-        val dateTimeFirstLine = findViewById<TextView>(R.id.event_view_date_line)
-        if (line2.isEmpty())
-            dateTimeFirstLine.text = line1
-        else
-            dateTimeFirstLine.text = String.format("%s  /  %s", line1, line2)
+        val (line1, line2) = formatter.formatDateTimeTwoLines(event)
+
+        findViewById<TextView>(R.id.event_view_date_line1).apply {
+            text = line1
+        }
+
+        findViewById<TextView>(R.id.event_view_date_line2).apply {
+            text = line2
+            visibility = if (line2.isNotEmpty()) View.VISIBLE else View.GONE
+        }
 
         // recurrence
         if (event.rRule.isNotBlank() || event.rDate.isNotBlank()) {
-            val recurrence = findViewById<TextView>(R.id.event_view_recurrence)
-            recurrence.visibility = View.VISIBLE
-            recurrence.text = if (event.rDate.isBlank()) event.rRule else event.rRule + "/" + event.rDate
+            findViewById<TextView>(R.id.event_view_recurrence).apply {
+                text = if (event.rDate.isBlank()) event.rRule else event.rRule + "/" + event.rDate
+                visibility = View.VISIBLE
+            }
         }
 
         if (event.desc.isNotEmpty()) {
@@ -220,26 +225,37 @@ open class ViewEventActivity : AppCompatActivity() {
 
         val reminders: List<EventReminderRecord> = calendarProvider.getEventReminders(this, event.eventId)
         if (reminders.isNotEmpty()) {
-            findViewById<RelativeLayout>(R.id.layout_next_reminder).visibility = View.VISIBLE
-
             val textReminders = StringBuilder()
+            var firstLine = true
             for (reminder: EventReminderRecord in reminders) {
-                textReminders.append(formatter.formatTimeDuration(reminder.millisecondsBefore))
-                textReminders.append(when (reminder.method) {
-                    CalendarContract.Reminders.METHOD_ALARM,
-                    CalendarContract.Reminders.METHOD_ALERT,
-                    CalendarContract.Reminders.METHOD_DEFAULT -> " before\n"
-                    CalendarContract.Reminders.METHOD_EMAIL -> " before as email\n"
-                    CalendarContract.Reminders.METHOD_SMS -> " before as sms\n"
-                    else -> "\n"
-                })
+                if (!firstLine)
+                    textReminders.append("\n")
+                firstLine = false
+                textReminders.append(String.format(
+                        resources.getString(R.string.remind_fmt_before),
+                        formatter.formatTimeDuration(reminder.millisecondsBefore)))
+
+                if (reminder.method == CalendarContract.Reminders.METHOD_EMAIL) {
+                    textReminders.append(" ")
+                    textReminders.append(resources.getString(R.string.as_email))
+                }
+                else if (reminder.method == CalendarContract.Reminders.METHOD_SMS) {
+                    textReminders.append(" ")
+                    textReminders.append(resources.getString(R.string.as_sms))
+                }
             }
-            findViewById<TextView>(R.id.event_view_reminders).text = textReminders.toString()
+            findViewById<TextView>(R.id.event_view_reminders).apply {
+                text = textReminders.toString()
+                visibility = View.VISIBLE
+            }
 
             val nextReminder = calendarProvider.getNextEventReminderTime(this, event)
             if (nextReminder != 0L) {
                 val format = this.resources.getString(R.string.next_reminder_fmt)
-                findViewById<TextView>(R.id.event_view_next_reminder).text = format.format(formatter.formatTimePoint(nextReminder))
+                findViewById<TextView>(R.id.event_view_next_reminder).apply{
+                    text = format.format(formatter.formatTimePoint(nextReminder))
+                    visibility = View.VISIBLE
+                }
             }
         }
 

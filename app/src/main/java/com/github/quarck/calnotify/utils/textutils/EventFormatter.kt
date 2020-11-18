@@ -80,7 +80,7 @@ class EventFormatter(val ctx: Context) {
         val startIsToday = DateUtils.isToday(startTime)
         val endIsToday = DateUtils.isToday(endTime)
 
-        val weekFlag = (if (showWeekDay) DateUtils.FORMAT_SHOW_WEEKDAY else 0) or DateUtils.FORMAT_ABBREV_ALL
+        val weekFlag = if (showWeekDay) DateUtils.FORMAT_SHOW_WEEKDAY else 0
 
         val line1: String
         val line2: String

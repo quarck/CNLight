@@ -112,6 +112,7 @@
                 >
 
 
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -131,34 +132,86 @@
                         android:importantForAccessibility="no"
                         />
 
-                    <TextView
-                        android:id="@+id/event_view_date_line"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/event_view_padding_start"
-                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
-                        android:paddingEnd="@dimen/event_view_padding_end"
-                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
-                        android:text="Tomorrow"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        tools:ignore="HardcodedText" />
+                        android:orientation="vertical"
+                        android:padding="0dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/event_view_recurrence"
-                        android:text="Repeats every 10 minutes when the moon is high"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
-                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/event_view_padding_start"
-                        android:paddingEnd="@dimen/event_view_padding_end"
-                        android:layout_below="@id/event_view_date_line"
-                        android:visibility="gone"
-                        tools:ignore="HardcodedText"
-                        />
+                        <TextView
+                            android:id="@+id/event_view_date_line1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/event_view_padding_start"
+                            android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                            android:paddingEnd="@dimen/event_view_padding_end"
+                            android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                            android:text="Tomorrow"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            android:id="@+id/event_view_date_line2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingStart="@dimen/event_view_padding_start"
+                            android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                            android:paddingEnd="@dimen/event_view_padding_end"
+                            android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                            android:text="Tomorrow"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:visibility="visible"
+                            tools:ignore="HardcodedText" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/event_view_reminders"
+                            android:text="15 minutes before\n15 minutes before as email"
+                            android:textAppearance="?android:textAppearanceSmall"
+                            android:textColor="@color/secondary_text"
+                            android:gravity="start|bottom"
+                            android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                            android:paddingTop="0dp"
+                            android:paddingStart="@dimen/event_view_padding_start"
+                            android:paddingEnd="@dimen/event_view_padding_end"
+                            android:visibility="visible"
+                            tools:ignore="HardcodedText"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/event_view_next_reminder"
+                            android:text="Next reminder: 18:49 tomorrow"
+                            android:textAppearance="?android:textAppearanceSmall"
+                            android:textColor="@color/secondary_text"
+                            android:gravity="start|bottom"
+                            android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                            android:paddingTop="0dp"
+                            android:paddingStart="@dimen/event_view_padding_start"
+                            android:paddingEnd="@dimen/event_view_padding_end"
+                            android:visibility="visible"
+                            tools:ignore="HardcodedText"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/event_view_recurrence"
+                            android:text="Repeats every 10 minutes when the moon is high"
+                            android:textAppearance="?android:textAppearanceSmall"
+                            android:textColor="@color/primary_text"
+                            android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                            android:paddingTop="0dp"
+                            android:paddingStart="@dimen/event_view_padding_start"
+                            android:paddingEnd="@dimen/event_view_padding_end"
+                            android:visibility="visible"
+                            tools:ignore="HardcodedText"
+                            />
+
+                    </LinearLayout>
+
 
                 </RelativeLayout>
 
@@ -202,61 +255,6 @@
                         tools:ignore="HardcodedText"
                         android:layout_below="@id/view_event_calendar_name"
                         />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/background"
-                    android:paddingBottom="@dimen/event_view_action_padding_bottom"
-                    android:paddingTop="0dp"
-                    android:id="@+id/layout_next_reminder"
-                    android:visibility="gone"
-                    >
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:longClickable="false"
-                        android:src="@drawable/ic_alarm_white_24dp"
-                        android:paddingStart="@dimen/event_view_img_padding_start"
-                        android:paddingEnd="@dimen/event_view_img_padding_end"
-                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
-                        android:paddingBottom="10dp"
-                        android:importantForAccessibility="no"
-                        />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/event_view_reminders"
-                        android:text="15 minutes before\n15 minutes before as email"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
-                        android:gravity="start|bottom"
-                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
-                        android:paddingTop="0dp"
-                        android:paddingStart="@dimen/event_view_padding_start"
-                        android:paddingEnd="@dimen/event_view_padding_end"
-                        android:layout_alignParentTop="true"
-                        android:visibility="visible"
-                        tools:ignore="HardcodedText"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/event_view_next_reminder"
-                        android:text="Next reminder: 18:49 tomorrow"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/secondary_text"
-                        android:gravity="start|bottom"
-                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
-                        android:paddingTop="0dp"
-                        android:paddingStart="@dimen/event_view_padding_start"
-                        android:paddingEnd="@dimen/event_view_padding_end"
-                        android:layout_below="@id/event_view_reminders"
-                        android:visibility="gone"
-                        tools:ignore="HardcodedText"/>
 
                 </RelativeLayout>
 

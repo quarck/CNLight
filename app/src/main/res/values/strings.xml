@@ -397,6 +397,9 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="view_event_details">View event details</string>
     <string name="yes">Yes</string>
     <string name="edit_event">Edit Event</string>
+    <string name="remind_fmt_before" formatted="false">Remind %s before</string>
+    <string name="as_email">as email</string>
+    <string name="as_sms">as SMS</string>
 
 </resources>
 
