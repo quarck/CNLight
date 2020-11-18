@@ -263,7 +263,7 @@ open class EditEventActivity : AppCompatActivity() {
                 findViewById<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
         }
 
-        eventTitleLayout = findViewById<RelativeLayout?>(R.id.snooze_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
+        eventTitleLayout = findViewById<RelativeLayout?>(R.id.event_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
 
         // get all the objects first
         eventTitleText = findViewById<EditText?>(R.id.add_event_title) ?: throw Exception("Can't find add_event_title")

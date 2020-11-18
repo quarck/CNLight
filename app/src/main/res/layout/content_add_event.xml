@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/material_blue"
-            android:id="@+id/snooze_view_event_details_layout"
+            android:id="@+id/event_view_event_details_layout"
             android:visibility="visible"
             android:elevation="@dimen/toolbar_elevation"
             tools:targetApi="m">
@@ -60,10 +60,10 @@
                 android:layout_alignBaseline="@id/add_event_view_cancel"
                 android:background="?android:attr/selectableItemBackground"
                 android:longClickable="false"
-                android:paddingBottom="@dimen/snooze_view_img_padding_start"
-                android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                android:paddingStart="@dimen/snooze_view_img_padding_start"
-                android:paddingTop="@dimen/snooze_view_img_padding_start"
+                android:paddingBottom="@dimen/event_view_img_padding_start"
+                android:paddingEnd="@dimen/event_view_img_padding_end"
+                android:paddingStart="@dimen/event_view_img_padding_start"
+                android:paddingTop="@dimen/event_view_img_padding_start"
                 android:text="@string/save_button_title"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textStyle="normal"
@@ -100,7 +100,7 @@
 
         </RelativeLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="@dimen/snooze_view_details_initial_padding" />
+        <View android:layout_width="match_parent" android:layout_height="@dimen/event_view_details_initial_padding" />
 
         <!-- Account name-->
         <RelativeLayout

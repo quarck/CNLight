@@ -12,24 +12,24 @@
     <!--  amount to scroll on the main activity until 'undo' layout hides itself, in dp-s -->
     <dimen name="undo_dismiss_sensitivity">160dp</dimen>
 
-    <dimen name="snooze_view_padding_start">60dp</dimen>
-    <dimen name="snooze_view_padding_end">20dp</dimen>
+    <dimen name="event_view_padding_start">60dp</dimen>
+    <dimen name="event_view_padding_end">20dp</dimen>
 
-    <dimen name="snooze_view_img_padding_start">16dp</dimen>
-    <dimen name="snooze_view_img_padding_end">16dp</dimen>
+    <dimen name="event_view_img_padding_start">16dp</dimen>
+    <dimen name="event_view_img_padding_end">16dp</dimen>
 
-    <dimen name="snooze_view_header_padding_top">16dp</dimen>
-    <dimen name="snooze_view_header_padding_bottom">24dp</dimen>
+    <dimen name="event_view_header_padding_top">16dp</dimen>
+    <dimen name="event_view_header_padding_bottom">24dp</dimen>
 
-    <dimen name="snooze_view_action_padding_top">16dp</dimen>
-    <dimen name="snooze_view_action_padding_bottom">8dp</dimen>
+    <dimen name="event_view_action_padding_top">16dp</dimen>
+    <dimen name="event_view_action_padding_bottom">8dp</dimen>
 
-    <dimen name="snooze_view_spacing">14dp</dimen>
+    <dimen name="event_view_spacing">14dp</dimen>
 
-    <dimen name="snooze_view_img_topbottom">20dp</dimen>
+    <dimen name="event_view_img_topbottom">20dp</dimen>
 
-    <dimen name="snooze_view_in_text_vert_padding">4dp</dimen>
-    <dimen name="snooze_view_details_initial_padding">10dp</dimen>
+    <dimen name="event_view_in_text_vert_padding">4dp</dimen>
+    <dimen name="event_view_details_initial_padding">10dp</dimen>
 
     <dimen name="activity_main_action_buttons_start_padding">16dp</dimen>
     <dimen name="activity_main_action_buttons_end_padding">16dp</dimen>

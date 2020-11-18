@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/nearly_black"
-                android:id="@+id/snooze_view_event_details_layout"
+                android:id="@+id/event_view_event_details_layout"
                 android:visibility="visible"
                 android:elevation="@dimen/toolbar_elevation"
                 tools:targetApi="m">
@@ -61,10 +61,10 @@
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textSize="19sp"
                     android:textColor="@color/event_title_color"
-                    android:paddingBottom="@dimen/snooze_view_header_padding_bottom"
-                    android:paddingTop="@dimen/snooze_view_header_padding_top"
-                    android:paddingStart="@dimen/snooze_view_padding_start"
-                    android:paddingEnd="@dimen/snooze_view_padding_end"
+                    android:paddingBottom="@dimen/event_view_header_padding_bottom"
+                    android:paddingTop="@dimen/event_view_header_padding_top"
+                    android:paddingStart="@dimen/event_view_padding_start"
+                    android:paddingEnd="@dimen/event_view_padding_end"
                     android:gravity="start|bottom"
                     tools:ignore="HardcodedText"
                     android:ellipsize="end"
@@ -76,10 +76,10 @@
                     android:layout_height="wrap_content"
                     android:longClickable="false"
                     android:src="@drawable/ic_navigate_before_white_24dp"
-                    android:paddingTop="@dimen/snooze_view_img_padding_start"
-                    android:paddingBottom="@dimen/snooze_view_img_padding_start"
-                    android:paddingStart="@dimen/snooze_view_img_padding_start"
-                    android:paddingEnd="@dimen/snooze_view_img_padding_end"
+                    android:paddingTop="@dimen/event_view_img_padding_start"
+                    android:paddingBottom="@dimen/event_view_img_padding_start"
+                    android:paddingStart="@dimen/event_view_img_padding_start"
+                    android:paddingEnd="@dimen/event_view_img_padding_end"
                     android:onClick="onButtonCancelClick"
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/content_desc_navigate_back" />
@@ -88,13 +88,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:longClickable="false"
-                    android:id="@+id/snooze_view_menu"
+                    android:id="@+id/event_view_menu"
                     android:src="@drawable/ic_more_vert_white_24dp"
                     android:layout_alignParentEnd="true"
-                    android:paddingTop="@dimen/snooze_view_img_padding_start"
-                    android:paddingBottom="@dimen/snooze_view_img_padding_start"
-                    android:paddingStart="@dimen/snooze_view_img_padding_start"
-                    android:paddingEnd="@dimen/snooze_view_img_padding_end"
+                    android:paddingTop="@dimen/event_view_img_padding_start"
+                    android:paddingBottom="@dimen/event_view_img_padding_start"
+                    android:paddingStart="@dimen/event_view_img_padding_start"
+                    android:paddingEnd="@dimen/event_view_img_padding_end"
                     android:background="?android:attr/selectableItemBackground"
                     android:contentDescription="@string/content_desc_menu" />
 
@@ -104,8 +104,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_below="@id/snooze_view_event_details_layout"
-                android:paddingTop="@dimen/snooze_view_details_initial_padding"
+                android:layout_below="@id/event_view_event_details_layout"
+                android:paddingTop="@dimen/event_view_details_initial_padding"
                 android:paddingBottom="0dp"
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp"
@@ -116,17 +116,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/background"
-                    android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
-                    android:paddingTop="@dimen/snooze_view_action_padding_top">
+                    android:paddingBottom="@dimen/event_view_action_padding_bottom"
+                    android:paddingTop="@dimen/event_view_action_padding_top">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:longClickable="false"
                         android:src="@drawable/ic_schedule_white_24dp"
-                        android:paddingStart="@dimen/snooze_view_img_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_img_padding_start"
+                        android:paddingEnd="@dimen/event_view_img_padding_end"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:paddingBottom="10dp"
                         android:importantForAccessibility="no"
                         />
@@ -135,10 +135,10 @@
                         android:id="@+id/event_view_date_line"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingEnd="@dimen/event_view_padding_end"
+                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:text="Tomorrow"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"
@@ -151,10 +151,10 @@
                         android:text="Repeats every 10 minutes when the moon is high"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:layout_below="@id/event_view_date_line"
                         android:visibility="gone"
                         tools:ignore="HardcodedText"
@@ -166,7 +166,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/background"
-                    android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
+                    android:paddingBottom="@dimen/event_view_action_padding_bottom"
                     android:paddingTop="0dp"
                     android:visibility="visible"
                     >
@@ -178,10 +178,10 @@
                         android:text="__CALENDAR_NAME__"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/secondary_text"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="0dp"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:layout_alignParentTop="true"
                         android:visibility="visible"
                         tools:ignore="HardcodedText"
@@ -194,10 +194,10 @@
                         android:text="__CALENDAR_ACCOUNT__"
                         android:textAppearance="?android:textAppearanceSmall"
                         android:textColor="@color/secondary_text"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="0dp"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:visibility="visible"
                         tools:ignore="HardcodedText"
                         android:layout_below="@id/view_event_calendar_name"
@@ -209,7 +209,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/background"
-                    android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
+                    android:paddingBottom="@dimen/event_view_action_padding_bottom"
                     android:paddingTop="0dp"
                     android:id="@+id/layout_next_reminder"
                     android:visibility="gone"
@@ -219,9 +219,9 @@
                         android:layout_height="wrap_content"
                         android:longClickable="false"
                         android:src="@drawable/ic_alarm_white_24dp"
-                        android:paddingStart="@dimen/snooze_view_img_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_img_padding_start"
+                        android:paddingEnd="@dimen/event_view_img_padding_end"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:paddingBottom="10dp"
                         android:importantForAccessibility="no"
                         />
@@ -234,10 +234,10 @@
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"
                         android:gravity="start|bottom"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="0dp"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:layout_alignParentTop="true"
                         android:visibility="visible"
                         tools:ignore="HardcodedText"/>
@@ -250,10 +250,10 @@
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/secondary_text"
                         android:gravity="start|bottom"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="0dp"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:layout_below="@id/event_view_reminders"
                         android:visibility="gone"
                         tools:ignore="HardcodedText"/>
@@ -263,10 +263,10 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/snooze_view_location_layout"
+                    android:id="@+id/event_view_location_layout"
                     android:background="@color/background"
-                    android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
-                    android:paddingTop="@dimen/snooze_view_action_padding_top"
+                    android:paddingBottom="@dimen/event_view_action_padding_bottom"
+                    android:paddingTop="@dimen/event_view_action_padding_top"
                     android:visibility="gone">
 
                     <ImageView
@@ -274,24 +274,24 @@
                         android:layout_height="wrap_content"
                         android:longClickable="false"
                         android:src="@drawable/ic_location_searching_white_24dp"
-                        android:paddingStart="@dimen/snooze_view_img_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingBottom="@dimen/snooze_view_img_topbottom"
+                        android:paddingStart="@dimen/event_view_img_padding_start"
+                        android:paddingEnd="@dimen/event_view_img_padding_end"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingBottom="@dimen/event_view_img_topbottom"
                         android:importantForAccessibility="no"
                         />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_location"
+                        android:id="@+id/event_view_location"
                         android:text="Meeting room 1.01"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:clickable="true"
                         tools:ignore="HardcodedText"
                         />
@@ -301,8 +301,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/background"
-                    android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
-                    android:paddingTop="@dimen/snooze_view_action_padding_top"
+                    android:paddingBottom="@dimen/event_view_action_padding_bottom"
+                    android:paddingTop="@dimen/event_view_action_padding_top"
                     android:id="@+id/layout_event_description"
                     android:visibility="gone"
                     >
@@ -312,9 +312,9 @@
                         android:layout_height="wrap_content"
                         android:longClickable="false"
                         android:src="@drawable/ic_event_note_white_24dp"
-                        android:paddingStart="@dimen/snooze_view_img_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_img_padding_start"
+                        android:paddingEnd="@dimen/event_view_img_padding_end"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:paddingBottom="10dp"
                         android:importantForAccessibility="no"
                         />
@@ -322,14 +322,14 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_event_description"
+                        android:id="@+id/event_view_description"
                         android:text="__DESC_PLACEHOLDER__"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:textIsSelectable="true"
                         android:autoLink="web|email|map"
                         tools:ignore="HardcodedText"/>
@@ -351,9 +351,9 @@
                     android:textAppearance="?android:textAppearanceSmall"
                     android:textColor="@color/primary"
                     android:paddingBottom="0dp"
-                    android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                    android:paddingStart="@dimen/snooze_view_padding_start"
-                    android:paddingEnd="@dimen/snooze_view_padding_end"
+                    android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                    android:paddingStart="@dimen/event_view_padding_start"
+                    android:paddingEnd="@dimen/event_view_padding_end"
                     android:visibility="gone"
                     tools:ignore="HardcodedText"
                     />
@@ -363,18 +363,18 @@
                     android:layout_height="wrap_content"
                     android:background="@color/background"
                     android:id="@+id/snooze_layout"
-                    android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
-                    android:paddingTop="@dimen/snooze_view_action_padding_top">
+                    android:paddingBottom="@dimen/event_view_action_padding_bottom"
+                    android:paddingTop="@dimen/event_view_action_padding_top">
 
                     <ImageView
-                        android:id="@+id/snooze_view_snooze_icon"
+                        android:id="@+id/event_view_snooze_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:longClickable="false"
-                        android:paddingBottom="@dimen/snooze_view_img_topbottom"
-                        android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                        android:paddingStart="@dimen/snooze_view_img_padding_start"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingBottom="@dimen/event_view_img_topbottom"
+                        android:paddingEnd="@dimen/event_view_img_padding_end"
+                        android:paddingStart="@dimen/event_view_img_padding_start"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:src="@drawable/ic_update_white_24dp"
                         tools:ignore="ContentDescription" />
 
@@ -382,41 +382,41 @@
                         android:id="@+id/snooze_snooze_for"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingBottom="@dimen/event_view_spacing"
+                        android:paddingEnd="@dimen/event_view_padding_end"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:text="@string/snooze_event_for"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text" />
 
                     <LinearLayout
-                        android:id="@+id/snooze_view_snooze_sub_layout_1"
+                        android:id="@+id/event_view_snooze_sub_layout_1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@id/snooze_view_snooze_icon"
+                        android:layout_toEndOf="@id/event_view_snooze_icon"
                         android:layout_below="@id/snooze_snooze_for"
 
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:paddingStart="0dp"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         >
 
                         <TextView
-                            android:id="@+id/snooze_view_snooze_15m"
+                            android:id="@+id/event_view_snooze_15m"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:onClick="onButtonSnoozeClick"
 
-                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingBottom="@dimen/event_view_spacing"
                             android:paddingEnd="30dp"
                             android:paddingStart="30dp"
-                            android:paddingTop="@dimen/snooze_view_spacing"
+                            android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_15_m"
                             android:textAppearance="?android:textAppearanceMedium"
@@ -425,17 +425,17 @@
                             />
 
                         <TextView
-                            android:id="@+id/snooze_view_snooze_60m"
+                            android:id="@+id/event_view_snooze_60m"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:onClick="onButtonSnoozeClick"
 
-                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingBottom="@dimen/event_view_spacing"
                             android:paddingEnd="30dp"
                             android:paddingStart="30dp"
-                            android:paddingTop="@dimen/snooze_view_spacing"
+                            android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_1_h"
                             android:textAppearance="?android:textAppearanceMedium"
@@ -444,17 +444,17 @@
                             />
 
                         <TextView
-                            android:id="@+id/snooze_view_snooze_240m"
+                            android:id="@+id/event_view_snooze_240m"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:onClick="onButtonSnoozeClick"
 
-                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingBottom="@dimen/event_view_spacing"
                             android:paddingEnd="30dp"
                             android:paddingStart="30dp"
-                            android:paddingTop="@dimen/snooze_view_spacing"
+                            android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_4_h"
                             android:textAppearance="?android:textAppearanceMedium"
@@ -465,32 +465,32 @@
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/snooze_view_snooze_sub_layout_2"
+                        android:id="@+id/event_view_snooze_sub_layout_2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@id/snooze_view_snooze_icon"
-                        android:layout_below="@id/snooze_view_snooze_sub_layout_1"
+                        android:layout_toEndOf="@id/event_view_snooze_icon"
+                        android:layout_below="@id/event_view_snooze_sub_layout_1"
 
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:paddingStart="0dp"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         >
 
                         <TextView
-                            android:id="@+id/snooze_view_snooze_8h"
+                            android:id="@+id/event_view_snooze_8h"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:onClick="onButtonSnoozeClick"
 
-                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingBottom="@dimen/event_view_spacing"
                             android:paddingEnd="30dp"
                             android:paddingStart="30dp"
-                            android:paddingTop="@dimen/snooze_view_spacing"
+                            android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_8_h"
                             android:textAppearance="?android:textAppearanceMedium"
@@ -499,17 +499,17 @@
                             />
 
                         <TextView
-                            android:id="@+id/snooze_view_snooze_1d"
+                            android:id="@+id/event_view_snooze_1d"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:onClick="onButtonSnoozeClick"
 
-                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingBottom="@dimen/event_view_spacing"
                             android:paddingEnd="30dp"
                             android:paddingStart="30dp"
-                            android:paddingTop="@dimen/snooze_view_spacing"
+                            android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_1_d"
                             android:textAppearance="?android:textAppearanceMedium"
@@ -518,17 +518,17 @@
                             />
 
                         <TextView
-                            android:id="@+id/snooze_view_snooze_minus_5m"
+                            android:id="@+id/event_view_snooze_minus_5m"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:onClick="onButtonSnoozeClick"
 
-                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingBottom="@dimen/event_view_spacing"
                             android:paddingEnd="30dp"
                             android:paddingStart="30dp"
-                            android:paddingTop="@dimen/snooze_view_spacing"
+                            android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/minus_5_m"
                             android:textAppearance="?android:textAppearanceMedium"
@@ -545,8 +545,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/background"
-                    android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
-                    android:paddingTop="@dimen/snooze_view_action_padding_top"
+                    android:paddingBottom="@dimen/event_view_action_padding_bottom"
+                    android:paddingTop="@dimen/event_view_action_padding_top"
                     android:id="@+id/snooze_reschedule_layout"
                     android:visibility="gone">
 
@@ -558,15 +558,15 @@
                         />
 
                     <ImageView
-                        android:id="@+id/snooze_view_move_icon"
+                        android:id="@+id/event_view_move_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:longClickable="false"
                         android:src="@drawable/ic_today_white_24dp"
-                        android:paddingStart="@dimen/snooze_view_img_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_img_padding_end"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingBottom="@dimen/snooze_view_img_topbottom"
+                        android:paddingStart="@dimen/event_view_img_padding_start"
+                        android:paddingEnd="@dimen/event_view_img_padding_end"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingBottom="@dimen/event_view_img_topbottom"
                         android:importantForAccessibility="no"
                         />
 
@@ -577,10 +577,10 @@
                         android:text="@string/change_event_time"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingBottom="@dimen/event_view_spacing"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:background="?android:attr/selectableItemBackground"
                         />
 
@@ -592,10 +592,10 @@
                         android:text="--- SHOW ---"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingBottom="@dimen/event_view_spacing"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:gravity="center"
 
                         android:background="?android:attr/selectableItemBackground"
@@ -604,15 +604,15 @@
                         />
 
                     <LinearLayout
-                        android:id="@+id/snooze_view_snooze_sub_layout_4"
+                        android:id="@+id/event_view_snooze_sub_layout_4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_alignParentEnd="true"
-                        android:layout_toEndOf="@id/snooze_view_move_icon"
+                        android:layout_toEndOf="@id/event_view_move_icon"
                         android:layout_below="@id/snooze_reschedule_for"
 
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:paddingStart="0dp"
                         android:paddingTop="24dp"
                         android:paddingBottom="16dp"
@@ -620,17 +620,17 @@
                         >
 
                         <TextView
-                            android:id="@+id/snooze_view_move_1d"
+                            android:id="@+id/event_view_move_1d"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:onClick="onButtonRescheduleClick"
 
-                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingBottom="@dimen/event_view_spacing"
                             android:paddingEnd="30dp"
                             android:paddingStart="30dp"
-                            android:paddingTop="@dimen/snooze_view_spacing"
+                            android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/next_day"
                             android:textAppearance="?android:textAppearanceMedium"
@@ -638,17 +638,17 @@
                             />
 
                         <TextView
-                            android:id="@+id/snooze_view_move_7d"
+                            android:id="@+id/event_view_move_7d"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:onClick="onButtonRescheduleClick"
 
-                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingBottom="@dimen/event_view_spacing"
                             android:paddingEnd="30dp"
                             android:paddingStart="30dp"
-                            android:paddingTop="@dimen/snooze_view_spacing"
+                            android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/next_week"
                             android:textAppearance="?android:textAppearanceMedium"
@@ -656,17 +656,17 @@
                             />
 
                         <TextView
-                            android:id="@+id/snooze_view_move_30d"
+                            android:id="@+id/event_view_move_30d"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:background="?android:attr/selectableItemBackground"
                             android:clickable="true"
                             android:onClick="onButtonRescheduleClick"
 
-                            android:paddingBottom="@dimen/snooze_view_spacing"
+                            android:paddingBottom="@dimen/event_view_spacing"
                             android:paddingEnd="30dp"
                             android:paddingStart="30dp"
-                            android:paddingTop="@dimen/snooze_view_spacing"
+                            android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/next_month_30d"
                             android:textAppearance="?android:textAppearanceMedium"
@@ -681,7 +681,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/background"
-                    android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
+                    android:paddingBottom="@dimen/event_view_action_padding_bottom"
                     android:paddingTop="32dp"
                     android:id="@+id/debug_details_layout"
                     android:visibility="visible"
@@ -693,10 +693,10 @@
                         android:text="DBG:"
                         android:textAppearance="?android:textAppearanceSmall"
                         android:textColor="@color/secondary_text"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingBottom="@dimen/event_view_spacing"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:background="?android:attr/selectableItemBackground"
                         tools:ignore="HardcodedText" />
 
@@ -707,10 +707,10 @@
                         android:text="none"
                         android:textAppearance="?android:textAppearanceSmall"
                         android:textColor="@color/secondary_text"
-                        android:paddingBottom="@dimen/snooze_view_spacing"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingBottom="@dimen/event_view_spacing"
+                        android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                        android:paddingStart="@dimen/event_view_padding_start"
+                        android:paddingEnd="@dimen/event_view_padding_end"
                         android:background="?android:attr/selectableItemBackground"
                         tools:ignore="HardcodedText" />
 
@@ -730,10 +730,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_layout_margin"
         app:fabSize="mini"
-        app:layout_anchor="@id/snooze_view_event_details_layout"
+        app:layout_anchor="@id/event_view_event_details_layout"
         app:layout_anchorGravity="bottom|start"
         app:srcCompat="@drawable/ic_create_white_24dp"
         android:elevation="@dimen/toolbar_elevation"
-        tools:targetApi="lollipop"/>
+        tools:targetApi="lollipop"
+        android:contentDescription="@string/edit_event" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

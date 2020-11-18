@@ -152,8 +152,8 @@ open class ViewEventActivity : AppCompatActivity() {
 
         val location = event.location;
         if (location != "") {
-            findViewById<View>(R.id.snooze_view_location_layout).visibility = View.VISIBLE;
-            val locationView = findViewById<TextView>(R.id.snooze_view_location)
+            findViewById<View>(R.id.event_view_location_layout).visibility = View.VISIBLE;
+            val locationView = findViewById<TextView>(R.id.event_view_location)
             locationView.text = location;
             locationView.setOnClickListener { MapsIntents.openLocation(this, event.location) }
         }
@@ -187,7 +187,7 @@ open class ViewEventActivity : AppCompatActivity() {
         if (event.desc.isNotEmpty()) {
             // Show the event desc
             findViewById<RelativeLayout>(R.id.layout_event_description).visibility = View.VISIBLE
-            findViewById<TextView>(R.id.snooze_view_event_description).text = event.desc
+            findViewById<TextView>(R.id.event_view_description).text = event.desc
         }
 
         var color: Int = event.color.adjustCalendarColor()
@@ -195,7 +195,7 @@ open class ViewEventActivity : AppCompatActivity() {
             color = ContextCompat.getColor(this, R.color.primary)
 
         val colorDrawable = ColorDrawable(color.invertColor().scaleColor(0.1f))
-        findViewById<RelativeLayout>(R.id.snooze_view_event_details_layout).background = colorDrawable
+        findViewById<RelativeLayout>(R.id.event_view_event_details_layout).background = colorDrawable
         title.setTextColor(ColorStateList.valueOf(color.scaleColor(1.8f)))
 
         window.statusBarColor = color.scaleColor(0.7f)
@@ -278,7 +278,7 @@ open class ViewEventActivity : AppCompatActivity() {
         }
 
 
-        val menuButton = findViewById<ImageView?>(R.id.snooze_view_menu)
+        val menuButton = findViewById<ImageView?>(R.id.event_view_menu)
         menuButton?.setOnClickListener { showDismissEditPopup(menuButton) }
         menuButton?.visibility = View.VISIBLE
     }
@@ -331,7 +331,7 @@ open class ViewEventActivity : AppCompatActivity() {
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onEnableMoveEvent(v: View?) {
         val btnEnable = findViewById<TextView>(R.id.enable_snooze_reschedule)
-        val layout2 = findViewById<LinearLayout>(R.id.snooze_view_snooze_sub_layout_4)
+        val layout2 = findViewById<LinearLayout>(R.id.event_view_snooze_sub_layout_4)
         btnEnable.visibility = View.GONE
         layout2.visibility = View.VISIBLE
     }
@@ -342,12 +342,12 @@ open class ViewEventActivity : AppCompatActivity() {
             return
 
         when (v.id) {
-            R.id.snooze_view_snooze_15m -> snoozeEvent(snoozePresets[0])
-            R.id.snooze_view_snooze_60m -> snoozeEvent(snoozePresets[1])
-            R.id.snooze_view_snooze_240m -> snoozeEvent(snoozePresets[2])
-            R.id.snooze_view_snooze_8h -> snoozeEvent(snoozePresets[3])
-            R.id.snooze_view_snooze_1d -> snoozeEvent(snoozePresets[4])
-            R.id.snooze_view_snooze_minus_5m -> snoozeEvent(snoozePresets[5])
+            R.id.event_view_snooze_15m -> snoozeEvent(snoozePresets[0])
+            R.id.event_view_snooze_60m -> snoozeEvent(snoozePresets[1])
+            R.id.event_view_snooze_240m -> snoozeEvent(snoozePresets[2])
+            R.id.event_view_snooze_8h -> snoozeEvent(snoozePresets[3])
+            R.id.event_view_snooze_1d -> snoozeEvent(snoozePresets[4])
+            R.id.event_view_snooze_minus_5m -> snoozeEvent(snoozePresets[5])
         }
     }
 
@@ -396,11 +396,11 @@ open class ViewEventActivity : AppCompatActivity() {
             return
 
         when (v.id) {
-            R.id.snooze_view_move_1d ->
+            R.id.event_view_move_1d ->
                 confirmAndReschedule(addDays = 1)
-            R.id.snooze_view_move_7d ->
+            R.id.event_view_move_7d ->
                 confirmAndReschedule(addDays = 7)
-            R.id.snooze_view_move_30d ->
+            R.id.event_view_move_30d ->
                 confirmAndReschedule(addDays = 30)
         }
     }
