@@ -322,9 +322,7 @@ data class EventAlertRecord(
     }
 
     val monitorEntryKey: MonitorEventAlertEntryKey
-        get() = MonitorEventAlertEntryKey(
-                alertTime, instanceStartTime, contentMd5.a, contentMd5.b, contentMd5.c, contentMd5.d
-        )
+        get() = MonitorEventAlertEntryKey(alertTime, instanceStartTime, contentMd5)
 
     // not including alertTime, so multiple alerts for the same event would have identical contentMd5
     val contentMd5: md5state by lazy {

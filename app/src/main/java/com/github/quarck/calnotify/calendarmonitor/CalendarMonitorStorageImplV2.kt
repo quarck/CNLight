@@ -129,8 +129,8 @@ class CalendarMonitorStorageImplV2(val context: Context) {
             db.delete(
                     TABLE_NAME,
                     "$KEY_MD5A = ? AND $KEY_MD5B = ? AND $KEY_MD5C = ? AND $KEY_MD5D = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
-                    arrayOf(e.md5a.toString(), e.md5b.toString(),
-                            e.md5c.toString(), e.md5d.toString(),
+                    arrayOf(e.md5.a.toString(), e.md5.b.toString(),
+                            e.md5.c.toString(), e.md5.d.toString(),
                             e.alertTime.toString(), e.instanceStartTime.toString()))
         }
         catch (ex: Exception) {
@@ -163,7 +163,7 @@ class CalendarMonitorStorageImplV2(val context: Context) {
 
             for (alert in alerts) {
                 if (filter(alert)) {
-                    deleteAlert(db, alert.md5a, alert.md5b, alert.md5c, alert.md5d, alert.alertTime, alert.instanceStartTime)
+                    deleteAlert(db, alert.md5.a, alert.md5.b, alert.md5.c, alert.md5.d, alert.alertTime, alert.instanceStartTime)
                 }
             }
 
@@ -183,8 +183,8 @@ class CalendarMonitorStorageImplV2(val context: Context) {
         db.update(TABLE_NAME, // table
                 values, // column/value
                 "$KEY_MD5A = ? AND $KEY_MD5B = ? AND $KEY_MD5C = ? AND $KEY_MD5D = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
-                arrayOf(e.md5a.toString(), e.md5b.toString(),
-                        e.md5c.toString(), e.md5d.toString(),
+                arrayOf(e.md5.a.toString(), e.md5.b.toString(),
+                        e.md5.c.toString(), e.md5.d.toString(),
                         e.alertTime.toString(), e.instanceStartTime.toString())
         )
     }
@@ -204,8 +204,8 @@ class CalendarMonitorStorageImplV2(val context: Context) {
                 db.update(TABLE_NAME, // table
                         values, // column/value
                         "$KEY_MD5A = ? AND $KEY_MD5B = ? AND $KEY_MD5C = ? AND $KEY_MD5D = ? AND $KEY_ALERT_TIME = ? AND $KEY_INSTANCE_START = ?",
-                        arrayOf(e.md5a.toString(), e.md5b.toString(),
-                                e.md5c.toString(), e.md5d.toString(),
+                        arrayOf(e.md5.a.toString(), e.md5.b.toString(),
+                                e.md5.c.toString(), e.md5.d.toString(),
                                 e.alertTime.toString(), e.instanceStartTime.toString()))
             }
 
@@ -488,10 +488,10 @@ class CalendarMonitorStorageImplV2(val context: Context) {
         values.put(KEY_CALENDAR_ID, -1)
         values.put(KEY_ALERT_TIME, entry.alertTime)
         values.put(KEY_INSTANCE_START, entry.instanceStartTime);
-        values.put(KEY_MD5A, entry.md5a)
-        values.put(KEY_MD5B, entry.md5b)
-        values.put(KEY_MD5C, entry.md5c)
-        values.put(KEY_MD5D, entry.md5d)
+        values.put(KEY_MD5A, entry.md5.a)
+        values.put(KEY_MD5B, entry.md5.b)
+        values.put(KEY_MD5C, entry.md5.c)
+        values.put(KEY_MD5D, entry.md5.d)
         values.put(KEY_WE_CREATED_ALERT, if (entry.alertCreatedByUs) 1 else 0)
         values.put(KEY_WAS_HANDLED, if (entry.wasHandled) 1 else 0)
 
@@ -504,13 +504,17 @@ class CalendarMonitorStorageImplV2(val context: Context) {
 
     private fun cursorToRecord(cursor: Cursor): MonitorEventAlertEntry {
 
+        val md5 = md5state (
+                a = cursor.getInt(PROJECTION_KEY_MD5A),
+                b = cursor.getInt(PROJECTION_KEY_MD5B),
+                c = cursor.getInt(PROJECTION_KEY_MD5C),
+                d = cursor.getInt(PROJECTION_KEY_MD5D),
+            )
+
         return MonitorEventAlertEntry(
                 alertTime = cursor.getLong(PROJECTION_KEY_ALERT_TIME),
                 instanceStartTime = cursor.getLong(PROJECTION_KEY_INSTANCE_START),
-                md5a = cursor.getInt(PROJECTION_KEY_MD5A),
-                md5b = cursor.getInt(PROJECTION_KEY_MD5B),
-                md5c = cursor.getInt(PROJECTION_KEY_MD5C),
-                md5d = cursor.getInt(PROJECTION_KEY_MD5D),
+                md5 = md5,
                 alertCreatedByUs = cursor.getInt(PROJECTION_KEY_WE_CREATED_ALERT) != 0,
                 wasHandled = cursor.getInt(PROJECTION_KEY_WAS_HANDLED) != 0
         )

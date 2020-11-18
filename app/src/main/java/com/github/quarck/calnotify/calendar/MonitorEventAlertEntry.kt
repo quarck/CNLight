@@ -24,23 +24,23 @@ import com.github.quarck.calnotify.utils.md5state
 data class MonitorEventAlertEntryKey(
         val alertTime: Long,
         val instanceStartTime: Long,
-        val md5a: Int, val md5b: Int, val md5c: Int, val md5d: Int
+        val md5: md5state
 ) {
     override fun toString(): String {
         val sb = StringBuilder(128)
         sb.append(instanceStartTime/1000L);sb.append(";")
         sb.append((instanceStartTime-alertTime)/1000L);sb.append(";")
         for (i in 0 until 4)
-            sb.append(String.format("%02x", (md5a ushr (i * 8)) and 0xFF))
+            sb.append(String.format("%02x", (md5.a ushr (i * 8)) and 0xFF))
         sb.append(':')
         for (i in 0 until 4)
-            sb.append(String.format("%02x", (md5b ushr (i * 8)) and 0xFF))
+            sb.append(String.format("%02x", (md5.b ushr (i * 8)) and 0xFF))
         sb.append(':')
         for (i in 0 until 4)
-            sb.append(String.format("%02x", (md5c ushr (i * 8)) and 0xFF))
+            sb.append(String.format("%02x", (md5.c ushr (i * 8)) and 0xFF))
         sb.append(':')
         for (i in 0 until 4)
-            sb.append(String.format("%02x", (md5d ushr (i * 8)) and 0xFF))
+            sb.append(String.format("%02x", (md5.d ushr (i * 8)) and 0xFF))
         return sb.toString()
     }
 }
@@ -48,14 +48,14 @@ data class MonitorEventAlertEntryKey(
 data class MonitorEventAlertEntry(
         val alertTime: Long,
         val instanceStartTime: Long,
-        val md5a: Int, val md5b: Int, val md5c: Int, val md5d: Int,
+        val md5: md5state,
         var alertCreatedByUs: Boolean,
         var wasHandled: Boolean // we should keep event alerts for a little bit longer to avoid double
         // alerting when reacting to different notification sources
         // (e.g. calendar provider vs our internal manual handler)
 ) {
     val key: MonitorEventAlertEntryKey
-        get() = MonitorEventAlertEntryKey(alertTime, instanceStartTime, md5a, md5b, md5c, md5d)
+        get() = MonitorEventAlertEntryKey(alertTime, instanceStartTime, md5)
 
     override fun toString(): String {
         val sb = StringBuilder(128)
@@ -70,43 +70,33 @@ data class MonitorEventAlertEntry(
         sb.append(instanceStartTime/1000L);sb.append(";")
         sb.append((instanceStartTime-alertTime)/1000L);sb.append(";")
         for (i in 0 until 4)
-            sb.append(String.format("%02x", (md5a ushr (i * 8)) and 0xFF))
+            sb.append(String.format("%02x", (md5.a ushr (i * 8)) and 0xFF))
         sb.append(':')
         for (i in 0 until 4)
-            sb.append(String.format("%02x", (md5b ushr (i * 8)) and 0xFF))
+            sb.append(String.format("%02x", (md5.b ushr (i * 8)) and 0xFF))
         sb.append(':')
         for (i in 0 until 4)
-            sb.append(String.format("%02x", (md5c ushr (i * 8)) and 0xFF))
+            sb.append(String.format("%02x", (md5.c ushr (i * 8)) and 0xFF))
         sb.append(':')
         for (i in 0 until 4)
-            sb.append(String.format("%02x", (md5d ushr (i * 8)) and 0xFF))
+            sb.append(String.format("%02x", (md5.d ushr (i * 8)) and 0xFF))
         return sb.toString()
     }
 
     fun keyEquals(alertKey: MonitorEventAlertEntryKey) =
             (alertTime == alertKey.alertTime) &&
                     (instanceStartTime == alertKey.instanceStartTime) &&
-                    (md5a == alertKey.md5a) &&
-                    (md5b == alertKey.md5b) &&
-                    (md5c == alertKey.md5c) &&
-                    (md5d == alertKey.md5d)
+                    (md5 == alertKey.md5)
 
     fun keyEquals(other: MonitorEventAlertEntry) =
             (alertTime == other.alertTime) &&
                     (instanceStartTime == other.instanceStartTime) &&
-                    (md5a == other.md5a) &&
-                    (md5b == other.md5b) &&
-                    (md5c == other.md5c) &&
-                    (md5d == other.md5d)
+                    (md5 == other.md5)
 
     fun keyEquals(event: EventAlertRecord): Boolean {
-        val eventContentMd5 = event.contentMd5
         return (alertTime == event.alertTime) &&
                 (instanceStartTime == event.instanceStartTime) &&
-                (md5a == eventContentMd5.a) &&
-                (md5b == eventContentMd5.b) &&
-                (md5c == eventContentMd5.c) &&
-                (md5d == eventContentMd5.d)
+                (md5 == event.contentMd5)
     }
 
     fun detailsChanged(other: MonitorEventAlertEntry) = !keyEquals(other)
@@ -114,22 +104,20 @@ data class MonitorEventAlertEntry(
 
     companion object {
         fun fromEventRecord(event: EventRecord, alertTime: Long, alertCreatedByUs: Boolean=false, wasHandled: Boolean=false): MonitorEventAlertEntry {
-            val md5 : md5state = event.contentMd5
             return MonitorEventAlertEntry(
                     alertTime,
                     event.startTime,
-                    md5.a, md5.b, md5.c, md5.d,
+                    event.contentMd5,
                     alertCreatedByUs,
                     wasHandled
             )
         }
 
         fun fromEventAlertRecord(event: EventAlertRecord, alertCreatedByUs: Boolean=false, wasHandled: Boolean=false): MonitorEventAlertEntry {
-            val md5 : md5state = event.contentMd5
             return MonitorEventAlertEntry(
                     event.alertTime,
                     event.instanceStartTime,
-                    md5.a, md5.b, md5.c, md5.d,
+                    event.contentMd5,
                     alertCreatedByUs,
                     wasHandled
             )
