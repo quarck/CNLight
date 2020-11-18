@@ -12,16 +12,16 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_upcoming"
-        android:name="com.github.quarck.calnotify.ui.MainActivityUpcomingEventsFragment"
-        android:label="@string/upcoming_events"
-        tools:layout="@layout/fragment_upcoming" />
-
-    <fragment
         android:id="@+id/nav_finished"
         android:name="com.github.quarck.calnotify.ui.MainActivityFinishedEventsFragment"
         android:label="@string/finished_events"
         tools:layout="@layout/fragment_finished" />
+
+    <fragment
+        android:id="@+id/nav_upcoming"
+        android:name="com.github.quarck.calnotify.ui.MainActivityUpcomingEventsFragment"
+        android:label="@string/upcoming_events"
+        tools:layout="@layout/fragment_upcoming" />
 
     <fragment
         android:id="@+id/nav_settings"

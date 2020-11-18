@@ -116,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:longClickable="false"
-                android:src="@drawable/baseline_today_white_24dp"
+                android:src="@drawable/ic_today_white_24dp"
                 android:paddingStart="@dimen/add_event_image_start"
                 android:paddingEnd="@dimen/add_event_image_end"
                 android:paddingLeft="@dimen/add_event_image_start"
@@ -168,7 +168,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:longClickable="false"
-                android:src="@drawable/baseline_schedule_white_24dp"
+                android:src="@drawable/ic_schedule_white_24dp"
                 android:paddingStart="@dimen/add_event_image_start"
                 android:paddingEnd="@dimen/add_event_image_end"
                 android:paddingTop="@dimen/add_event_padding_top"
@@ -176,7 +176,7 @@
                 android:importantForAccessibility="no"
                 />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/switch_all_day"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -284,7 +284,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:longClickable="false"
-                android:src="@drawable/baseline_location_searching_white_24dp"
+                android:src="@drawable/ic_location_searching_white_24dp"
                 android:paddingStart="@dimen/add_event_image_start"
                 android:paddingEnd="@dimen/add_event_image_end"
                 android:paddingTop="@dimen/add_event_padding_top"
@@ -336,7 +336,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:longClickable="false"
-                android:src="@drawable/baseline_access_alarm_white_24dp"
+                android:src="@drawable/ic_alarm_white_24dp"
                 android:paddingStart="@dimen/add_event_image_start"
                 android:paddingEnd="@dimen/add_event_image_end"
                 android:paddingTop="@dimen/add_event_padding_top"
@@ -420,7 +420,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:longClickable="false"
-                android:src="@drawable/baseline_event_note_white_24dp"
+                android:src="@drawable/ic_event_note_white_24dp"
                 android:paddingStart="@dimen/add_event_image_start"
                 android:paddingEnd="@dimen/add_event_image_end"
                 android:paddingTop="@dimen/add_event_padding_top"
