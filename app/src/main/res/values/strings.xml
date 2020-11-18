@@ -143,7 +143,7 @@
 
     <string name="hyphen" translatable="false">—</string>
     <string name="no_calendars_found">No calendars found</string>
-    <string name="dismissed">Dismissed</string>
+    <string name="marked_as_done">Complete</string>
     <string name="choose_date">Choose Date</string>
 
     <string name="choose_time" formatted="false">Snoozing until %s\nChoose Time</string>

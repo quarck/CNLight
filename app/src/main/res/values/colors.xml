@@ -29,6 +29,9 @@
     <color name="material_red">#c3362b</color>
     <color name="material_blue">#3f51b8</color>
 
+
+    <color name="complete_event_bg">#03A9e4</color>
+
     <color name="cal_sample_primary">#03A9F4</color>
 
     <color name="quiet_hours_active_text">#FFC107</color>

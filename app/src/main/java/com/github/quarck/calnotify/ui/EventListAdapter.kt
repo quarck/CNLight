@@ -35,7 +35,6 @@ import android.widget.TextView
 import androidx.core.graphics.BlendModeColorFilterCompat
 import androidx.core.graphics.BlendModeCompat
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
@@ -61,42 +60,24 @@ class EventListAdapter(
         : RecyclerView.ViewHolder(itemView) {
         var eventId: Long = 0;
 
-        var eventHolder: RelativeLayout?
-        var eventTitleText: TextView
-        var eventDateText: TextView
-        var eventTimeText: TextView
+        var eventHolder: RelativeLayout? = itemView.findViewById(R.id.card_view_main_holder)
+        var eventTitleText: TextView = itemView.findViewById(R.id.card_view_event_name)
+        var eventDateText: TextView = itemView.findViewById(R.id.card_view_event_date)
+        var eventTimeText: TextView = itemView.findViewById(R.id.card_view_event_time)
 
-        var snoozedUntilText: TextView?
-        val compactViewCalendarColor: View?
+        var snoozedUntilText: TextView? = itemView.findViewById(R.id.card_view_snoozed_until)
+        var undoLayout: RelativeLayout? = itemView.findViewById(R.id.event_card_undo_layout)
 
-        val compactViewContentLayout: RelativeLayout?
-        var undoLayout: RelativeLayout?
+        val compactViewCalendarColor: View? = itemView.findViewById(R.id.compact_view_calendar_color)
+        val compactViewContentLayout: RelativeLayout? = itemView.findViewById(R.id.compact_view_content_layout)
 
-        var undoButton: Button?
+        var undoButton: Button? = itemView.findViewById(R.id.card_view_button_undo)
 
-        val alarmIcon: ImageView?
+        val alarmIcon: ImageView? = itemView.findViewById(R.id.imageview_is_alarm_indicator)
 
-        var calendarColor: ColorDrawable
+        var calendarColor: ColorDrawable = ColorDrawable(0)
 
         init {
-            eventHolder = itemView.findViewById(R.id.card_view_main_holder)
-            eventTitleText = itemView.findViewById(R.id.card_view_event_name)
-
-            eventDateText = itemView.findViewById(R.id.card_view_event_date)
-            eventTimeText = itemView.findViewById(R.id.card_view_event_time)
-            snoozedUntilText = itemView.findViewById(R.id.card_view_snoozed_until)
-
-            undoLayout = itemView.findViewById(R.id.event_card_undo_layout)
-
-            compactViewContentLayout = itemView.findViewById(R.id.compact_view_content_layout)
-            compactViewCalendarColor = itemView.findViewById(R.id.compact_view_calendar_color)
-
-            undoButton = itemView.findViewById(R.id.card_view_button_undo)
-
-            alarmIcon = itemView.findViewById(R.id.imageview_is_alarm_indicator)
-
-            calendarColor = ColorDrawable(0)
-
             val itemClickListener = View.OnClickListener {
                 callback.onItemClick(itemView, adapterPosition, eventId);
             }
@@ -117,9 +98,7 @@ class EventListAdapter(
             onRecycleViewRegistered(_recyclerView)
         }
 
-    private val primaryColor: Int
-    private val changeString: String
-    private val snoozeString: String
+    private val primaryColor: Int = ContextCompat.getColor(context, R.color.primary)
 
     private var currentScrollPosition: Int = 0
 
@@ -130,12 +109,6 @@ class EventListAdapter(
 
     val scrollPosition: Int
         get() = currentScrollPosition
-
-    init {
-        primaryColor = ContextCompat.getColor(context, R.color.primary)
-        changeString = context.resources.getString(R.string.card_view_btn_change);
-        snoozeString = context.resources.getString(R.string.card_view_btn_snooze);
-    }
 
     private fun onRecycleViewRegistered(_recyclerView: RecyclerView?) {
 
@@ -155,15 +128,17 @@ class EventListAdapter(
         val itemTouchCallback =
                 object : ItemTouchHelper.Callback() {
 
-                    internal val escapeVelocityMultiplier = 5.0f
+                    val escapeVelocityMultiplier = 5.0f
 
-                    internal val background = ColorDrawable(ContextCompat.getColor(context, R.color.material_red))
-                    internal var xMark = ContextCompat.getDrawable(context, R.drawable.ic_clear_white_24dp) ?: throw Exception("Now x-mark")
-                    internal var xMarkMargin = context.resources.getDimension(R.dimen.ic_clear_margin).toInt()
+                    val background = ColorDrawable(ContextCompat.getColor(context, R.color.complete_event_bg))
+                    var vMark = (ContextCompat.getDrawable(context, R.drawable.ic_check_white_24dp) ?: throw Exception("Now v-mark"))
+                                .apply{
+                                    colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                                            ContextCompat.getColor(context, R.color.icons), BlendModeCompat.SRC_ATOP)
+                                }
 
-                    init {
-                        xMark.setColorFilter(BlendModeColorFilterCompat.createBlendModeColorFilterCompat(Color.WHITE, BlendModeCompat.SRC_ATOP))
-                    }
+                    var vMarkMargin = context.resources.getDimension(R.dimen.ic_clear_margin).toInt()
+                    var bgMargin = context.resources.getDimension(R.dimen.swipe_bg_margin).toInt()
 
                     override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
                         val position = viewHolder.adapterPosition
@@ -244,33 +219,43 @@ class EventListAdapter(
                             return
 
                         if (dX < 0)
-                            background.setBounds(itemView.right + dX.toInt(), itemView.top, itemView.right, itemView.bottom)
+                            background.setBounds(
+                                    itemView.right + dX.toInt() + bgMargin,
+                                    itemView.top + bgMargin,
+                                    itemView.right - bgMargin,
+                                    itemView.bottom - bgMargin
+                            )
                         else
-                            background.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
+                            background.setBounds(
+                                    itemView.left + bgMargin,
+                                    itemView.top + bgMargin,
+                                    itemView.left + (dX.toInt() - bgMargin).coerceAtLeast(0),
+                                    itemView.bottom - bgMargin
+                            )
 
                         background.draw(c)
 
                         val itemHeight = itemView.bottom - itemView.top
-                        val intrinsicWidth = xMark.intrinsicWidth
-                        val intrinsicHeight = xMark.intrinsicWidth
+                        val intrinsicWidth = vMark.intrinsicWidth
+                        val intrinsicHeight = vMark.intrinsicWidth
 
 
                         if (dX < 0) {
-                            val xMarkLeft = itemView.right - xMarkMargin - intrinsicWidth
-                            val xMarkRight = itemView.right - xMarkMargin
-                            val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
-                            val xMarkBottom = xMarkTop + intrinsicHeight
-                            xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+                            val vMarkLeft = itemView.right - vMarkMargin - intrinsicWidth
+                            val vMarkRight = itemView.right - vMarkMargin
+                            val vMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                            val vMarkBottom = vMarkTop + intrinsicHeight
+                            vMark.setBounds(vMarkLeft, vMarkTop, vMarkRight, vMarkBottom)
                         }
                         else {
-                            val xMarkLeft = itemView.left + xMarkMargin
-                            val xMarkRight = itemView.left + xMarkMargin + intrinsicWidth
-                            val xMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
-                            val xMarkBottom = xMarkTop + intrinsicHeight
-                            xMark.setBounds(xMarkLeft, xMarkTop, xMarkRight, xMarkBottom)
+                            val vMarkLeft = itemView.left + vMarkMargin
+                            val vMarkRight = itemView.left + vMarkMargin + intrinsicWidth
+                            val vMarkTop = itemView.top + (itemHeight - intrinsicHeight) / 2
+                            val vMarkBottom = vMarkTop + intrinsicHeight
+                            vMark.setBounds(vMarkLeft, vMarkTop, vMarkRight, vMarkBottom)
                         }
 
-                        xMark.draw(c)
+                        vMark.draw(c)
 
                         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
                     }
@@ -298,13 +283,9 @@ class EventListAdapter(
 
             holder.undoButton?.setOnClickListener {
                 _ ->
-
                 callback.onItemRestored(event)
-
                 pendingEventRemoveRunnables.remove(eventKey)
-
                 eventsPendingRemoval.remove(eventKey)
-
                 notifyItemChanged(events.indexOf(event))
             }
         }

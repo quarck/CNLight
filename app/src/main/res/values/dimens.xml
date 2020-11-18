@@ -8,6 +8,7 @@
 
     <!-- Compact view - 'dismissed' view - 'x' icon margin -->
     <dimen name="ic_clear_margin">25dp</dimen>
+    <dimen name="swipe_bg_margin">2dp</dimen>
 
     <!--  amount to scroll on the main activity until 'undo' layout hides itself, in dp-s -->
     <dimen name="undo_dismiss_sensitivity">160dp</dimen>

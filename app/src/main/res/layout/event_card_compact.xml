@@ -124,14 +124,14 @@
         android:id="@+id/event_card_undo_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/compact_view_layout_height"
-        android:background="@color/material_red"
+        android:background="@color/complete_event_bg"
         android:visibility="gone"
         >
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/dismissed"
+            android:text="@string/marked_as_done"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/icons"
             android:layout_centerVertical="true"
@@ -163,7 +163,6 @@
         android:layout_height="0.25dp"
         android:background="@color/light_divider"
         android:layout_alignParentBottom="true"/>
-
 
 </RelativeLayout>
 
