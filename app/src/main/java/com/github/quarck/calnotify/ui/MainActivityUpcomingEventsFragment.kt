@@ -32,10 +32,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.CalendarProvider
-import com.github.quarck.calnotify.calendar.EventAlertRecord
-import com.github.quarck.calnotify.calendar.EventFinishType
-import com.github.quarck.calnotify.calendar.MonitorDataPair
+import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.adjustCalendarColor
@@ -110,11 +107,13 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
                         CalendarProvider
                                 .getEventAlertsForInstancesInRange(activity, from, to)
                                 .filter {
-                                    it.monitorEntry.alertTime >= from
+                                    it.alertTime >= from
                                 }
                                 .map {
-                                    val newMonitorEntry = monitorEntries.getOrElse(it.monitorEntry.key, {it.monitorEntry})
-                                    MonitorDataPair(newMonitorEntry, it.eventEntry)
+                                    ev ->
+                                    val monitorEntry = monitorEntries.getOrElse(
+                                            ev.monitorEntryKey, { MonitorEventAlertEntry.fromEventAlertRecord(ev) })
+                                    MonitorDataPair(monitorEntry, ev)
                                 }
                                 .sortedBy { it -> it.eventEntry.instanceStartTime }
                                 .toMutableList()

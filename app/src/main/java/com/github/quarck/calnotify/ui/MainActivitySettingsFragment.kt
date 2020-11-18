@@ -24,7 +24,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
@@ -69,8 +68,8 @@ class MainActivitySettingsFragment : Fragment() {
                 }
 
                 switch(R.string.handle_events_with_no_reminders, R.string.handle_events_with_no_reminders_summary) {
-                    initial(settings.shouldRemindForEventsWithNoReminders)
-                    onChange{settings.shouldRemindForEventsWithNoReminders = it}
+                    initial(settings.handleEventsWithNoReminders)
+                    onChange{settings.handleEventsWithNoReminders = it}
 
                     depending {
 
@@ -78,8 +77,8 @@ class MainActivitySettingsFragment : Fragment() {
                             DefaultManualNotificationPreference(
                                     ctx,
                                     layoutInflater,
-                                    settings.defaultReminderTimeForEventWithNoReminderMinutes,
-                                    { settings.defaultReminderTimeForEventWithNoReminderMinutes = it }
+                                    settings.defaultReminderTimeMinutes,
+                                    { settings.defaultReminderTimeMinutes = it }
                             ).create().show()
                         }
 
@@ -87,8 +86,8 @@ class MainActivitySettingsFragment : Fragment() {
                             DefaultManualAllDayNotificationPreference(
                                     ctx,
                                     layoutInflater,
-                                    settings.defaultReminderTimeForAllDayEventWithNoreminderMinutes,
-                                    { settings.defaultReminderTimeForAllDayEventWithNoreminderMinutes = it }
+                                    settings.defaultAllDayReminderTimeMinutes,
+                                    { settings.defaultAllDayReminderTimeMinutes = it }
                             ).create().show()
                         }
                     }

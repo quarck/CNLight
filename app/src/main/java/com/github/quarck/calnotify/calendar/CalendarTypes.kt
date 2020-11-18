@@ -317,6 +317,15 @@ data class EventAlertRecord(
         var timeFirstSeen: Long = 0L,
         var flags: Long = 0
 ) {
+    fun monitorEntryKeyEquas(monitorEventAlertEntry: MonitorEventAlertEntry): Boolean {
+        return monitorEventAlertEntry.keyEquals(this)
+    }
+
+    val monitorEntryKey: MonitorEventAlertEntryKey
+        get() = MonitorEventAlertEntryKey(
+                alertTime, instanceStartTime, contentMd5.a, contentMd5.b, contentMd5.c, contentMd5.d
+        )
+
     // not including alertTime, so multiple alerts for the same event would have identical contentMd5
     val contentMd5: md5state by lazy {
         eventContentHash(

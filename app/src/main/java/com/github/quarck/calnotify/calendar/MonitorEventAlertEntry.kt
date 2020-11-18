@@ -20,7 +20,6 @@
 package com.github.quarck.calnotify.calendar
 
 import com.github.quarck.calnotify.utils.md5state
-import com.github.quarck.calnotify.utils.toHexString
 
 data class MonitorEventAlertEntryKey(
         val alertTime: Long,
@@ -84,7 +83,7 @@ data class MonitorEventAlertEntry(
         return sb.toString()
     }
 
-    fun keyEquas(alertKey: MonitorEventAlertEntryKey) =
+    fun keyEquals(alertKey: MonitorEventAlertEntryKey) =
             (alertTime == alertKey.alertTime) &&
                     (instanceStartTime == alertKey.instanceStartTime) &&
                     (md5a == alertKey.md5a) &&
@@ -92,7 +91,7 @@ data class MonitorEventAlertEntry(
                     (md5c == alertKey.md5c) &&
                     (md5d == alertKey.md5d)
 
-    fun keyEquas(other: MonitorEventAlertEntry) =
+    fun keyEquals(other: MonitorEventAlertEntry) =
             (alertTime == other.alertTime) &&
                     (instanceStartTime == other.instanceStartTime) &&
                     (md5a == other.md5a) &&
@@ -100,7 +99,17 @@ data class MonitorEventAlertEntry(
                     (md5c == other.md5c) &&
                     (md5d == other.md5d)
 
-    fun detailsChanged(other: MonitorEventAlertEntry) = !keyEquas(other)
+    fun keyEquals(event: EventAlertRecord): Boolean {
+        val eventContentMd5 = event.contentMd5
+        return (alertTime == event.alertTime) &&
+                (instanceStartTime == event.instanceStartTime) &&
+                (md5a == eventContentMd5.a) &&
+                (md5b == eventContentMd5.b) &&
+                (md5c == eventContentMd5.c) &&
+                (md5d == eventContentMd5.d)
+    }
+
+    fun detailsChanged(other: MonitorEventAlertEntry) = !keyEquals(other)
 
 
     companion object {
@@ -130,7 +139,7 @@ data class MonitorEventAlertEntry(
 
 data class MonitorDataPair(val monitorEntry: MonitorEventAlertEntry, val eventEntry: EventAlertRecord) {
     companion object {
-        fun fromEventAlertRecord(event: EventAlertRecord, alertCreatedByUs: Boolean, wasHandled: Boolean): MonitorDataPair {
+        fun fromEventAlertRecord(event: EventAlertRecord, alertCreatedByUs: Boolean = true, wasHandled: Boolean = false): MonitorDataPair {
             return MonitorDataPair(
                     MonitorEventAlertEntry.fromEventAlertRecord(event, alertCreatedByUs, wasHandled),
                     event

@@ -1105,15 +1105,15 @@ object CalendarProvider  {
 
         val settings = Settings(context)
 
-        val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
+        val shouldRemindForEventsWithNoReminders = settings.handleEventsWithNoReminders
 
         val notifyOnEmailOnlyEvents = settings.notifyOnEmailOnlyEvents
 
         val defaultReminderTimeForEventWithNoReminder =
-                settings.defaultReminderTimeForEventWithNoReminderMillis
+                settings.defaultReminderTime
 
         val defaultReminderTimeForAllDayEventWithNoreminder =
-                settings.defaultReminderTimeForAllDayEventWithNoreminderMillis
+                settings.defaultAllDayReminderTime
 
         try {
             val timezone = TimeZone.getDefault()
@@ -1196,9 +1196,10 @@ object CalendarProvider  {
     fun getEventAlertsForInstancesInRange(
             context: Context,
             instanceFrom: Long,
-            instanceTo: Long
-    ): List<MonitorDataPair> {
-        val ret = arrayListOf<MonitorDataPair>()
+            instanceTo: Long,
+            eventId: Long? = null
+    ): List<EventAlertRecord> {
+        val ret = arrayListOf<EventAlertRecord>()
 
         if (!PermissionsManager.hasReadCalendar(context)) {
             DevLog.error(LOG_TAG, "getEventAlertsForInstancesInRange: no permissions")
@@ -1209,22 +1210,15 @@ object CalendarProvider  {
 
         val handledCalendars = getHandledCalendarsIds(context, settings)
 
-        val shouldRemindForEventsWithNoReminders = settings.shouldRemindForEventsWithNoReminders
-
+        val handleEventsWithNoReminders = settings.handleEventsWithNoReminders
         val notifyOnEmailOnlyEvents = settings.notifyOnEmailOnlyEvents
-
-        val defaultReminderTimeForEventWithNoReminder =
-                settings.defaultReminderTimeForEventWithNoReminderMillis
-
-        val defaultReminderTimeForAllDayEventWithNoreminder =
-                settings.defaultReminderTimeForAllDayEventWithNoreminderMillis
+        val defaultReminderTime = settings.defaultReminderTime
+        val defaultAllDayReminderTime = settings.defaultAllDayReminderTime
 
         try {
             val timezone = TimeZone.getDefault()
 
             DevLog.info(LOG_TAG, "getEventAlertsForInstancesInRange: Manual alerts scan started, range: from $instanceFrom to $instanceTo")
-
-            val intermitEvents = arrayListOf<EventAlertRecord>()
 
             val scanStart = System.currentTimeMillis()
 
@@ -1237,114 +1231,56 @@ object CalendarProvider  {
                     )
 
             if (instanceCursor != null && instanceCursor.moveToFirst()) {
-
                 do {
-                    val alert = cursorToEventInstance(instanceCursor)
-                    if (alert == null) {
+                    val event = cursorToEventInstance(instanceCursor)
+                    if (event == null) {
                         DevLog.info(LOG_TAG, "Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
                         continue
                     }
 
-                    if (!handledCalendars.contains(alert.calendarId) || alert.calendarId == -1L) {
-                        DevLog.info(LOG_TAG, "Event id ${alert.eventId} / calId ${alert.calendarId} - not handling")
+                    if (!handledCalendars.contains(event.calendarId) || event.calendarId == -1L) {
+                        DevLog.info(LOG_TAG, "Event id ${event.eventId} / calId ${event.calendarId} - not handling")
                         continue
                     }
 
-                    if (alert.instanceStartTime < instanceFrom) {
-                        DevLog.debug(LOG_TAG, "Event id ${alert.eventId}: instanceStart ${alert.instanceStartTime} is actully before instanceFrom $instanceFrom, skipping")
+                    if (event.instanceStartTime < instanceFrom) {
+                        DevLog.debug(LOG_TAG, "Event id ${event.eventId}: instanceStart ${event.instanceStartTime} is actully before instanceFrom $instanceFrom, skipping")
                         continue
                     }
 
-                    intermitEvents.add(alert)
+                    if (eventId != null && eventId != event.eventId) {
+                        // looking for alerts for a particular eventid - skip everything else
+                        continue
+                    }
+
+                    val reminders = getEventReminders(context, event.eventId)
+                            .filter { it.method != CalendarContract.Reminders.METHOD_SMS }
+                            .map { Pair(it.method != CalendarContract.Reminders.METHOD_EMAIL, it.millisecondsBefore) }
+                            .toTypedArray()
+
+                    val hasLocalReminders = reminders.any{ it -> it.first }
+                    var addedAnyReminders = false
+                    for ((isLocal, reminderTime) in reminders) {
+                        if (!isLocal && (hasLocalReminders || !notifyOnEmailOnlyEvents)) {
+                            continue
+                        }
+                        val utcOffset = if (event.isAllDay) timezone.getOffset(event.instanceStartTime) else 0
+                        ret.add(event.copy(alertTime = event.instanceStartTime - reminderTime - utcOffset))
+                        addedAnyReminders = true
+                    }
+
+                    if (!addedAnyReminders && handleEventsWithNoReminders) {
+                        val reminderOffset =
+                                if (!event.isAllDay)
+                                    defaultReminderTime
+                                else
+                                    timezone.getOffset(event.instanceStartTime) - defaultAllDayReminderTime
+                        val alertTime = event.instanceStartTime - reminderOffset
+                        DevLog.debug(LOG_TAG, "Manual reminder for event ${event.eventId}, offset: ${reminderOffset/1000L/60L}m")
+                        ret.add(event.copy(alertTime = alertTime))
+                    }
 
                 } while (instanceCursor.moveToNext())
-
-                val knownReminders =
-                        intermitEvents.map { it.eventId }.toSet().map {
-                                eventId ->
-                                eventId to
-                                    getEventReminders(context, eventId)
-                                            .filter {
-                                                it.method != CalendarContract.Reminders.METHOD_SMS
-                                            }
-                                            .map {
-                                                Pair(
-                                                        it.method != CalendarContract.Reminders.METHOD_EMAIL,
-                                                        it.millisecondsBefore
-                                                )
-                                            }
-                                            .toTypedArray()
-                            }
-                            .toMap()
-
-                for (evt in intermitEvents) {
-                    val reminders = knownReminders[evt.eventId] // getEventLocalReminders(context, eventId);
-
-                    var hasAnyReminders = false
-                    var hasNonLocalReminders = false
-
-                    if (reminders != null)
-                        for ((isLocal, reminderTime) in reminders) {
-
-                            if (!isLocal) {
-                                hasNonLocalReminders = true
-                                continue
-                            }
-
-                            //DevLog.debug(context, LOG_TAG, "Event ${evt.eventId}, reminder time: $reminderTime")
-
-                            var utcOffset = 0
-
-                            if (evt.isAllDay) {
-                                utcOffset = timezone.getOffset(evt.instanceStartTime)
-                                DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset" +
-                                        " $utcOffset applied to ${evt.instanceStartTime} - $reminderTime")
-                            }
-
-                            val entry = MonitorDataPair.fromEventAlertRecord(
-                                    evt.copy(alertTime = evt.instanceStartTime - reminderTime - utcOffset),
-                                    false,
-                                    false
-                            )
-
-                            ret.add(entry)
-                            hasAnyReminders = true
-                        }
-
-                    var shouldAddManualReminder = false
-
-                    // has no reminders and we should notify about such requests
-                    if (!hasAnyReminders && shouldRemindForEventsWithNoReminders) {
-
-                        // it also has no remote (email) reminders or we were configured to notify on such requests
-                        if (!hasNonLocalReminders || notifyOnEmailOnlyEvents) {
-                            shouldAddManualReminder = true
-                        }
-                    }
-
-                    if (shouldAddManualReminder) {
-
-                        val alertTime =
-                                if (evt.isAllDay) {
-                                    evt.instanceStartTime - defaultReminderTimeForEventWithNoReminder
-                                } else {
-                                    val utcOffset = timezone.getOffset(evt.instanceStartTime)
-                                    DevLog.debug(LOG_TAG, "Event id ${evt.eventId}, UTC offset " +
-                                            "$utcOffset applied to ${evt.instanceStartTime} -" +
-                                            " $defaultReminderTimeForAllDayEventWithNoreminder")
-                                    evt.instanceStartTime + defaultReminderTimeForAllDayEventWithNoreminder - utcOffset
-                                }
-
-                        val entry = MonitorDataPair.fromEventAlertRecord(
-                                evt.copy(alertTime = alertTime),
-                                true,
-                                false
-                        )
-
-                        ret.add(entry)
-                    }
-                }
-
             }
 
             instanceCursor?.close()
@@ -1360,4 +1296,10 @@ object CalendarProvider  {
         return ret
     }
 
+
+    fun getEventAlertsForInstanceAt(
+            context: Context,
+            instanceStartTime: Long,
+            eventId: Long? = null
+    ) = getEventAlertsForInstancesInRange(context, instanceStartTime, instanceStartTime + 1, eventId)
 }

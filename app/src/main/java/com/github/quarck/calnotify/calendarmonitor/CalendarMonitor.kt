@@ -319,27 +319,24 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
     fun alertToMonitorEntry(context: Context, alert: MonitorEventAlertEntry): MonitorDataPair? {
 
-        var ev: MonitorDataPair? = null
-
         for (range in alertToMonitorEntrySearchRanges) {
-            ev = calendarProvider.getEventAlertsForInstancesInRange(
+            val ev = calendarProvider.getEventAlertsForInstancesInRange(
                     context = context,
                     instanceFrom = alert.instanceStartTime - range,
                     instanceTo = alert.instanceStartTime + range
-            ).firstOrNull{ e -> e.monitorEntry.keyEquas(alert) }
+            ).firstOrNull{ e -> alert.keyEquals(e) }
 
             if (ev != null)
-                break
+                return MonitorDataPair.fromEventAlertRecord(ev)
 
             DevLog.error(LOG_TAG, "Error: failed to find event for alert $alert while using range $range")
         }
 
-        if (ev == null) {
-            DevLog.error(LOG_TAG, "!!!! ERROR ERROR ERROR!!!! : alertToMonitorEntry: failed to find event for alert $alert AFTER WIDE RANGE ATTEMPT!!! ")
-            DevLog.error(LOG_TAG, "!!!! ERROR ERROR ERROR!!!! : alertToMonitorEntry: failed to find event for alert $alert AFTER WIDE RANGE ATTEMPT!!! ")
-            DevLog.error(LOG_TAG, "!!!! ERROR ERROR ERROR!!!! : alertToMonitorEntry: failed to find event for alert $alert AFTER WIDE RANGE ATTEMPT!!! ")
-        }
-        return ev
+        DevLog.error(LOG_TAG, "!!!! ERROR ERROR ERROR!!!! : alertToMonitorEntry: failed to find event for alert $alert AFTER WIDE RANGE ATTEMPT!!! ")
+        DevLog.error(LOG_TAG, "!!!! ERROR ERROR ERROR!!!! : alertToMonitorEntry: failed to find event for alert $alert AFTER WIDE RANGE ATTEMPT!!! ")
+        DevLog.error(LOG_TAG, "!!!! ERROR ERROR ERROR!!!! : alertToMonitorEntry: failed to find event for alert $alert AFTER WIDE RANGE ATTEMPT!!! ")
+
+        return null
     }
 
     fun alertListIntoMonitorPairsList(context: Context, alertList: List<MonitorEventAlertEntry>): List<MonitorDataPair> =
@@ -580,6 +577,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
         val firstScanEver = state.firstScanEver
 
         val alerts = calendarProvider.getEventAlertsForInstancesInRange(context, scanFrom, scanTo)
+                .map{ MonitorDataPair.fromEventAlertRecord(it) }
         val alertsMerged =
                 filterAndMergeAlerts(context, alerts, scanFrom, scanTo).sortedBy { it.first.alertTime }
 

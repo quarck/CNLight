@@ -126,14 +126,14 @@ open class ViewEventActivity : AppCompatActivity() {
                 event = dbEvent
             }
         } else {
-            val calEvents = CalendarProvider.getEventAlertsForInstancesInRange(this, instanceStartTime, instanceStartTime+1)
-            val calEvent = calEvents.firstOrNull { it -> it.eventEntry.eventId == eventId && it.eventEntry.alertTime == alertTime }
+            val calEvent = CalendarProvider.getEventAlertsForInstanceAt(this, instanceStartTime, eventId)
+                    .firstOrNull { it.alertTime == alertTime }
             if (calEvent == null) {
                 DevLog.error(LOG_TAG, "ViewActivity started for non-existing eveng id $eventId, st $instanceStartTime")
                 finish()
                 return
             }
-            event = calEvent.eventEntry
+            event = calEvent
         }
 
         calendar = calendarProvider.getCalendarById(this, event.calendarId)
@@ -203,15 +203,18 @@ open class ViewEventActivity : AppCompatActivity() {
 
         window.statusBarColor = color.scaleColor(0.7f)
 
-        val shouldOfferMove = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
-        if (shouldOfferMove) {
-            findViewById<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
-            if (event.isRepeating) {
-                findViewById<TextView>(R.id.snooze_reschedule_for).text = getString(R.string.change_event_time_repeating_event)
+        if (!viewForFutureEvent) {
+            val shouldOfferMove = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
+            if (shouldOfferMove) {
+                findViewById<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
+                if (event.isRepeating) {
+                    findViewById<TextView>(R.id.snooze_reschedule_for).text = getString(R.string.change_event_time_repeating_event)
+                }
             }
-        }
-        else {
-            findViewById<View?>(R.id.snooze_view_inter_view_divider)?.visibility = View.GONE
+            findViewById<RelativeLayout>(R.id.snooze_layout).visibility = View.VISIBLE
+        } else {
+            findViewById<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.GONE
+            findViewById<RelativeLayout>(R.id.snooze_layout).visibility = View.GONE
         }
 
         if (event.snoozedUntil != 0L) {
@@ -235,6 +238,8 @@ open class ViewEventActivity : AppCompatActivity() {
             }
         }
 
+        findViewById<TextView>(R.id.debug_details_line)?.text =
+                "RRULE: ${event.rRule}\nRDATE: ${event.rDate}\nEXRRULE: ${event.exRRule}\nEXRDATE: ${event.exRDate}"
 
         val fab = findViewById<FloatingActionButton>(R.id.floating_edit_button)
 
