@@ -56,7 +56,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:minLines="2"
-                    android:id="@+id/snooze_view_title"
+                    android:id="@+id/event_view_title"
                     android:text="Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. "
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textSize="19sp"
@@ -132,50 +132,33 @@
                         />
 
                     <TextView
+                        android:id="@+id/event_view_date_line"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_event_date_line1"
+                        android:paddingStart="@dimen/snooze_view_padding_start"
+                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
                         android:text="Tomorrow"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:clickable="true"
-                        tools:ignore="HardcodedText"
-                        android:focusable="true" />
+                        tools:ignore="HardcodedText" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_event_date_line2"
-                        android:text="22:00 - 23:00"
+                        android:id="@+id/event_view_recurrence"
+                        android:text="Repeats every 10 minutes when the moon is high"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/primary_text"
                         android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
                         android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
                         android:paddingStart="@dimen/snooze_view_padding_start"
                         android:paddingEnd="@dimen/snooze_view_padding_end"
-                        android:layout_below="@id/snooze_view_event_date_line1"
-                        android:clickable="true"
-                        tools:ignore="HardcodedText"
-                        android:focusable="true" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Snoozed until: 21 June 2999 18:00"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/secondary_text"
-                        android:gravity="start|bottom"
-                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
-                        android:paddingStart="@dimen/snooze_view_padding_start"
-                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:layout_below="@id/event_view_date_line"
                         android:visibility="gone"
-                        android:layout_below="@id/snooze_view_event_date_line2"
-                        tools:ignore="HardcodedText"/>
+                        tools:ignore="HardcodedText"
+                        />
 
                 </RelativeLayout>
 
@@ -187,13 +170,14 @@
                     android:paddingTop="0dp"
                     android:visibility="visible"
                     >
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/view_event_calendar_name"
                         android:text="__CALENDAR_NAME__"
                         android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
+                        android:textColor="@color/secondary_text"
                         android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
                         android:paddingTop="0dp"
                         android:paddingStart="@dimen/snooze_view_padding_start"
@@ -221,7 +205,6 @@
 
                 </RelativeLayout>
 
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -231,19 +214,47 @@
                     android:id="@+id/layout_next_reminder"
                     android:visibility="gone"
                     >
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:longClickable="false"
+                        android:src="@drawable/ic_alarm_white_24dp"
+                        android:paddingStart="@dimen/snooze_view_img_padding_start"
+                        android:paddingEnd="@dimen/snooze_view_img_padding_end"
+                        android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingBottom="10dp"
+                        android:importantForAccessibility="no"
+                        />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/snooze_view_next_reminder"
-                        android:text="Next reminder: 18:49 tomorrow"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/secondary_text"
+                        android:id="@+id/event_view_reminders"
+                        android:text="15 minutes before\n15 minutes before as email"
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textColor="@color/primary_text"
                         android:gravity="start|bottom"
                         android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
                         android:paddingTop="0dp"
                         android:paddingStart="@dimen/snooze_view_padding_start"
                         android:paddingEnd="@dimen/snooze_view_padding_end"
                         android:layout_alignParentTop="true"
+                        android:visibility="visible"
+                        tools:ignore="HardcodedText"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/event_view_next_reminder"
+                        android:text="Next reminder: 18:49 tomorrow"
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textColor="@color/secondary_text"
+                        android:gravity="start|bottom"
+                        android:paddingBottom="@dimen/snooze_view_in_text_vert_padding"
+                        android:paddingTop="0dp"
+                        android:paddingStart="@dimen/snooze_view_padding_start"
+                        android:paddingEnd="@dimen/snooze_view_padding_end"
+                        android:layout_below="@id/event_view_reminders"
                         android:visibility="gone"
                         tools:ignore="HardcodedText"/>
 
@@ -671,24 +682,17 @@
                     android:layout_height="wrap_content"
                     android:background="@color/background"
                     android:paddingBottom="@dimen/snooze_view_action_padding_bottom"
-                    android:paddingTop="@dimen/snooze_view_action_padding_top"
+                    android:paddingTop="32dp"
                     android:id="@+id/debug_details_layout"
                     android:visibility="visible"
                     android:orientation="vertical">
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/divider"
-                        android:padding="0dp"
-                        />
-
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="DEBUG_DETAILS:"
-                        android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/primary_text"
+                        android:text="DBG:"
+                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textColor="@color/secondary_text"
                         android:paddingBottom="@dimen/snooze_view_spacing"
                         android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
                         android:paddingStart="@dimen/snooze_view_padding_start"
@@ -702,7 +706,7 @@
                         android:id="@+id/debug_details_line"
                         android:text="none"
                         android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@color/primary_text"
+                        android:textColor="@color/secondary_text"
                         android:paddingBottom="@dimen/snooze_view_spacing"
                         android:paddingTop="@dimen/snooze_view_in_text_vert_padding"
                         android:paddingStart="@dimen/snooze_view_padding_start"

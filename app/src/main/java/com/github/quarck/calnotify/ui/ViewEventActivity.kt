@@ -20,15 +20,12 @@
 package com.github.quarck.calnotify.ui
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import android.text.format.DateUtils
 import android.view.View
 import android.widget.*
 import com.github.quarck.calnotify.app.*
@@ -38,14 +35,15 @@ import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.maps.MapsIntents
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.*
-import java.util.*
 import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
+import android.provider.CalendarContract
 import androidx.core.content.ContextCompat
 import android.text.method.ScrollingMovementMethod
 import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
+import java.lang.StringBuilder
 
 // TODO: add repeating rule and calendar name somewhere on the snooze activity
 
@@ -160,25 +158,9 @@ open class ViewEventActivity : AppCompatActivity() {
             locationView.setOnClickListener { MapsIntents.openLocation(this, event.location) }
         }
 
-        val title = findViewById<TextView>(R.id.snooze_view_title)
+        // title
+        val title = findViewById<TextView>(R.id.event_view_title)
         title.text = if (event.title.isNotEmpty()) event.title else this.resources.getString(R.string.empty_title);
-
-        val (line1, line2) = formatter.formatDateTimeTwoLines(event);
-
-        val dateTimeFirstLine = findViewById<TextView>(R.id.snooze_view_event_date_line1)
-        val dateTimeSecondLine = findViewById<TextView>(R.id.snooze_view_event_date_line2)
-
-        dateTimeFirstLine.text = line1;
-
-        if (line2.isEmpty())
-            dateTimeSecondLine.visibility = View.GONE
-        else
-            dateTimeSecondLine.text = line2;
-
-        dateTimeFirstLine.isClickable = false
-        dateTimeSecondLine.isClickable = false
-        title.isClickable = false
-
         title.setMovementMethod(ScrollingMovementMethod())
         title.post {
             val y = title.getLayout()?.getLineTop(0)
@@ -186,6 +168,21 @@ open class ViewEventActivity : AppCompatActivity() {
                 title.scrollTo(0, y)
         }
         title.setTextIsSelectable(true)
+
+        // date
+        val (line1, line2) = formatter.formatDateTimeTwoLines(event);
+        val dateTimeFirstLine = findViewById<TextView>(R.id.event_view_date_line)
+        if (line2.isEmpty())
+            dateTimeFirstLine.text = line1
+        else
+            dateTimeFirstLine.text = String.format("%s  /  %s", line1, line2)
+
+        // recurrence
+        if (event.rRule.isNotBlank() || event.rDate.isNotBlank()) {
+            val recurrence = findViewById<TextView>(R.id.event_view_recurrence)
+            recurrence.visibility = View.VISIBLE
+            recurrence.text = if (event.rDate.isBlank()) event.rRule else event.rRule + "/" + event.rDate
+        }
 
         if (event.desc.isNotEmpty()) {
             // Show the event desc
@@ -218,23 +215,31 @@ open class ViewEventActivity : AppCompatActivity() {
         }
 
         if (event.snoozedUntil != 0L) {
-            findViewById<TextView>(R.id.snooze_snooze_for).text = resources.getString(R.string.change_snooze_to)
+            findViewById<TextView>(R.id.snooze_snooze_for)?.text = resources.getString(R.string.change_snooze_to)
         }
 
-        val nextReminderLayout: RelativeLayout? = findViewById<RelativeLayout>(R.id.layout_next_reminder)
-        val nextReminderText: TextView? = findViewById<TextView>(R.id.snooze_view_next_reminder)
+        val reminders: List<EventReminderRecord> = calendarProvider.getEventReminders(this, event.eventId)
+        if (reminders.isNotEmpty()) {
+            findViewById<RelativeLayout>(R.id.layout_next_reminder).visibility = View.VISIBLE
 
-        if (nextReminderLayout != null && nextReminderText != null) {
+            val textReminders = StringBuilder()
+            for (reminder: EventReminderRecord in reminders) {
+                textReminders.append(formatter.formatTimeDuration(reminder.millisecondsBefore))
+                textReminders.append(when (reminder.method) {
+                    CalendarContract.Reminders.METHOD_ALARM,
+                    CalendarContract.Reminders.METHOD_ALERT,
+                    CalendarContract.Reminders.METHOD_DEFAULT -> " before\n"
+                    CalendarContract.Reminders.METHOD_EMAIL -> " before as email\n"
+                    CalendarContract.Reminders.METHOD_SMS -> " before as sms\n"
+                    else -> "\n"
+                })
+            }
+            findViewById<TextView>(R.id.event_view_reminders).text = textReminders.toString()
 
             val nextReminder = calendarProvider.getNextEventReminderTime(this, event)
-
             if (nextReminder != 0L) {
-                nextReminderLayout.visibility = View.VISIBLE
-                nextReminderText.visibility = View.VISIBLE
-
                 val format = this.resources.getString(R.string.next_reminder_fmt)
-
-                nextReminderText.text = format.format(formatter.formatTimePoint(nextReminder))
+                findViewById<TextView>(R.id.event_view_next_reminder).text = format.format(formatter.formatTimePoint(nextReminder))
             }
         }
 
