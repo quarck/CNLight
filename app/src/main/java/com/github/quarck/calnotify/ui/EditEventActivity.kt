@@ -46,6 +46,7 @@ import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.textutils.dateToStr
 import com.github.quarck.calnotify.utils.*
+import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.*
 
 // FIXME: on the snooze activity - show all the reminders, not just next
@@ -130,7 +131,7 @@ open class EditEventActivity : AppCompatActivity() {
 
     private lateinit var accountName: TextView
 
-    private lateinit var switchAllDay: Switch
+    private lateinit var switchAllDay: SwitchMaterial
 
     private lateinit var dateFrom: Button
     private lateinit var timeFrom: Button
@@ -272,7 +273,7 @@ open class EditEventActivity : AppCompatActivity() {
 
         accountName = findViewById<TextView?>(R.id.account_name) ?: throw Exception("Can't find account_name")
 
-        switchAllDay = findViewById<Switch?>(R.id.switch_all_day) ?: throw Exception("Can't find switch_all_day")
+        switchAllDay = findViewById<SwitchMaterial?>(R.id.switch_all_day) ?: throw Exception("Can't find switch_all_day")
 
         dateFrom = findViewById<Button?>(R.id.add_event_date_from) ?: throw Exception("Can't find add_event_date_from")
         timeFrom = findViewById<Button?>(R.id.add_event_time_from) ?: throw Exception("Can't find add_event_time_from")

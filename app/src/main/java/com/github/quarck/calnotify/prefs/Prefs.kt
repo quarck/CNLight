@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioButton
-import android.widget.Switch
 import android.widget.TextView
 import com.github.quarck.calnotify.R
+import com.google.android.material.switchmaterial.SwitchMaterial
 import java.text.DateFormat
 import java.util.*
 
@@ -40,7 +40,7 @@ import java.util.*
 //        initialValue: Boolean,
 //        onChange: (Boolean) -> Unit
 //) {
-//    val switch: Switch = parent.findViewById(id)
+//    val switch: SwitchMaterial = parent.findViewById(id)
 //    init {
 //        switch.isChecked = initialValue
 //
@@ -59,7 +59,7 @@ import java.util.*
 //        onChange: (Boolean) -> Unit,
 //        updateLayout: (Boolean) -> Unit
 //) {
-//    val switch: Switch = parent.findViewById(id)
+//    val switch: SwitchMaterial = parent.findViewById(id)
 //    init {
 //        switch.isChecked = initialValue
 //
@@ -81,14 +81,14 @@ class PrefsSwitch(
         textMain: String,
         textSecondary: String
 ) {
-    val switch: Switch
+    val switch: SwitchMaterial
     val text: TextView
     var onChangeFn: ((Boolean) -> Unit)? = null
     var dependingLayout: LinearLayout? = null
 
     init {
         val child = inflater.inflate(R.layout.pref_switch_with_text, null)
-        switch = child.findViewById<Switch>(R.id.pref_switch_generic)
+        switch = child.findViewById<SwitchMaterial>(R.id.pref_switch_generic)
         text = child.findViewById<TextView>(R.id.pref_switch_generic_small_text)
 
         switch.text = textMain
