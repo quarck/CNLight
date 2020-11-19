@@ -17,9 +17,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/choose_time"
+            android:text="Choose time"
             android:id="@+id/textViewSnoozeUntilDate"
-            android:layout_margin="@dimen/date_time_picker_margin"
+            android:layout_margin="16dp"
             android:paddingLeft="30dp"
             android:paddingStart="30dp"
             android:paddingRight="10dp"
@@ -35,8 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/date_time_picker_margin"
-            android:padding="@dimen/date_time_picker_padding"
+            android:layout_margin="16dp"
+            android:padding="16dp"
             />
 
     </LinearLayout>
