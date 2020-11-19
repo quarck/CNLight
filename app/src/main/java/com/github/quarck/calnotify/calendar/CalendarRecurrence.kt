@@ -411,6 +411,8 @@ import java.util.*
 //       (2007 EDT) March 15,30
 
 abstract class CalendarRecurrence(
+        var firstInstance: Long,
+        var calendarTimeZone: String?, // defaults to UTC if not given. Defines how to handle 'firstInstance'
         var interval: Int?,
         var count: Int?,
         var until: Long?
@@ -422,7 +424,7 @@ abstract class CalendarRecurrence(
 
     abstract fun toLocalizedString(ctx: Context): String
 
-    internal fun formatItems(): String {
+    internal fun formatCommonItems(): String {
         val ret = StringBuilder(128)
         interval?.let { ret.append(";INTERVAL=$it") }
         count?.let { ret.append(";COUNT=$it")}
@@ -488,10 +490,12 @@ abstract class CalendarRecurrence(
 }
 
 class CalendarRecurrenceDaily(
+        firstInstance: Long,
+        calendarTimeZone: String?,
         interval: Int?,
         count: Int?,
         until: Long?
-) : CalendarRecurrence(interval, count, until) {
+) : CalendarRecurrence(firstInstance, calendarTimeZone, interval, count, until) {
     override fun format(): Pair<String, String> {
         TODO("Not yet implemented")
     }
@@ -511,10 +515,12 @@ class CalendarRecurrenceDaily(
 class CalendarRecurrenceWeekly(
         var weekDays: List<Int>,
         var weekStart: Int,
+        firstInstance: Long,
+        calendarTimeZone: String?,
         interval: Int?,
         count: Int?,
         until: Long?
-) : CalendarRecurrence(interval, count, until) {
+) : CalendarRecurrence(firstInstance, calendarTimeZone, interval, count, until) {
     override fun format(): Pair<String, String> {
         TODO("Not yet implemented")
     }
@@ -534,10 +540,12 @@ class CalendarRecurrenceMonthly(
         var monthDay: Int?,
         var nthWeek: Int?,              // for events like
         var nthWeekDayOfWeek: Int?,     // 'every third Wednesday'
+        firstInstance: Long,
+        calendarTimeZone: String?,
         interval: Int?,
         count: Int?,
         until: Long?
-) : CalendarRecurrence(interval, count, until) {
+) : CalendarRecurrence(firstInstance, calendarTimeZone, interval, count, until) {
     override fun format(): Pair<String, String> {
         TODO("Not yet implemented")
     }
@@ -554,10 +562,12 @@ class CalendarRecurrenceMonthly(
 }
 
 class CalendarRecurrenceAnnually(
+        firstInstance: Long,
+        calendarTimeZone: String?,
         interval: Int?,
         count: Int?,
         until: Long?
-) : CalendarRecurrence(interval, count, until) {
+) : CalendarRecurrence(firstInstance, calendarTimeZone, interval, count, until) {
     override fun format(): Pair<String, String> {
         TODO("Not yet implemented")
     }
