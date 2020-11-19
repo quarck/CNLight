@@ -15,7 +15,6 @@
 
     <string name="done">done</string>
     <string name="mark_as_done">Mark as done</string> <!-- to distinguish from dismissing the notification -->
-    <string name="snooze">Snooze</string>
 
     <string name="empty_title">(No title)</string>
     <string name="snooze_event_for">Snooze:</string>
@@ -30,25 +29,10 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="change_event_time">Move:</string>
     <string name="change_event_time_repeating_event">Move instance:</string>
-    <string name="one_hour_from_now">Move next hour</string>
-    <string name="same_time_tomorrow">Move next day</string>
-    <string name="next_week_same_day">Move next week</string>
-    <string name="move_four_weeks">Move by 4 weeks</string>
     <string name="title_activity_activity_test_buttons_and_to_do" translatable="false">ActivityTestButtonsAndToDo</string>
 
     <string name="snoozed_until_string">Snoozed until </string>
-    <string name="card_view_btn_change">CHANGE</string>
-    <string name="card_view_btn_snooze">SNOOZE</string>
-    <string name="settings_name">Settings</string>
-    <string name="notification_settings">Notification Settings</string>
-    <string name="snooze_presets">Snooze settings</string>
     <!-- string name="dialog_snooze_text_label">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\'\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string -->
-
-    <string name="error_cannot_parse_preset">Sorry, cannot parse your input</string>
-    <string name="snooze_presets_title">Snooze Presets</string>
-    <string name="snooze_presets_summary">Here you can change default snooze presets</string>
-
-    <string name="error_too_many_presets">Only up to 6 presets are supported, extra presets would be ignored</string>
 
     <string name="now">now</string>
     <string name="days">days</string>
@@ -61,16 +45,7 @@
     <string name="second">second</string>
     <string name="no_events_to_display">No event notifications to display\nActive and snoozed notifications would appear here</string>
     <string name="no_calendar_permissions_main">Application has no calendar permissions</string>
-    <string name="view_after_edit">View after edit</string>
-    <string name="view_after_edit_summary">Enable to automatically view event in the calendar after changing event time using Snooze activity</string>
     <string name="misc_settings">Misc settings</string>
-
-    <string name="enable_reminders">Enable reminders</string>
-    <string name="enable_reminders_summary">If enabled, app would repeatedly remind about active notifications</string>
-    <string name="remind_interval">Remind interval</string>
-    <string name="invalid_reminder_interval">Reminder interval cannot be zero, reverted to 1 minute</string>
-    <string name="max_reminders">Max reminders</string>
-    <string name="max_reminders_summary">Maximum number of reminders to fire, 0 for indefinite</string>
 
     <string name="projectPageOnGitHub">Project page on GitHub</string>
     <string name="snooze_all">Snooze All</string>
@@ -86,24 +61,10 @@
     <string name="snooze_all_title">Snooze all events</string>
     <string name="change_all_title">Change all events</string>
 
-    <string name="error_cannot_parse_pattern">Cannot parse this pattern</string>
-    <string name="quiet_time_from">Quiet time from</string>
     <string name="quiet_time_to">Quiet time to</string>
-    <string name="enable_quiet_time">Enable quiet time</string>
 
-    <string name="quiet_hours_section">Quiet hours settings</string>
-
-    <string name="snoozed_time_inside_quiet_hours" formatted="false">NOTE: Next snooze reminder hits quiet time period, no sound or vibration would be played until end of period on %s</string>
-    <string name="quiet_hours_summary">Use quiet time to mute all reminders and snoozed event during certain period of time, primary events notifications would still play sound and vibrate (according to settings)</string>
-
-    <string name="quiet_hours_main_activity_status" formatted="false">Quiet hours period is active\nNo reminders until %s</string>
     <string name="hits_quiet_period">(hits quiet period)</string>
     <!-- Displayed on the snooze activity next to the time when this time would result snoozed event time to be within quiet time-->
-
-    <string name="for_a_custom_time">For a custom period</string>
-    <string name="until_specific_time">Until specific time and date</string>
-    <string name="snooze_for">Snooze for:</string>
-    <string name="selected_time_is_in_the_past"><b>Can\'t snooze:</b><br>selected time is in the past</br></string>
 
     <string-array name="time_units_plurals">
         <item>Minutes</item>
@@ -121,8 +82,6 @@
     <string name="title_calendars_activity">Handled Calendars</string>
 
 
-    <string name="dialog_snooze_text_label_v2">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\' as well as negative values like \'-5m\' ("5 minutes before event")\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string>
-
     <string name="before_event">before</string>
     <string name="menu_about">About</string>
 
@@ -131,7 +90,6 @@
 
     <string name="gplv3_src_comment">\nFull text of GPLv3 license as well as full source code for this program can be found on the:</string>
     <string name="undo">UNDO</string>
-    <string name="event_dismissed">Event dismissed</string>
 
     <string name="moved_to_string">Event rescheduled to</string>
 
@@ -139,16 +97,10 @@
     <string name="event_title_example">Event title</string>
     <string name="event_time_example">Wednesday, 31 December</string>
 
-    <string name="ok">OK</string>
-
     <string name="hyphen" translatable="false">—</string>
     <string name="no_calendars_found">No calendars found</string>
     <string name="marked_as_done">Complete</string>
-    <string name="choose_date">Choose Date</string>
 
-    <string name="choose_time" formatted="false">Snoozing until %s\nChoose Time</string>
-
-    <string name="next">Next</string>
     <string name="next_col">Next:</string>
 
     <string name="until_event_time">Until event time</string>
@@ -156,8 +108,6 @@
     <string name="multiple_events_single_notification" formatted="false">%d calendar events</string>
     <string name="reminder_at" formatted="false"> (reminder at %s)</string>
 
-
-    <string name="app_behavior">Behavior</string>
 
     <string name="complete_from_the_app" formatted="false">In the app on %s</string>
     <string name="complete_from_notification" formatted="false">Via notification %s</string>
@@ -180,25 +130,16 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="default_all_day_reminder_time">Default all day reminder</string>
     <string name="default_all_day_reminder_time_summary_short">Default reminder time for all day events with no reminders</string>
 
-    <string name="special_event_title">Warning: due events skipped</string>
-    <string name="special_event_detail_format" formatted="false">Only %d of %d due events displayed</string>
-    <string name="special_event_detail2" formatted="false">Your device was switched off for long</string>
     <string name="first_day_of_week">First day of the week</string>
     <string name="first_day_of_week_summary" />
-    <string name="use_alarm_stream">Use Alarm volume</string>
-    <string name="use_alarm_stream_summary">Play notification on Alarm stream (instead of Notification)</string>
 
     <string name="on_the_day_before">On the day before</string>
     <string name="on_the_day_of_event">On the day of event</string>
     <string name="before_the_event">before the event</string>
 
     <string name="reminder_at_fmt" formatted="false">reminder: %s</string>
-    <string name="manual_event_rescan_title">Manual calendar rescan</string>
-    <string name="manual_event_rescan_summary">Improves reliability of event reminders and allows handling events with no reminders</string>
     <string name="handle_email_only_events_title">Handle e-mail only events</string>
     <string name="handle_email_only_events_summary">Notify locally about events with email-only reminders</string>
-
-    <string name="notification_behavior">Notification behavior</string>
 
     <string name="exit">Exit</string>
 
@@ -248,27 +189,6 @@ THIS APP DOESN\'T STEAL YOUR DATA
         <item>On the day at 12:00</item>
     </string-array>
 
-    <string-array name="default_snooze_intervals">
-        <item>Enter manually</item>
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>45 minutes</item>
-        <item>1 hour</item>
-        <item>2 hours</item>
-        <item>3 hours</item>
-        <item>4 hours</item>
-        <item>6 hours</item>
-        <item>8 hours</item>
-        <item>12 hours</item>
-        <item>18 hours</item>
-        <item>1 day</item>
-        <item>1.5 days</item>
-        <item>2 days</item>
-        <item>3 days</item>
-        <item>4 days</item>
-        <item>7 days</item>
-    </string-array>
-
     <string name="new_event_max_reminder_is_28_days">Max reminder interval is 28 days before the event</string>
 
     <string name="add_event_event_title_hint">Title</string>
@@ -283,23 +203,11 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="event_not_found">Event not found</string>
     <string name="calendar_not_found">Calendar not found</string>
     <string name="failed_to_update_event_details">Failed to update event details</string>
-    <string name="failed_to_move_event">Failed to move event: </string>
-    <string name="failed_to_add_event">Failed to add event: </string>
 
     <string name="event_was_updated">Event was updated</string>
     <string name="event_was_updated_next_reminder" formatted="false">Event was updated, next reminder: %s</string>
 
-    <string name="failed_to_edit_event">Failed to update event: </string>
-    <string name="event_failed_location">Location: </string>
-
-    <string name="horizontal_line_with_new_line" translatable="false">\n\n---------\n\n</string>
-    <string name="arrow_to_right" translatable="false"> --&gt; </string>
-
     <string name="open_in_calendar">Open in Calendar</string>
-    <string name="add_empty_action_to_the_end_title">Append empty action</string>
-    <string name="add_empty_action_to_the_end_summary">Append the empty-string action to the end of action list, use this if effect of the last action of the list extends to the whole width of notification</string>
-    <string name="custom_pattern">Custom pattern</string>
-    <string name="reminder_pattern">Comma-separated list of reminder intervals with values like \'15s\' (min value), \'15m\', \'2h\' or \'3d\'\nPattern would be repeated in cycle\nNew or \'un-snoozed\' events would start pattern over</string>
 
     <string name="calendar_handling_options">Calendar handling options</string>
 
@@ -311,9 +219,6 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="notification_channel_alarm_desc">Notifications that behave like an alarm (with #alarm tag)</string>
 
 
-    <string name="event_snoozed_by" formatted="false">Event snoozed by %s</string>
-    <string name="debug_notifications">Debug notifications</string>
-    <string name="debug_notifications_description">Used for app debugging</string>
     <string name="plus_more" formatted="false">+%d more events</string>
 
     <string name="view_event">View Event</string>
@@ -323,29 +228,12 @@ THIS APP DOESN\'T STEAL YOUR DATA
 
     <string name="content_desc_navigate_back">navigate back</string>
     <string name="main_notifications">Notification channels</string>
-    <string name="reminder_notifications">Reminder notificaiton channels</string>
-    <string name="other">Other…</string>
     <string name="owner_dummy_local">Local</string>
     <string name="no_account">No account</string>
     <string name="dummy">Dummy</string>
     <string name="unknown">Unknown</string>
 
     <!-- do not translate the line below - only used for debugging -->
-    <string name="notificaiton_swipe_prefix">Swiping the notification:</string>
-
-    <string name="notificaiton_swipe_dismisses_the_event">Dismisses the event</string>
-    <string name="notificaiton_swipe_snoozes_the_event">Snoozes the event using 1st preset</string>
-    <string name="notificaiton_swipe_disallowed">Not allowed (ongoing notification)</string>
-
-    <string name="notificaiton_group_swipe_prefix">Swiping group notificaiton:</string>
-    <string name="notificaiton_group_swipe_dismisses_the_event">Dismisses all the events</string>
-    <string name="notificaiton_group_swipe_snoozes_the_event">Snoozes all the events using 1st preset</string>
-    <string name="notificaiton_group_swipe_disallowed">Not allowed</string>
-
-    <string name="show_snooze_button">Show SNOOZE button</string>
-    <string name="show_snooze_button_desc">Brings back \'SNOOZE\' button, thus click on the notification would open even in the calendar, and click on SNOOZE will bring the snooze activity</string>
-    <string name="always_use_extenal_editor">Always use external editor</string>
-    <string name="always_use_external_editor_summary">Edit button on the snooze activity will always bring the external event editor / view</string>
 
     <string name="battery_optimisation_title">Battery optimisation</string>
     <string name="battery_optimisation_details">It is recommended to disable battery optimisations for this app to ensure correct operation (Android battery optimisation can put app into deep sleep, resulting missed calendar notifications)</string>
@@ -353,21 +241,9 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="you_can_do_it_later">LATER</string>
     <string name="you_cannot_do_it">DISMISS</string>
 
-    <string name="always_collapse">Always collapse</string>
-    <string name="always_collapse_detail">Always collapse multiple notifications into large summary one</string>
     <string name="donation_offers_are_rejected">Any donation offers would be rejected</string>
 
-    <string name="N_calendar_events" formatted="false">%d events</string>
-    <string name="calendar">Calendar</string>
-    <string name="group_notifications">Group notifications</string>
-    <string name="group_notifications_summary">Group notifications under a single expandable notification\r\nNOTE: disabling this setting would still make app to group all the notification into one big notification when number of notifications exceeds certain limit, this is done to prevent app from crashing over violation of max notifications limit</string>
-    <string name="group_notifications_android_oreo_gore">WARNING:\n\nEnabling notifications grouping on Oreo+ would disable/limit functionality related to event muting, #alarm tag handling and quiet hours\n\nThis is due to unexpected/unreliable behavior of system notifications when grouping notifications from different channels</string>
-
-    <string name="pre_oreo_notification_channels_explanation_v2">Where is everything? Please read:\nhttps://github.com/quarck/CalendarNotification/issues/322</string>
-    <string name="kill_google_calendar_notifications">Kill Google Calendar Notifications</string>
-    <string name="note_text">Note text</string>
     <string name="_15_m">15m</string>
-    <string name="_30_m">30m</string>
     <string name="_1_h">1h</string>
     <string name="_4_h">4h</string>
     <string name="_8_h">8h</string>
@@ -379,13 +255,7 @@ THIS APP DOESN\'T STEAL YOUR DATA
 
     <string name="move_event_confirm" formatted="false">Move event by %d days?</string>
     <string name="add_event">Add Event</string>
-    <string name="title_activity_main_n_g">MainActivityNG</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Calendar</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
     <string name="menu_home">Active Events</string>
     <string name="menu_upcoming">Upcoming Events</string>
@@ -398,9 +268,6 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="view_event_details">View event details</string>
     <string name="yes">Yes</string>
     <string name="edit_event">Edit Event</string>
-    <string name="remind_fmt_before" formatted="false">%s before</string>
-    <string name="as_email">as email</string>
-    <string name="as_sms">as SMS</string>
 
 </resources>
 

@@ -191,8 +191,7 @@ open class ViewEventActivity : AppCompatActivity() {
                 visibility = View.GONE
             }
         }
-
-
+        
         if (event.desc.isNotEmpty()) {
             // Show the event desc
             findViewById<RelativeLayout>(R.id.layout_event_description).visibility = View.VISIBLE
