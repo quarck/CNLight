@@ -149,6 +149,7 @@
     <string name="choose_time" formatted="false">Snoozing until %s\nChoose Time</string>
 
     <string name="next">Next</string>
+    <string name="next_col">Next:</string>
 
     <string name="until_event_time">Until event time</string>
 
@@ -191,7 +192,6 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="on_the_day_of_event">On the day of event</string>
     <string name="before_the_event">before the event</string>
 
-    <string name="next_reminder_fmt" formatted="false">Next: %s</string>
     <string name="reminder_at_fmt" formatted="false">reminder: %s</string>
     <string name="manual_event_rescan_title">Manual calendar rescan</string>
     <string name="manual_event_rescan_summary">Improves reliability of event reminders and allows handling events with no reminders</string>
@@ -224,6 +224,7 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="remove_reminder">Remove</string>
     <string name="days_before">days before, at:</string>
     <string name="remind">Remind</string>
+    <string name="remind_col">Remind:</string>
 
     <string-array name="default_reminder_intervals">
         <item>1 minute</item>
@@ -371,7 +372,7 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="_4_h">4h</string>
     <string name="_8_h">8h</string>
     <string name="_1_d">1d</string>
-    <string name="minus_5_m">- 5m</string>
+    <string name="minus_5_m">-5m</string>
     <string name="next_day">Next Day</string>
     <string name="next_week">Next Week</string>
     <string name="next_month_30d">Next month (+30d)</string>
@@ -397,7 +398,7 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="view_event_details">View event details</string>
     <string name="yes">Yes</string>
     <string name="edit_event">Edit Event</string>
-    <string name="remind_fmt_before" formatted="false">Remind %s before</string>
+    <string name="remind_fmt_before" formatted="false">%s before</string>
     <string name="as_email">as email</string>
     <string name="as_sms">as SMS</string>
 

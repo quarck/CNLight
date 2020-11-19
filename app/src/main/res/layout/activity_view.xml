@@ -159,41 +159,87 @@
                             android:paddingTop="@dimen/event_view_in_text_vert_padding"
                             android:paddingEnd="@dimen/event_view_padding_end"
                             android:paddingBottom="@dimen/event_view_in_text_vert_padding"
-                            android:text="Tomorrow"
+                            android:text="13:00 - 14:00"
                             android:textAppearance="?android:textAppearanceMedium"
                             android:textColor="@color/primary_text"
-                            android:visibility="gone"
+                            android:visibility="visible"
                             tools:ignore="HardcodedText" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/event_view_reminders"
-                            android:text="15 minutes before\n15 minutes before as email"
-                            android:textAppearance="?android:textAppearanceSmall"
-                            android:textColor="@color/secondary_text"
-                            android:gravity="start|bottom"
-                            android:paddingBottom="@dimen/event_view_in_text_vert_padding"
-                            android:paddingTop="0dp"
-                            android:paddingStart="@dimen/event_view_padding_start"
-                            android:paddingEnd="@dimen/event_view_padding_end"
-                            android:visibility="gone"
-                            tools:ignore="HardcodedText"/>
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <RelativeLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:id="@+id/event_view_next_reminder"
-                            android:text="Next reminder: 18:49 tomorrow"
-                            android:textAppearance="?android:textAppearanceSmall"
-                            android:textColor="@color/secondary_text"
-                            android:gravity="start|bottom"
-                            android:paddingBottom="@dimen/event_view_in_text_vert_padding"
-                            android:paddingTop="0dp"
-                            android:paddingStart="@dimen/event_view_padding_start"
-                            android:paddingEnd="@dimen/event_view_padding_end"
-                            android:visibility="gone"
-                            tools:ignore="HardcodedText"/>
+                            android:id="@+id/event_view_reminders_layout"
+                            android:orientation="horizontal"
+                            >
+                            <TextView
+                                android:id="@+id/label_remind"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/remind_col"
+                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textColor="@color/secondary_text"
+                                android:gravity="start|bottom"
+                                android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                                android:paddingTop="0dp"
+                                android:paddingStart="@dimen/event_view_padding_start"
+                                android:paddingEnd="@dimen/event_view_padding_end"
+                                android:visibility="visible"
+                                android:layout_alignParentStart="true"
+                                android:layout_alignParentTop="true"
+                                />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/event_view_reminders"
+                                android:text="15 minutes before\n15 minutes before as email"
+                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textColor="@color/secondary_text"
+                                android:gravity="start|bottom"
+                                android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                                android:paddingTop="0dp"
+                                android:paddingStart="0dp"
+                                android:paddingEnd="@dimen/event_view_padding_end"
+                                android:visibility="visible"
+                                tools:ignore="HardcodedText"
+                                android:layout_toEndOf="@id/label_remind" />
+
+                            <TextView
+                                android:id="@+id/label_next"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/next_col"
+                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textColor="@color/material_red"
+                                android:gravity="start|bottom"
+                                android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                                android:paddingTop="0dp"
+                                android:paddingStart="@dimen/event_view_padding_start"
+                                android:paddingEnd="@dimen/event_view_padding_end"
+                                android:visibility="visible"
+                                android:layout_alignParentStart="true"
+                                android:layout_below="@id/event_view_reminders"
+                                />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/event_view_next_reminder"
+                                android:text="18:49 tomorrow"
+                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textColor="@color/material_red"
+                                android:gravity="start|bottom"
+                                android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                                android:paddingTop="0dp"
+                                android:paddingStart="0dp"
+                                android:paddingEnd="@dimen/event_view_padding_end"
+                                android:visibility="visible"
+                                android:layout_alignStart="@id/event_view_reminders"
+                                android:layout_below="@id/event_view_reminders"
+                                tools:ignore="HardcodedText"/>
+
+
+                        </RelativeLayout>
 
                         <TextView
                             android:layout_width="match_parent"
@@ -206,7 +252,7 @@
                             android:paddingTop="0dp"
                             android:paddingStart="@dimen/event_view_padding_start"
                             android:paddingEnd="@dimen/event_view_padding_end"
-                            android:visibility="gone"
+                            android:visibility="visible"
                             tools:ignore="HardcodedText"
                             />
 

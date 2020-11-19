@@ -49,16 +49,10 @@ import com.github.quarck.calnotify.utils.*
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.*
 
-// FIXME: on the snooze activity - show all the reminders, not just next
-
-// FIXME: Bin - invalid 'moved to' after edit
 
 // FIXME: handle repeating requests
-
 // FIXME: handle timezones
-
 // FIXME: Also handle colors
-
 
 fun EventReminderRecord.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
 

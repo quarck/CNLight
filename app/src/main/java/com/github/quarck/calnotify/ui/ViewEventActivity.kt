@@ -182,12 +182,16 @@ open class ViewEventActivity : AppCompatActivity() {
         }
 
         // recurrence
-        if (event.rRule.isNotBlank() || event.rDate.isNotBlank()) {
-            findViewById<TextView>(R.id.event_view_recurrence).apply {
+        findViewById<TextView>(R.id.event_view_recurrence).apply {
+            if (event.rRule.isNotBlank() || event.rDate.isNotBlank()) {
                 text = if (event.rDate.isBlank()) event.rRule else event.rRule + "/" + event.rDate
                 visibility = View.VISIBLE
             }
+            else {
+                visibility = View.GONE
+            }
         }
+
 
         if (event.desc.isNotEmpty()) {
             // Show the event desc
@@ -223,44 +227,33 @@ open class ViewEventActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.snooze_snooze_for)?.text = resources.getString(R.string.change_snooze_to)
         }
 
-        val reminders: List<EventReminderRecord> = calendarProvider.getEventReminders(this, event.eventId)
+        val reminders: List<EventReminderRecord> = calendarProvider.getEventReminders(this@ViewEventActivity, event.eventId)
         if (reminders.isNotEmpty()) {
-            val textReminders = StringBuilder()
-            var firstLine = true
-            for (reminder: EventReminderRecord in reminders) {
-                if (!firstLine)
-                    textReminders.append("\n")
-                firstLine = false
-                textReminders.append(String.format(
-                        resources.getString(R.string.remind_fmt_before),
-                        formatter.formatTimeDuration(reminder.millisecondsBefore)))
+            findViewById<RelativeLayout>(R.id.event_view_reminders_layout).visibility = View.VISIBLE
 
-                if (reminder.method == CalendarContract.Reminders.METHOD_EMAIL) {
-                    textReminders.append(" ")
-                    textReminders.append(resources.getString(R.string.as_email))
-                }
-                else if (reminder.method == CalendarContract.Reminders.METHOD_SMS) {
-                    textReminders.append(" ")
-                    textReminders.append(resources.getString(R.string.as_sms))
-                }
-            }
-            findViewById<TextView>(R.id.event_view_reminders).apply {
-                text = textReminders.toString()
-                visibility = View.VISIBLE
-            }
+            findViewById<TextView>(R.id.event_view_reminders).text =
+                    reminders.joinToString(separator = "\n") { it.toLocalizedString(this, event.isAllDay) }
 
             val nextReminder = calendarProvider.getNextEventReminderTime(this, event)
             if (nextReminder != 0L) {
-                val format = this.resources.getString(R.string.next_reminder_fmt)
-                findViewById<TextView>(R.id.event_view_next_reminder).apply{
-                    text = format.format(formatter.formatTimePoint(nextReminder))
+                findViewById<TextView>(R.id.label_next).visibility = View.VISIBLE
+                findViewById<TextView>(R.id.event_view_next_reminder).apply {
                     visibility = View.VISIBLE
+                    text = formatter.formatTimePoint(nextReminder)
                 }
             }
+            else {
+                findViewById<TextView>(R.id.label_next).visibility = View.GONE
+                findViewById<TextView>(R.id.event_view_next_reminder).visibility = View.GONE
+            }
+        }
+        else {
+            findViewById<RelativeLayout>(R.id.event_view_reminders_layout).visibility = View.GONE
         }
 
-        findViewById<TextView>(R.id.debug_details_line)?.text =
-                "RRULE: ${event.rRule}\nRDATE: ${event.rDate}\nEXRRULE: ${event.exRRule}\nEXRDATE: ${event.exRDate}"
+        findViewById<TextView>(R.id.debug_details_line).apply {
+            text = "RRULE: ${event.rRule}\nRDATE: ${event.rDate}\nEXRRULE: ${event.exRRule}\nEXRDATE: ${event.exRDate}"
+        }
 
         val fab = findViewById<FloatingActionButton>(R.id.floating_edit_button)
 
