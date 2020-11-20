@@ -21,6 +21,7 @@ package com.github.quarck.calnotify.calendar
 
 import android.content.Context
 import com.github.quarck.calnotify.utils.DateTimeUtils
+import java.lang.Exception
 import java.lang.StringBuilder
 import java.util.*
 
@@ -410,6 +411,181 @@ import java.util.*
 //       (2007 EST) February 15
 //       (2007 EDT) March 15,30
 
+enum class FreqType {
+    DAILY,
+    WEEKLY,
+    MONTHLY,
+    YEARLY;
+
+    companion object {
+        fun parse(v: String): FreqType {
+            return when (v) {
+                "DAILY" -> DAILY
+                "WEEKLY" -> WEEKLY
+                "MONTHLY" -> MONTHLY
+                "YEARLY" -> YEARLY
+                else -> throw Exception("Unknown value $v for Frequency Type")
+            }
+        }
+    }
+}
+
+enum class WeekDay(val code: Int) {
+    MO(1),
+    TU(2),
+    WE(3),
+    TH(4),
+    FR(5),
+    SA(6),
+    SU(7); // take this, Usono!
+
+    companion object {
+        fun parse(v: String): WeekDay {
+            return when (v) {
+                "MO" -> MO
+                "TU" -> TU
+                "WE" -> WE
+                "TH" -> TH
+                "FR" -> FR
+                "SA" -> SA
+                "SU" -> SU
+                else -> throw Exception("Failed to parse WeekDay $v")
+            }
+        }
+    }
+}
+
+data class NthWeekDay(val weekDay: WeekDay, val n: Int?=null) {
+    companion object {
+        fun parse(v: String): NthWeekDay {
+            if (v.length == 2)
+                return NthWeekDay(WeekDay.parse(v), null)
+            val nStr = v.substring(0, v.length - 2)
+            val wdStr = v.substring(v.length - 2)
+            return NthWeekDay(WeekDay.parse(wdStr), nStr.toIntOrNull() ?: throw Exception("Failed to parse NthWeekDay $v"))
+        }
+    }
+}
+
+sealed class RRuleNamedValue {
+    data class FREQ(val value: FreqType): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): FREQ = FREQ(FreqType.parse(v))
+        }
+    }
+
+    data class COUNT(val value: Int): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): COUNT =
+                    COUNT(v.toIntOrNull() ?: throw Exception("Failed to parse count $v"))
+        }
+    }
+
+    data class INTERVAL(val value: Int): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): INTERVAL =
+                    INTERVAL(v.toIntOrNull() ?: throw Exception("Failed to parse count $v"))
+        }
+    }
+
+    data class UNTIL(val value: Long): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): UNTIL {
+                if (v.length != 16)
+                    throw Exception("UNTIL date '$v' is invalid")
+
+                val year = v.substring(0, 4).toIntOrNull()
+                val month = v.substring(4, 6).toIntOrNull()
+                val day = v.substring(6, 8).toIntOrNull()
+                val t = v.substring(8, 9).toLowerCase(Locale.ROOT) == "t"
+                val hour = v.substring(9, 11).toIntOrNull()
+                val minute = v.substring(11, 13).toIntOrNull()
+                val second = v.substring(13, 15).toIntOrNull()
+                val z = v.substring(15, 16).toLowerCase(Locale.ROOT) == "z"
+
+                if (year == null || month == null || day == null ||
+                        hour == null || minute == null || second == null || !t || !z) // format check
+                    throw Exception("UNTIL date '$v' is invalid (2)")
+
+                val c = Calendar.getInstance(DateTimeUtils.utcTimeZone)
+                c.set(Calendar.YEAR, year)
+                c.set(Calendar.MONTH, month)
+                c.set(Calendar.DAY_OF_MONTH, day)
+                c.set(Calendar.HOUR_OF_DAY, hour)
+                c.set(Calendar.MINUTE, minute)
+                c.set(Calendar.SECOND, second)
+
+                return UNTIL(c.timeInMillis)
+            }
+        }
+    }
+
+    data class WKST(val value: WeekDay): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): WKST {
+                return WKST(WeekDay.parse(v))
+            }
+        }
+    }
+
+    data class BYDAY(val value: List<NthWeekDay>): RRuleNamedValue() { // list preserves an order
+        companion object {
+            fun parse(v: String): BYDAY {
+                if (v.isBlank())
+                    throw Exception("Failed to parse BYDATE $v")
+                return BYDAY(v.split(',').map{ NthWeekDay.parse(it) }.toList())
+            }
+        }
+    }
+    data class BYMONTH(val value: List<Int>): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): BYMONTH {
+                if (v.isBlank())
+                    throw Exception("BYMONTH value is empty")
+                return BYMONTH(v.split(',').map { it.toIntOrNull() ?: throw Exception("Failed to BYMONTH entry $it") }.toList())
+            }
+        }
+    }
+
+    data class BYMONTHDAY(val value: List<Int>): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): BYMONTHDAY {
+                if (v.isBlank())
+                    throw Exception("BYMONTHDAY value is empty")
+                return BYMONTHDAY(v.split(',').map { it.toIntOrNull() ?: throw Exception("Failed to parse BYMONTHDAY entry '$it'") }.toList())
+            }
+        }
+    }
+
+    data class BYYEARDAY(val value: List<Int>): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): BYYEARDAY {
+                if (v.isBlank())
+                    throw Exception("BYYEARDAY value is empty")
+                return BYYEARDAY(v.split(',').map { it.toIntOrNull() ?: throw Exception("Failed to BYYEARDAY entry $it") }.toList())
+            }
+        }
+    }
+
+    data class BYWEEKNO(val value: List<Int>): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): BYWEEKNO {
+                if (v.isBlank())
+                    throw Exception("BYWEEKNO value is empty")
+                return BYWEEKNO(v.split(',').map { it.toIntOrNull() ?: throw Exception("Failed to BYWEEKNO entry $it") }.toList())
+            }
+        }
+    }
+
+    data class BYSETPOS(val value: Int): RRuleNamedValue() {
+        companion object {
+            fun parse(v: String): BYSETPOS {
+                return BYSETPOS(v.toIntOrNull() ?: throw Exception("Failed to parse BYSETPOS $v"))
+            }
+        }
+    }
+}
+
 abstract class CalendarRecurrence(
         var firstInstance: Long,
         var calendarTimeZone: String?, // defaults to UTC if not given. Defines how to handle 'firstInstance'
@@ -483,6 +659,35 @@ abstract class CalendarRecurrence(
     }
 
     companion object {
+        fun parseRRuleIntoPairs(rRule: String): List<RRuleNamedValue> {
+            val ret = mutableListOf<RRuleNamedValue>()
+            if (rRule.isNotBlank()) {
+                for (item in rRule.split(';')) {
+                    val eqPos = item.indexOf('=')
+                    if (eqPos == -1)
+                        throw Exception("Error when parsing the rrRule $rRule: token $item has no '=' sign")
+                    val name = item.substring(0, eqPos)
+                    val value = item.substring(eqPos + 1)
+                    val namedValue = when (name) {
+                        "FREQ" -> RRuleNamedValue.FREQ.parse(value)
+                        "COUNT" -> RRuleNamedValue.COUNT.parse(value)
+                        "INTERVAL" -> RRuleNamedValue.INTERVAL.parse(value)
+                        "UNTIL" -> RRuleNamedValue.UNTIL.parse(value)
+                        "WKST" -> RRuleNamedValue.WKST.parse(value)
+                        "BYDAY" -> RRuleNamedValue.BYDAY.parse(value)
+                        "BYMONTH" -> RRuleNamedValue.BYMONTH.parse(value)
+                        "BYMONTHDAY" -> RRuleNamedValue.BYMONTHDAY.parse(value)
+                        "BYYEARDAY" -> RRuleNamedValue.BYYEARDAY.parse(value)
+                        "BYWEEKNO" -> RRuleNamedValue.BYWEEKNO.parse(value)
+                        "BYSETPOS" -> RRuleNamedValue.BYSETPOS.parse(value)
+                        else -> throw Exception("Unknown value $name with value '$value'")
+                    }
+                    ret.add(namedValue)
+                }
+            }
+            return ret
+        }
+
         fun parse(rRule: String, rDate: String): CalendarRecurrence {
             TODO("Implement me")
         }
