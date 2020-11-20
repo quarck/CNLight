@@ -184,7 +184,8 @@ open class ViewEventActivity : AppCompatActivity() {
         // recurrence
         findViewById<TextView>(R.id.event_view_recurrence).apply {
             if (event.rRule.isNotBlank() || event.rDate.isNotBlank()) {
-                text = if (event.rDate.isBlank()) event.rRule else event.rRule + "/" + event.rDate
+                val humanRrule = RRule.parse(event.rRule).toString()
+                text = if (event.rDate.isBlank()) humanRrule else humanRrule + "/" + event.rDate
                 visibility = View.VISIBLE
             }
             else {

@@ -38,6 +38,12 @@ object DateTimeUtils {
         ret.set(Calendar.YEAR, year)
         ret.set(Calendar.MONTH, month)
         ret.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+        ret.set(Calendar.HOUR_OF_DAY, 0)
+        ret.set(Calendar.MINUTE, 0)
+        ret.set(Calendar.SECOND, 0)
+        ret.set(Calendar.MILLISECOND, 0)
+
         return ret
     }
 
@@ -47,6 +53,7 @@ object DateTimeUtils {
         ret.set(Calendar.HOUR_OF_DAY, hour)
         ret.set(Calendar.MINUTE, minute)
         ret.set(Calendar.SECOND, 0)
+        ret.set(Calendar.MILLISECOND, 0)
         return ret
     }
 
@@ -120,6 +127,10 @@ var Calendar.minute: Int
 var Calendar.second: Int
     get() = this.get(Calendar.SECOND)
     set(value) = this.set(Calendar.SECOND, value)
+
+var Calendar.millisecond: Int
+    get() = this.get(Calendar.MILLISECOND)
+    set(value) = this.set(Calendar.MILLISECOND, value)
 
 fun Calendar.addDays(days: Int) {
     this.add(Calendar.DATE, days)
