@@ -181,11 +181,40 @@ open class ViewEventActivity : AppCompatActivity() {
             visibility = if (line2.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
+        var eventTimeZoneOffset = 0
+//        var deviceTimeZoneOffset = 0
+        if (event.timeZone.isNotBlank()) {
+            try {
+                val eventTimeZone = java.util.TimeZone.getTimeZone(event.timeZone)
+                eventTimeZoneOffset = eventTimeZone.getOffset(event.instanceStartTime)
+               // val deviceTimeZone = java.util.TimeZone.getDefault()
+                ///deviceTimeZoneOffset = deviceTimeZone.getOffset(event.instanceStartTime)
+            }
+            catch (ex: Exception) {
+            }
+        }
+
+        findViewById<TextView>(R.id.event_view_timezone).apply {
+//            if (eventTimeZoneOffset == deviceTimeZoneOffset) {
+//                text = event.timeZone
+//                visibility = View.VISIBLE
+//            }
+//            else {
+            visibility = View.GONE
+            //}
+        }
+
         // recurrence
         findViewById<TextView>(R.id.event_view_recurrence).apply {
             if (event.rRule.isNotBlank() || event.rDate.isNotBlank()) {
-                val humanRrule = RRule.tryParse(event.rRule)?.toString(settings.firstDayOfWeekNormalized) ?: event.rRule
-                text = if (event.rDate.isBlank()) humanRrule else humanRrule + "/" + event.rDate
+
+                val rrule = RRule.tryParse(event.rRule)
+                if (rrule != null) {
+                    text = rrule.toString(eventTimeZoneOffset)
+                }
+                else {
+                    text = "Failed to parse: ${event.rRule}"
+                }
                 visibility = View.VISIBLE
             }
             else {

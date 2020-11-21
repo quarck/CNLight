@@ -107,7 +107,6 @@ fun EventReminderRecord.toLocalizedString(ctx: Context, isAllDay: Boolean): Stri
     return ret.toString()
 }
 
-
 class EditEventActivityState(val ctx: Context): PersistentStorageBase(ctx, "add_event_state") {
     var lastCalendar by PersistentStorageBase.LongProperty(-1, "A") // give a short name to simplify XML parsing
 }
@@ -429,9 +428,9 @@ open class EditEventActivity : AppCompatActivity() {
             addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER), false)
             addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER), true)
 
-            val emailMethod = CalendarContract.Reminders.METHOD_EMAIL
-            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, method=emailMethod), false)
-            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, method=emailMethod), true)
+//            val emailMethod = CalendarContract.Reminders.METHOD_EMAIL
+//            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, method=emailMethod), false)
+//            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, method=emailMethod), true)
 
             updateReminders()
         }
