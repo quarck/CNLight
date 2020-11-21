@@ -165,6 +165,20 @@
                             android:visibility="visible"
                             tools:ignore="HardcodedText" />
 
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/event_view_recurrence"
+                            android:text="Repeats every 10 minutes when the moon is high"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/primary_text"
+                            android:paddingBottom="@dimen/event_view_in_text_vert_padding"
+                            android:paddingTop="0dp"
+                            android:paddingStart="@dimen/event_view_padding_start"
+                            android:paddingEnd="@dimen/event_view_padding_end"
+                            android:visibility="visible"
+                            tools:ignore="HardcodedText"
+                            />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -240,21 +254,6 @@
 
 
                         </RelativeLayout>
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/event_view_recurrence"
-                            android:text="Repeats every 10 minutes when the moon is high"
-                            android:textAppearance="?android:textAppearanceSmall"
-                            android:textColor="@color/primary_text"
-                            android:paddingBottom="@dimen/event_view_in_text_vert_padding"
-                            android:paddingTop="0dp"
-                            android:paddingStart="@dimen/event_view_padding_start"
-                            android:paddingEnd="@dimen/event_view_padding_end"
-                            android:visibility="visible"
-                            tools:ignore="HardcodedText"
-                            />
 
                     </LinearLayout>
 

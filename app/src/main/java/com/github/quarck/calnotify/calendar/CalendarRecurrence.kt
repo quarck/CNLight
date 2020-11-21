@@ -106,23 +106,23 @@ sealed class RRuleVal {
         override fun serialize(): String = "FREQ=$value"
 
         private fun plural(n: Int, unit: String): String = when (n) {
-            2 -> "Every 2nd $unit"
-            3 -> "Every 3rd $unit"
-            else -> "Every ${n}th $unit"
+            2 -> "every 2nd $unit"
+            3 -> "every 3rd $unit"
+            else -> "every ${n}th $unit"
         }
 
         fun toStringWithInterval(v: INTERVAL?): String = when (value) {
             FreqType.DAILY ->
-                if (v?.value ?: 1 == 1) "Daily"
+                if (v?.value ?: 1 == 1) "daily"
                 else plural(v?.value ?: 0, "day")
             FreqType.WEEKLY ->
-                if (v?.value ?: 1 == 1) "Weekly"
+                if (v?.value ?: 1 == 1) "weekly"
                 else plural(v?.value ?: 0, "week")
             FreqType.MONTHLY ->
-                if (v?.value ?: 1 == 1) "Monthly"
+                if (v?.value ?: 1 == 1) "monthly"
                 else plural(v?.value ?: 0, "month")
             FreqType.YEARLY ->
-                if (v?.value ?: 1 == 1) "Yearly"
+                if (v?.value ?: 1 == 1) "yearly"
                 else plural(v?.value ?: 0, "year")
         }
 
@@ -404,7 +404,7 @@ data class RRule(
     fun toString(weekStartDefault: Int): String {
         val sb = StringBuilder(128)
 
-        freq?.let { sb.append(it.toStringWithInterval(interval)) }
+        freq?.let { sb.append("Repeats "); sb.append(it.toStringWithInterval(interval)) }
         count?.let { sb.append(" "); sb.append(it.toString())}
         byDay?.let { sb.append(" "); sb.append(it.toString())}
         byMonth?.let { sb.append(" "); sb.append(it.toString())}
