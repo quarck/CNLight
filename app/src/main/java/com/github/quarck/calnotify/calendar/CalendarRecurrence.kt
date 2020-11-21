@@ -228,7 +228,7 @@ sealed class RRuleVal {
     data class WKST(val value: WeekDay): RRuleVal() {
         override fun serialize(): String = "WKST=${value.serialize()}"
 
-        override fun toString(): String = "/week starts on $value/"
+        override fun toString(): String = "(week starts on $value)"
 
         companion object {
             fun parse(v: String): WKST {
@@ -401,7 +401,7 @@ data class RRule(
         return items.joinToString(";")
     }
 
-    override fun toString(): String {
+    fun toString(weekStartDefault: Int): String {
         val sb = StringBuilder(128)
 
         freq?.let { sb.append(it.toStringWithInterval(interval)) }
@@ -413,7 +413,12 @@ data class RRule(
         byWeekNo?.let { sb.append(" "); sb.append(it.toString())}
         bySetPos?.let { sb.append(" "); sb.append(it.toString())}
         until?.let { sb.append(" "); sb.append(it.toString())}
-        wkst?.let { sb.append(" "); sb.append(it.toString())}
+        wkst?.let {
+            if (it.value.code != weekStartDefault) {
+                sb.append(" ")
+                sb.append(it.toString())
+            }
+        }
 
 
         return sb.toString()
@@ -435,6 +440,15 @@ data class RRule(
                 }
             }
             return ret
+        }
+
+        fun tryParse(rRule: String): RRule? {
+            try {
+                return parse(rRule)
+            }
+            catch (ex: Exception) {
+            }
+            return null
         }
     }
 
