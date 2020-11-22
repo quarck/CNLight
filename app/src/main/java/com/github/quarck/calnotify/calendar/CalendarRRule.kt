@@ -62,7 +62,17 @@ data class NthWeekDay(val weekDay: WeekDay, val n: Int?=null) {
         if (n == null)
             return weekDay.toString()
         else
-            return "$n@${weekDay}"
+            return when (n) {
+                1 -> "1st $weekDay"
+                2 -> "2nd $weekDay"
+                3 -> "3rd $weekDay"
+                4, 5 -> "${n}th $weekDay"
+                -1 -> "last $weekDay"
+                -2 -> "2nd last $weekDay"
+                -3 -> "3rd last $weekDay"
+                -4, -5 -> "${-n}th last $weekDay"
+                else -> "Invalid rule: ${serialize()}"
+            }
     }
 
     companion object {
@@ -402,6 +412,12 @@ data class RRule(
 
         return sb.toString()
     }
+
+    fun isEmpty(): Boolean =
+            (freq == null) && (count == null) && (byDay == null) &&
+            (byMonth == null) && (byMonthDay == null) &&
+            (byYearDay == null) && (byWeekNo == null) &&
+            (bySetPos == null) && (until == null) && (wkst == null)
 
     companion object {
         fun parse(rRule: String): RRule {

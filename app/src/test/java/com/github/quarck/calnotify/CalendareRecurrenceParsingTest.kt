@@ -1,5 +1,6 @@
 package com.github.quarck.calnotify
 
+import com.github.quarck.calnotify.calendar.CalendarRecurrence
 import com.github.quarck.calnotify.calendar.RRule
 import org.junit.Test
 
@@ -62,5 +63,46 @@ class CalendareRecurrenceParsingTest {
             println()
         }
 
+    }
+
+    @Test
+    fun interpretingRRuleTest() {
+
+        val rrules = listOf(
+                "FREQ=DAILY;COUNT=10",
+                "FREQ=DAILY;UNTIL=19971224T000000Z",
+                "FREQ=DAILY;INTERVAL=2",
+                "FREQ=DAILY;INTERVAL=10;COUNT=5",
+                "FREQ=WEEKLY;COUNT=10",
+                "FREQ=WEEKLY;INTERVAL=2;WKST=SU",
+                "FREQ=WEEKLY;COUNT=10;WKST=SU;BYDAY=TU,TH",
+                "FREQ=WEEKLY;INTERVAL=2;UNTIL=19971224T000000Z;WKST=SU;BYDAY=MO,WE,FR",
+                "FREQ=MONTHLY;UNTIL=19971224T000000Z;BYDAY=1FR",
+                "FREQ=MONTHLY;COUNT=10;BYDAY=1FR",
+                "FREQ=MONTHLY;COUNT=6;BYDAY=-2MO",
+                "FREQ=MONTHLY;BYMONTHDAY=3",
+                "FREQ=MONTHLY;INTERVAL=18;COUNT=10;BYMONTHDAY=15",
+                "FREQ=YEARLY;COUNT=10;BYMONTH=6;BYMONTHDAY=15",
+        )
+
+        val now = System.currentTimeMillis()
+
+        for (rrule in rrules) {
+            val interpreted = CalendarRecurrence.interpretRecurrence(now, "UTC", rrule, "", "", "");
+            println(rrule)
+            println(interpreted.serialize().serialize())
+            println(interpreted.toString())
+            println()
+        }
+
+
+        /*interpretRecurrence(
+                instanceStart: Long,
+                eventTimeZone: String,
+                rRule: String,
+                rDate: String,
+                exRRule: String,
+                exRDate: String,
+        )*/
     }
 }

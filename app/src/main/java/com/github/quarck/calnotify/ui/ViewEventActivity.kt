@@ -208,12 +208,20 @@ open class ViewEventActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.event_view_recurrence).apply {
             if (event.rRule.isNotBlank() || event.rDate.isNotBlank()) {
 
-                val rrule = RRule.tryParse(event.rRule)
-                if (rrule != null) {
-                    text = rrule.toString(eventTimeZoneOffset)
+                val recurrence = CalendarRecurrence.tryInterpretRecurrence(
+                        event.instanceStartTime,
+                        event.timeZone,
+                        event.rRule,
+                        event.rDate,
+                        event.exRRule,
+                        event.exRDate
+                )
+
+                if (recurrence != null) {
+                    text = recurrence.toString()
                 }
                 else {
-                    text = "Failed to parse: ${event.rRule}"
+                    text = "Failed to parse: ${event.rRule} / ${event.rDate}"
                 }
                 visibility = View.VISIBLE
             }
