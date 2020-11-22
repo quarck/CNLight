@@ -43,6 +43,17 @@ enum class WeekDay(val code: Int) {
         }
     }
 
+    val javaCalendarDayOfWeek: Int
+        get() = when(this) {
+            MO -> Calendar.MONDAY
+            TU -> Calendar.TUESDAY
+            WE -> Calendar.WEDNESDAY
+            TH -> Calendar.THURSDAY
+            FR -> Calendar.FRIDAY
+            SA -> Calendar.SATURDAY
+            SU -> Calendar.SUNDAY
+        }
+
     companion object {
         fun parse(v: String): WeekDay {
             return when (v) {
@@ -50,6 +61,20 @@ enum class WeekDay(val code: Int) {
                 "FR" -> FR  // Friday is always special!
                 "SA" -> SA; "SU" -> SU
                 else -> throw Exception("Failed to parse WeekDay $v")
+            }
+        }
+
+        fun fromJavaCalendarDayOfWeek(day: Int): WeekDay {
+            return when (day) {
+                Calendar.MONDAY -> MO
+                Calendar.TUESDAY -> TU
+                Calendar.WEDNESDAY -> WE
+                Calendar.THURSDAY -> TH
+                Calendar.FRIDAY -> FR
+                Calendar.SATURDAY -> SA
+                Calendar.SUNDAY -> SU
+                else ->
+                    throw Exception("Invalid day of week code $day")
             }
         }
     }

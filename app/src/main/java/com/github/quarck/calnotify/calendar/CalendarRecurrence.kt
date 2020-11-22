@@ -54,8 +54,15 @@ sealed class CalendarRecurrence(
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String): CalendarRecurrenceDaily {
-                TODO("Implement me")
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceDaily {
+                return CalendarRecurrenceDaily(
+                        firstInstance,
+                        eventTimeZone,
+                        interval = 1,
+                        count = null,
+                        until = null,
+                        weekStart = weekStart
+                )
             }
         }
     }
@@ -82,8 +89,16 @@ sealed class CalendarRecurrence(
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String): CalendarRecurrenceWeekly {
-                TODO("Implement me")
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceWeekly {
+                return CalendarRecurrenceWeekly(
+                        firstInstance,
+                        eventTimeZone,
+                        interval = 1,
+                        count = null,
+                        until = null,
+                        weekStart = weekStart,
+                        weekDays = null
+                    )
             }
         }
     }
@@ -111,8 +126,21 @@ sealed class CalendarRecurrence(
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String): CalendarRecurrenceMonthlyByNthWeekDay {
-                TODO("Implement me")
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceMonthlyByNthWeekDay {
+                val timeZone = TimeZone.getTimeZone(eventTimeZone)
+                val cal = Calendar.getInstance(timeZone)
+                cal.timeInMillis = firstInstance
+                cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
+                return CalendarRecurrenceMonthlyByNthWeekDay(
+                        firstInstance,
+                        eventTimeZone,
+                        interval = 1,
+                        count = null,
+                        until = null,
+                        weekStart = weekStart,
+                        weekDay = WeekDay.fromJavaCalendarDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)),
+                        weekDayNum = cal.get(Calendar.WEEK_OF_MONTH)
+                )
             }
         }
     }
@@ -139,8 +167,20 @@ sealed class CalendarRecurrence(
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String): CalendarRecurrenceMonthlyByMonthDay {
-                TODO("Implement me")
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceMonthlyByMonthDay {
+                val timeZone = TimeZone.getTimeZone(eventTimeZone)
+                val cal = Calendar.getInstance(timeZone)
+                cal.timeInMillis = firstInstance
+                cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
+                return CalendarRecurrenceMonthlyByMonthDay(
+                        firstInstance,
+                        eventTimeZone,
+                        interval = 1,
+                        count = null,
+                        until = null,
+                        weekStart = weekStart,
+                        monthDay = cal.get(Calendar.DAY_OF_MONTH)
+                )
             }
         }
     }
@@ -169,8 +209,21 @@ sealed class CalendarRecurrence(
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String): CalendarRecurrenceYearly {
-                TODO("Implement me")
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceYearly {
+                val timeZone = TimeZone.getTimeZone(eventTimeZone)
+                val cal = Calendar.getInstance(timeZone)
+                cal.timeInMillis = firstInstance
+                cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
+                return CalendarRecurrenceYearly(
+                        firstInstance,
+                        eventTimeZone,
+                        interval = 1,
+                        count = null,
+                        until = null,
+                        weekStart = weekStart,
+                        month = cal.get(Calendar.MONTH) + 1,
+                        monthDay = cal.get(Calendar.DAY_OF_MONTH)
+                )
             }
         }
     }

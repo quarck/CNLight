@@ -21,6 +21,7 @@ package com.github.quarck.calnotify
 
 import android.content.Context
 import com.github.quarck.calnotify.utils.PersistentStorageBase
+import java.util.*
 
 class Settings(context: Context) : PersistentStorageBase(context, "settings") {
 
@@ -50,12 +51,8 @@ class Settings(context: Context) : PersistentStorageBase(context, "settings") {
 
     // in the API format - 1 - Sun, 2 - Mon, etc.. crazy
     var firstDayOfWeek: Int
-        get() = getInt(FIRST_DAY_OF_WEEK_KEY, 2)
+        get() = getInt(FIRST_DAY_OF_WEEK_KEY, Calendar.MONDAY)
         set(value) = setInt(FIRST_DAY_OF_WEEK_KEY, value)
-
-    // 1 - Monday, 2 - Tuesday, etc.
-    val firstDayOfWeekNormalized: Int
-        get() = ((firstDayOfWeek + 5) % 7) + 1
 
     var notifyOnEmailOnlyEvents: Boolean
         get() = getBoolean(NOTIFY_ON_EMAIL_ONLY_EVENTS_KEY, false)
