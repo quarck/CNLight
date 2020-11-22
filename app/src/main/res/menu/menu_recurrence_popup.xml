@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/repeats_does_not"
+        android:title="@string/recurrence_does_not_repeat" />
+    <item android:id="@+id/repeats_daily"
+        android:title="@string/recurrence_daily" />
+    <item android:id="@+id/repeats_weekly"
+        android:title="@string/recurrence_weekly" />
+    <item android:id="@+id/repeats_monthly"
+        android:title="@string/recurrence_monthly" />
+    <item android:id="@+id/repeats_yearly"
+        android:title="@string/recurrence_yearly" />
+    <item android:id="@+id/repeats_custom"
+        android:title="@string/recurrence_custom" />
+
+</menu>

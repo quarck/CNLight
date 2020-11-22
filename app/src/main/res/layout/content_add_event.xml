@@ -258,6 +258,22 @@
                 tools:ignore="HardcodedText"
                 android:background="?android:attr/selectableItemBackground"/>
 
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_event_recurrence"
+                android:text="@string/recurrence_does_not_repeat"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/primary_text"
+                android:paddingBottom="@dimen/add_event_padding_bottom"
+                android:paddingTop="@dimen/add_event_padding_top"
+                android:paddingStart="@dimen/add_event_text_start"
+                android:paddingEnd="@dimen/add_event_date_end"
+                android:layout_below="@id/add_event_date_to"
+                tools:ignore="HardcodedText"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_toEndOf="@id/image_date_time"
+                />
 
         </RelativeLayout>
 

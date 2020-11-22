@@ -268,6 +268,12 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="view_event_details">View event details</string>
     <string name="yes">Yes</string>
     <string name="edit_event">Edit Event</string>
+    <string name="recurrence_daily">Daily</string>
+    <string name="recurrence_weekly">Weekly</string>
+    <string name="recurrence_monthly">Monthly</string>
+    <string name="recurrence_yearly">Yearly</string>
+    <string name="recurrence_custom">Custom</string>
+    <string name="recurrence_does_not_repeat">Does not repeat</string>
 
 </resources>
 
