@@ -116,7 +116,7 @@ sealed class CalendarRecurrence(
 
         override fun serialize(): RRule {
             return RRule(
-                    freq = RRuleVal.FREQ(FreqType.WEEKLY),
+                    freq = RRuleVal.FREQ(FreqType.MONTHLY),
                     interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
                     count = count?.let { RRuleVal.COUNT(it) },
                     until = until?.let { RRuleVal.UNTIL(it) },
@@ -139,7 +139,7 @@ sealed class CalendarRecurrence(
                         until = null,
                         weekStart = weekStart,
                         weekDay = WeekDay.fromJavaCalendarDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)),
-                        weekDayNum = cal.get(Calendar.WEEK_OF_MONTH)
+                        weekDayNum = cal.get(Calendar.DAY_OF_WEEK_IN_MONTH)
                 )
             }
         }
@@ -157,7 +157,7 @@ sealed class CalendarRecurrence(
 
         override fun serialize(): RRule {
             return RRule(
-                    freq = RRuleVal.FREQ(FreqType.WEEKLY),
+                    freq = RRuleVal.FREQ(FreqType.MONTHLY),
                     interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
                     count = count?.let { RRuleVal.COUNT(it) },
                     until = until?.let { RRuleVal.UNTIL(it) },
@@ -198,7 +198,7 @@ sealed class CalendarRecurrence(
 
         override fun serialize(): RRule {
             return RRule(
-                    freq = RRuleVal.FREQ(FreqType.WEEKLY),
+                    freq = RRuleVal.FREQ(FreqType.YEARLY),
                     interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
                     count = count?.let { RRuleVal.COUNT(it) },
                     until = until?.let { RRuleVal.UNTIL(it) },

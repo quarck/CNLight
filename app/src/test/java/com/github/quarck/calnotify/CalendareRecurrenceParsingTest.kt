@@ -2,6 +2,7 @@ package com.github.quarck.calnotify
 
 import com.github.quarck.calnotify.calendar.CalendarRecurrence
 import com.github.quarck.calnotify.calendar.RRule
+import com.github.quarck.calnotify.calendar.WeekDay
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -104,5 +105,77 @@ class CalendareRecurrenceParsingTest {
                 exRRule: String,
                 exRDate: String,
         )*/
+    }
+
+    fun alignUntilTime(t: Long): Long {
+        val day = t / (24 * 3600 * 1000L)
+        return (day * 24 * 3600 * 1000L) + 24 * 3600 * 1000L -1L
+    }
+
+    @Test
+    fun creatingRecurrenceTest() {
+        val tz = "UTC"
+        val wkst = WeekDay.MO
+
+        val time = 1606038313290L  // 2020/11/22 09:45:13 4-th week, day: 1
+        val daily = CalendarRecurrence.CalendarRecurrenceDaily.createDefaultForDate(time, tz, wkst)
+        assertEquals(daily.serialize().serialize(), "FREQ=DAILY;WKST=MO")
+        daily.count = 2
+        assertEquals(daily.serialize().serialize(), "FREQ=DAILY;COUNT=2;WKST=MO")
+        daily.interval = 3
+        assertEquals(daily.serialize().serialize(), "FREQ=DAILY;COUNT=2;INTERVAL=3;WKST=MO")
+        daily.until = alignUntilTime(time + 3 * 24 * 3600 * 1000L)
+        assertEquals(daily.serialize().serialize(), "FREQ=DAILY;COUNT=2;INTERVAL=3;UNTIL=20201125T235959Z;WKST=MO")
+
+        val weekly = CalendarRecurrence.CalendarRecurrenceWeekly.createDefaultForDate(time, tz, wkst)
+        assertEquals(weekly.serialize().serialize(), "FREQ=WEEKLY;WKST=MO")
+        weekly.count = 2
+        assertEquals(weekly.serialize().serialize(), "FREQ=WEEKLY;COUNT=2;WKST=MO")
+        weekly.interval = 3
+        assertEquals(weekly.serialize().serialize(), "FREQ=WEEKLY;COUNT=2;INTERVAL=3;WKST=MO")
+        weekly.until = alignUntilTime(time + 30 * 24 * 3600 * 1000L)
+        assertEquals(weekly.serialize().serialize(), "FREQ=WEEKLY;COUNT=2;INTERVAL=3;UNTIL=20201222T235959Z;WKST=MO")
+        weekly.weekDays = listOf(WeekDay.MO, WeekDay.FR)
+        assertEquals(weekly.serialize().serialize(), "FREQ=WEEKLY;COUNT=2;INTERVAL=3;UNTIL=20201222T235959Z;WKST=MO;BYDAY=MO,FR")
+
+
+        val monthly0 = CalendarRecurrence.CalendarRecurrenceMonthlyByMonthDay.createDefaultForDate(time, tz, wkst)
+        assertEquals(monthly0.serialize().serialize(), "FREQ=MONTHLY;WKST=MO;BYMONTHDAY=22")
+        monthly0.count = 2
+        assertEquals(monthly0.serialize().serialize(), "FREQ=MONTHLY;COUNT=2;WKST=MO;BYMONTHDAY=22")
+        monthly0.interval = 3
+        assertEquals(monthly0.serialize().serialize(), "FREQ=MONTHLY;COUNT=2;INTERVAL=3;WKST=MO;BYMONTHDAY=22")
+        monthly0.until = alignUntilTime(time + 395 * 24 * 3600 * 1000L)
+        assertEquals(monthly0.serialize().serialize(), "FREQ=MONTHLY;COUNT=2;INTERVAL=3;UNTIL=20211222T235959Z;WKST=MO;BYMONTHDAY=22")
+
+
+        val monthly1 = CalendarRecurrence.CalendarRecurrenceMonthlyByNthWeekDay.createDefaultForDate(time, tz, wkst)
+        assertEquals(monthly1.serialize().serialize(), "FREQ=MONTHLY;WKST=MO;BYDAY=4SU")
+        monthly1.count = 2
+        assertEquals(monthly1.serialize().serialize(), "FREQ=MONTHLY;COUNT=2;WKST=MO;BYDAY=4SU")
+        monthly1.interval = 3
+        assertEquals(monthly1.serialize().serialize(), "FREQ=MONTHLY;COUNT=2;INTERVAL=3;WKST=MO;BYDAY=4SU")
+        monthly1.until = alignUntilTime(time + 395 * 24 * 3600 * 1000L)
+        assertEquals(monthly1.serialize().serialize(), "FREQ=MONTHLY;COUNT=2;INTERVAL=3;UNTIL=20211222T235959Z;WKST=MO;BYDAY=4SU")
+
+
+        val time1 = 1605001513290L  // 2020/11/10 09:45:13 3-th week, day: 3
+        val monthly2 = CalendarRecurrence.CalendarRecurrenceMonthlyByNthWeekDay.createDefaultForDate(time1, tz, wkst)
+        assertEquals(monthly2.serialize().serialize(), "FREQ=MONTHLY;WKST=MO;BYDAY=2TU")
+        monthly2.count = 2
+        assertEquals(monthly2.serialize().serialize(), "FREQ=MONTHLY;COUNT=2;WKST=MO;BYDAY=2TU")
+        monthly2.interval = 3
+        assertEquals(monthly2.serialize().serialize(), "FREQ=MONTHLY;COUNT=2;INTERVAL=3;WKST=MO;BYDAY=2TU")
+        monthly2.until = alignUntilTime(time + 395 * 24 * 3600 * 1000L)
+        assertEquals(monthly2.serialize().serialize(), "FREQ=MONTHLY;COUNT=2;INTERVAL=3;UNTIL=20211222T235959Z;WKST=MO;BYDAY=2TU")
+
+        val yearly = CalendarRecurrence.CalendarRecurrenceYearly.createDefaultForDate(time, tz, wkst)
+        assertEquals(yearly.serialize().serialize(), "FREQ=YEARLY;WKST=MO;BYMONTH=11;BYMONTHDAY=22")
+        yearly.count = 2
+        assertEquals(yearly.serialize().serialize(), "FREQ=YEARLY;COUNT=2;WKST=MO;BYMONTH=11;BYMONTHDAY=22")
+        yearly.interval = 3
+        assertEquals(yearly.serialize().serialize(), "FREQ=YEARLY;COUNT=2;INTERVAL=3;WKST=MO;BYMONTH=11;BYMONTHDAY=22")
+        yearly.until =alignUntilTime(time + (395 + 365) * 24 * 3600 * 1000L)
+        assertEquals(yearly.serialize().serialize(), "FREQ=YEARLY;COUNT=2;INTERVAL=3;UNTIL=20221222T235959Z;WKST=MO;BYMONTH=11;BYMONTHDAY=22")
     }
 }
