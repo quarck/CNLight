@@ -72,7 +72,13 @@ sealed class CalendarRecurrence(
         var limit: CalendarRecurrenceLimit,
         var weekStart: WeekDay?
 ) {
-    abstract fun serialize(): RRule
+    open fun serialize(): RRule {
+        val ret = RRule()
+        limit.serializeInto(ret)
+        ret.interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null
+        ret.wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
+        return ret
+    }
 
     fun setCount(v: Int) {
         limit = CalendarRecurrenceLimit.Count(v)
@@ -92,14 +98,9 @@ sealed class CalendarRecurrence(
             limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?
     ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
-        override fun serialize(): RRule {
-            return RRule(
-                    freq = RRuleVal.FREQ(FreqType.DAILY),
-                    interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            ).apply {
-                limit.serializeInto(this)
-            }
+
+        override fun serialize(): RRule = super.serialize().apply {
+            freq = RRuleVal.FREQ(FreqType.DAILY)
         }
 
         companion object {
@@ -124,15 +125,9 @@ sealed class CalendarRecurrence(
             var weekDays: List<WeekDay>? // if not given - determined by the weekday of the instance start
     ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
-        override fun serialize(): RRule {
-            return RRule(
-                    freq = RRuleVal.FREQ(FreqType.WEEKLY),
-                    interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    byDay = weekDays?.let { RRuleVal.BYDAY(it.map { NthWeekDay(it) }.toList()) },
-                    wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            ).apply {
-                limit.serializeInto(this)
-            }
+        override fun serialize(): RRule = super.serialize().apply {
+            freq = RRuleVal.FREQ(FreqType.WEEKLY)
+            byDay = weekDays?.let { RRuleVal.BYDAY(it.map { NthWeekDay(it) }.toList()) }
         }
 
         companion object {
@@ -156,34 +151,53 @@ sealed class CalendarRecurrence(
             limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?,
             var weekDay: WeekDay,
-            var weekDayNum: Int // here 1 means 1st
+            var weekDayNum: Int // here 1 means 1st, -1 means last, -2 - 2nd last
     ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
-        override fun serialize(): RRule {
-            return RRule(
-                    freq = RRuleVal.FREQ(FreqType.MONTHLY),
-                    interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    byDay = RRuleVal.BYDAY(listOf(NthWeekDay(weekDay, weekDayNum))),
-                    wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            ).apply {
-                limit.serializeInto(this)
-            }
+        override fun serialize(): RRule = super.serialize().apply {
+            freq = RRuleVal.FREQ(FreqType.MONTHLY)
+            byDay = RRuleVal.BYDAY(listOf(NthWeekDay(weekDay, weekDayNum)))
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): MonthlyByWeekDay {
+
+            fun getValuesForRule(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): Pair<WeekDay, Int> {
                 val timeZone = TimeZone.getTimeZone(eventTimeZone)
                 val cal = Calendar.getInstance(timeZone)
                 cal.timeInMillis = firstInstance
                 cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
+
+                val weekDay = WeekDay.fromJavaCalendarDayOfWeek(cal.get(Calendar.DAY_OF_WEEK))
+                var weekDayNum = cal.get(Calendar.DAY_OF_WEEK_IN_MONTH)
+
+                if (takeLast)
+                {
+                    weekDayNum = -1
+                    val currentMonth = cal.get(Calendar.MONTH)
+                    while (true) {
+                        cal.timeInMillis += 7 * 24 * 3600 * 1000L // jump next week
+                        if (cal.get(Calendar.MONTH) != currentMonth)  // this week is in the next month already -- we are done
+                            break
+                        // still in the same month -- add 1 to "weekDayNum"
+                        weekDayNum -= 1
+                    }
+                }
+
+                return Pair<WeekDay, Int>(weekDay, weekDayNum)
+            }
+
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): MonthlyByWeekDay {
+
+                val (weekDay, weekDayNum) = getValuesForRule(firstInstance, eventTimeZone, weekStart, takeLast)
+
                 return MonthlyByWeekDay(
                         firstInstance,
                         eventTimeZone,
                         interval = 1,
                         limit = CalendarRecurrenceLimit.NoLimit(),
                         weekStart = weekStart,
-                        weekDay = WeekDay.fromJavaCalendarDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)),
-                        weekDayNum = cal.get(Calendar.DAY_OF_WEEK_IN_MONTH)
+                        weekDay = weekDay,
+                        weekDayNum = weekDayNum
                 )
             }
         }
@@ -198,15 +212,9 @@ sealed class CalendarRecurrence(
             var monthDay: Int
     ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
-        override fun serialize(): RRule {
-            return RRule(
-                    freq = RRuleVal.FREQ(FreqType.MONTHLY),
-                    interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay)),
-                    wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            ).apply {
-                limit.serializeInto(this)
-            }
+        override fun serialize(): RRule  = super.serialize().apply {
+            freq = RRuleVal.FREQ(FreqType.MONTHLY)
+            byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay))
         }
 
         companion object {
@@ -237,16 +245,10 @@ sealed class CalendarRecurrence(
             var monthDay: Int
     ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
-        override fun serialize(): RRule {
-            return RRule(
-                    freq = RRuleVal.FREQ(FreqType.YEARLY),
-                    interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    byMonth = RRuleVal.BYMONTH(listOf(month)),
-                    byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay)),
-                    wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            ).apply {
-                limit.serializeInto(this)
-            }
+        override fun serialize(): RRule  = super.serialize().apply {
+            freq = RRuleVal.FREQ(FreqType.YEARLY)
+            byMonth = RRuleVal.BYMONTH(listOf(month))
+            byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay))
         }
 
         companion object {
