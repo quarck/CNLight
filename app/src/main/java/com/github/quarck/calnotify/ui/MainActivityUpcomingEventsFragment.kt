@@ -115,7 +115,7 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
                                             ev.monitorEntryKey, { MonitorEventAlertEntry.fromEventAlertRecord(ev) })
                                     MonitorDataPair(monitorEntry, ev)
                                 }
-                                .sortedBy { it -> it.eventEntry.instanceStartTime }
+                                .sortedBy { it -> it.eventEntry.alertTime }
                                 .toMutableList()
 
                 activity.runOnUiThread {
