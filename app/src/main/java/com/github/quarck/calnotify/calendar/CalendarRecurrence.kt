@@ -19,124 +19,168 @@
 
 package com.github.quarck.calnotify.calendar
 
-import android.content.Context
 import java.util.*
+
+sealed class CalendarRecurrenceLimit {
+    abstract fun serializeInto(rrule: RRule)
+
+    class NoLimit : CalendarRecurrenceLimit() {
+        override fun serializeInto(rrule: RRule) {
+            rrule.count = null
+            rrule.until = null
+        }
+    }
+
+    class Count(var count: Int): CalendarRecurrenceLimit() {
+        override fun serializeInto(rrule: RRule) {
+            rrule.count = RRuleVal.COUNT(count)
+            rrule.until = null
+        }
+    }
+
+    class Until(var until: Long): CalendarRecurrenceLimit() {
+        override fun serializeInto(rrule: RRule) {
+            rrule.until = RRuleVal.UNTIL(until)
+            rrule.count = null
+        }
+    }
+
+    companion object {
+        fun interpretRRuleLimits(rrule: RRule): CalendarRecurrenceLimit {
+
+            val count = rrule.count
+            val until = rrule.until
+
+            if (count != null && until != null)
+                throw Exception("Setting both COUNT and UNTIL is not supported, rrule: ${rrule.serialize()}")
+
+            if (count != null)
+                return Count(count.value)
+
+            if (until != null)
+                return Until(until.value)
+
+            return NoLimit()
+        }
+    }
+}
 
 sealed class CalendarRecurrence(
         var firstInstance: Long,
         var eventTimeZone: String,
         var interval: Int,
-        var count: Int?,
-        var until: Long?,
+        var limit: CalendarRecurrenceLimit,
         var weekStart: WeekDay?
 ) {
     abstract fun serialize(): RRule
 
+    fun setCount(v: Int) {
+        limit = CalendarRecurrenceLimit.Count(v)
+    }
+
+    fun setUntil(v: Long) {
+        limit = CalendarRecurrenceLimit.Until(v)
+    }
+
     override fun toString(): String =
             serialize().toString(java.util.TimeZone.getTimeZone(eventTimeZone).getOffset(firstInstance))
 
-    class CalendarRecurrenceDaily(
+    class Daily(
             firstInstance: Long,
             eventTimeZone: String,
             interval: Int,
-            count: Int?,
-            until: Long?,
+            limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?
-    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, count, until, weekStart) {
+    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
         override fun serialize(): RRule {
             return RRule(
                     freq = RRuleVal.FREQ(FreqType.DAILY),
                     interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    count = count?.let { RRuleVal.COUNT(it) },
-                    until = until?.let { RRuleVal.UNTIL(it) },
                     wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            )
+            ).apply {
+                limit.serializeInto(this)
+            }
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceDaily {
-                return CalendarRecurrenceDaily(
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Daily {
+                return Daily(
                         firstInstance,
                         eventTimeZone,
                         interval = 1,
-                        count = null,
-                        until = null,
+                        limit = CalendarRecurrenceLimit.NoLimit(),
                         weekStart = weekStart
                 )
             }
         }
     }
 
-    class CalendarRecurrenceWeekly(
+    class Weekly(
             firstInstance: Long,
             eventTimeZone: String,
             interval: Int,
-            count: Int?,
-            until: Long?,
+            limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?,
             var weekDays: List<WeekDay>? // if not given - determined by the weekday of the instance start
-    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, count, until, weekStart) {
+    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
         override fun serialize(): RRule {
             return RRule(
                     freq = RRuleVal.FREQ(FreqType.WEEKLY),
                     interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    count = count?.let { RRuleVal.COUNT(it) },
-                    until = until?.let { RRuleVal.UNTIL(it) },
                     byDay = weekDays?.let { RRuleVal.BYDAY(it.map { NthWeekDay(it) }.toList()) },
                     wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            )
+            ).apply {
+                limit.serializeInto(this)
+            }
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceWeekly {
-                return CalendarRecurrenceWeekly(
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Weekly {
+                return Weekly(
                         firstInstance,
                         eventTimeZone,
                         interval = 1,
-                        count = null,
-                        until = null,
+                        limit = CalendarRecurrenceLimit.NoLimit(),
                         weekStart = weekStart,
                         weekDays = null
-                    )
+                )
             }
         }
     }
 
-    class CalendarRecurrenceMonthlyByNthWeekDay(
+    class MonthlyByWeekDay(
             firstInstance: Long,
             eventTimeZone: String,
             interval: Int,
-            count: Int?,
-            until: Long?,
+            limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?,
             var weekDay: WeekDay,
             var weekDayNum: Int // here 1 means 1st
-    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, count, until, weekStart) {
+    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
         override fun serialize(): RRule {
             return RRule(
                     freq = RRuleVal.FREQ(FreqType.MONTHLY),
                     interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    count = count?.let { RRuleVal.COUNT(it) },
-                    until = until?.let { RRuleVal.UNTIL(it) },
                     byDay = RRuleVal.BYDAY(listOf(NthWeekDay(weekDay, weekDayNum))),
                     wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            )
+            ).apply {
+                limit.serializeInto(this)
+            }
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceMonthlyByNthWeekDay {
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): MonthlyByWeekDay {
                 val timeZone = TimeZone.getTimeZone(eventTimeZone)
                 val cal = Calendar.getInstance(timeZone)
                 cal.timeInMillis = firstInstance
                 cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
-                return CalendarRecurrenceMonthlyByNthWeekDay(
+                return MonthlyByWeekDay(
                         firstInstance,
                         eventTimeZone,
                         interval = 1,
-                        count = null,
-                        until = null,
+                        limit = CalendarRecurrenceLimit.NoLimit(),
                         weekStart = weekStart,
                         weekDay = WeekDay.fromJavaCalendarDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)),
                         weekDayNum = cal.get(Calendar.DAY_OF_WEEK_IN_MONTH)
@@ -145,39 +189,37 @@ sealed class CalendarRecurrence(
         }
     }
 
-    class CalendarRecurrenceMonthlyByMonthDay(
+    class Monthly(
             firstInstance: Long,
             eventTimeZone: String,
             interval: Int,
-            count: Int?,
-            until: Long?,
+            limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?,
             var monthDay: Int
-    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, count, until, weekStart) {
+    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
         override fun serialize(): RRule {
             return RRule(
                     freq = RRuleVal.FREQ(FreqType.MONTHLY),
                     interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    count = count?.let { RRuleVal.COUNT(it) },
-                    until = until?.let { RRuleVal.UNTIL(it) },
                     byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay)),
                     wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            )
+            ).apply {
+                limit.serializeInto(this)
+            }
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceMonthlyByMonthDay {
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Monthly {
                 val timeZone = TimeZone.getTimeZone(eventTimeZone)
                 val cal = Calendar.getInstance(timeZone)
                 cal.timeInMillis = firstInstance
                 cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
-                return CalendarRecurrenceMonthlyByMonthDay(
+                return Monthly(
                         firstInstance,
                         eventTimeZone,
                         interval = 1,
-                        count = null,
-                        until = null,
+                        limit = CalendarRecurrenceLimit.NoLimit(),
                         weekStart = weekStart,
                         monthDay = cal.get(Calendar.DAY_OF_MONTH)
                 )
@@ -185,41 +227,39 @@ sealed class CalendarRecurrence(
         }
     }
 
-    class CalendarRecurrenceYearly(
+    class Yearly(
             firstInstance: Long,
             eventTimeZone: String,
             interval: Int,
-            count: Int?,
-            until: Long?,
+            limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?,
             var month: Int,
             var monthDay: Int
-    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, count, until, weekStart) {
+    ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
         override fun serialize(): RRule {
             return RRule(
                     freq = RRuleVal.FREQ(FreqType.YEARLY),
                     interval = if (interval != 1) RRuleVal.INTERVAL(interval) else null,
-                    count = count?.let { RRuleVal.COUNT(it) },
-                    until = until?.let { RRuleVal.UNTIL(it) },
                     byMonth = RRuleVal.BYMONTH(listOf(month)),
                     byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay)),
                     wkst = RRuleVal.WKST(weekStart ?: WeekDay.MO )
-            )
+            ).apply {
+                limit.serializeInto(this)
+            }
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): CalendarRecurrenceYearly {
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Yearly {
                 val timeZone = TimeZone.getTimeZone(eventTimeZone)
                 val cal = Calendar.getInstance(timeZone)
                 cal.timeInMillis = firstInstance
                 cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
-                return CalendarRecurrenceYearly(
+                return Yearly(
                         firstInstance,
                         eventTimeZone,
                         interval = 1,
-                        count = null,
-                        until = null,
+                        limit = CalendarRecurrenceLimit.NoLimit(),
                         weekStart = weekStart,
                         month = cal.get(Calendar.MONTH) + 1,
                         monthDay = cal.get(Calendar.DAY_OF_MONTH)
@@ -304,14 +344,13 @@ sealed class CalendarRecurrence(
             if (rrule.bySetPos != null)
                 throw Exception("BYSETPOS is not supported for DAILY recurrent events")
 
-            return CalendarRecurrenceDaily(
+            return Daily(
                     firstInstance = instanceStart,
                     eventTimeZone = eventTimeZone,
                     interval = rrule.interval?.value ?: 1,
-                    count = rrule.count?.value,
-                    until = rrule.until?.value,
+                    limit = CalendarRecurrenceLimit.interpretRRuleLimits(rrule),
                     weekStart = rrule.wkst?.value
-                )
+            )
         }
 
         private fun interpretWeeklyRecurrence(instanceStart: Long, eventTimeZone: String, rrule: RRule): CalendarRecurrence {
@@ -334,17 +373,16 @@ sealed class CalendarRecurrence(
                                 throw Exception("BYDAY value ${it.serialize()} is not supported")
                             it.weekDay
                         }
-                }
+                    }
 
-            return CalendarRecurrenceWeekly(
+            return Weekly(
                     firstInstance = instanceStart,
                     eventTimeZone = eventTimeZone,
                     interval = rrule.interval?.value ?: 1,
-                    count = rrule.count?.value,
-                    until = rrule.until?.value,
+                    limit = CalendarRecurrenceLimit.interpretRRuleLimits(rrule),
                     weekStart = rrule.wkst?.value,
                     weekDays = weekDays
-                )
+            )
         }
 
         private fun interpretMonthlyRecurrence(instanceStart: Long, eventTimeZone: String, rrule: RRule): CalendarRecurrence {
@@ -366,12 +404,11 @@ sealed class CalendarRecurrence(
             weekDays?.let {
                 if (it.count() != 1)
                     throw Exception("BYDAY must contain exactly one element for monthly events")
-                return CalendarRecurrenceMonthlyByNthWeekDay(
+                return MonthlyByWeekDay(
                         firstInstance = instanceStart,
                         eventTimeZone = eventTimeZone,
                         interval = rrule.interval?.value ?: 1,
-                        count = rrule.count?.value,
-                        until = rrule.until?.value,
+                        limit = CalendarRecurrenceLimit.interpretRRuleLimits(rrule),
                         weekStart = rrule.wkst?.value,
                         weekDay = it.first().weekDay,
                         weekDayNum = it.first().n ?: 1
@@ -381,12 +418,11 @@ sealed class CalendarRecurrence(
             monthDays?.let {
                 if (it.count() != 1)
                     throw Exception("BYMONTHDAY must contain exactly one element for monthly events")
-                return CalendarRecurrenceMonthlyByMonthDay(
+                return Monthly(
                         firstInstance = instanceStart,
                         eventTimeZone = eventTimeZone,
                         interval = rrule.interval?.value ?: 1,
-                        count = rrule.count?.value,
-                        until = rrule.until?.value,
+                        limit = CalendarRecurrenceLimit.interpretRRuleLimits(rrule),
                         weekStart = rrule.wkst?.value,
                         monthDay = it.first()
                 )
@@ -413,12 +449,11 @@ sealed class CalendarRecurrence(
             if (monthDay.count() != 1)
                 throw Exception("BYMONTHDAY must contain exactly one month for YEARLY events")
 
-            return CalendarRecurrenceYearly(
+            return Yearly(
                     firstInstance = instanceStart,
                     eventTimeZone = eventTimeZone,
                     interval = rrule.interval?.value ?: 1,
-                    count = rrule.count?.value,
-                    until = rrule.until?.value,
+                    limit = CalendarRecurrenceLimit.interpretRRuleLimits(rrule),
                     weekStart = rrule.wkst?.value,
                     month = month.first(),
                     monthDay = monthDay.first()
