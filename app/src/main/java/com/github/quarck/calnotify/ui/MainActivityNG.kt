@@ -25,6 +25,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -40,6 +41,8 @@ import com.github.quarck.calnotify.BuildConfig
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.calendar.CalendarRecurrence
+import com.github.quarck.calnotify.calendar.WeekDay
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.powerManager
@@ -102,6 +105,11 @@ class MainActivityNG : AppCompatActivity() {
         DevLog.info(LOG_TAG, "onResume()")
 
         checkPermissions()
+
+        val now = System.currentTimeMillis()
+        DialogRecurrence(this, this.layoutInflater, null, now, "UTC",
+            CalendarRecurrence.Weekly.createDefaultForDate(now, "UTC", WeekDay.MO)
+        ).show()
 
         // do this only when we are in the activity launched form the notification?
 //        val navController = findNavController(R.id.nav_host_fragment)
