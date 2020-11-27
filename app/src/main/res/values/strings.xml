@@ -284,6 +284,10 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="after">After</string>
     <string name="on">On</string>
     <string name="never">Never</string>
+    <string name="unit_day">Day</string>
+    <string name="unit_week">Week</string>
+    <string name="unit_month">Month</string>
+    <string name="unit_year">Year</string>
 
 </resources>
 

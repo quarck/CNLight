@@ -23,11 +23,16 @@ import java.util.*
 
 sealed class CalendarRecurrenceLimit {
     abstract fun serializeInto(rrule: RRule)
+    abstract fun copy(): CalendarRecurrenceLimit
 
     class NoLimit : CalendarRecurrenceLimit() {
         override fun serializeInto(rrule: RRule) {
             rrule.count = null
             rrule.until = null
+        }
+
+        override fun copy(): CalendarRecurrenceLimit {
+            return NoLimit()
         }
     }
 
@@ -36,12 +41,20 @@ sealed class CalendarRecurrenceLimit {
             rrule.count = RRuleVal.COUNT(count)
             rrule.until = null
         }
+
+        override fun copy(): CalendarRecurrenceLimit {
+            return Count(count)
+        }
     }
 
     class Until(var until: Long): CalendarRecurrenceLimit() {
         override fun serializeInto(rrule: RRule) {
             rrule.until = RRuleVal.UNTIL(until)
             rrule.count = null
+        }
+
+        override fun copy(): CalendarRecurrenceLimit {
+            return Until(until)
         }
     }
 
@@ -91,6 +104,8 @@ sealed class CalendarRecurrence(
     override fun toString(): String =
             serialize().toString(java.util.TimeZone.getTimeZone(eventTimeZone).getOffset(firstInstance))
 
+    abstract fun copy(): CalendarRecurrence
+
     class Daily(
             firstInstance: Long,
             eventTimeZone: String,
@@ -101,6 +116,16 @@ sealed class CalendarRecurrence(
 
         override fun serialize(): RRule = super.serialize().apply {
             freq = RRuleVal.FREQ(FreqType.DAILY)
+        }
+
+        override fun copy(): CalendarRecurrence {
+            return Daily(
+                    firstInstance,
+                    eventTimeZone,
+                    interval,
+                    limit.copy(),
+                    weekStart
+            )
         }
 
         companion object {
@@ -130,6 +155,17 @@ sealed class CalendarRecurrence(
             byDay = weekDays?.let { RRuleVal.BYDAY(it.map { NthWeekDay(it) }.toList()) }
         }
 
+        override fun copy(): CalendarRecurrence {
+            return Weekly(
+                    firstInstance,
+                    eventTimeZone,
+                    interval,
+                    limit.copy(),
+                    weekStart,
+                    weekDays?.map{ it }?.toList()
+            )
+        }
+
         companion object {
             fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Weekly {
                 return Weekly(
@@ -157,6 +193,19 @@ sealed class CalendarRecurrence(
         override fun serialize(): RRule = super.serialize().apply {
             freq = RRuleVal.FREQ(FreqType.MONTHLY)
             byDay = RRuleVal.BYDAY(listOf(NthWeekDay(weekDay, weekDayNum)))
+        }
+
+
+        override fun copy(): CalendarRecurrence {
+            return MonthlyByWeekDay(
+                    firstInstance,
+                    eventTimeZone,
+                    interval,
+                    limit.copy(),
+                    weekStart,
+                    weekDay,
+                    weekDayNum
+            )
         }
 
         companion object {
@@ -217,6 +266,17 @@ sealed class CalendarRecurrence(
             byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay))
         }
 
+        override fun copy(): CalendarRecurrence {
+            return Monthly(
+                    firstInstance,
+                    eventTimeZone,
+                    interval,
+                    limit.copy(),
+                    weekStart,
+                    monthDay
+            )
+        }
+
         companion object {
             fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Monthly {
                 val timeZone = TimeZone.getTimeZone(eventTimeZone)
@@ -249,6 +309,18 @@ sealed class CalendarRecurrence(
             freq = RRuleVal.FREQ(FreqType.YEARLY)
             byMonth = RRuleVal.BYMONTH(listOf(month))
             byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay))
+        }
+
+        override fun copy(): CalendarRecurrence {
+            return Yearly(
+                    firstInstance,
+                    eventTimeZone,
+                    interval,
+                    limit.copy(),
+                    weekStart,
+                    month,
+                    monthDay
+            )
         }
 
         companion object {

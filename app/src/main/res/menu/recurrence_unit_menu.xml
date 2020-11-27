@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_recurrence_day"
+        android:title="@string/unit_day" />
+
+    <item
+        android:id="@+id/menu_recurrence_week"
+        android:title="@string/unit_week" />
+
+    <item
+        android:id="@+id/menu_recurrence_month"
+        android:title="@string/unit_month" />
+
+    <item
+        android:id="@+id/menu_recurrence_year"
+        android:title="@string/unit_year" />
+</menu>
