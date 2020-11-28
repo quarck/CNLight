@@ -210,7 +210,7 @@ sealed class CalendarRecurrence(
 
         companion object {
 
-            fun getValuesForRule(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): Pair<WeekDay, Int> {
+            fun getDefaultValuesFor(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): Pair<WeekDay, Int> {
                 val timeZone = TimeZone.getTimeZone(eventTimeZone)
                 val cal = Calendar.getInstance(timeZone)
                 cal.timeInMillis = firstInstance
@@ -237,7 +237,7 @@ sealed class CalendarRecurrence(
 
             fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): MonthlyByWeekDay {
 
-                val (weekDay, weekDayNum) = getValuesForRule(firstInstance, eventTimeZone, weekStart, takeLast)
+                val (weekDay, weekDayNum) = getDefaultValuesFor(firstInstance, eventTimeZone, weekStart, takeLast)
 
                 return MonthlyByWeekDay(
                         firstInstance,
@@ -278,18 +278,23 @@ sealed class CalendarRecurrence(
         }
 
         companion object {
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Monthly {
+
+            fun getDefaultValuesFor(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Int {
                 val timeZone = TimeZone.getTimeZone(eventTimeZone)
                 val cal = Calendar.getInstance(timeZone)
                 cal.timeInMillis = firstInstance
                 cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
+                return cal.get(Calendar.DAY_OF_MONTH)
+            }
+
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): Monthly {
                 return Monthly(
                         firstInstance,
                         eventTimeZone,
                         interval = 1,
                         limit = CalendarRecurrenceLimit.NoLimit(),
                         weekStart = weekStart,
-                        monthDay = cal.get(Calendar.DAY_OF_MONTH)
+                        monthDay = getDefaultValuesFor(firstInstance, eventTimeZone, weekStart)
                 )
             }
         }

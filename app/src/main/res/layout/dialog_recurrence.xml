@@ -17,7 +17,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:text="__DIALOG_TITLE__"
             android:id="@+id/recurrence_dialog_title"
             android:layout_gravity="start"
@@ -25,13 +25,13 @@
             android:paddingEnd="10dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:textStyle="bold"
             android:textColor="@color/secondary_text"
             />
 
         <TextView
             android:id="@+id/recurrence_dialog_button_done"
             android:background="?android:attr/selectableItemBackground"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:clickable="true"
             android:focusable="true"
             android:layout_width="wrap_content"
@@ -65,18 +65,17 @@
         >
 
         <TextView
+            android:id="@+id/recurrence_dialog_repeats_every_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Repeats every:"
-            android:id="@+id/recurrence_dialog_repeats_every_label"
             android:layout_gravity="start"
             android:paddingStart="10dp"
-            android:paddingEnd="10dp"
             android:paddingTop="10dp"
+            android:paddingEnd="10dp"
             android:paddingBottom="10dp"
-            android:textColor="@color/secondary_text"
-            />
+            android:text="Repeats every:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:textColor="@color/secondary_text" />
 
         <EditText
             android:id="@+id/recurrence_dialog_repeats_every_number"
@@ -92,6 +91,7 @@
             android:gravity="center_horizontal"
             android:layout_alignParentStart="true"
             android:layout_below="@id/recurrence_dialog_repeats_every_label"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             />
 
         <Button
@@ -101,6 +101,7 @@
             android:drawableEnd="@android:drawable/arrow_down_float"
             android:layout_alignBaseline="@id/recurrence_dialog_repeats_every_number"
             android:layout_toEndOf="@id/recurrence_dialog_repeats_every_number"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="Day " />
@@ -114,116 +115,109 @@
         android:id="@+id/recurrence_dialog_weekly_config"
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
-        android:visibility="gone"
+        android:visibility="visible"
         >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:text="@string/mon"
             android:id="@+id/recurrence_dialog_monday_text"
-            android:layout_gravity="start"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:gravity="center"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textColor="@color/secondary_text"
-            android:textStyle="bold"
             android:layout_weight="10"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:text="@string/tue"
             android:id="@+id/recurrence_dialog_tuesday_text"
-            android:layout_gravity="start"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:gravity="center"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textColor="@color/secondary_text"
-            android:textStyle="bold"
             android:layout_weight="10"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:text="@string/wed"
             android:id="@+id/recurrence_dialog_wednesday_text"
-            android:layout_gravity="start"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:gravity="center"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textColor="@color/secondary_text"
-            android:textStyle="bold"
             android:layout_weight="10"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:text="@string/thr"
             android:id="@+id/recurrence_dialog_thursday_text"
-            android:layout_gravity="start"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:gravity="center"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textColor="@color/secondary_text"
-            android:textStyle="bold"
             android:layout_weight="10"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:text="@string/fri"
             android:id="@+id/recurrence_dialog_friday_text"
-            android:layout_gravity="start"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:gravity="center"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textColor="@color/secondary_text"
-            android:textStyle="bold"
             android:layout_weight="10"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:text="@string/sat"
             android:id="@+id/recurrence_dialog_saturday_text"
-            android:layout_gravity="start"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:gravity="center"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textColor="@color/secondary_text"
-            android:textStyle="bold"
             android:layout_weight="10"
             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:text="@string/sun"
             android:id="@+id/recurrence_dialog_sunday_text"
-            android:layout_gravity="start"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
+            android:gravity="center"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
             android:textColor="@color/secondary_text"
-            android:textStyle="bold"
             android:layout_weight="10"
             />
     </LinearLayout>
@@ -233,7 +227,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/recurrence_dialog_monthly_config"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <RadioButton
             android:id="@+id/recurrence_dialog_month_onmonthday"
@@ -245,7 +239,7 @@
             android:paddingStart="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="@color/secondary_text"
             android:text="On day 28"
             />
@@ -260,7 +254,7 @@
             android:paddingStart="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="@color/secondary_text"
             android:text="On 3rd Friday"
             />
@@ -275,7 +269,7 @@
             android:paddingStart="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="@color/secondary_text"
             android:text="On last Friday"
             />
@@ -290,7 +284,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
         android:text="Ends:"
         android:id="@+id/recurrence_dialog_ends_label"
         android:layout_gravity="start"
@@ -316,7 +310,7 @@
             android:paddingStart="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="@color/secondary_text"
             android:text="@string/never" />
 
@@ -331,7 +325,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
             android:layout_below="@id/recurrence_dialog_radio_no_end"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="@color/secondary_text"
             android:text="@string/on" />
 
@@ -342,12 +336,12 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:paddingEnd="24dp"
+            android:paddingEnd="16dp"
             android:paddingStart="8dp"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="0dp"
             android:layout_below="@id/recurrence_dialog_radio_end_on"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="@color/secondary_text"
             android:text="@string/after" />
 
@@ -359,6 +353,7 @@
             tools:ignore="HardcodedText"
             android:layout_alignBaseline="@id/recurrence_dialog_radio_end_on"
             android:layout_toEndOf="@id/recurrence_dialog_radio_end_on"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             />
 
         <EditText
@@ -372,13 +367,14 @@
             android:text="10"
             tools:ignore="HardcodedText,LabelFor"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:importantForAutofill="no" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textColor="@color/secondary_text"
             android:layout_alignBaseline="@id/recurrence_dialog_radio_end_after_n"
             android:layout_toEndOf="@id/recurrence_dialog_radio_end_after_n_edit"

@@ -273,21 +273,23 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="recurrence_yearly">Yearly</string>
     <string name="recurrence_custom">Custom</string>
     <string name="recurrence_does_not_repeat">Does not repeat</string>
-    <string name="mon">Mon</string>
-    <string name="tue">Tue</string>
-    <string name="wed">Wed</string>
-    <string name="thr">Thr</string>
-    <string name="fri">Fri</string>
-    <string name="sat">Sat</string>
-    <string name="sun">Sun</string>
+    <string name="mon">mo</string>
+    <string name="tue">tu</string>
+    <string name="wed">we</string>
+    <string name="thr">th</string>
+    <string name="fri">fr</string>
+    <string name="sat">sa</string>
+    <string name="sun">su</string>
     <string name="occurrences">occurrences</string>
     <string name="after">After</string>
     <string name="on">On</string>
     <string name="never">Never</string>
-    <string name="unit_day">Day</string>
-    <string name="unit_week">Week</string>
-    <string name="unit_month">Month</string>
-    <string name="unit_year">Year</string>
+    <string name="unit_day">day</string>
+    <string name="unit_week">week</string>
+    <string name="unit_month">month</string>
+    <string name="unit_year">year</string>
+    <string name="on_day_fmt" formatted="true">On day %s</string>
+    <string name="on_fmt" formatted="true">On %s</string>
 
 </resources>
 

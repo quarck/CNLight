@@ -107,7 +107,8 @@ class MainActivityNG : AppCompatActivity() {
         checkPermissions()
 
         val now = System.currentTimeMillis()
-        DialogRecurrence(this, this.layoutInflater, null, now, now + 3600 * 1000L, "UTC",
+        DialogRecurrence(this, this.layoutInflater.inflate(R.layout.dialog_recurrence, null),
+                now, now + 3600 * 1000L, "UTC",
             CalendarRecurrence.Weekly.createDefaultForDate(now, "UTC", WeekDay.MO)
         ).show()
 
