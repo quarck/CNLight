@@ -220,6 +220,23 @@
             android:textColor="@color/secondary_text"
             android:layout_weight="10"
             />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+            android:text="mu"
+            android:id="@+id/recurrence_dialog_moonday_text"
+            android:gravity="center"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textColor="@color/accent"
+            android:layout_weight="10"
+            android:visibility="gone"
+            />
+
     </LinearLayout>
 
     <LinearLayout
