@@ -77,6 +77,55 @@ enum class WeekDay(val code: Int) {
                     throw Exception("Invalid day of week code $day")
             }
         }
+
+        @JvmStatic
+        fun fromZeroBasedIndex(v: Int) = values()[v]
+    }
+}
+
+class WeekDays {
+    private val days = Array<Boolean>(7, {false} )
+
+    operator fun get(idx: Int): Boolean = days[idx]
+    operator fun set(idx: Int, value: Boolean) { days[idx] = value }
+
+    operator fun get(day: WeekDay): Boolean = get(day.code - 1)
+    operator fun set(day: WeekDay, value: Boolean) { days[day.code - 1] = value }
+
+    fun toList(): List<WeekDay> {
+        val ret = mutableListOf<WeekDay>()
+        for (i in 0 until 7) {
+            if (days[i])
+                ret.add(WeekDay.fromZeroBasedIndex(i))
+        }
+        return ret
+    }
+
+    fun toRRule(): RRuleVal.BYDAY {
+        val values = mutableListOf<NthWeekDay>()
+        for (i in 0 until 7) {
+            if (days[i])
+                values.add(NthWeekDay(WeekDay.fromZeroBasedIndex(i)))
+        }
+        return RRuleVal.BYDAY(values)
+    }
+
+    fun clone(): WeekDays {
+        val ret = WeekDays()
+        for (i in 0 until 8) {
+            ret[i] = get(i)
+        }
+        return ret
+    }
+
+    companion object {
+        fun fromList(days: List<WeekDay>): WeekDays {
+            val ret = WeekDays()
+            for (d in days) {
+                ret[d] = true
+            }
+            return ret
+        }
     }
 }
 

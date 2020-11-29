@@ -147,12 +147,12 @@ sealed class CalendarRecurrence(
             interval: Int,
             limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?,
-            var weekDays: List<WeekDay>? // if not given - determined by the weekday of the instance start
+            var weekDays: WeekDays? // if not given - determined by the weekday of the instance start
     ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
         override fun serialize(): RRule = super.serialize().apply {
             freq = RRuleVal.FREQ(FreqType.WEEKLY)
-            byDay = weekDays?.let { RRuleVal.BYDAY(it.map { NthWeekDay(it) }.toList()) }
+            byDay = weekDays?.toRRule()
         }
 
         override fun copy(): CalendarRecurrence {
@@ -162,7 +162,7 @@ sealed class CalendarRecurrence(
                     interval,
                     limit.copy(),
                     weekStart,
-                    weekDays?.map{ it }?.toList()
+                    weekDays?.clone()
             )
         }
 
@@ -176,6 +176,17 @@ sealed class CalendarRecurrence(
                         weekStart = weekStart,
                         weekDays = null
                 )
+            }
+
+            fun getDefaultValuesFor(eventStart: Long, timeZone: TimeZone, weekStart: WeekDay): WeekDays {
+
+                val cal = Calendar.getInstance(timeZone)
+                cal.timeInMillis = eventStart
+                cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
+
+                val weekDays = WeekDays()
+                weekDays[WeekDay.fromJavaCalendarDayOfWeek(cal.get(Calendar.DAY_OF_WEEK))] = true
+                return weekDays
             }
         }
     }
@@ -195,7 +206,6 @@ sealed class CalendarRecurrence(
             byDay = RRuleVal.BYDAY(listOf(NthWeekDay(weekDay, weekDayNum)))
         }
 
-
         override fun copy(): CalendarRecurrence {
             return MonthlyByWeekDay(
                     firstInstance,
@@ -210,8 +220,8 @@ sealed class CalendarRecurrence(
 
         companion object {
 
-            fun getDefaultValuesFor(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): Pair<WeekDay, Int> {
-                val timeZone = TimeZone.getTimeZone(eventTimeZone)
+            fun getDefaultValuesFor(firstInstance: Long, timeZone: TimeZone, weekStart: WeekDay, takeLast: Boolean): Pair<WeekDay, Int> {
+
                 val cal = Calendar.getInstance(timeZone)
                 cal.timeInMillis = firstInstance
                 cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
@@ -219,8 +229,7 @@ sealed class CalendarRecurrence(
                 val weekDay = WeekDay.fromJavaCalendarDayOfWeek(cal.get(Calendar.DAY_OF_WEEK))
                 var weekDayNum = cal.get(Calendar.DAY_OF_WEEK_IN_MONTH)
 
-                if (takeLast)
-                {
+                if (takeLast) {
                     weekDayNum = -1
                     val currentMonth = cal.get(Calendar.MONTH)
                     while (true) {
@@ -232,12 +241,12 @@ sealed class CalendarRecurrence(
                     }
                 }
 
-                return Pair<WeekDay, Int>(weekDay, weekDayNum)
+                return Pair(weekDay, weekDayNum)
             }
 
             fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): MonthlyByWeekDay {
-
-                val (weekDay, weekDayNum) = getDefaultValuesFor(firstInstance, eventTimeZone, weekStart, takeLast)
+                val timeZone = TimeZone.getTimeZone(eventTimeZone)
+                val (weekDay, weekDayNum) = getDefaultValuesFor(firstInstance, timeZone, weekStart, takeLast)
 
                 return MonthlyByWeekDay(
                         firstInstance,
@@ -279,8 +288,7 @@ sealed class CalendarRecurrence(
 
         companion object {
 
-            fun getDefaultValuesFor(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Int {
-                val timeZone = TimeZone.getTimeZone(eventTimeZone)
+            fun getDefaultValuesFor(firstInstance: Long, timeZone: TimeZone, weekStart: WeekDay): Int {
                 val cal = Calendar.getInstance(timeZone)
                 cal.timeInMillis = firstInstance
                 cal.firstDayOfWeek = weekStart.javaCalendarDayOfWeek
@@ -288,13 +296,14 @@ sealed class CalendarRecurrence(
             }
 
             fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): Monthly {
+                val timeZone = TimeZone.getTimeZone(eventTimeZone)
                 return Monthly(
                         firstInstance,
                         eventTimeZone,
                         interval = 1,
                         limit = CalendarRecurrenceLimit.NoLimit(),
                         weekStart = weekStart,
-                        monthDay = getDefaultValuesFor(firstInstance, eventTimeZone, weekStart)
+                        monthDay = getDefaultValuesFor(firstInstance, timeZone, weekStart)
                 )
             }
         }
@@ -460,7 +469,7 @@ sealed class CalendarRecurrence(
                     interval = rrule.interval?.value ?: 1,
                     limit = CalendarRecurrenceLimit.interpretRRuleLimits(rrule),
                     weekStart = rrule.wkst?.value,
-                    weekDays = weekDays
+                    weekDays = weekDays?.let{ WeekDays.fromList(it) }
             )
         }
 

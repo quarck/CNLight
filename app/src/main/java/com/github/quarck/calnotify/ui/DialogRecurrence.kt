@@ -3,41 +3,125 @@ package com.github.quarck.calnotify.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.text.Editable
+import android.text.TextWatcher
 import android.text.format.DateUtils
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.calendar.CalendarRecurrence
-import com.github.quarck.calnotify.calendar.CalendarRecurrenceLimit
-import com.github.quarck.calnotify.calendar.NthWeekDay
-import com.github.quarck.calnotify.calendar.WeekDay
-import java.text.DateFormat
+import com.github.quarck.calnotify.calendar.*
+import com.github.quarck.calnotify.utils.logs.DevLog
 import java.util.*
+
+enum class RecurrenceType {
+    Daily,
+    Weekly,
+    MonthlyByMonthDay,
+    MonthlyByWeekDay,
+    MonthlyByLastWeekDay,
+    Yearly
+}
+
+enum class RecurrenceLimit {
+    NoLimit,
+    Until,
+    Count
+}
+
+class DialogRecurrenceViewModel(
+        val eventStart: Long,
+        val eventEnd: Long,
+        val eventTimeZone: String,
+        val originalRecurrence: CalendarRecurrence
+) {
+
+    val monthDay: Int
+    val monthByWeekDay: NthWeekDay
+    val monthByLastWeekDay: NthWeekDay
+
+    var timeUntil = eventEnd + 30 * 24 * 3600 * 1000L + 60L // must cap to end of day...
+    var numRepetitions = 10
+    var weekDays = WeekDays()
+    var interval = 1
+
+    var lastMonthlyRecurrenceType: RecurrenceType? = null
+
+    private var _recurrenceType: RecurrenceType = RecurrenceType.Daily // just some default
+    var recurrenceType: RecurrenceType
+        get() = _recurrenceType
+        set(value) {
+            _recurrenceType = value
+            if (value == RecurrenceType.MonthlyByMonthDay ||
+                    value == RecurrenceType.MonthlyByWeekDay ||
+                    value == RecurrenceType.MonthlyByLastWeekDay) {
+                lastMonthlyRecurrenceType = value
+            }
+        }
+    var limitType: RecurrenceLimit
+
+    init {
+        val timeZone = TimeZone.getTimeZone(eventTimeZone)
+
+        monthDay = CalendarRecurrence.Monthly.getDefaultValuesFor(eventStart, timeZone, originalRecurrence.weekStart ?: WeekDay.MO)
+
+        val byWeekDay = CalendarRecurrence.MonthlyByWeekDay.getDefaultValuesFor(eventStart, timeZone, originalRecurrence.weekStart ?: WeekDay.MO, false)
+        monthByWeekDay = NthWeekDay(byWeekDay.first, byWeekDay.second)
+
+        val byLastWeekDay = CalendarRecurrence.MonthlyByWeekDay.getDefaultValuesFor(eventStart, timeZone, originalRecurrence.weekStart ?: WeekDay.MO, true)
+        monthByLastWeekDay = NthWeekDay(byLastWeekDay.first, byLastWeekDay.second)
+
+        val originalLimit = originalRecurrence.limit
+        when (originalLimit) {
+            is CalendarRecurrenceLimit.Until -> {
+                timeUntil = originalLimit.until
+                limitType = RecurrenceLimit.Until
+            }
+            is CalendarRecurrenceLimit.Count -> {
+                numRepetitions = originalLimit.count
+                limitType = RecurrenceLimit.Count
+            }
+            is CalendarRecurrenceLimit.NoLimit -> {
+                limitType = RecurrenceLimit.NoLimit
+            }
+        }
+
+        var currentWeekDays: WeekDays? = null
+
+        when (originalRecurrence) {
+            is CalendarRecurrence.Daily -> {
+                recurrenceType = RecurrenceType.Daily
+            }
+            is CalendarRecurrence.Weekly -> {
+                recurrenceType = RecurrenceType.Weekly
+                currentWeekDays = originalRecurrence.weekDays
+            }
+            is CalendarRecurrence.Monthly -> {
+                recurrenceType = RecurrenceType.MonthlyByMonthDay
+            }
+            is CalendarRecurrence.MonthlyByWeekDay -> {
+                recurrenceType = if (originalRecurrence.weekDayNum > 0)
+                    RecurrenceType.MonthlyByWeekDay
+                else
+                    RecurrenceType.MonthlyByLastWeekDay
+            }
+            is CalendarRecurrence.Yearly -> {
+                recurrenceType = RecurrenceType.Yearly
+            }
+        }
+
+        weekDays = currentWeekDays ?: CalendarRecurrence.Weekly.getDefaultValuesFor(eventStart, timeZone, originalRecurrence.weekStart ?: WeekDay.MO)
+    }
+}
 
 class DialogRecurrence(
         val context: Context,
         val view: View,
-        val eventStart: Long,
-        val eventEnd: Long,
-        val eventTimeZone: String,
-        val originalRecurrence: CalendarRecurrence,
+        eventStart: Long,
+        eventEnd: Long,
+        eventTimeZone: String,
+        originalRecurrence: CalendarRecurrence,
 ) {
-    enum class RecurrenceType {
-        Daily,
-        Weekly,
-        MonthlyByMonthDay,
-        MonthlyByWeekDay,
-        MonthlyByLastWeekDay,
-        Yearly
-    }
 
-    enum class RecurrenceLimit {
-        NoLimit,
-        Until,
-        Count
-    }
     private val dialog: AlertDialog
 
     private val doneButton: TextView = view.findViewById(R.id.recurrence_dialog_button_done)
@@ -67,15 +151,7 @@ class DialogRecurrence(
     private val endOnButton: Button = view.findViewById(R.id.recurrence_dialog_radio_end_on_button)
     private val endAfterCount: EditText = view.findViewById(R.id.recurrence_dialog_radio_end_after_n_edit)
 
-
-    private var timeUntil = eventEnd + 30 * 24 * 3600 * 1000L + 60L // must cap to end of day...
-    private var numRepetitions = 10
-    private var weekDays = Array<Boolean>(7, {false})
-    private var interval = 1
-
-    private var recurrenceType: RecurrenceType
-    private var lastMonthlyRecurrenceType: RecurrenceType? = null
-    private var limitType: RecurrenceLimit
+    private val vm = DialogRecurrenceViewModel(eventStart, eventEnd, eventTimeZone, originalRecurrence)
 
     init {
         val builder = AlertDialog.Builder(context)
@@ -84,67 +160,34 @@ class DialogRecurrence(
             _: DialogInterface?, _: Int ->
         }
 
-        val originalLimit = originalRecurrence.limit
-        when (originalLimit) {
-            is CalendarRecurrenceLimit.Until -> {
-                timeUntil = originalLimit.until
-                limitType = RecurrenceLimit.Until
-            }
-            is CalendarRecurrenceLimit.Count -> {
-                numRepetitions = originalLimit.count
-                limitType = RecurrenceLimit.Count
-            }
-            is CalendarRecurrenceLimit.NoLimit -> {
-                limitType = RecurrenceLimit.NoLimit
-            }
-        }
-
-        when (originalRecurrence) {
-            is CalendarRecurrence.Daily -> {
-                recurrenceType = RecurrenceType.Daily
-            }
-            is CalendarRecurrence.Weekly -> {
-                recurrenceType = RecurrenceType.Weekly
-            }
-            is CalendarRecurrence.Monthly -> {
-                recurrenceType = RecurrenceType.MonthlyByMonthDay
-                lastMonthlyRecurrenceType = recurrenceType
-            }
-            is CalendarRecurrence.MonthlyByWeekDay -> {
-                recurrenceType = if (originalRecurrence.weekDayNum > 0)
-                    RecurrenceType.MonthlyByWeekDay
-                else
-                    RecurrenceType.MonthlyByLastWeekDay
-                lastMonthlyRecurrenceType = recurrenceType
-            }
-            is CalendarRecurrence.Yearly -> {
-                recurrenceType = RecurrenceType.Yearly
-            }
-        }
-
-        val monthDay = CalendarRecurrence.Monthly.getDefaultValuesFor(eventStart, eventTimeZone, originalRecurrence.weekStart ?: WeekDay.MO)
-        val monthByWeekDay = CalendarRecurrence.MonthlyByWeekDay.getDefaultValuesFor(eventStart, eventTimeZone, originalRecurrence.weekStart ?: WeekDay.MO, false)
-        val monthByLastWeekDay = CalendarRecurrence.MonthlyByWeekDay.getDefaultValuesFor(eventStart, eventTimeZone, originalRecurrence.weekStart ?: WeekDay.MO, true)
-
-        radioOnMonthDay.setText(context.getString(R.string.on_day_fmt).format(monthDay))
-        radioOnWeekDay.setText(context.getString(R.string.on_fmt).format(NthWeekDay(monthByWeekDay.first, monthByWeekDay.second).toString()))
-        radioOnLastWeekDay.setText(context.getString(R.string.on_fmt).format(NthWeekDay(monthByLastWeekDay.first, monthByLastWeekDay.second).toString()))
+        radioOnMonthDay.setText(context.getString(R.string.on_day_fmt).format(vm.monthDay))
+        radioOnWeekDay.setText(context.getString(R.string.on_fmt).format(vm.monthByWeekDay.toString()))
+        radioOnLastWeekDay.setText(context.getString(R.string.on_fmt).format(vm.monthByLastWeekDay.toString()))
 
         val intervalAsStr = originalRecurrence.interval.toString()
         repeatsEveryText.setText(intervalAsStr)
         repeatsEveryText.setSelection(intervalAsStr.length) // focus it at the end
 
+        repeatsEveryText.addTextChangedListener(object: TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                vm.interval = repeatsEveryText.text.toString().toIntOrNull() ?: 1
+                DevLog.info("___DIALOG___", "$s: ${vm.interval}")
+            }
+        });
+
         radioEventNoEnd.setOnClickListener{
-            limitType = RecurrenceLimit.NoLimit
-            updateLimitUI()
+            vm.limitType = RecurrenceLimit.NoLimit
+            onVmUpdated()
         }
         radioEndByDate.setOnClickListener{
-            limitType = RecurrenceLimit.Until
-            updateLimitUI()
+            vm.limitType = RecurrenceLimit.Until
+            onVmUpdated()
         }
         radioEndByCount.setOnClickListener{
-            limitType = RecurrenceLimit.Count
-            updateLimitUI()
+            vm.limitType = RecurrenceLimit.Count
+            onVmUpdated()
         }
 
         repeatsEveryUnitButton.setOnClickListener{
@@ -152,23 +195,19 @@ class DialogRecurrence(
         }
 
         radioOnMonthDay.setOnClickListener {
-            recurrenceType = RecurrenceType.MonthlyByMonthDay
-            lastMonthlyRecurrenceType = recurrenceType
-            updateRecurrenceUI()
+            vm.recurrenceType = RecurrenceType.MonthlyByMonthDay
+            onVmUpdated()
         }
         radioOnWeekDay.setOnClickListener {
-            recurrenceType = RecurrenceType.MonthlyByWeekDay
-            lastMonthlyRecurrenceType = recurrenceType
-            updateRecurrenceUI()
+            vm.recurrenceType = RecurrenceType.MonthlyByWeekDay
+            onVmUpdated()
         }
         radioOnLastWeekDay.setOnClickListener {
-            recurrenceType = RecurrenceType.MonthlyByLastWeekDay
-            lastMonthlyRecurrenceType = recurrenceType
-            updateRecurrenceUI()
+            vm.recurrenceType = RecurrenceType.MonthlyByLastWeekDay
+            onVmUpdated()
         }
 
-        updateLimitUI()
-        updateRecurrenceUI()
+        onVmUpdated()
 
         dialog = builder.create()
 
@@ -184,9 +223,8 @@ class DialogRecurrence(
 
     fun show() = dialog.show()
 
-    fun updateLimitUI() {
-
-        when (limitType) {
+    fun onVmUpdated() {
+        when (vm.limitType) {
             RecurrenceLimit.NoLimit -> {
                 radioEventNoEnd.isChecked = true
                 radioEndByDate.isChecked = false
@@ -210,11 +248,12 @@ class DialogRecurrence(
             }
         }
 
-        endOnButton.text = DateUtils.formatDateTime(context, timeUntil, DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_SHOW_YEAR)
-    }
+        endOnButton.text = DateUtils.formatDateTime(
+                context, vm.timeUntil,
+                DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_ABBREV_ALL or DateUtils.FORMAT_SHOW_YEAR
+        )
 
-    fun updateRecurrenceUI() {
-        when (recurrenceType) {
+        when (vm.recurrenceType) {
             RecurrenceType.Daily -> {
                 weeklyConfigLayout.visibility = View.GONE
                 monthlyConfigLayout.visibility = View.GONE
@@ -230,9 +269,9 @@ class DialogRecurrence(
                 monthlyConfigLayout.visibility = View.VISIBLE
                 repeatsEveryUnitButton.text = context.resources.getString(R.string.unit_month)
 
-                radioOnMonthDay.isChecked = recurrenceType == RecurrenceType.MonthlyByMonthDay
-                radioOnWeekDay.isChecked = recurrenceType == RecurrenceType.MonthlyByWeekDay
-                radioOnLastWeekDay.isChecked = recurrenceType == RecurrenceType.MonthlyByLastWeekDay
+                radioOnMonthDay.isChecked = vm.recurrenceType == RecurrenceType.MonthlyByMonthDay
+                radioOnWeekDay.isChecked = vm.recurrenceType == RecurrenceType.MonthlyByWeekDay
+                radioOnLastWeekDay.isChecked = vm.recurrenceType == RecurrenceType.MonthlyByLastWeekDay
             }
             RecurrenceType.Yearly -> {
                 weeklyConfigLayout.visibility = View.GONE
@@ -252,24 +291,24 @@ class DialogRecurrence(
             item ->
             val ret = when (item.itemId) {
                 R.id.menu_recurrence_day -> {
-                    recurrenceType = RecurrenceType.Daily
+                    vm.recurrenceType = RecurrenceType.Daily
                     true
                 }
                 R.id.menu_recurrence_week -> {
-                    recurrenceType = RecurrenceType.Weekly
+                    vm.recurrenceType = RecurrenceType.Weekly
                     true
                 }
                 R.id.menu_recurrence_month -> {
-                    recurrenceType = lastMonthlyRecurrenceType ?: RecurrenceType.MonthlyByMonthDay
+                    vm.recurrenceType = vm.lastMonthlyRecurrenceType ?: RecurrenceType.MonthlyByMonthDay
                     true
                 }
                 R.id.menu_recurrence_year -> {
-                    recurrenceType = RecurrenceType.Yearly
+                    vm.recurrenceType = RecurrenceType.Yearly
                     true
                 }
                 else -> false
             }
-            updateRecurrenceUI()
+            onVmUpdated()
             ret
         }
 
