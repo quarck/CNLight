@@ -290,7 +290,9 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="unit_year">year</string>
     <string name="on_day_fmt" formatted="true">On day %s</string>
     <string name="on_fmt" formatted="true">On %s</string>
-    <string name="custom_recurrence">Custom recurrence</string>
+    <string name="recurrence_dialog_title">Recurrence</string>
+    <string name="done_caps">DONE</string>
+    <string name="repeats_every">Repeats every:</string>
 
 </resources>
 

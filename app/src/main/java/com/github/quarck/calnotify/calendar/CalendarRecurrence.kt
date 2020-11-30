@@ -166,6 +166,24 @@ sealed class CalendarRecurrence(
             )
         }
 
+        fun generateStartTimeAdjust(): Long {
+            val wkd = weekDays
+            if (wkd == null || !wkd.any())
+                return 0L
+
+            val cal = Calendar.getInstance(TimeZone.getTimeZone(eventTimeZone))
+            cal.timeInMillis = firstInstance
+
+            for (max_try in 0 until 7) {
+                val weekDay = WeekDay.fromJavaCalendarDayOfWeek(cal.get(Calendar.DAY_OF_WEEK))
+                if (wkd[weekDay])
+                    return cal.timeInMillis - firstInstance
+                cal.timeInMillis += 24 * 3600 * 1000L
+            }
+
+            return 0L
+        }
+
         companion object {
             fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Weekly {
                 return Weekly(

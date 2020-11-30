@@ -3,6 +3,7 @@ package com.github.quarck.calnotify
 import com.github.quarck.calnotify.calendar.CalendarRecurrence
 import com.github.quarck.calnotify.calendar.RRule
 import com.github.quarck.calnotify.calendar.WeekDay
+import com.github.quarck.calnotify.calendar.WeekDays
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -135,7 +136,7 @@ class CalendareRecurrenceParsingTest {
         assertEquals(weekly.serialize().serialize(), "FREQ=WEEKLY;COUNT=2;INTERVAL=3;WKST=MO")
         weekly.setUntil(alignUntilTime(time + 30 * 24 * 3600 * 1000L))
         assertEquals(weekly.serialize().serialize(), "FREQ=WEEKLY;INTERVAL=3;UNTIL=20201222T235959Z;WKST=MO")
-        weekly.weekDays = listOf(WeekDay.MO, WeekDay.FR)
+        weekly.weekDays = WeekDays.fromList(listOf(WeekDay.MO, WeekDay.FR))
         assertEquals(weekly.serialize().serialize(), "FREQ=WEEKLY;INTERVAL=3;UNTIL=20201222T235959Z;WKST=MO;BYDAY=MO,FR")
 
 

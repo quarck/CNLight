@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:text="@string/custom_recurrence"
+            android:text="@string/recurrence_dialog_title"
             android:id="@+id/recurrence_dialog_title"
             android:layout_gravity="start"
             android:paddingStart="10dp"
@@ -58,21 +57,9 @@
             android:paddingBottom="10dp"
             android:layout_alignParentEnd="true"
             android:layout_alignBaseline="@id/recurrence_dialog_title"
-            android:text="DONE" />
+            android:text="@string/done_caps" />
     </RelativeLayout>
 
-
-    <!-- Add scroll view!! -->
-
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -88,7 +75,7 @@
             android:paddingTop="10dp"
             android:paddingEnd="10dp"
             android:paddingBottom="10dp"
-            android:text="Repeats every:"
+            android:text="@string/repeats_every"
             android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:textColor="@color/secondary_text" />
 
@@ -107,7 +94,7 @@
             android:layout_alignParentStart="true"
             android:layout_below="@id/recurrence_dialog_repeats_every_label"
             android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-            />
+            tools:ignore="HardcodedText" />
 
         <Button
             android:id="@+id/recurrence_dialog_repeats_button_every_unit"
@@ -119,7 +106,8 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Display3"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:text="Day " />
+            android:text="Day "
+            tools:ignore="HardcodedText" />
 
     </RelativeLayout>
 
@@ -417,10 +405,6 @@
             android:text="@string/occurrences" />
 
     </RelativeLayout>
-
-        </LinearLayout>
-
-    </ScrollView>
 
 </LinearLayout>
 

@@ -742,7 +742,7 @@
                     android:paddingBottom="@dimen/event_view_action_padding_bottom"
                     android:paddingTop="32dp"
                     android:id="@+id/debug_details_layout"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:orientation="vertical">
 
                     <TextView

@@ -49,11 +49,6 @@ import com.github.quarck.calnotify.utils.*
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.util.*
 
-
-// FIXME: handle repeating requests
-// FIXME: handle timezones
-// FIXME: Also handle colors
-
 fun EventReminderRecord.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
 
     val ret = StringBuilder()
@@ -117,6 +112,11 @@ open class EditEventActivity : AppCompatActivity() {
 
     private var receivedSharedText = ""
 
+    private lateinit var layoutMain: LinearLayout
+    private lateinit var layoutRecurrence: LinearLayout
+
+    private lateinit var recurrenceView: RecurrenceView
+
     private lateinit var eventTitleText: EditText
 
     private lateinit var buttonSave: Button
@@ -131,6 +131,8 @@ open class EditEventActivity : AppCompatActivity() {
 
     private lateinit var dateTo: Button
     private lateinit var timeTo: Button
+
+    private lateinit var buttonRecurrence: Button
 
     private lateinit var eventLocation: EditText
 
@@ -158,13 +160,18 @@ open class EditEventActivity : AppCompatActivity() {
     val reminders = mutableListOf<ReminderWrapper>()
 
     var originalEvent: EventRecord? = null
+    var instanceStart = 0L
+
+    var rRule: String = ""
+    var rDate: String = ""
+    var exRRule: String = ""
+    var exRDate: String = ""
 
     val anyChanges: Boolean
         get() {
             val details = originalEvent?.details
 
             if (details == null) {
-
                 return eventTitleText.text.isNotEmpty() ||
                         eventLocation.text.isNotEmpty() ||
                         note.text.isNotEmpty()
@@ -202,15 +209,11 @@ open class EditEventActivity : AppCompatActivity() {
             if (!details.reminders.containsAll(currentReminders))
                 return true
 
-//            if (colorView.text.value != details.color)
-//                return true
+            if (rRule != details.rRule || rDate != details.rDate)
+                return true
+            if (exRRule != details.exRRule || exRDate != details.exRDate)
+                return true
 
-/*
-        val repeatingRule: String = "", // empty if not repeating
-        val repeatingRDate: String = "", // empty if not repeating
-        val repeatingExRule: String = "", // empty if not repeating
-        val repeatingExRDate: String = "", // empty if not repeating
-*/
             return false;
         }
 
@@ -242,6 +245,8 @@ open class EditEventActivity : AppCompatActivity() {
         }
 
         val eventId = intent.getLongExtra(EVENT_ID, -1)
+        instanceStart = intent.getLongExtra(INSTANCE_START, 0)
+
         if (eventId != -1L) {
             originalEvent = CalendarProvider.getEvent(this, eventId)
 
@@ -255,6 +260,11 @@ open class EditEventActivity : AppCompatActivity() {
             if (receivedSharedText.isEmpty())
                 findViewById<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
         }
+
+        layoutMain = findViewById(R.id.layout_main)
+        layoutRecurrence = findViewById(R.id.layout_recurrence)
+
+        recurrenceView = RecurrenceView(this, layoutRecurrence)
 
         eventTitleLayout = findViewById<RelativeLayout?>(R.id.event_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
 
@@ -273,6 +283,8 @@ open class EditEventActivity : AppCompatActivity() {
 
         dateTo = findViewById<Button?>(R.id.add_event_date_to) ?: throw Exception("Can't find add_event_date_to")
         timeTo = findViewById<Button?>(R.id.add_event_time_to) ?: throw Exception("Can't find add_event_time_to")
+
+        buttonRecurrence = findViewById(R.id.add_event_recurrence) ?: throw Exception("Can't find add_event_recurrence")
 
         eventLocation = findViewById<EditText?>(R.id.event_location) ?: throw Exception("Can't find event_location")
 
@@ -334,15 +346,13 @@ open class EditEventActivity : AppCompatActivity() {
 
         addNotification.setOnClickListener(this::onAddNotificationClick)
 
+        buttonRecurrence.setOnClickListener(this::onButtonRecurrence)
 
         // Set-up fields
 
         val eventToEdit = originalEvent
 
         if (eventToEdit != null) {
-
-            //val details = eventToEdit.details
-
             val cal = calendars.find { it.calendarId == eventToEdit.calendarId }
             if (cal == null) {
                 Toast.makeText(this, R.string.calendar_not_found, Toast.LENGTH_LONG).show()
@@ -354,6 +364,11 @@ open class EditEventActivity : AppCompatActivity() {
             isAllDay = eventToEdit.isAllDay
             switchAllDay.isChecked = isAllDay
             switchAllDay.isEnabled = false
+
+            rRule = eventToEdit.rRule
+            rDate = eventToEdit.rDate
+            exRRule = eventToEdit.exRRule
+            exRDate = eventToEdit.exRDate
 
             accountName.text = calendar.name
             eventTitleLayout.background = ColorDrawable(eventToEdit.color.invertColor().scaleColor(0.1f))
@@ -433,6 +448,36 @@ open class EditEventActivity : AppCompatActivity() {
 //            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, method=emailMethod), true)
 
             updateReminders()
+        }
+
+        updateRecurrenceLabel()
+    }
+
+    fun updateRecurrenceLabel() {
+
+        var currentStartTime = from.timeInMillis
+        if (isAllDay) {
+            currentStartTime = DateTimeUtils.createUTCCalendarDate(from.year, from.month, from.dayOfMonth).timeInMillis
+        }
+
+
+        if (rRule != "") {
+            val parsed = CalendarRecurrence.tryInterpretRecurrence(
+                    currentStartTime,
+                    originalEvent?.timeZone ?: TimeZone.getDefault().id,
+                    rRule,
+                    rDate,
+                    exRRule,
+                    exRDate
+            )
+            if (parsed != null) {
+                buttonRecurrence.setText(parsed.toString())
+            }
+            else {
+                buttonRecurrence.setText(rRule)
+            }
+        } else {
+            buttonRecurrence.setText(resources.getString(R.string.recurrence_does_not_repeat))
         }
     }
 
@@ -585,10 +630,10 @@ open class EditEventActivity : AppCompatActivity() {
                         startTime = startTime,
                         endTime = endTime,
                         isAllDay = isAllDay,
-                        rRule = originalEvent?.rRule ?: "",
-                        rDate = originalEvent?.rDate ?: "",
-                        exRRule = originalEvent?.exRRule ?: "",
-                        exRDate = originalEvent?.exRDate ?: "",
+                        rRule = rRule,
+                        rDate = rDate,
+                        exRRule = exRRule,
+                        exRDate = exRDate,
                         color = originalEvent?.color ?: 0,
                         reminders = remindersToAdd
         )
@@ -785,6 +830,114 @@ open class EditEventActivity : AppCompatActivity() {
         )
 
         dialog.show()
+    }
+
+    fun onButtonRecurrence(v: View) {
+        val popup = PopupMenu(this, v)
+        val inflater = popup.menuInflater
+        inflater.inflate(R.menu.menu_recurrence_popup, popup.menu)
+
+        val timeZone = originalEvent?.timeZone ?: TimeZone.getDefault().id
+        val weekStart = WeekDay.fromJavaCalendarDayOfWeek(Settings(this).firstDayOfWeek)
+
+        if (originalEvent != null) {
+            val item = popup.menu.findItem(R.id.repeats_does_not)
+            item.isEnabled = false
+            item.isVisible = false
+        }
+
+        var currentStartTime = from.timeInMillis
+
+        if (isAllDay) {
+            currentStartTime = DateTimeUtils.createUTCCalendarDate(from.year, from.month, from.dayOfMonth).timeInMillis
+        }
+
+        popup.setOnMenuItemClickListener {
+            item ->
+            val ret = when (item.itemId) {
+                R.id.repeats_does_not -> {
+                    if (originalEvent == null) {
+                        rRule = ""
+                        rDate = ""
+                    }
+                    true
+                }
+                R.id.repeats_daily -> {
+                    rRule = CalendarRecurrence.Daily
+                            .createDefaultForDate(currentStartTime, timeZone, weekStart)
+                            .serialize().serialize()
+                    rDate = ""
+                    true
+                }
+                R.id.repeats_weekly -> {
+                    rRule = CalendarRecurrence.Weekly
+                            .createDefaultForDate(currentStartTime, timeZone, weekStart)
+                            .serialize().serialize()
+                    rDate = ""
+                    true
+                }
+                R.id.repeats_monthly -> {
+                    rRule = CalendarRecurrence.Monthly
+                            .createDefaultForDate(currentStartTime, timeZone, weekStart)
+                            .serialize().serialize()
+                    rDate = ""
+                    true
+                }
+                R.id.repeats_yearly -> {
+                    rRule = CalendarRecurrence.Yearly
+                            .createDefaultForDate(currentStartTime, timeZone, weekStart)
+                            .serialize().serialize()
+                    rDate = ""
+                    true
+                }
+                R.id.repeats_custom -> {
+                    showCustomRecurrenceDialog()
+                    true
+                }
+                else -> false
+            }
+
+            updateRecurrenceLabel()
+
+            ret
+        }
+    }
+
+    fun showCustomRecurrenceDialog() {
+
+
+        var currentStartTime = from.timeInMillis
+        var currentEndTime = to.timeInMillis
+
+        if (isAllDay) {
+            currentStartTime = DateTimeUtils.createUTCCalendarDate(from.year, from.month, from.dayOfMonth).timeInMillis
+            currentEndTime = DateTimeUtils.createUTCCalendarDate(to.year, to.month, to.dayOfMonth).timeInMillis
+        }
+
+        val tz = originalEvent?.timeZone ?: TimeZone.getDefault().id
+        var currentRecurrence = CalendarRecurrence.tryInterpretRecurrence(
+                currentStartTime,
+                tz,
+                rRule,
+                rDate,
+                exRRule,
+                exRDate
+        )
+
+        if (currentRecurrence == null)
+            currentRecurrence = CalendarRecurrence.Weekly.createDefaultForDate(
+                    instanceStart, tz, WeekDay.fromJavaCalendarDayOfWeek(settings.firstDayOfWeek))
+
+        val vm = RecurrenceViewModel(
+                currentStartTime,
+                currentEndTime,
+                tz,
+                currentRecurrence
+            )
+
+
+        layoutMain.visibility = View.GONE
+        layoutRecurrence.visibility = View.VISIBLE
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1098,5 +1251,7 @@ open class EditEventActivity : AppCompatActivity() {
     companion object {
         private const val LOG_TAG = "EditEventActivity"
         const val EVENT_ID = "event_id"
+        const val INSTANCE_START = "instance_start"
+        const val IS_RECURRING = "recurring"
     }
 }

@@ -288,27 +288,20 @@ open class ViewEventActivity : AppCompatActivity() {
             findViewById<RelativeLayout>(R.id.event_view_reminders_layout).visibility = View.GONE
         }
 
-        findViewById<TextView>(R.id.debug_details_line).apply {
-            text = "RRULE: ${event.rRule}\nRDATE: ${event.rDate}\nEXRRULE: ${event.exRRule}\nEXRDATE: ${event.exRDate}"
-        }
+//        findViewById<TextView>(R.id.debug_details_line).apply {
+//            text = "" //  "RRULE: ${event.rRule}\nRDATE: ${event.rDate}\nEXRRULE: ${event.exRRule}\nEXRDATE: ${event.exRDate}"
+//        }
 
         val fab = findViewById<FloatingActionButton>(R.id.floating_edit_button)
 
         if (!calendar.isReadOnly) {
-            if (!event.isRepeating) {
-
-                fab.setOnClickListener { _ ->
-                    val intent = Intent(this, EditEventActivity::class.java)
-                    intent.putExtra(EditEventActivity.EVENT_ID, event.eventId)
-                    startActivity(intent)
-                    finish()
-                }
-
-            } else {
-                fab.setOnClickListener { _ ->
-                    CalendarIntents.viewCalendarEvent(this, event)
-                    finish()
-                }
+            fab.setOnClickListener { _ ->
+                val intent = Intent(this, EditEventActivity::class.java)
+                intent.putExtra(EditEventActivity.EVENT_ID, event.eventId)
+                intent.putExtra(EditEventActivity.INSTANCE_START, event.instanceStartTime)
+                intent.putExtra(EditEventActivity.IS_RECURRING, event.isRepeating)
+                startActivity(intent)
+                finish()
             }
 
             val states = arrayOf(intArrayOf(android.R.attr.state_enabled), // enabled

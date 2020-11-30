@@ -11,370 +11,198 @@
     tools:showIn="@layout/activity_add_event"
     android:background="@color/background">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         >
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/layout_main"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/material_blue"
-            android:id="@+id/event_view_event_details_layout"
+            android:orientation="vertical"
             android:visibility="visible"
-            android:elevation="@dimen/toolbar_elevation"
-            tools:targetApi="m">
-
-            <!-- To catch focus -->
-            <LinearLayout
-                android:id="@+id/layout_focus_catcher"
-                android:focusable="true"
-                android:orientation="horizontal"
-                android:focusableInTouchMode="true"
-                android:layout_width="0px"
-                android:layout_height="0px"
-                tools:ignore="UselessLeaf" />
-
-            <!--             android:textSize="18.0sp"
-    -->
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:longClickable="false"
-                android:id="@+id/add_event_view_cancel"
-                android:src="@drawable/ic_navigate_before_white_24dp"
-                android:paddingTop="@dimen/add_event_view_img_padding_start"
-                android:paddingBottom="@dimen/add_event_view_img_padding_end"
-                android:paddingStart="@dimen/add_event_view_img_padding_start"
-                android:paddingEnd="@dimen/add_event_view_img_padding_end"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="@string/back_button"
-                />
-
-            <Button
-                android:id="@+id/add_event_save"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignBaseline="@id/add_event_view_cancel"
-                android:background="?android:attr/selectableItemBackground"
-                android:longClickable="false"
-                android:paddingBottom="@dimen/event_view_img_padding_start"
-                android:paddingEnd="@dimen/event_view_img_padding_end"
-                android:paddingStart="@dimen/event_view_img_padding_start"
-                android:paddingTop="@dimen/event_view_img_padding_start"
-                android:text="@string/save_button_title"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textStyle="normal"
-                android:textColor="@color/primary_text"
-                tools:ignore="RelativeOverlap"
-                android:contentDescription="@string/save_button"
-                />
-
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="@dimen/add_event_view_title_height"
-                android:id="@+id/add_event_title"
-                android:text="@string/empty"
-                android:hint="@string/add_event_event_title_hint"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/event_title_color"
-                android:textColorHint="@color/event_title_hint_color"
-
-                android:paddingBottom="@dimen/add_event_view_header_padding_bottom"
-                android:paddingTop="@dimen/add_event_view_header_padding_top"
-                android:paddingStart="@dimen/add_event_view_padding_start"
-                android:paddingEnd="@dimen/add_event_view_padding_end"
-                android:inputType="textMultiLine|textCapSentences"
-
-                android:gravity="start|bottom"
-                tools:ignore="HardcodedText"
-                android:ellipsize="end"
-                android:layout_below="@id/add_event_save"
-
-                />
-
-
-        </RelativeLayout>
-
-        <View android:layout_width="match_parent" android:layout_height="@dimen/event_view_details_initial_padding" />
-
-        <!-- Account name-->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background"
-            android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
-            android:paddingTop="@dimen/add_event_view_action_padding_top"
             >
 
-            <ImageView
-                android:id="@+id/image_account_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:longClickable="false"
-                android:src="@drawable/ic_today_white_24dp"
-                android:paddingStart="@dimen/add_event_image_start"
-                android:paddingEnd="@dimen/add_event_image_end"
-                android:paddingLeft="@dimen/add_event_image_start"
-                android:paddingRight="@dimen/add_event_image_end"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingBottom="@dimen/add_event_image_padding_bottom"
-                android:importantForAccessibility="no"
-                />
-
-            <TextView
-                android:id="@+id/account_name"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@id/image_account_name"
-                android:background="?android:attr/selectableItemBackground"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingEnd="@dimen/add_event_date_end"
-                android:paddingStart="@dimen/add_event_text_start"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:text="Events (&lt;.."
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                tools:ignore="HardcodedText"
-                android:clickable="true"/>
+                android:background="@color/material_blue"
+                android:id="@+id/event_view_event_details_layout"
+                android:visibility="visible"
+                android:elevation="@dimen/toolbar_elevation"
+                tools:targetApi="m">
 
+                <!-- To catch focus -->
+                <LinearLayout
+                    android:id="@+id/layout_focus_catcher"
+                    android:focusable="true"
+                    android:orientation="horizontal"
+                    android:focusableInTouchMode="true"
+                    android:layout_width="0px"
+                    android:layout_height="0px"
+                    tools:ignore="UselessLeaf" />
 
-        </RelativeLayout>
-
-        <!-- HR -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"
-            android:padding="0dp"
-            />
-
-        <!-- Date / time -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background"
-            android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
-            android:paddingTop="@dimen/add_event_view_action_padding_top"
-            >
-
-            <ImageView
-                android:id="@+id/image_date_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:longClickable="false"
-                android:src="@drawable/ic_schedule_white_24dp"
-                android:paddingStart="@dimen/add_event_image_start"
-                android:paddingEnd="@dimen/add_event_image_end"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingBottom="@dimen/add_event_image_padding_bottom"
-                android:importantForAccessibility="no"
-                />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switch_all_day"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingStart="@dimen/add_event_text_start"
-                android:paddingEnd="@dimen/add_event_date_end"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:text="@string/all_day"
-                android:layout_toEndOf="@id/image_date_time"
-                android:textColor="@color/primary_text"
-
-                />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/add_event_date_from"
-                android:text="7/03/2018"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingStart="@dimen/add_event_text_start"
-                android:paddingEnd="@dimen/add_event_date_end"
-                tools:ignore="HardcodedText"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_toEndOf="@id/image_date_time"
-                android:layout_below="@id/switch_all_day"
-                />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/add_event_time_from"
-                android:text="13:00"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingEnd="@dimen/add_event_time_end"
-                android:paddingStart="@dimen/add_event_time_start"
-                android:layout_alignBaseline="@id/add_event_date_from"
-                android:layout_alignParentEnd="true"
-                tools:ignore="HardcodedText"
-                android:background="?android:attr/selectableItemBackground"/>
-
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/add_event_date_to"
-                android:text="7/03/2018"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingStart="@dimen/add_event_text_start"
-                android:paddingEnd="@dimen/add_event_date_end"
-                android:layout_below="@id/add_event_date_from"
-                tools:ignore="HardcodedText"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_toEndOf="@id/image_date_time"
-                />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/add_event_time_to"
-                android:text="14:00"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingEnd="@dimen/add_event_time_end"
-                android:paddingStart="@dimen/add_event_time_start"
-                android:layout_alignBaseline="@id/add_event_date_to"
-                android:layout_alignParentEnd="true"
-                tools:ignore="HardcodedText"
-                android:background="?android:attr/selectableItemBackground"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/add_event_recurrence"
-                android:text="@string/recurrence_does_not_repeat"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingStart="@dimen/add_event_text_start"
-                android:paddingEnd="@dimen/add_event_date_end"
-                android:layout_below="@id/add_event_date_to"
-                tools:ignore="HardcodedText"
-                android:background="?android:attr/selectableItemBackground"
-                android:layout_toEndOf="@id/image_date_time"
-                />
-
-        </RelativeLayout>
-
-        <!-- HR -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"
-            android:padding="0dp"
-            />
-
-
-        <!-- Location -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background"
-            android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
-            android:paddingTop="@dimen/add_event_view_action_padding_top"
-            >
-
-            <ImageView
-                android:id="@+id/image_event_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:longClickable="false"
-                android:src="@drawable/ic_location_searching_white_24dp"
-                android:paddingStart="@dimen/add_event_image_start"
-                android:paddingEnd="@dimen/add_event_image_end"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingBottom="@dimen/add_event_image_padding_bottom"
-                android:importantForAccessibility="no"
-                />
-
-            <EditText
-                android:id="@+id/event_location"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@id/image_event_location"
-                android:hint="@string/add_location"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingEnd="@dimen/add_event_text_end"
-                android:paddingStart="@dimen/add_event_text_start"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:text="@string/empty"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                android:textColorHint="@color/secondary_text"
-                android:background="@color/background"
-
-                />
-
-        </RelativeLayout>
-
-        <!-- HR -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"
-            android:padding="0dp"
-            />
-
-        <!-- notification -->
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/background"
-            android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
-            android:paddingTop="@dimen/add_event_view_action_padding_top"
-            >
-
-            <ImageView
-                android:id="@+id/image_notification"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:longClickable="false"
-                android:src="@drawable/ic_alarm_white_24dp"
-                android:paddingStart="@dimen/add_event_image_start"
-                android:paddingEnd="@dimen/add_event_image_end"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingBottom="@dimen/add_event_image_padding_bottom"
-                android:importantForAccessibility="no"
-                />
-
-            <LinearLayout
-                android:id="@+id/notifications"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_toEndOf="@id/image_notification"
-                android:layout_alignParentEnd="true"
-                android:padding="0dp"
-                >
-
-                <TextView
+                <!--             android:textSize="18.0sp"
+        -->
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/notificationPrototype"
-                    android:text="15 minutes before"
+                    android:longClickable="false"
+                    android:id="@+id/add_event_view_cancel"
+                    android:src="@drawable/ic_navigate_before_white_24dp"
+                    android:paddingTop="@dimen/add_event_view_img_padding_start"
+                    android:paddingBottom="@dimen/add_event_view_img_padding_end"
+                    android:paddingStart="@dimen/add_event_view_img_padding_start"
+                    android:paddingEnd="@dimen/add_event_view_img_padding_end"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="@string/back_button"
+                    />
+
+                <Button
+                    android:id="@+id/add_event_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignBaseline="@id/add_event_view_cancel"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:longClickable="false"
+                    android:paddingBottom="@dimen/event_view_img_padding_start"
+                    android:paddingEnd="@dimen/event_view_img_padding_end"
+                    android:paddingStart="@dimen/event_view_img_padding_start"
+                    android:paddingTop="@dimen/event_view_img_padding_start"
+                    android:text="@string/save_button_title"
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textStyle="normal"
+                    android:textColor="@color/primary_text"
+                    tools:ignore="RelativeOverlap"
+                    android:contentDescription="@string/save_button"
+                    />
+
+
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/add_event_view_title_height"
+                    android:id="@+id/add_event_title"
+                    android:text="@string/empty"
+                    android:hint="@string/add_event_event_title_hint"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/event_title_color"
+                    android:textColorHint="@color/event_title_hint_color"
+
+                    android:paddingBottom="@dimen/add_event_view_header_padding_bottom"
+                    android:paddingTop="@dimen/add_event_view_header_padding_top"
+                    android:paddingStart="@dimen/add_event_view_padding_start"
+                    android:paddingEnd="@dimen/add_event_view_padding_end"
+                    android:inputType="textMultiLine|textCapSentences"
+
+                    android:gravity="start|bottom"
+                    tools:ignore="HardcodedText"
+                    android:ellipsize="end"
+                    android:layout_below="@id/add_event_save"
+
+                    />
+
+
+            </RelativeLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="@dimen/event_view_details_initial_padding" />
+
+            <!-- Account name-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
+                android:paddingTop="@dimen/add_event_view_action_padding_top"
+                >
+
+                <ImageView
+                    android:id="@+id/image_account_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:longClickable="false"
+                    android:src="@drawable/ic_today_white_24dp"
+                    android:paddingStart="@dimen/add_event_image_start"
+                    android:paddingEnd="@dimen/add_event_image_end"
+                    android:paddingLeft="@dimen/add_event_image_start"
+                    android:paddingRight="@dimen/add_event_image_end"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingBottom="@dimen/add_event_image_padding_bottom"
+                    android:importantForAccessibility="no"
+                    />
+
+                <TextView
+                    android:id="@+id/account_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@id/image_account_name"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:text="Events (&lt;.."
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    tools:ignore="HardcodedText"
+                    android:clickable="true"/>
+
+
+            </RelativeLayout>
+
+            <!-- HR -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:padding="0dp"
+                />
+
+            <!-- Date / time -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
+                android:paddingTop="@dimen/add_event_view_action_padding_top"
+                >
+
+                <ImageView
+                    android:id="@+id/image_date_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:longClickable="false"
+                    android:src="@drawable/ic_schedule_white_24dp"
+                    android:paddingStart="@dimen/add_event_image_start"
+                    android:paddingEnd="@dimen/add_event_image_end"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingBottom="@dimen/add_event_image_padding_bottom"
+                    android:importantForAccessibility="no"
+                    />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_all_day"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:text="@string/all_day"
+                    android:layout_toEndOf="@id/image_date_time"
+                    android:textColor="@color/primary_text"
+
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_event_date_from"
+                    android:text="7/03/2018"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/primary_text"
                     android:paddingBottom="@dimen/add_event_padding_bottom"
@@ -383,89 +211,282 @@
                     android:paddingEnd="@dimen/add_event_date_end"
                     tools:ignore="HardcodedText"
                     android:background="?android:attr/selectableItemBackground"
+                    android:layout_toEndOf="@id/image_date_time"
+                    android:layout_below="@id/switch_all_day"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_event_time_from"
+                    android:text="13:00"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingEnd="@dimen/add_event_time_end"
+                    android:paddingStart="@dimen/add_event_time_start"
+                    android:layout_alignBaseline="@id/add_event_date_from"
+                    android:layout_alignParentEnd="true"
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"/>
+
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_event_date_to"
+                    android:text="7/03/2018"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:layout_below="@id/add_event_date_from"
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_toEndOf="@id/image_date_time"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_event_time_to"
+                    android:text="14:00"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingEnd="@dimen/add_event_time_end"
+                    android:paddingStart="@dimen/add_event_time_start"
+                    android:layout_alignBaseline="@id/add_event_date_to"
+                    android:layout_alignParentEnd="true"
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_event_recurrence"
+                    android:text="@string/recurrence_does_not_repeat"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    android:layout_marginEnd="16dp"
+                    android:layout_below="@id/add_event_date_to"
+                    android:gravity="start"
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_toEndOf="@id/image_date_time"
+                    />
+
+            </RelativeLayout>
+
+            <!-- HR -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:padding="0dp"
+                />
+
+
+            <!-- Location -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
+                android:paddingTop="@dimen/add_event_view_action_padding_top"
+                >
+
+                <ImageView
+                    android:id="@+id/image_event_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:longClickable="false"
+                    android:src="@drawable/ic_location_searching_white_24dp"
+                    android:paddingStart="@dimen/add_event_image_start"
+                    android:paddingEnd="@dimen/add_event_image_end"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingBottom="@dimen/add_event_image_padding_bottom"
+                    android:importantForAccessibility="no"
+                    />
+
+                <EditText
+                    android:id="@+id/event_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@id/image_event_location"
+                    android:hint="@string/add_location"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingEnd="@dimen/add_event_text_end"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:text="@string/empty"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/secondary_text"
+                    android:background="@color/background"
+
+                    />
+
+            </RelativeLayout>
+
+            <!-- HR -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:padding="0dp"
+                />
+
+            <!-- notification -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
+                android:paddingTop="@dimen/add_event_view_action_padding_top"
+                >
+
+                <ImageView
+                    android:id="@+id/image_notification"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:longClickable="false"
+                    android:src="@drawable/ic_alarm_white_24dp"
+                    android:paddingStart="@dimen/add_event_image_start"
+                    android:paddingEnd="@dimen/add_event_image_end"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingBottom="@dimen/add_event_image_padding_bottom"
+                    android:importantForAccessibility="no"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/notifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_toEndOf="@id/image_notification"
+                    android:layout_alignParentEnd="true"
+                    android:padding="0dp"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/notificationPrototype"
+                        android:text="15 minutes before"
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textColor="@color/primary_text"
+                        android:paddingBottom="@dimen/add_event_padding_bottom"
+                        android:paddingTop="@dimen/add_event_padding_top"
+                        android:paddingStart="@dimen/add_event_text_start"
+                        android:paddingEnd="@dimen/add_event_date_end"
+                        tools:ignore="HardcodedText"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        />
+
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/add_notification"
+                    android:text="@string/add_notification"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/secondary_text"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingEnd="@dimen/add_event_date_end"
+                    tools:ignore="HardcodedText"
+                    android:background="?android:attr/selectableItemBackground"
+
+                    android:layout_toEndOf="@id/image_notification"
+                    android:layout_alignParentEnd="true"
+
+                    android:layout_below="@id/notifications"
+
                     android:clickable="true"
                     />
 
-            </LinearLayout>
 
-            <TextView
+            </RelativeLayout>
+
+            <!-- HR -->
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/add_notification"
-                android:text="@string/add_notification"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/secondary_text"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingStart="@dimen/add_event_text_start"
-                android:paddingEnd="@dimen/add_event_date_end"
-                tools:ignore="HardcodedText"
-                android:background="?android:attr/selectableItemBackground"
-
-                android:layout_toEndOf="@id/image_notification"
-                android:layout_alignParentEnd="true"
-
-                android:layout_below="@id/notifications"
-
-                android:clickable="true"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:padding="0dp"
                 />
 
 
-        </RelativeLayout>
+            <!-- Note -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/background"
+                android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
+                android:paddingTop="@dimen/add_event_view_action_padding_top"
+                >
 
-        <!-- HR -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/divider"
-            android:padding="0dp"
-            />
+                <ImageView
+                    android:id="@+id/image_event_note"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:longClickable="false"
+                    android:src="@drawable/ic_event_note_white_24dp"
+                    android:paddingStart="@dimen/add_event_image_start"
+                    android:paddingEnd="@dimen/add_event_image_end"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:paddingBottom="@dimen/add_event_image_padding_bottom"
+                    android:importantForAccessibility="no"
+                    />
+
+                <EditText
+                    android:id="@+id/event_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@id/image_event_note"
+                    android:hint="@string/add_note"
+                    android:paddingBottom="@dimen/add_event_padding_bottom"
+                    android:paddingEnd="@dimen/add_event_text_end"
+                    android:paddingStart="@dimen/add_event_text_start"
+                    android:paddingTop="@dimen/add_event_padding_top"
+                    android:text="@string/empty"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/secondary_text"
+                    android:background="@color/background"
+                    android:inputType="textMultiLine"
+                    />
 
 
-        <!-- Note -->
-        <RelativeLayout
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/background"
-            android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
-            android:paddingTop="@dimen/add_event_view_action_padding_top"
-            >
+            android:orientation="vertical"
+            android:id="@+id/layout_recurrence"
+            android:visibility="gone">
 
-            <ImageView
-                android:id="@+id/image_event_note"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:longClickable="false"
-                android:src="@drawable/ic_event_note_white_24dp"
-                android:paddingStart="@dimen/add_event_image_start"
-                android:paddingEnd="@dimen/add_event_image_end"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:paddingBottom="@dimen/add_event_image_padding_bottom"
-                android:importantForAccessibility="no"
-                />
+            <include layout="@layout/dialog_recurrence" />
+        </LinearLayout>
 
-            <EditText
-                android:id="@+id/event_note"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_toEndOf="@id/image_event_note"
-                android:hint="@string/add_note"
-                android:paddingBottom="@dimen/add_event_padding_bottom"
-                android:paddingEnd="@dimen/add_event_text_end"
-                android:paddingStart="@dimen/add_event_text_start"
-                android:paddingTop="@dimen/add_event_padding_top"
-                android:text="@string/empty"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/primary_text"
-                android:textColorHint="@color/secondary_text"
-                android:background="@color/background"
-                android:inputType="textMultiLine"
-                />
-
-
-        </RelativeLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
 </ScrollView>
