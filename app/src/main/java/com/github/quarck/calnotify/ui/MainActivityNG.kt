@@ -122,7 +122,7 @@ class MainActivityNG : AppCompatActivity() {
 //                        .create()
 //
 //        view.onComplete {
-//            DevLog.info(LOG_TAG, "${it.serialize().serialize()}")
+//            DevLog.info(LOG_TAG, "RRULE:${it?.serialize()?.serialize()}")
 //            dialog.dismiss()
 //        }
 //

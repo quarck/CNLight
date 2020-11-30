@@ -14,29 +14,44 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <TextView
+
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            android:text="__DIALOG_TITLE__"
-            android:id="@+id/recurrence_dialog_title"
-            android:layout_gravity="start"
-            android:paddingStart="30dp"
+            android:longClickable="false"
+            android:id="@+id/recurrence_dialog_back_btn"
+            android:src="@drawable/ic_navigate_before_white_24dp"
+            android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="@string/back_button"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:text="@string/custom_recurrence"
+            android:id="@+id/recurrence_dialog_title"
+            android:layout_gravity="start"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:layout_toEndOf="@id/recurrence_dialog_back_btn"
             android:textColor="@color/secondary_text"
             />
 
         <TextView
             android:id="@+id/recurrence_dialog_button_done"
             android:background="?android:attr/selectableItemBackground"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             android:clickable="true"
             android:focusable="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
             android:paddingEnd="16dp"
             android:paddingStart="16dp"
             android:paddingTop="10dp"

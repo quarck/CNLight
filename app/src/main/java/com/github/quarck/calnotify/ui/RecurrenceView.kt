@@ -129,6 +129,7 @@ class RecurrenceView(
         originalRecurrence: CalendarRecurrence,
 ) {
     private val doneButton: TextView = view.findViewById(R.id.recurrence_dialog_button_done)
+    private val backButton: ImageView = view.findViewById(R.id.recurrence_dialog_back_btn)
 
     private val repeatsEveryText: EditText = view.findViewById(R.id.recurrence_dialog_repeats_every_number)
     private val repeatsEveryUnitButton: Button = view.findViewById(R.id.recurrence_dialog_repeats_button_every_unit)
@@ -162,9 +163,12 @@ class RecurrenceView(
     private val inactiveTextColors = view.findViewById<TextView>(R.id.recurrence_dialog_monday_text).textColors
     private val activeTextColors =  view.findViewById<TextView>(R.id.recurrence_dialog_moonday_text).textColors
 
-    private var onCompleteFn: ((CalendarRecurrence)->Unit)? = null
+    private var onCompleteFn: ((CalendarRecurrence?)->Unit)? = null
 
     init {
+        doneButton.setOnClickListener(this::onDoneButton)
+        backButton.setOnClickListener(this::onBackButton)
+
         radioOnMonthDay.setText(context.getString(R.string.on_day_fmt).format(vm.monthDay))
         radioOnWeekDay.setText(context.getString(R.string.on_fmt).format(vm.monthByWeekDay.toString()))
         radioOnLastWeekDay.setText(context.getString(R.string.on_fmt).format(vm.monthByLastWeekDay.toString()))
@@ -229,8 +233,6 @@ class RecurrenceView(
         }
 
         updateView()
-
-        doneButton.setOnClickListener(this::onDoneButton)
     }
 
     private fun updateView() {
@@ -371,11 +373,15 @@ class RecurrenceView(
         popup.show()
     }
 
-    fun onComplete(fn: (CalendarRecurrence)->Unit) {
+    fun onComplete(fn: (CalendarRecurrence?)->Unit) {
         onCompleteFn = fn
     }
 
-    private fun onDoneButton(it: View) {
+    private fun onBackButton(v: View) {
+        onCompleteFn?.invoke(null)
+    }
+
+    private fun onDoneButton(v: View) {
         val recurrence = when (vm.recurrenceType) {
             RecurrenceType.Daily ->
                 CalendarRecurrence.Daily
