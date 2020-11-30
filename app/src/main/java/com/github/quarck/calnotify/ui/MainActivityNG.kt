@@ -21,6 +21,7 @@ package com.github.quarck.calnotify.ui
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -106,11 +107,28 @@ class MainActivityNG : AppCompatActivity() {
 
         checkPermissions()
 
-        val now = System.currentTimeMillis()
-        DialogRecurrence(this, this.layoutInflater.inflate(R.layout.dialog_recurrence, null),
-                now, now + 3600 * 1000L, "UTC",
-            CalendarRecurrence.Weekly.createDefaultForDate(now, "UTC", WeekDay.MO)
-        ).show()
+//        val now = System.currentTimeMillis()
+//
+//        val view = RecurrenceView(this, this.layoutInflater.inflate(R.layout.dialog_recurrence, null),
+//                now, now + 3600 * 1000L, "UTC",
+//            CalendarRecurrence.Weekly.createDefaultForDate(now, "UTC", WeekDay.MO)
+//        )
+//        val dialog  =
+//                AlertDialog.Builder(this)
+//                        .setView(view.view)
+//                        .setNegativeButton(android.R.string.cancel) {
+//                            _: DialogInterface?, _: Int ->
+//                        }
+//                        .create()
+//
+//        view.onComplete {
+//            DevLog.info(LOG_TAG, "${it.serialize().serialize()}")
+//            dialog.dismiss()
+//        }
+//
+//        dialog.show()
+
+
 
         // do this only when we are in the activity launched form the notification?
 //        val navController = findNavController(R.id.nav_host_fragment)

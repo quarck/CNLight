@@ -295,7 +295,7 @@ sealed class CalendarRecurrence(
                 return cal.get(Calendar.DAY_OF_MONTH)
             }
 
-            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay, takeLast: Boolean): Monthly {
+            fun createDefaultForDate(firstInstance: Long, eventTimeZone: String, weekStart: WeekDay): Monthly {
                 val timeZone = TimeZone.getTimeZone(eventTimeZone)
                 return Monthly(
                         firstInstance,

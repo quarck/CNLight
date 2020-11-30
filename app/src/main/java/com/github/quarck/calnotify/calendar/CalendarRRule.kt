@@ -101,6 +101,10 @@ class WeekDays {
         return ret
     }
 
+    fun any(): Boolean {
+        return days.any()
+    }
+
     fun toRRule(): RRuleVal.BYDAY {
         val values = mutableListOf<NthWeekDay>()
         for (i in 0 until 7) {
