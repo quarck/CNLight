@@ -299,7 +299,7 @@ open class ViewEventActivity : AppCompatActivity() {
                 val intent = Intent(this, EditEventActivity::class.java)
                 intent.putExtra(EditEventActivity.EVENT_ID, event.eventId)
                 intent.putExtra(EditEventActivity.INSTANCE_START, event.instanceStartTime)
-                intent.putExtra(EditEventActivity.IS_RECURRING, event.isRepeating)
+                intent.putExtra(EditEventActivity.INSTANCE_END, event.instanceEndTime)
                 startActivity(intent)
                 finish()
             }

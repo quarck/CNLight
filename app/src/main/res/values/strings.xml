@@ -293,6 +293,9 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="recurrence_dialog_title">Recurrence</string>
     <string name="done_caps">DONE</string>
     <string name="repeats_every">Repeats every:</string>
+    <string name="failed_to_parse_original_rrule">Failed to parse original rrule</string>
+    <string name="failed_to_update_recurrence">Failed to update recurrence</string>
+    <string name="failed_to_update_old_recurrence">Failed to update old recurrence</string>
 
 </resources>
 

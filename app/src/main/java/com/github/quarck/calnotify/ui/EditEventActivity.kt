@@ -160,7 +160,8 @@ open class EditEventActivity : AppCompatActivity() {
     val reminders = mutableListOf<ReminderWrapper>()
 
     var originalEvent: EventRecord? = null
-    var instanceStart = 0L
+    var originalInstanceStart = 0L
+    var originalInstanceEnd = 0L
 
     var rRule: String = ""
     var rDate: String = ""
@@ -198,7 +199,7 @@ open class EditEventActivity : AppCompatActivity() {
                 currentEndTime = DateTimeUtils.createUTCCalendarDate(to.year, to.month, to.dayOfMonth).timeInMillis
             }
 
-            if (currentStartTime != details.startTime || currentEndTime != details.endTime)
+            if (currentStartTime != originalInstanceStart || currentEndTime != originalInstanceEnd)
                 return true
 
             val currentReminders = reminders.filter { it.isForAllDay == isAllDay }.map { it.reminder }
@@ -245,7 +246,8 @@ open class EditEventActivity : AppCompatActivity() {
         }
 
         val eventId = intent.getLongExtra(EVENT_ID, -1)
-        instanceStart = intent.getLongExtra(INSTANCE_START, 0)
+        originalInstanceStart = intent.getLongExtra(INSTANCE_START, 0)
+        originalInstanceEnd = intent.getLongExtra(INSTANCE_END, 0)
 
         if (eventId != -1L) {
             originalEvent = CalendarProvider.getEvent(this, eventId)
@@ -254,6 +256,11 @@ open class EditEventActivity : AppCompatActivity() {
                 Toast.makeText(this, R.string.event_not_found, Toast.LENGTH_LONG).show()
                 finish()
                 return
+            }
+
+            originalEvent?.let {
+                originalInstanceStart = it.startTime
+                originalInstanceEnd = it.endTime
             }
         }
         else {
@@ -265,6 +272,7 @@ open class EditEventActivity : AppCompatActivity() {
         layoutRecurrence = findViewById(R.id.layout_recurrence)
 
         recurrenceView = RecurrenceView(this, layoutRecurrence)
+        recurrenceView.onComplete(this::onCustomRecurrenceComplete)
 
         eventTitleLayout = findViewById<RelativeLayout?>(R.id.event_view_event_details_layout) ?: throw Exception("Cant find snooze_view_event_details_layout")
 
@@ -383,12 +391,12 @@ open class EditEventActivity : AppCompatActivity() {
 
 //            eventTimeSonze.setText(eventToEdit.timezone)
 
-            from = DateTimeUtils.createCalendarTime(eventToEdit.startTime)
-            to = DateTimeUtils.createCalendarTime(eventToEdit.endTime)
+            from = DateTimeUtils.createCalendarTime(originalInstanceStart)
+            to = DateTimeUtils.createCalendarTime(originalInstanceEnd)
 
             if (eventToEdit.isAllDay) {
-                val fromUtc = DateTimeUtils.createUTCCalendarTime(eventToEdit.startTime)
-                val toUtc = DateTimeUtils.createUTCCalendarTime(eventToEdit.endTime)
+                val fromUtc = DateTimeUtils.createUTCCalendarTime(originalInstanceStart)
+                val toUtc = DateTimeUtils.createUTCCalendarTime(originalInstanceEnd)
 
                 from.year = fromUtc.year
                 from.month = fromUtc.month
@@ -667,7 +675,7 @@ open class EditEventActivity : AppCompatActivity() {
                         .show()
             }
         }
-        else {
+        else if (eventToEdit.rRule == "") {
             val success = CalendarEditor(CalendarProvider).updateEvent(this, eventToEdit, details)
 
             if (success) {
@@ -687,6 +695,44 @@ open class EditEventActivity : AppCompatActivity() {
             }
             else {
                 Toast.makeText(this, R.string.failed_to_update_event_details, Toast.LENGTH_LONG).show()
+            }
+        }
+        else {
+            // Updating the repeating event, we are doing that by creating the new event from today, and
+            // then cutting the recurrence of the old event by adding UNTIL= to the RRULE
+
+            val rrule = RRule.tryParse(eventToEdit.rRule)
+            if (rrule == null) {
+                DevLog.error(LOG_TAG, "Failed to create event for the recurrence")
+                AlertDialog.Builder(this)
+                        .setMessage(R.string.failed_to_parse_original_rrule)
+                        .setPositiveButton(android.R.string.ok) { _, _ -> }
+                        .show()
+                finish()
+                return
+            }
+
+            val eventId = CalendarEditor(CalendarProvider).createEvent(this, calendar.calendarId, calendar.owner, details)
+            if (eventId != -1L) {
+
+                rrule.until = RRuleVal.UNTIL( startTime - 60*1000L)
+                val success = CalendarEditor(CalendarProvider).updateEvent(this,
+                        eventToEdit,
+                        eventToEdit.details.copy(rRule = rrule.serialize()))
+                if (!success) {
+                    DevLog.error(LOG_TAG, "Failed to update old recurrence")
+                    AlertDialog.Builder(this)
+                            .setMessage(R.string.failed_to_update_old_recurrence)
+                            .setPositiveButton(android.R.string.ok) { _, _ -> }
+                            .show()
+                }
+                finish()
+            } else {
+                DevLog.error(LOG_TAG, "Failed to create event for the recurrence")
+                AlertDialog.Builder(this)
+                        .setMessage(R.string.failed_to_update_recurrence)
+                        .setPositiveButton(android.R.string.ok) { _, _ -> }
+                        .show()
             }
         }
     }
@@ -901,10 +947,11 @@ open class EditEventActivity : AppCompatActivity() {
 
             ret
         }
+
+        popup.show()
     }
 
     fun showCustomRecurrenceDialog() {
-
 
         var currentStartTime = from.timeInMillis
         var currentEndTime = to.timeInMillis
@@ -926,18 +973,31 @@ open class EditEventActivity : AppCompatActivity() {
 
         if (currentRecurrence == null)
             currentRecurrence = CalendarRecurrence.Weekly.createDefaultForDate(
-                    instanceStart, tz, WeekDay.fromJavaCalendarDayOfWeek(settings.firstDayOfWeek))
+                    currentStartTime, tz, WeekDay.fromJavaCalendarDayOfWeek(settings.firstDayOfWeek))
 
-        val vm = RecurrenceViewModel(
+        recurrenceView.setViewModel(RecurrenceViewModel(
                 currentStartTime,
                 currentEndTime,
                 tz,
                 currentRecurrence
-            )
-
+        ))
 
         layoutMain.visibility = View.GONE
         layoutRecurrence.visibility = View.VISIBLE
+    }
+
+    private fun onCustomRecurrenceComplete(newRecurrence: CalendarRecurrence?, startTimeAdjust: Long) {
+        layoutMain.visibility = View.VISIBLE
+        layoutRecurrence.visibility = View.GONE
+        if (newRecurrence != null) {
+            from.timeInMillis += startTimeAdjust
+            to.timeInMillis += startTimeAdjust
+
+            rRule = newRecurrence.serialize().serialize()
+            rDate = ""
+        }
+
+        updateRecurrenceLabel()
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1252,6 +1312,6 @@ open class EditEventActivity : AppCompatActivity() {
         private const val LOG_TAG = "EditEventActivity"
         const val EVENT_ID = "event_id"
         const val INSTANCE_START = "instance_start"
-        const val IS_RECURRING = "recurring"
+        const val INSTANCE_END = "instance_end"
     }
 }

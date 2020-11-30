@@ -46,7 +46,9 @@ class RecurrenceViewModel(
     val monthByWeekDay: NthWeekDay
     val monthByLastWeekDay: NthWeekDay
 
-    var timeUntil = eventEnd + 30 * 24 * 3600 * 1000L + 60L // must cap to end of day...
+    val month = 30 * 24 * 3600 * 1000L + 60L
+
+    var timeUntil = alignUntilTime(if (eventEnd != 0L) eventEnd + month else eventStart + month) // must cap to end of day...
     var numRepetitions = 10
     var weekDays = WeekDays()
     var interval = 1
@@ -117,6 +119,11 @@ class RecurrenceViewModel(
         }
 
         weekDays = currentWeekDays ?: CalendarRecurrence.Weekly.getDefaultValuesFor(eventStart, timeZone, originalRecurrence.weekStart ?: WeekDay.MO)
+    }
+
+    fun alignUntilTime(t: Long): Long {
+        val day = t / (24 * 3600 * 1000L)
+        return (day * 24 * 3600 * 1000L) + 24 * 3600 * 1000L -1L
     }
 }
 
