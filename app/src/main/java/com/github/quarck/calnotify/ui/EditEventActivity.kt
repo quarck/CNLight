@@ -259,8 +259,10 @@ open class EditEventActivity : AppCompatActivity() {
             }
 
             originalEvent?.let {
-                originalInstanceStart = it.startTime
-                originalInstanceEnd = it.endTime
+                if (it.rRule == "") {
+                    originalInstanceStart = it.startTime
+                    originalInstanceEnd = it.endTime
+                }
             }
         }
         else {
@@ -630,7 +632,7 @@ open class EditEventActivity : AppCompatActivity() {
 
         val remindersToAdd = reminders.filter { it.isForAllDay == isAllDay }.map { it.reminder }.toList()
 
-        val details = CalendarEventDetails(
+        var details = CalendarEventDetails(
                         title = eventTitleText.text.toString(),
                         desc = note.text.toString(),
                         location = eventLocation.text.toString(),
@@ -701,6 +703,9 @@ open class EditEventActivity : AppCompatActivity() {
             // Updating the repeating event, we are doing that by creating the new event from today, and
             // then cutting the recurrence of the old event by adding UNTIL= to the RRULE
 
+
+            // to do: do not create a copy if we are woking with the first instance! 
+
             val rrule = RRule.tryParse(eventToEdit.rRule)
             if (rrule == null) {
                 DevLog.error(LOG_TAG, "Failed to create event for the recurrence")
@@ -712,13 +717,28 @@ open class EditEventActivity : AppCompatActivity() {
                 return
             }
 
+            val newRRule = RRule.tryParse(rRule)
+            if (newRRule == null) {
+                DevLog.error(LOG_TAG, "Failed to create event for the recurrence")
+                AlertDialog.Builder(this)
+                        .setMessage(R.string.failed_to_parse_new_rrule)
+                        .setPositiveButton(android.R.string.ok) { _, _ -> }
+                        .show()
+                finish()
+                return
+            }
+
+            newRRule.until?.value?.let {
+                details = details.copy(lastDate = it)
+            }
+
             val eventId = CalendarEditor(CalendarProvider).createEvent(this, calendar.calendarId, calendar.owner, details)
             if (eventId != -1L) {
-
-                rrule.until = RRuleVal.UNTIL( startTime - 60*1000L)
+                val lastDate = originalInstanceStart - 1 * 1000L
+                rrule.until = RRuleVal.UNTIL( lastDate)
                 val success = CalendarEditor(CalendarProvider).updateEvent(this,
                         eventToEdit,
-                        eventToEdit.details.copy(rRule = rrule.serialize()))
+                        eventToEdit.details.copy(rRule = rrule.serialize(), lastDate = lastDate))
                 if (!success) {
                     DevLog.error(LOG_TAG, "Failed to update old recurrence")
                     AlertDialog.Builder(this)

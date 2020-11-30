@@ -99,7 +99,7 @@ data class CalendarEventDetails(
         val rDate: String = "", // empty if not repeating
         val exRRule: String = "", // empty if not repeating
         val exRDate: String = "", // empty if not repeating
-
+        val lastDate: Long? = null,
         val color: Int = 0
 ) {
 }
@@ -115,9 +115,7 @@ fun eventContentHash(calendarId: Long, isAllDay: Boolean, color: Int,
                 "$startTime,$endTime," +
                 "$eventStatus,$attendanceStatus," +
                 "${title.length},${desc.length},${location.length},${timeZone.length}," +
-                // "${rRule.length},${rDate.length},${exRRule.length},${exRDate.length}," +
                 "$title,$desc,$location,$timeZone,"// +
-                //"$rRule,$rDate,$exRRule,$exRDate"
         ).toByteArray())
 
 data class EventRecord(

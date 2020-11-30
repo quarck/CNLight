@@ -99,7 +99,8 @@ object CalendarProvider  {
                     CalendarContract.Events.EVENT_LOCATION,
                     CalendarContract.Events.DISPLAY_COLOR,
                     CalendarContract.Events.STATUS,
-                    CalendarContract.Events.SELF_ATTENDEE_STATUS
+                    CalendarContract.Events.SELF_ATTENDEE_STATUS,
+                    CalendarContract.Events.LAST_DATE
             )
 
     const val EVENT_PROJECTTION_INDEX_CALENDAR_ID = 0
@@ -117,6 +118,7 @@ object CalendarProvider  {
     const val EVENT_PROJECTTION_INDEX_COLOR = 12
     const val EVENT_PROJECTTION_INDEX_STATUS = 13
     const val EVENT_PROJECTTION_INDEX_ATTENDANCE = 14
+    const val EVENT_PROJECTTION_INDEX_LAST_DATE = 15
 
     private val instanceFields =
             arrayOf(
@@ -236,6 +238,7 @@ object CalendarProvider  {
         val color: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_COLOR)
         val status: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_STATUS)
         val attendance: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_ATTENDANCE)
+        val lastDate: Long? = cursor.getLong(EVENT_PROJECTTION_INDEX_LAST_DATE)
 
         if (title != null && start != null) {
 
@@ -264,7 +267,8 @@ object CalendarProvider  {
                             exRRule = exRRule ?: "",
                             exRDate = exRDate ?: "",
                             color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
-                            title = title
+                            title = title,
+                            lastDate = lastDate
                     ),
                     eventStatus = EventStatus.fromInt(status),
                     attendanceStatus = AttendanceStatus.fromInt(attendance)
@@ -648,11 +652,11 @@ object CalendarProvider  {
 
 
         values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
-        values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
+        //values.put(CalendarContract.Events.SELF_ATTENDEE_STATUS, CalendarContract.Events.STATUS_CONFIRMED)
 
         // https://gist.github.com/mlc/5188579
-        values.put(CalendarContract.Events.ORGANIZER, calendarOwnerAccount)
-        values.put(CalendarContract.Events.HAS_ATTENDEE_DATA, 1);
+        //values.put(CalendarContract.Events.ORGANIZER, calendarOwnerAccount)
+        //values.put(CalendarContract.Events.HAS_ATTENDEE_DATA, 1);
 
         try {
             val uri = context.contentResolver.insert(CalendarContract.Events.CONTENT_URI, values)
@@ -775,15 +779,17 @@ object CalendarProvider  {
             if (oldDetails.exRDate != newDetails.exRDate)
                 values.put(CalendarContract.Events.EXDATE, newDetails.exRDate)
 
+            if (oldDetails.lastDate != newDetails.lastDate && newDetails.lastDate != null)
+                values.put(CalendarContract.Events.LAST_DATE, newDetails.lastDate)
+
             val updateUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId)
             val updated = context.contentResolver.update(updateUri, values, null, null)
 
             ret = updated > 0
 
-            if (ret && oldDetails.reminders != newDetails.reminders)
-            {
-                // Now - update reminders also
+            if (ret && oldDetails.reminders != newDetails.reminders) {
 
+                // Now - update reminders also
                 val remindersProjection = arrayOf(
                         CalendarContract.Reminders._ID,
                         CalendarContract.Reminders.METHOD,
