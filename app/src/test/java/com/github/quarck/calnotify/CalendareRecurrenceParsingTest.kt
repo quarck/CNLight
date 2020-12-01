@@ -1,9 +1,6 @@
 package com.github.quarck.calnotify
 
-import com.github.quarck.calnotify.calendar.CalendarRecurrence
-import com.github.quarck.calnotify.calendar.RRule
-import com.github.quarck.calnotify.calendar.WeekDay
-import com.github.quarck.calnotify.calendar.WeekDays
+import com.github.quarck.calnotify.calendar.*
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -216,5 +213,35 @@ class CalendareRecurrenceParsingTest {
         assertEquals(yearly.serialize().serialize(), "FREQ=YEARLY;COUNT=2;INTERVAL=3;WKST=MO;BYMONTH=11;BYMONTHDAY=22")
         yearly.setUntil(alignUntilTime(time + (395 + 365) * 24 * 3600 * 1000L))
         assertEquals(yearly.serialize().serialize(), "FREQ=YEARLY;INTERVAL=3;UNTIL=20221222T235959Z;WKST=MO;BYMONTH=11;BYMONTHDAY=22")
+    }
+
+    @Test
+    fun parsingDurationTest() {
+        val S = 1000L
+        val M = 60 * S
+        val H = 60 * M
+        val D = 24 * H
+        val W = 7 * D
+        val durations = listOf(
+                Pair("P15DT5H0M20S", 15*D + 5*H + 0*M + 20*S),
+                Pair("+P15DT5H0M20S", 15*D + 5*H + 0*M + 20*S),
+                Pair("-P15DT5H0M20S", -(15*D + 5*H + 0*M + 20*S)),
+                Pair("P15D5H0M20S", 15*D + 5*H + 0*M + 20*S),
+                Pair("P7W", 7*W),
+                Pair("+P7W", 7*W),
+                Pair("-P7W", -7*W),
+                Pair("P3600S", 3600*S),
+        )
+
+        for (d in durations) {
+            val parsed = CalendarProviderHelper.parseRfc2445Duration(d.first)
+            println("${d.first} -> $parsed")
+            assertEquals(parsed, d.second)
+        }
+
+        assertEquals(CalendarProviderHelper.encodeRfc2445Duration(3600*1000L), "P3600S")
+        assertEquals(CalendarProviderHelper.encodeRfc2445Duration(1*1000L), "P1S")
+        assertEquals(CalendarProviderHelper.encodeRfc2445Duration(232323*1000L), "P232323S")
+
     }
 }

@@ -29,10 +29,77 @@ import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import com.github.quarck.calnotify.utils.detailed
+import com.github.quarck.calnotify.utils.logs.DevLog
 import java.util.*
+
+object CalendarProviderHelper {
+
+    internal enum class DurationParserState {
+        Start, InDigit, InTimeUnit
+    }
+
+    fun parseRfc2445Duration(duration: String): Long {
+        var sign = 1
+        var accumulatedDurationSeconds = 0L
+        var currentNum = 0L
+        var state = DurationParserState.Start
+
+        for (c in duration) {
+            when (state) {
+                DurationParserState.Start ->
+                    when (c) {
+                        '+' -> sign = 1
+                        '-' -> sign = -1
+                        'P' -> state = DurationParserState.InDigit
+                        else -> throw Exception("Invalid duration $duration")
+                    }
+                DurationParserState.InDigit ->
+                    when (c) {
+                        'W' -> {
+                            accumulatedDurationSeconds += currentNum * 7 * 24 * 3600
+                            state = DurationParserState.InTimeUnit
+                        }
+                        'D' -> {
+                            accumulatedDurationSeconds += currentNum * 24 * 3600
+                            state = DurationParserState.InTimeUnit
+                        }
+                        'H' -> {
+                            accumulatedDurationSeconds += currentNum * 3600
+                            state = DurationParserState.InTimeUnit
+                        }
+                        'M' -> {
+                            accumulatedDurationSeconds += currentNum * 60
+                            state = DurationParserState.InTimeUnit
+                        }
+                        'S' -> {
+                            accumulatedDurationSeconds += currentNum
+                            state = DurationParserState.InTimeUnit
+                        }
+                        else -> {
+                            if (!c.isDigit()) throw Exception("Invalid duration $duration")
+                            currentNum = currentNum * 10 + c.toInt() - '0'.toInt()
+                        }
+
+                    }
+                DurationParserState.InTimeUnit ->
+                    when (c) {
+                        'T' -> { } // just skip - useless noise
+                        else -> {
+                            if (!c.isDigit()) throw Exception("Invalid duration $duration")
+                            currentNum = c.toLong() - '0'.toLong()
+                            state = DurationParserState.InDigit
+                        }
+                    }
+            }
+        }
+
+        return sign * accumulatedDurationSeconds * 1000L
+    }
+
+    fun encodeRfc2445Duration(durationMillis: Long) = "P${durationMillis/1000L}S"
+}
 
 @SuppressLint("MissingPermission")
 object CalendarProvider  {
@@ -100,7 +167,8 @@ object CalendarProvider  {
                     CalendarContract.Events.DISPLAY_COLOR,
                     CalendarContract.Events.STATUS,
                     CalendarContract.Events.SELF_ATTENDEE_STATUS,
-                    CalendarContract.Events.LAST_DATE
+                    CalendarContract.Events.LAST_DATE,
+                    CalendarContract.Events.DURATION
             )
 
     const val EVENT_PROJECTTION_INDEX_CALENDAR_ID = 0
@@ -119,6 +187,7 @@ object CalendarProvider  {
     const val EVENT_PROJECTTION_INDEX_STATUS = 13
     const val EVENT_PROJECTTION_INDEX_ATTENDANCE = 14
     const val EVENT_PROJECTTION_INDEX_LAST_DATE = 15
+    const val EVENT_PROJECTTION_INDEX_DURATION = 16
 
     private val instanceFields =
             arrayOf(
@@ -239,6 +308,7 @@ object CalendarProvider  {
         val status: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_STATUS)
         val attendance: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_ATTENDANCE)
         val lastDate: Long? = cursor.getLong(EVENT_PROJECTTION_INDEX_LAST_DATE)
+        val duration: String? = cursor.getString(EVENT_PROJECTTION_INDEX_DURATION)
 
         if (title != null && start != null) {
 
@@ -268,7 +338,8 @@ object CalendarProvider  {
                             exRDate = exRDate ?: "",
                             color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
                             title = title,
-                            lastDate = lastDate
+                            lastDate = lastDate,
+                            duration = duration?.let{ CalendarProviderHelper.parseRfc2445Duration(it) }
                     ),
                     eventStatus = EventStatus.fromInt(status),
                     attendanceStatus = AttendanceStatus.fromInt(attendance)
@@ -625,11 +696,15 @@ object CalendarProvider  {
         values.put(CalendarContract.Events.DESCRIPTION, details.desc)
 
         values.put(CalendarContract.Events.DTSTART, details.startTime)
-        values.put(CalendarContract.Events.DTEND, details.endTime)
+        if (details.endTime != 0L)
+            values.put(CalendarContract.Events.DTEND, details.endTime)
+        if (details.duration != null)
+            values.put(CalendarContract.Events.DURATION, CalendarProviderHelper.encodeRfc2445Duration(details.duration))
+
+        if (details.lastDate != null)
+            values.put(CalendarContract.Events.LAST_DATE, details.lastDate)
 
         values.put(CalendarContract.Events.EVENT_LOCATION, details.location)
-
-        //
 
         if (details.color != 0)
             values.put(CalendarContract.Events.EVENT_COLOR, details.color) // just something
@@ -649,6 +724,7 @@ object CalendarProvider  {
             values.put(CalendarContract.Events.EXRULE, details.exRRule)
         if (details.exRDate != "")
             values.put(CalendarContract.Events.EXDATE, details.exRDate)
+
 
 
         values.put(CalendarContract.Events.STATUS, CalendarContract.Events.STATUS_CONFIRMED)
@@ -763,6 +839,9 @@ object CalendarProvider  {
 
             if (oldDetails.endTime != newDetails.endTime)
                 values.put(CalendarContract.Events.DTEND, newDetails.endTime)
+
+            if (oldDetails.duration != newDetails.duration && newDetails.duration != null)
+                values.put(CalendarContract.Events.DURATION, CalendarProviderHelper.encodeRfc2445Duration(newDetails.duration))
 
             if (oldDetails.color != newDetails.color)
                 values.put(CalendarContract.Events.EVENT_COLOR, newDetails.color)
@@ -1282,7 +1361,7 @@ object CalendarProvider  {
                                 else
                                     timezone.getOffset(event.instanceStartTime) - defaultAllDayReminderTime
                         val alertTime = event.instanceStartTime - reminderOffset
-                        DevLog.debug(LOG_TAG, "Manual reminder for event ${event.eventId}, offset: ${reminderOffset/1000L/60L}m")
+                        DevLog.debug(LOG_TAG, "Manual reminder for event ${event.eventId}, offset: ${reminderOffset / 1000L / 60L}m")
                         ret.add(event.copy(alertTime = alertTime))
                     }
 

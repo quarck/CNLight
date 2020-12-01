@@ -112,6 +112,8 @@ open class EditEventActivity : AppCompatActivity() {
 
     private var receivedSharedText = ""
 
+    private val editor: CalendarEditor by lazy { CalendarEditor(CalendarProvider) }
+
     private lateinit var layoutMain: LinearLayout
     private lateinit var layoutRecurrence: LinearLayout
 
@@ -619,6 +621,34 @@ open class EditEventActivity : AppCompatActivity() {
         builder.show()
     }
 
+    private fun onEventUpdated(newEvent: Boolean, eventId: Long, instanceStart: Long){
+        val nextReminder = calendarProvider.getNextEventReminderTime(this, eventId, instanceStart)
+
+        if (newEvent) {
+            if (nextReminder != 0L)
+                Toast.makeText(
+                        this,
+                        resources.getString(R.string.event_was_created_reminder_at).format(dateToStr(this, nextReminder)),
+                        Toast.LENGTH_LONG
+                ).show()
+            else
+                Toast.makeText(this, R.string.event_was_created, Toast.LENGTH_LONG).show()
+        }
+        else {
+            if (nextReminder != 0L)
+                    Toast.makeText(
+                            this,
+                            resources.getString(R.string.event_was_updated_next_reminder).format(dateToStr(this, nextReminder)),
+                            Toast.LENGTH_LONG
+                    ).show()
+            else
+                Toast.makeText(this, getString(R.string.event_was_updated), Toast.LENGTH_LONG).show()
+        }
+
+        finish()
+    }
+
+
     @Suppress("UNUSED_PARAMETER")
     fun onButtonSaveClick(v: View) {
 
@@ -632,127 +662,68 @@ open class EditEventActivity : AppCompatActivity() {
 
         val remindersToAdd = reminders.filter { it.isForAllDay == isAllDay }.map { it.reminder }.toList()
 
-        var details = CalendarEventDetails(
-                        title = eventTitleText.text.toString(),
-                        desc = note.text.toString(),
-                        location = eventLocation.text.toString(),
-                        timezone = originalEvent?.timezone ?: calendar.timeZone,
-                        startTime = startTime,
-                        endTime = endTime,
-                        isAllDay = isAllDay,
-                        rRule = rRule,
-                        rDate = rDate,
-                        exRRule = exRRule,
-                        exRDate = exRDate,
-                        color = originalEvent?.color ?: 0,
-                        reminders = remindersToAdd
+        val oldRRule = RRule.tryParse(originalEvent?.rRule ?: "")
+        val newRRule = RRule.tryParse(rRule)
+
+        val isRecurring = newRRule != null && !newRRule.isEmpty()
+
+        val details = CalendarEventDetails(
+                title = eventTitleText.text.toString(),
+                desc = note.text.toString(),
+                location = eventLocation.text.toString(),
+                timezone = originalEvent?.timezone ?: calendar.timeZone,
+                startTime = startTime,
+                endTime = if (isRecurring) 0L else endTime,
+                duration = if (isRecurring) (endTime - startTime) else null,
+                isAllDay = isAllDay,
+                rRule = rRule,
+                rDate = rDate,
+                exRRule = exRRule,
+                exRDate = exRDate,
+                color = originalEvent?.color ?: 0,
+                reminders = remindersToAdd,
+                lastDate = newRRule?.until?.value
         )
 
         val eventToEdit = originalEvent
 
         if (eventToEdit == null) {
-            val eventId = CalendarEditor(CalendarProvider).createEvent(this, calendar.calendarId, calendar.owner, details)
-            if (eventId != -1L) {
-                DevLog.debug(LOG_TAG, "Event created: id=${eventId}")
-
-                val nextReminder = calendarProvider.getNextEventReminderTime(this, eventId, startTime)
-                if (nextReminder != 0L) {
-                    Toast.makeText(
-                            this,
-                            resources.getString(R.string.event_was_created_reminder_at).format(dateToStr(this, nextReminder)),
-                            Toast.LENGTH_LONG
-                    ).show()
-                }
-                else {
-                    Toast.makeText(this, R.string.event_was_created, Toast.LENGTH_LONG).show()
-                }
-                finish()
-
-            } else {
-                DevLog.error(LOG_TAG, "Failed to create event")
-
-                AlertDialog.Builder(this)
-                        .setMessage(R.string.new_event_failed_to_create_event)
-                        .setPositiveButton(android.R.string.ok) { _, _ -> }
-                        .show()
-            }
+            val eventId = editor.createEvent(this, calendar.calendarId, calendar.owner, details)
+            if (eventId != -1L)
+                onEventUpdated(true, eventId, startTime)
+            else
+                Toast.makeText(this, R.string.new_event_failed_to_create_event, Toast.LENGTH_LONG).show()
         }
-        else if (eventToEdit.rRule == "") {
-            val success = CalendarEditor(CalendarProvider).updateEvent(this, eventToEdit, details)
-
-            if (success) {
-                val nextReminder = calendarProvider.getNextEventReminderTime(this, eventToEdit.eventId, details.startTime)
-                if (nextReminder != 0L) {
-                    Toast.makeText(
-                            this,
-                            resources.getString(R.string.event_was_updated_next_reminder).format(dateToStr(this, nextReminder)),
-                            Toast.LENGTH_LONG
-                    ).show()
-                }
-                else {
-                    Toast.makeText(this, getString(R.string.event_was_updated), Toast.LENGTH_LONG).show()
-                }
-
-                finish()
-            }
-            else {
+        else if (oldRRule == null || oldRRule.isEmpty() || // non-recurrent (or non-recurrent becoming recurrent) or ..
+                originalInstanceStart == eventToEdit.startTime // recurrent, but we are looking at the very first instance
+        ) {
+            val success = editor.updateEvent(this, eventToEdit, details)
+            if (success)
+                onEventUpdated(false, eventToEdit.eventId, details.startTime)
+            else
                 Toast.makeText(this, R.string.failed_to_update_event_details, Toast.LENGTH_LONG).show()
-            }
         }
         else {
             // Updating the repeating event, we are doing that by creating the new event from today, and
             // then cutting the recurrence of the old event by adding UNTIL= to the RRULE
-
-
-            // to do: do not create a copy if we are woking with the first instance! 
-
-            val rrule = RRule.tryParse(eventToEdit.rRule)
-            if (rrule == null) {
-                DevLog.error(LOG_TAG, "Failed to create event for the recurrence")
-                AlertDialog.Builder(this)
-                        .setMessage(R.string.failed_to_parse_original_rrule)
-                        .setPositiveButton(android.R.string.ok) { _, _ -> }
-                        .show()
-                finish()
-                return
-            }
-
-            val newRRule = RRule.tryParse(rRule)
             if (newRRule == null) {
-                DevLog.error(LOG_TAG, "Failed to create event for the recurrence")
-                AlertDialog.Builder(this)
-                        .setMessage(R.string.failed_to_parse_new_rrule)
-                        .setPositiveButton(android.R.string.ok) { _, _ -> }
-                        .show()
-                finish()
+                Toast.makeText(this, R.string.failed_to_parse_new_rrule, Toast.LENGTH_LONG).show()
                 return
             }
 
-            newRRule.until?.value?.let {
-                details = details.copy(lastDate = it)
-            }
-
-            val eventId = CalendarEditor(CalendarProvider).createEvent(this, calendar.calendarId, calendar.owner, details)
+            // create the new recurrence first - from today onward
+            val eventId = editor.createEvent(this, calendar.calendarId, calendar.owner, details)
             if (eventId != -1L) {
+                // update the old recurrence now, making it stop just before the original instance start
                 val lastDate = originalInstanceStart - 1 * 1000L
-                rrule.until = RRuleVal.UNTIL( lastDate)
-                val success = CalendarEditor(CalendarProvider).updateEvent(this,
-                        eventToEdit,
-                        eventToEdit.details.copy(rRule = rrule.serialize(), lastDate = lastDate))
-                if (!success) {
-                    DevLog.error(LOG_TAG, "Failed to update old recurrence")
-                    AlertDialog.Builder(this)
-                            .setMessage(R.string.failed_to_update_old_recurrence)
-                            .setPositiveButton(android.R.string.ok) { _, _ -> }
-                            .show()
-                }
-                finish()
+                oldRRule.until = RRuleVal.UNTIL(lastDate)
+                if (editor.updateEvent(this, eventToEdit,
+                                eventToEdit.details.copy(rRule = oldRRule.serialize(), lastDate = lastDate)))
+                    onEventUpdated(false, eventId, details.startTime)
+                else
+                    Toast.makeText(this, R.string.failed_to_update_old_recurrence, Toast.LENGTH_LONG).show()
             } else {
-                DevLog.error(LOG_TAG, "Failed to create event for the recurrence")
-                AlertDialog.Builder(this)
-                        .setMessage(R.string.failed_to_update_recurrence)
-                        .setPositiveButton(android.R.string.ok) { _, _ -> }
-                        .show()
+                Toast.makeText(this, R.string.failed_to_update_recurrence, Toast.LENGTH_LONG).show()
             }
         }
     }
