@@ -239,12 +239,12 @@
 
     <string name="donation_offers_are_rejected">Any donation offers would be rejected</string>
 
-    <string name="_15_m">15m</string>
-    <string name="_1_h">1h</string>
-    <string name="_4_h">4h</string>
-    <string name="_8_h">8h</string>
-    <string name="_1_d">1d</string>
-    <string name="minus_5_m">-5m</string>
+    <string name="_15_m">For 15m</string>
+    <string name="_1_h">For 1h</string>
+    <string name="_4_h">For 4h</string>
+    <string name="_8_h">For 8h</string>
+    <string name="_1_d">For 1d</string>
+    <string name="minus_5_m">Until 5m to start</string>
     <string name="next_day">Next Day</string>
     <string name="next_week">Next Week</string>
     <string name="next_month_30d">Next month (+30d)</string>

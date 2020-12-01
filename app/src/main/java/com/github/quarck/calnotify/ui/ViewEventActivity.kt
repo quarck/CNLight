@@ -292,7 +292,8 @@ open class ViewEventActivity : AppCompatActivity() {
 
         val fabEditButton = findViewById<FloatingActionButton>(R.id.floating_edit_button)
         val fabMarkDoneButton = findViewById<FloatingActionButton>(R.id.floating_mark_done_button)
-        val fabSnoozeOrMove = findViewById<FloatingActionButton>(R.id.floating_mark_snooze_or_move)
+        val fabSnoozeButton = findViewById<FloatingActionButton>(R.id.floating_snooze_button)
+        val fabMoveButton = findViewById<FloatingActionButton>(R.id.floating_move_button)
 
         val fabColorStateList =  ColorStateList(
                 arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(android.R.attr.state_pressed)),
@@ -300,7 +301,8 @@ open class ViewEventActivity : AppCompatActivity() {
 
         fabEditButton.backgroundTintList = fabColorStateList
         fabMarkDoneButton.backgroundTintList = fabColorStateList
-        fabSnoozeOrMove.backgroundTintList = fabColorStateList
+        fabSnoozeButton.backgroundTintList = fabColorStateList
+        fabMoveButton.backgroundTintList = fabColorStateList
 
         if (!calendar.isReadOnly) {
             fabEditButton.setOnClickListener { _ ->
@@ -321,13 +323,14 @@ open class ViewEventActivity : AppCompatActivity() {
                 ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
                 finish()
             }
-            fabSnoozeOrMove.setOnClickListener(this::showSnoozeOrMoveDialog)
+            fabSnoozeButton.setOnClickListener(this::showSnoozeMenu)
+            fabMoveButton.setOnClickListener(this::showMoveMenu)
         }
         else {
             fabMarkDoneButton.visibility = View.GONE
-            fabSnoozeOrMove.visibility = View.GONE
+            fabSnoozeButton.visibility = View.GONE
+            fabMoveButton.visibility = View.GONE
         }
-
 
         val menuButton = findViewById<ImageView?>(R.id.event_view_menu)
         menuButton?.setOnClickListener { showActionsPopupMenu(menuButton) }
@@ -359,8 +362,69 @@ open class ViewEventActivity : AppCompatActivity() {
         popup.show()
     }
 
-    fun showSnoozeOrMoveDialog(v: View) {
-        
+    fun showSnoozeMenu(v: View) {
+        val popup = PopupMenu(this, v)
+        val inflater = popup.menuInflater
+        inflater.inflate(R.menu.snooze_options, popup.menu)
+        popup.setOnMenuItemClickListener {
+            item ->
+
+            when (item.itemId) {
+                R.id.action_snooze_15m -> {
+                    snoozeEvent(snoozePresets[0])
+                    true
+                }
+                R.id.action_snooze_1h -> {
+                    snoozeEvent(snoozePresets[1])
+                    true
+                }
+                R.id.action_snooze_4h -> {
+                    snoozeEvent(snoozePresets[2])
+                    true
+                }
+                R.id.action_snooze_8h -> {
+                    snoozeEvent(snoozePresets[3])
+                    true
+                }
+                R.id.action_snooze_1d -> {
+                    snoozeEvent(snoozePresets[4])
+                    true
+                }
+                R.id.action_snooze_m5m -> {
+                    snoozeEvent(snoozePresets[5])
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popup.show()
+    }
+
+    fun showMoveMenu(v: View) {
+        val popup = PopupMenu(this, v)
+        val inflater = popup.menuInflater
+        inflater.inflate(R.menu.move_options, popup.menu)
+        popup.setOnMenuItemClickListener {
+            item ->
+
+            when (item.itemId) {
+                R.id.action_move_next_day -> {
+                    confirmAndReschedule(addDays = 1)
+                    true
+                }
+                R.id.action_move_next_week -> {
+                    confirmAndReschedule(addDays = 7)
+                    true
+                }
+                R.id.action_move_next_month_30d -> {
+                    confirmAndReschedule(addDays = 30)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

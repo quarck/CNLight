@@ -807,7 +807,23 @@
         android:visibility="visible"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floating_mark_snooze_or_move"
+        android:id="@+id/floating_snooze_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_layout_margin"
+        android:layout_marginBottom="176dp"
+        android:layout_marginStart="@dimen/fab_layout_margin"
+        android:layout_marginEnd="@dimen/fab_layout_margin"
+        app:fabSize="normal"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@drawable/ic_alarm_white_24dp"
+        android:elevation="@dimen/toolbar_elevation"
+        tools:targetApi="O"
+        android:contentDescription="@string/mark_finished"
+        android:visibility="visible"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_move_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/fab_layout_margin"
@@ -816,7 +832,7 @@
         android:layout_marginEnd="@dimen/fab_layout_margin"
         app:fabSize="normal"
         android:layout_gravity="bottom|end"
-        app:srcCompat="@drawable/ic_alarm_white_24dp"
+        app:srcCompat="@drawable/ic_next_week_white_24dp"
         android:elevation="@dimen/toolbar_elevation"
         tools:targetApi="O"
         android:contentDescription="@string/mark_finished"
