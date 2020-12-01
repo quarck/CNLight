@@ -292,6 +292,7 @@ open class ViewEventActivity : AppCompatActivity() {
 
         val fabEditButton = findViewById<FloatingActionButton>(R.id.floating_edit_button)
         val fabMarkDoneButton = findViewById<FloatingActionButton>(R.id.floating_mark_done_button)
+        val fabSnoozeOrMove = findViewById<FloatingActionButton>(R.id.floating_mark_snooze_or_move)
 
         val fabColorStateList =  ColorStateList(
                 arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(android.R.attr.state_pressed)),
@@ -299,6 +300,7 @@ open class ViewEventActivity : AppCompatActivity() {
 
         fabEditButton.backgroundTintList = fabColorStateList
         fabMarkDoneButton.backgroundTintList = fabColorStateList
+        fabSnoozeOrMove.backgroundTintList = fabColorStateList
 
         if (!calendar.isReadOnly) {
             fabEditButton.setOnClickListener { _ ->
@@ -319,9 +321,11 @@ open class ViewEventActivity : AppCompatActivity() {
                 ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
                 finish()
             }
+            fabSnoozeOrMove.setOnClickListener(this::showSnoozeOrMoveDialog)
         }
         else {
             fabMarkDoneButton.visibility = View.GONE
+            fabSnoozeOrMove.visibility = View.GONE
         }
 
 
@@ -353,6 +357,10 @@ open class ViewEventActivity : AppCompatActivity() {
         }
 
         popup.show()
+    }
+
+    fun showSnoozeOrMoveDialog(v: View) {
+        
     }
 
     @Suppress("unused", "UNUSED_PARAMETER")

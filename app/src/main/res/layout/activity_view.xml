@@ -788,7 +788,7 @@
         android:layout_gravity="bottom|end"
         app:srcCompat="@drawable/ic_create_white_24dp"
         android:elevation="@dimen/toolbar_elevation"
-        tools:targetApi="lollipop"
+        tools:targetApi="O"
         android:contentDescription="@string/edit_event"
         />
 
@@ -802,7 +802,23 @@
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_check_white_24dp"
         android:elevation="@dimen/toolbar_elevation"
-        tools:targetApi="lollipop"
+        tools:targetApi="O"
+        android:contentDescription="@string/mark_finished"
+        android:visibility="visible"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_mark_snooze_or_move"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/fab_layout_margin"
+        android:layout_marginBottom="96dp"
+        android:layout_marginStart="@dimen/fab_layout_margin"
+        android:layout_marginEnd="@dimen/fab_layout_margin"
+        app:fabSize="normal"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@drawable/ic_alarm_white_24dp"
+        android:elevation="@dimen/toolbar_elevation"
+        tools:targetApi="O"
         android:contentDescription="@string/mark_finished"
         android:visibility="visible"/>
 
