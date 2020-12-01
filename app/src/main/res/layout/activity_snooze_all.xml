@@ -79,7 +79,7 @@
                         android:paddingStart="@dimen/event_view_padding_start"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:text="@string/snooze_event_for"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text" />
 
                     <TextView
@@ -99,7 +99,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:visibility="visible" />
 
@@ -121,7 +121,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/secondary_text"
                         android:visibility="gone" />
 
@@ -140,7 +140,7 @@
                         android:paddingStart="@dimen/event_view_padding_start"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_15_min"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text" />
 
 
@@ -161,7 +161,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:visibility="visible" />
 
@@ -183,7 +183,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/secondary_text"
                         android:visibility="gone" />
 
@@ -202,7 +202,7 @@
                         android:paddingStart="@dimen/event_view_padding_start"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_1_hour"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text" />
 
                     <TextView
@@ -222,7 +222,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:visibility="visible" />
 
@@ -244,7 +244,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/secondary_text"
                         android:visibility="gone" />
 
@@ -263,7 +263,7 @@
                         android:paddingStart="@dimen/event_view_padding_start"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_4_hours"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text" />
 
 
@@ -284,7 +284,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:visibility="visible" />
 
@@ -306,7 +306,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/secondary_text"
                         android:visibility="gone" />
 
@@ -325,7 +325,7 @@
                         android:paddingStart="@dimen/event_view_padding_start"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_1_day"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text" />
 
 
@@ -346,7 +346,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:visibility="visible" />
 
@@ -368,7 +368,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/secondary_text"
                         android:visibility="gone" />
 
@@ -387,7 +387,7 @@
                         android:paddingStart="@dimen/event_view_padding_start"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_1_day"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text" />
 
                     <TextView
@@ -407,7 +407,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:visibility="visible" />
 
@@ -429,7 +429,7 @@
                         android:paddingStart="0dp"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
-                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/secondary_text"
                         android:visibility="gone" />
 
@@ -448,7 +448,7 @@
                         android:paddingStart="@dimen/event_view_padding_start"
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_1_day"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:visibility="gone" />
 

@@ -39,11 +39,9 @@ import com.github.quarck.calnotify.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
-import android.provider.CalendarContract
 import androidx.core.content.ContextCompat
 import android.text.method.ScrollingMovementMethod
 import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
-import java.lang.StringBuilder
 
 // TODO: add repeating rule and calendar name somewhere on the snooze activity
 
@@ -292,10 +290,18 @@ open class ViewEventActivity : AppCompatActivity() {
 //            text = "" //  "RRULE: ${event.rRule}\nRDATE: ${event.rDate}\nEXRRULE: ${event.exRRule}\nEXRDATE: ${event.exRDate}"
 //        }
 
-        val fab = findViewById<FloatingActionButton>(R.id.floating_edit_button)
+        val fabEditButton = findViewById<FloatingActionButton>(R.id.floating_edit_button)
+        val fabMarkDoneButton = findViewById<FloatingActionButton>(R.id.floating_mark_done_button)
+
+        val fabColorStateList =  ColorStateList(
+                arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(android.R.attr.state_pressed)),
+                intArrayOf(event.color.adjustCalendarColor(false),  event.color.adjustCalendarColor(true)))
+
+        fabEditButton.backgroundTintList = fabColorStateList
+        fabMarkDoneButton.backgroundTintList = fabColorStateList
 
         if (!calendar.isReadOnly) {
-            fab.setOnClickListener { _ ->
+            fabEditButton.setOnClickListener { _ ->
                 val intent = Intent(this, EditEventActivity::class.java)
                 intent.putExtra(EditEventActivity.EVENT_ID, event.eventId)
                 intent.putExtra(EditEventActivity.INSTANCE_START, event.instanceStartTime)
@@ -303,43 +309,38 @@ open class ViewEventActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }
+        }
+        else {
+            fabEditButton.visibility = View.GONE
+        }
 
-            val states = arrayOf(intArrayOf(android.R.attr.state_enabled), // enabled
-                    intArrayOf(android.R.attr.state_pressed)  // pressed
-            )
-
-            val colors = intArrayOf(
-                    event.color.adjustCalendarColor(false),
-                    event.color.adjustCalendarColor(true)
-            )
-
-            fab.backgroundTintList = ColorStateList(states, colors)
+        if (!viewForFutureEvent) {
+            fabMarkDoneButton.setOnClickListener{
+                ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
+                finish()
+            }
+        }
+        else {
+            fabMarkDoneButton.visibility = View.GONE
         }
 
 
         val menuButton = findViewById<ImageView?>(R.id.event_view_menu)
-        menuButton?.setOnClickListener { showDismissEditPopup(menuButton) }
+        menuButton?.setOnClickListener { showActionsPopupMenu(menuButton) }
         menuButton?.visibility = View.VISIBLE
     }
 
-    fun showDismissEditPopup(v: View) {
+    fun showActionsPopupMenu(v: View) {
         val popup = PopupMenu(this, v)
         val inflater = popup.menuInflater
         inflater.inflate(R.menu.snooze, popup.menu)
-
-        val dismissItem = popup.menu.findItem(R.id.action_dismiss_event)
-        dismissItem?.isVisible = !viewForFutureEvent
 
         popup.setOnMenuItemClickListener {
             item ->
 
             when (item.itemId) {
-                R.id.action_dismiss_event -> {
-                    if (!viewForFutureEvent) {
-                        ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
-                        finish()
-                    }
-                    true
+                R.id.action_delete_event -> {
+                    false // not handled yet
                 }
 
                 R.id.action_open_in_calendar -> {

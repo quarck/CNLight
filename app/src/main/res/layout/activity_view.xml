@@ -58,8 +58,7 @@
                     android:minLines="2"
                     android:id="@+id/event_view_title"
                     android:text="Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. "
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textSize="19sp"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/event_title_color"
                     android:paddingBottom="@dimen/event_view_header_padding_bottom"
                     android:paddingTop="@dimen/event_view_header_padding_top"
@@ -147,7 +146,7 @@
                             android:paddingEnd="@dimen/event_view_padding_end"
                             android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                             android:text="Tomorrow"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             tools:ignore="HardcodedText" />
 
@@ -160,7 +159,7 @@
                             android:paddingEnd="@dimen/event_view_padding_end"
                             android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                             android:text="13:00 - 14:00"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             android:visibility="visible"
                             tools:ignore="HardcodedText" />
@@ -170,7 +169,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/event_view_recurrence"
                             android:text="Repeats every 10 minutes when the moon is high"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                             android:paddingTop="0dp"
@@ -185,7 +184,7 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/event_view_timezone"
                             android:text="Timezone: UTC"
-                            android:textAppearance="?android:textAppearanceSmall"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Small"
                             android:textColor="@color/secondary_text"
                             android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                             android:paddingTop="0dp"
@@ -206,7 +205,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/remind_col"
-                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                 android:textColor="@color/secondary_text"
                                 android:gravity="start|bottom"
                                 android:paddingBottom="@dimen/event_view_in_text_vert_padding"
@@ -222,7 +221,7 @@
                                 android:layout_height="wrap_content"
                                 android:id="@+id/event_view_reminders"
                                 android:text="15 minutes before\n15 minutes before as email"
-                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                 android:textColor="@color/secondary_text"
                                 android:gravity="start|bottom"
                                 android:paddingBottom="@dimen/event_view_in_text_vert_padding"
@@ -238,7 +237,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/next_col"
-                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                 android:textColor="@color/material_red"
                                 android:gravity="start|bottom"
                                 android:paddingBottom="@dimen/event_view_in_text_vert_padding"
@@ -255,7 +254,7 @@
                                 android:layout_height="wrap_content"
                                 android:id="@+id/event_view_next_reminder"
                                 android:text="18:49 tomorrow"
-                                android:textAppearance="?android:textAppearanceSmall"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
                                 android:textColor="@color/material_red"
                                 android:gravity="start|bottom"
                                 android:paddingBottom="@dimen/event_view_in_text_vert_padding"
@@ -289,7 +288,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/view_event_calendar_name"
                         android:text="__CALENDAR_NAME__"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/secondary_text"
                         android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="0dp"
@@ -305,7 +304,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/view_event_calendar_account"
                         android:text="__CALENDAR_ACCOUNT__"
-                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/secondary_text"
                         android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="0dp"
@@ -344,7 +343,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/event_view_location"
                         android:text="Meeting room 1.01"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
@@ -382,7 +381,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/event_view_description"
                         android:text="__DESC_PLACEHOLDER__"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
@@ -394,8 +393,6 @@
 
                 </RelativeLayout>
 
-
-
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -406,7 +403,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Subtle notice can be placed here"
-                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textColor="@color/primary"
                     android:paddingBottom="0dp"
                     android:paddingTop="@dimen/event_view_in_text_vert_padding"
@@ -445,7 +442,7 @@
                         android:paddingStart="@dimen/event_view_padding_start"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:text="@string/snooze_event_for"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text" />
 
                     <LinearLayout
@@ -477,7 +474,7 @@
                             android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_15_m"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             android:layout_weight="1"
                             />
@@ -496,7 +493,7 @@
                             android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_1_h"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             android:layout_weight="1"
                             />
@@ -515,7 +512,7 @@
                             android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_4_h"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             android:layout_weight="1"
                             />
@@ -551,7 +548,7 @@
                             android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_8_h"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             android:layout_weight="1"
                             />
@@ -570,7 +567,7 @@
                             android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/_1_d"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             android:layout_weight="1"
                             />
@@ -589,7 +586,7 @@
                             android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/minus_5_m"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             android:layout_weight="1"
                             />
@@ -633,7 +630,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/snooze_reschedule_for"
                         android:text="@string/change_event_time"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:paddingBottom="@dimen/event_view_spacing"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
@@ -648,7 +645,7 @@
                         android:id="@+id/enable_snooze_reschedule"
                         android:layout_below="@id/snooze_reschedule_for"
                         android:text="--- SHOW ---"
-                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                         android:textColor="@color/primary_text"
                         android:paddingBottom="@dimen/event_view_spacing"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
@@ -691,7 +688,7 @@
                             android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/next_day"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             />
 
@@ -709,7 +706,7 @@
                             android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/next_week"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             />
 
@@ -727,7 +724,7 @@
                             android:paddingTop="@dimen/event_view_spacing"
 
                             android:text="@string/next_month_30d"
-                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/primary_text"
                             />
 
@@ -749,7 +746,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="DBG:"
-                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/secondary_text"
                         android:paddingBottom="@dimen/event_view_spacing"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
@@ -763,7 +760,7 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/debug_details_line"
                         android:text="none"
-                        android:textAppearance="?android:textAppearanceSmall"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/secondary_text"
                         android:paddingBottom="@dimen/event_view_spacing"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
@@ -787,12 +784,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_layout_margin"
-        app:fabSize="mini"
-        app:layout_anchor="@id/event_view_event_details_layout"
-        app:layout_anchorGravity="bottom|start"
+        app:fabSize="normal"
+        android:layout_gravity="bottom|end"
         app:srcCompat="@drawable/ic_create_white_24dp"
         android:elevation="@dimen/toolbar_elevation"
         tools:targetApi="lollipop"
-        android:contentDescription="@string/edit_event" />
+        android:contentDescription="@string/edit_event"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_mark_done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_layout_margin"
+        app:fabSize="mini"
+        app:layout_anchor="@id/event_view_event_details_layout"
+        app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_check_white_24dp"
+        android:elevation="@dimen/toolbar_elevation"
+        tools:targetApi="lollipop"
+        android:contentDescription="@string/mark_finished"
+        android:visibility="visible"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -21,7 +21,7 @@
 		android:id="@+id/no_calendars_text"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textAppearance="@style/TextAppearance.AppCompat.Large"
 		android:gravity="center"
 		android:visibility="gone"
 		android:textColor="@color/secondary_text"

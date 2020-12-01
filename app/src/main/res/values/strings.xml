@@ -114,12 +114,9 @@
     <string name="mark_not_finished">Mark not done</string>
 
     <string name="title_activity_privacy_policy">Privacy Policy</string>
-    <string name="privacy_policy">PRIVACY POLICY</string>
-    <string name="context_policy">
-PRIVACY POLICY\n
-\n
-THIS APP DOESN\'T STEAL YOUR DATA
-    </string>
+
+    <string name="privacy_policy_title">PRIVACY POLICY</string>
+    <string name="privacy_policy_content">This app does not steal your data\n\nNo data is being ever sent over network to any 3rd party</string>
 
     <string name="build_time_string_format" formatted="false">Build time: %s</string>
     <string name="handle_events_with_no_reminders">Handle events with no reminders</string>
@@ -297,6 +294,7 @@ THIS APP DOESN\'T STEAL YOUR DATA
     <string name="failed_to_update_recurrence">Failed to update recurrence</string>
     <string name="failed_to_update_old_recurrence">Failed to update old recurrence</string>
     <string name="failed_to_parse_new_rrule">Failed to parse the new rrule</string>
+    <string name="delete_event">Delete event</string>
 
 </resources>
 

@@ -11,7 +11,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:text="__DIALOG_TITLE__"
         android:id="@+id/textViewTimeIntervalTitle"
         android:layout_gravity="left"
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/numberPickerTimeInterval"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:layout_gravity="center"
             />
 
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/spinnerTimeIntervalUnit"
             android:layout_gravity="center"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
 
             />
         <!-- android:entries="@array/time_units_plurals" -->

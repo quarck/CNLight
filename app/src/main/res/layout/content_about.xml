@@ -24,7 +24,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/primary_text"
             android:text="@string/app_name_cnlight"
             android:layout_gravity="center_horizontal"
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/text_view_app_version"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/primary_text"
             android:text="version XXX"
             android:layout_gravity="center_horizontal"
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/text_view_app_build_time"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/primary_text"
             android:text="build time"
             android:layout_gravity="center_horizontal"
@@ -55,10 +55,10 @@
             android:id="@+id/about_button_privacy_policy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/accent"
             android:layout_margin="10dp"
-            android:text="@string/privacy_policy"
+            android:text="@string/privacy_policy_title"
             android:clickable="true"
             android:layout_gravity="center_horizontal"
             />
@@ -70,14 +70,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/primary_text"
             android:text="@string/gplv3_notice"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/primary_text"
             android:text="@string/gplv3_src_comment"/>
 
@@ -85,7 +85,7 @@
             android:id="@+id/about_button_github"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:text="@string/projectPageOnGitHub"
             android:layout_marginBottom="6dp"
             android:layout_marginTop="12dp"
@@ -106,7 +106,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/primary_text"
             android:text="(c) 2019 QRCK"
             android:layout_gravity="center_horizontal"
@@ -116,7 +116,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="@color/secondary_text"
             android:text="(quarck@gmail.com)"
             android:layout_gravity="center_horizontal"
@@ -132,7 +132,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:paddingTop="20dp"
             android:paddingBottom="20dp"
             android:paddingStart="16dp"
