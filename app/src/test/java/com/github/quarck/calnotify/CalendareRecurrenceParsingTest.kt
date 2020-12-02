@@ -47,7 +47,9 @@ class CalendareRecurrenceParsingTest {
                 "FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2",
                 "FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO",
                 "FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU",
-                "FREQ=MONTHLY;BYMONTHDAY=15,30;COUNT=5"
+                "FREQ=MONTHLY;BYMONTHDAY=15,30;COUNT=5",
+                "FREQ=MONTHLY",
+                "FREQ=YEARLY"
         )
 
         for (rrule in rrules) {
@@ -82,6 +84,8 @@ class CalendareRecurrenceParsingTest {
                 "FREQ=MONTHLY;BYMONTHDAY=3",
                 "FREQ=MONTHLY;INTERVAL=18;COUNT=10;BYMONTHDAY=15",
                 "FREQ=YEARLY;COUNT=10;BYMONTH=6;BYMONTHDAY=15",
+                "FREQ=MONTHLY",
+                "FREQ=YEARLY"
         )
 
         val now = System.currentTimeMillis()

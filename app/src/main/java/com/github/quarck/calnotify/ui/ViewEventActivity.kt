@@ -305,11 +305,7 @@ open class ViewEventActivity : AppCompatActivity() {
         fabMarkDoneButton.backgroundTintList = fabColorStateList
         fabMoveButton.backgroundTintList = fabColorStateList
 
-        val calIsReadOnly = calendar.isReadOnly
-        val eventStartTimeHasPassed = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
-        val shouldOfferMove = !calIsReadOnly  && !viewForFutureEvent && eventStartTimeHasPassed
-        val allowEdit = !calIsReadOnly && !viewForFutureEvent
-
+        val allowEdit = !calendar.isReadOnly
         if (allowEdit) {
             fabEditButton.setOnClickListener { _ ->
                 val intent = Intent(this, EditEventActivity::class.java)
@@ -323,12 +319,12 @@ open class ViewEventActivity : AppCompatActivity() {
             fabEditButton.visibility = View.GONE
         }
 
-        if (shouldOfferMove) {
+        val eventStartTimeHasPassed = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
+        if (allowEdit && !viewForFutureEvent && eventStartTimeHasPassed) {
             fabMoveButton.setOnClickListener(this::showMoveMenu)
         } else {
             fabMoveButton.visibility = View.GONE
         }
-
 
         if (!viewForFutureEvent) {
             fabMarkDoneButton.setOnClickListener{

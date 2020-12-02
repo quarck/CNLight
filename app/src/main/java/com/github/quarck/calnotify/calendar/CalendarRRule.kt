@@ -320,8 +320,16 @@ sealed class RRuleVal {
         override fun serialize(): String =
                 "BYMONTH=${value.joinToString(",")}"
 
-        override fun toString(): String =
-                "on months: ${value.joinToString(",")}"
+        fun monthNames(): List<String> = value.map{monthName(it)}
+
+        private fun monthName(num: Int): String {
+            return when (num) {
+                1 -> "Jan"; 2 -> "Feb"; 3 -> "Mar"; 4 -> "Apr"
+                5 -> "May"; 6 -> "Jun"; 7 -> "Jul"; 8 -> "Aug"
+                9 -> "Sep"; 10 -> "Oct"; 11 -> "Nov"; 12 -> "Dec"
+                else -> "month $num"
+            }
+        }
 
         companion object {
             fun parse(v: String): BYMONTH {
@@ -336,8 +344,16 @@ sealed class RRuleVal {
         override fun serialize(): String =
                 "BYMONTHDAY=${value.joinToString(",")}"
 
-        override fun toString(): String =
-                "on month days: ${value.joinToString(",")}"
+        fun dayNames(): List<String> = value.map{dayName(it)}
+
+        private fun dayName(num: Int): String {
+            return when (num) {
+                1,21,31,41 -> "${num}st"
+                2,22,32,42 -> "${num}nd"
+                3,23,33,43 -> "${num}rd"
+                else -> "${num}th"
+            }
+        }
 
         companion object {
             fun parse(v: String): BYMONTHDAY {
@@ -471,18 +487,38 @@ data class RRule(
         freq?.let { sb.append("Repeats "); sb.append(it.toStringWithInterval(interval)) }
         count?.let { sb.append(" "); sb.append(it.toString())}
         byDay?.let { sb.append(" "); sb.append(it.toString())}
-        byMonth?.let { sb.append(" "); sb.append(it.toString())}
-        byMonthDay?.let { sb.append(" "); sb.append(it.toString())}
+
+        val byMonthCopy = byMonth
+        val byMonthDayCopy = byMonthDay
+
+        if (byMonthCopy != null && byMonthDayCopy != null) {
+            val months = byMonthCopy.monthNames().toTypedArray()
+            val days = byMonthDayCopy.dayNames().toTypedArray()
+            if (months.size == 1 && days.size == 1) {
+                sb.append(" on ${days[0]} of ${months[0]}")
+            } else {
+                sb.append(" on days ${byMonthDayCopy.value.joinToString(", ")} of ${months.joinToString(", ")}")
+            }
+        } else if (byMonthCopy != null) {
+            val months = byMonthCopy.monthNames().toTypedArray()
+            if (months.size == 1) {
+                sb.append(" in ${months[0]}")
+            } else {
+                sb.append(" on months ${months.joinToString(", ")}")
+            }
+        } else if (byMonthDayCopy != null) {
+            val days = byMonthDayCopy.value.toTypedArray()
+            if (days.size == 1) {
+                sb.append(" on day ${days.firstOrNull()}")
+            } else {
+                sb.append(" on days ${days.joinToString(", ")}")
+            }
+        }
+
         byYearDay?.let { sb.append(" "); sb.append(it.toString())}
         byWeekNo?.let { sb.append(" "); sb.append(it.toString())}
         bySetPos?.let { sb.append(" "); sb.append(it.toString())}
         until?.let { sb.append(" "); sb.append(it.toString(eventTimeZoneOffset))}
-//        wkst?.let {
-//            if (it.value.code != weekStartDefault) {
-//                sb.append(" ")
-//                sb.append(it.toString())
-//            }
-//        }
 
         return sb.toString()
     }

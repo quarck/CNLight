@@ -102,7 +102,7 @@ sealed class CalendarRecurrence(
     }
 
     override fun toString(): String =
-            serialize().toString(java.util.TimeZone.getTimeZone(eventTimeZone).getOffset(firstInstance))
+            serialize().toString(TimeZone.getTimeZone(eventTimeZone).getOffset(firstInstance))
 
     abstract fun copy(): CalendarRecurrence
 
@@ -285,12 +285,12 @@ sealed class CalendarRecurrence(
             interval: Int,
             limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?,
-            var monthDay: Int
+            var monthDay: Int?
     ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
         override fun serialize(): RRule  = super.serialize().apply {
             freq = RRuleVal.FREQ(FreqType.MONTHLY)
-            byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay))
+            byMonthDay = monthDay?.let { RRuleVal.BYMONTHDAY(listOf(it)) }
         }
 
         override fun copy(): CalendarRecurrence {
@@ -333,14 +333,14 @@ sealed class CalendarRecurrence(
             interval: Int,
             limit: CalendarRecurrenceLimit,
             weekStart: WeekDay?,
-            var month: Int,
-            var monthDay: Int
+            var month: Int?,
+            var monthDay: Int?
     ) : CalendarRecurrence(firstInstance, eventTimeZone, interval, limit, weekStart) {
 
         override fun serialize(): RRule  = super.serialize().apply {
             freq = RRuleVal.FREQ(FreqType.YEARLY)
-            byMonth = RRuleVal.BYMONTH(listOf(month))
-            byMonthDay = RRuleVal.BYMONTHDAY(listOf(monthDay))
+            byMonth = month?.let { RRuleVal.BYMONTH(listOf(it)) }
+            byMonthDay = monthDay?.let{ RRuleVal.BYMONTHDAY(listOf(it)) }
         }
 
         override fun copy(): CalendarRecurrence {
@@ -534,7 +534,14 @@ sealed class CalendarRecurrence(
                 )
             }
 
-            throw Exception("At least one of BYDAY or BYMONTHDAY must be provided")
+            return Monthly(
+                    firstInstance = instanceStart,
+                    eventTimeZone = eventTimeZone,
+                    interval = rrule.interval?.value ?: 1,
+                    limit = CalendarRecurrenceLimit.interpretRRuleLimits(rrule),
+                    weekStart = rrule.wkst?.value,
+                    monthDay = null
+            )
         }
 
         private fun interpretYearlyRecurrence(instanceStart: Long, eventTimeZone: String, rrule: RRule): CalendarRecurrence {
@@ -547,12 +554,16 @@ sealed class CalendarRecurrence(
             if (rrule.bySetPos != null)
                 throw Exception("BYSETPOS is not supported for YEARLY recurrent events")
 
-            val month = rrule.byMonth?.value ?: throw Exception("BYMONTH must be giveg for YEARLY events")
-            val monthDay = rrule.byMonthDay?.value ?: throw Exception("BYMONTHDAY must be given YEARLY events")
+            val month = rrule.byMonth?.value
+            val monthDay = rrule.byMonthDay?.value
 
-            if (month.count() != 1)
+            if ((month != null && monthDay == null) ||(month == null && monthDay != null)) {
+                throw Exception("Yearly recurrence must either have both BYMONTH & BYMONTHDAY or none")
+            }
+
+            if ((month?.count() ?: 1) != 1)
                 throw Exception("BYMONTH must contain exactly one month for YEARLY events")
-            if (monthDay.count() != 1)
+            if ((monthDay?.count() ?: 1) != 1)
                 throw Exception("BYMONTHDAY must contain exactly one month for YEARLY events")
 
             return Yearly(
@@ -561,8 +572,8 @@ sealed class CalendarRecurrence(
                     interval = rrule.interval?.value ?: 1,
                     limit = CalendarRecurrenceLimit.interpretRRuleLimits(rrule),
                     weekStart = rrule.wkst?.value,
-                    month = month.first(),
-                    monthDay = monthDay.first()
+                    month = month?.first() ?: null,
+                    monthDay = monthDay?.first() ?: null
             )
         }
     }
