@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.ui
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -33,6 +34,47 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.toast
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
+
+
+fun formatSnoozePreset(ctx: Context, preset: Long): String {
+    val num: Long
+    val unit: String
+    val presetSeconds = preset / 1000L;
+
+    if (presetSeconds == 0L)
+        return ctx.resources.getString(R.string.until_event_time)
+
+    if (presetSeconds % Consts.DAY_IN_SECONDS == 0L) {
+        num = presetSeconds / Consts.DAY_IN_SECONDS;
+        unit =
+                if (num != 1L)
+                    ctx.resources.getString(R.string.days)
+                else
+                    ctx.resources.getString(R.string.day)
+    }
+    else if (presetSeconds % Consts.HOUR_IN_SECONDS == 0L) {
+        num = presetSeconds / Consts.HOUR_IN_SECONDS;
+        unit =
+                if (num != 1L)
+                    ctx.resources.getString(R.string.hours)
+                else
+                    ctx.resources.getString(R.string.hour)
+    }
+    else {
+        num = presetSeconds / Consts.MINUTE_IN_SECONDS;
+        unit =
+                if (num != 1L)
+                    ctx.resources.getString(R.string.minutes)
+                else
+                    ctx.resources.getString(R.string.minute)
+    }
+
+    if (num <= 0) {
+        val beforeEventString = ctx.resources.getString(R.string.before_event)
+        return "${-num} $unit $beforeEventString"
+    }
+    return "$num $unit"
+}
 
 
 open class SnoozeAllActivity : AppCompatActivity() {
@@ -108,7 +150,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
             val quietTimeNoticeBaseline = findViewById<TextView>(baselineIds[idx])
 
             if (idx < snoozePresets.size) {
-                snoozeLable.text = formatPreset(snoozePresets[idx])
+                snoozeLable.text = formatSnoozePreset(this, snoozePresets[idx])
                 snoozeLable.visibility = View.VISIBLE;
                 quietTimeNoticeBaseline.visibility = View.VISIBLE
                 quietTimeNotice.visibility = View.GONE
@@ -134,45 +176,6 @@ open class SnoozeAllActivity : AppCompatActivity() {
                     resources.getString(R.string.change_all_title)
     }
 
-    private fun formatPreset(preset: Long): String {
-        val num: Long
-        val unit: String
-        val presetSeconds = preset / 1000L;
-
-        if (presetSeconds == 0L)
-            return resources.getString(R.string.until_event_time)
-
-        if (presetSeconds % Consts.DAY_IN_SECONDS == 0L) {
-            num = presetSeconds / Consts.DAY_IN_SECONDS;
-            unit =
-                    if (num != 1L)
-                        resources.getString(R.string.days)
-                    else
-                        resources.getString(R.string.day)
-        }
-        else if (presetSeconds % Consts.HOUR_IN_SECONDS == 0L) {
-            num = presetSeconds / Consts.HOUR_IN_SECONDS;
-            unit =
-                    if (num != 1L)
-                        resources.getString(R.string.hours)
-                    else
-                        resources.getString(R.string.hour)
-        }
-        else {
-            num = presetSeconds / Consts.MINUTE_IN_SECONDS;
-            unit =
-                    if (num != 1L)
-                        resources.getString(R.string.minutes)
-                    else
-                        resources.getString(R.string.minute)
-        }
-
-        if (num <= 0) {
-            val beforeEventString = resources.getString(R.string.before_event)
-            return "${-num} $unit $beforeEventString"
-        }
-        return "$num $unit"
-    }
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onButtonCancelClick(v: View?) {

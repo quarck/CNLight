@@ -41,6 +41,9 @@ import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
 import androidx.core.content.ContextCompat
 import android.text.method.ScrollingMovementMethod
+import android.view.ViewGroup
+import androidx.core.view.MarginLayoutParamsCompat
+import androidx.core.view.marginEnd
 import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
 
 // TODO: add repeating rule and calendar name somewhere on the snooze activity
@@ -148,6 +151,17 @@ open class ViewEventActivity : AppCompatActivity() {
         if (event.displayedStartTime < currentTime)
             snoozePresets = snoozePresets.filter { it > 0L }.toLongArray()
 
+        val presetRoot = findViewById<LinearLayout>(R.id.event_view_snooze_sub_layout)
+
+        for (p in snoozePresets) {
+            val preset = p
+            val childLayout = layoutInflater.inflate(R.layout.snooze_preset_layout_template, null)
+            val textView = childLayout.findViewById<TextView>(R.id.event_view_snooze_template)
+            textView.text = formatSnoozePreset(this, preset)
+            textView.setOnClickListener { snoozeEvent(preset) }
+            presetRoot.addView(childLayout)
+        }
+
         val location = event.location;
         if (location != "") {
             findViewById<View>(R.id.event_view_location_layout).visibility = View.VISIBLE;
@@ -245,22 +259,15 @@ open class ViewEventActivity : AppCompatActivity() {
         window.statusBarColor = color.scaleColor(0.7f)
 
         if (!viewForFutureEvent) {
-            val shouldOfferMove = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
-            if (shouldOfferMove) {
-                findViewById<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.VISIBLE
-                if (event.isRepeating) {
-                    findViewById<TextView>(R.id.snooze_reschedule_for).text = getString(R.string.change_event_time_repeating_event)
-                }
-            }
             findViewById<RelativeLayout>(R.id.snooze_layout).visibility = View.VISIBLE
         } else {
-            findViewById<RelativeLayout>(R.id.snooze_reschedule_layout).visibility = View.GONE
             findViewById<RelativeLayout>(R.id.snooze_layout).visibility = View.GONE
         }
 
         if (event.snoozedUntil != 0L) {
             findViewById<TextView>(R.id.snooze_snooze_for)?.text = resources.getString(R.string.change_snooze_to)
         }
+
 
         val reminders: List<EventReminderRecord> = calendarProvider.getEventReminders(this@ViewEventActivity, event.eventId)
         if (reminders.isNotEmpty()) {
@@ -286,13 +293,8 @@ open class ViewEventActivity : AppCompatActivity() {
             findViewById<RelativeLayout>(R.id.event_view_reminders_layout).visibility = View.GONE
         }
 
-//        findViewById<TextView>(R.id.debug_details_line).apply {
-//            text = "" //  "RRULE: ${event.rRule}\nRDATE: ${event.rDate}\nEXRRULE: ${event.exRRule}\nEXRDATE: ${event.exRDate}"
-//        }
-
         val fabEditButton = findViewById<FloatingActionButton>(R.id.floating_edit_button)
         val fabMarkDoneButton = findViewById<FloatingActionButton>(R.id.floating_mark_done_button)
-        val fabSnoozeButton = findViewById<FloatingActionButton>(R.id.floating_snooze_button)
         val fabMoveButton = findViewById<FloatingActionButton>(R.id.floating_move_button)
 
         val fabColorStateList =  ColorStateList(
@@ -301,10 +303,14 @@ open class ViewEventActivity : AppCompatActivity() {
 
         fabEditButton.backgroundTintList = fabColorStateList
         fabMarkDoneButton.backgroundTintList = fabColorStateList
-        fabSnoozeButton.backgroundTintList = fabColorStateList
         fabMoveButton.backgroundTintList = fabColorStateList
 
-        if (!calendar.isReadOnly) {
+        val calIsReadOnly = calendar.isReadOnly
+        val eventStartTimeHasPassed = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
+        val shouldOfferMove = !calIsReadOnly  && !viewForFutureEvent && eventStartTimeHasPassed
+        val allowEdit = !calIsReadOnly && !viewForFutureEvent
+
+        if (allowEdit) {
             fabEditButton.setOnClickListener { _ ->
                 val intent = Intent(this, EditEventActivity::class.java)
                 intent.putExtra(EditEventActivity.EVENT_ID, event.eventId)
@@ -313,23 +319,25 @@ open class ViewEventActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }
-        }
-        else {
+        } else {
             fabEditButton.visibility = View.GONE
         }
+
+        if (shouldOfferMove) {
+            fabMoveButton.setOnClickListener(this::showMoveMenu)
+        } else {
+            fabMoveButton.visibility = View.GONE
+        }
+
 
         if (!viewForFutureEvent) {
             fabMarkDoneButton.setOnClickListener{
                 ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
                 finish()
             }
-            fabSnoozeButton.setOnClickListener(this::showSnoozeMenu)
-            fabMoveButton.setOnClickListener(this::showMoveMenu)
         }
         else {
-            fabMarkDoneButton.visibility = View.GONE
-            fabSnoozeButton.visibility = View.GONE
-            fabMoveButton.visibility = View.GONE
+            fabMarkDoneButton.setOnClickListener(this::futureEventMarkDoneBtn)
         }
 
         val menuButton = findViewById<ImageView?>(R.id.event_view_menu)
@@ -353,45 +361,6 @@ open class ViewEventActivity : AppCompatActivity() {
                 R.id.action_open_in_calendar -> {
                     CalendarIntents.viewCalendarEvent(this, event)
                     finish()
-                    true
-                }
-                else -> false
-            }
-        }
-
-        popup.show()
-    }
-
-    fun showSnoozeMenu(v: View) {
-        val popup = PopupMenu(this, v)
-        val inflater = popup.menuInflater
-        inflater.inflate(R.menu.snooze_options, popup.menu)
-        popup.setOnMenuItemClickListener {
-            item ->
-
-            when (item.itemId) {
-                R.id.action_snooze_15m -> {
-                    snoozeEvent(snoozePresets[0])
-                    true
-                }
-                R.id.action_snooze_1h -> {
-                    snoozeEvent(snoozePresets[1])
-                    true
-                }
-                R.id.action_snooze_4h -> {
-                    snoozeEvent(snoozePresets[2])
-                    true
-                }
-                R.id.action_snooze_8h -> {
-                    snoozeEvent(snoozePresets[3])
-                    true
-                }
-                R.id.action_snooze_1d -> {
-                    snoozeEvent(snoozePresets[4])
-                    true
-                }
-                R.id.action_snooze_m5m -> {
-                    snoozeEvent(snoozePresets[5])
                     true
                 }
                 else -> false
@@ -427,6 +396,30 @@ open class ViewEventActivity : AppCompatActivity() {
         popup.show()
     }
 
+    fun futureEventMarkDoneBtn(v: View) {
+        val popup = PopupMenu(this, v)
+        val inflater = popup.menuInflater
+        inflater.inflate(R.menu.future_event_mark_done_options, popup.menu)
+        popup.setOnMenuItemClickListener {
+            item ->
+            when (item.itemId) {
+                R.id.action_mark_done -> {
+                    ApplicationController.dismissFutureEvent(this, MonitorDataPair.fromEventAlertRecord(event))
+                    finish()
+                    true
+                }
+                R.id.action_mark_note_done -> {
+                    ApplicationController.restoreEvent(this, event)
+                    finish()
+                    true
+                }
+
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onButtonCancelClick(v: View?) {
         finish();
@@ -438,29 +431,6 @@ open class ViewEventActivity : AppCompatActivity() {
         val result = ApplicationController.snoozeEvent(this, event.eventId, event.instanceStartTime, snoozeDelay);
         result?.toast(this)
         finish()
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onEnableMoveEvent(v: View?) {
-        val btnEnable = findViewById<TextView>(R.id.enable_snooze_reschedule)
-        val layout2 = findViewById<LinearLayout>(R.id.event_view_snooze_sub_layout_4)
-        btnEnable.visibility = View.GONE
-        layout2.visibility = View.VISIBLE
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onButtonSnoozeClick(v: View?) {
-        if (v == null)
-            return
-
-        when (v.id) {
-            R.id.event_view_snooze_15m -> snoozeEvent(snoozePresets[0])
-            R.id.event_view_snooze_60m -> snoozeEvent(snoozePresets[1])
-            R.id.event_view_snooze_240m -> snoozeEvent(snoozePresets[2])
-            R.id.event_view_snooze_8h -> snoozeEvent(snoozePresets[3])
-            R.id.event_view_snooze_1d -> snoozeEvent(snoozePresets[4])
-            R.id.event_view_snooze_minus_5m -> snoozeEvent(snoozePresets[5])
-        }
     }
 
     private fun confirmAndReschedule(addDays: Long) {
@@ -499,21 +469,6 @@ open class ViewEventActivity : AppCompatActivity() {
             } else {
                 DevLog.info(LOG_TAG, "snooze: Failed to move event ${event.eventId} by ${addTime / 1000L} seconds")
             }
-        }
-    }
-
-    @Suppress("unused", "UNUSED_PARAMETER")
-    fun onButtonRescheduleClick(v: View?) {
-        if (v == null)
-            return
-
-        when (v.id) {
-            R.id.event_view_move_1d ->
-                confirmAndReschedule(addDays = 1)
-            R.id.event_view_move_7d ->
-                confirmAndReschedule(addDays = 7)
-            R.id.event_view_move_30d ->
-                confirmAndReschedule(addDays = 30)
         }
     }
 

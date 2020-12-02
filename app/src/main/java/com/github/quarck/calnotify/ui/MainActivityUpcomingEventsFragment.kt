@@ -128,54 +128,16 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
 
     // TODO: add an option to view the event, not only to restore it
     override fun onItemClick(v: View, position: Int, entry: MonitorDataPair) {
-
         this.context?.let {
             ctx ->
-
-            val popup = PopupMenu(ctx, v)
-            val inflater = popup.menuInflater
-
-            inflater.inflate(R.menu.upcoming_events_popup, popup.menu)
-
-            popup.menu.findItem(R.id.action_mark_as_finished)?.isVisible = !entry.monitorEntry.wasHandled
-            popup.menu.findItem(R.id.action_mark_not_finished)?.isVisible = entry.monitorEntry.wasHandled
-
-            popup.setOnMenuItemClickListener {
-                item ->
-                when (item.itemId) {
-                    R.id.action_view_event -> {
-                        startActivity(
-                                Intent(ctx, ViewEventActivity::class.java)
-                                        .putExtra(Consts.INTENT_EVENT_ID_KEY, entry.eventEntry.eventId)
-                                        .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, entry.eventEntry.instanceStartTime)
-                                        .putExtra(Consts.INTENT_ALERT_TIME, entry.eventEntry.alertTime)
-                                        .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
-                                        .putExtra(Consts.INTENT_VIEW_FUTURE_EVENT, true)
-                                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-
-                        true
-                    }
-                    R.id.action_mark_as_finished -> {
-                        ApplicationController.dismissFutureEvent(ctx, entry)
-                        entry.monitorEntry.wasHandled = true
-                        adapter?.notifyDataSetChanged()
-                        true
-                    }
-
-                    R.id.action_mark_not_finished -> {
-                        ApplicationController.restoreEvent(ctx, entry.eventEntry)
-                        entry.monitorEntry.wasHandled = false
-                        adapter?.notifyDataSetChanged()
-                        true
-                    }
-
-                    else ->
-                        false
-
-                }
-            }
-
-            popup.show()
+            startActivity(
+                    Intent(ctx, ViewEventActivity::class.java)
+                            .putExtra(Consts.INTENT_EVENT_ID_KEY, entry.eventEntry.eventId)
+                            .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, entry.eventEntry.instanceStartTime)
+                            .putExtra(Consts.INTENT_ALERT_TIME, entry.eventEntry.alertTime)
+                            .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
+                            .putExtra(Consts.INTENT_VIEW_FUTURE_EVENT, true)
+                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
     }
 

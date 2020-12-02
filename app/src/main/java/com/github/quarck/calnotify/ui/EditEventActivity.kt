@@ -1283,7 +1283,6 @@ open class EditEventActivity : AppCompatActivity() {
 
         textView.setTextColor(notificationPrototype.textColors)
 
-
         textView.setPaddingRelative(
                 notificationPrototype.paddingStart,
                 notificationPrototype.paddingTop,
