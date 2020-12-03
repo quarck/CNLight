@@ -249,10 +249,10 @@
 
     <string name="menu_home">Active Events</string>
     <string name="menu_upcoming">Upcoming Events</string>
-    <string name="menu_finished">Finished Events</string>
+    <string name="menu_finished">Log</string>
     <string name="active_events">Active Events</string>
     <string name="upcoming_events">Upcoming Events</string>
-    <string name="finished_events">Finished Events</string>
+    <string name="finished_events">Log</string>
     <string name="event_was_marked_as_finished">MARKED AS DONE</string>
     <string name="mark_finished">Mark as done</string>
     <string name="view_event_details">View event details</string>
@@ -293,6 +293,7 @@
     <string name="snooze_event">Snooze event</string>
     <string name="skip_done">Skip (done)</string>
     <string name="do_not_skip_not_done">Do not skip (not done)</string>
+    <string name="menu_calendar">Calendar</string>
 
 </resources>
 
