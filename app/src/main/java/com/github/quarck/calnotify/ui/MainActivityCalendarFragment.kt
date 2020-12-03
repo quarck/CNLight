@@ -19,36 +19,80 @@
 
 package com.github.quarck.calnotify.ui
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toolbar
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
-import androidx.navigation.ui.navigateUp
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
-import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.calendar.*
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
-import com.github.quarck.calnotify.eventsstorage.EventsStorage
+import com.github.quarck.calnotify.calendar.CalendarProvider
+import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.utils.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
-import java.lang.StringBuilder
 import java.util.*
+
+class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onItemClick: (CalendarGrid, Int)->Unit) {
+    var layout: LinearLayout
+    var dayLabels: Array<TextView>
+    var lineLayouts: Array<LinearLayout>
+
+    init {
+        layout = inflater.inflate(R.layout.days_grid, null) as LinearLayout
+        dayLabels = dayLabelIds.map{ id -> layout.findViewById<TextView>(id) }.toTypedArray()
+        lineLayouts = lineLayoutIds.map{ id -> layout.findViewById<LinearLayout>(id) }.toTypedArray()
+
+        for (lbl in dayLabels) {
+            lbl.setOnClickListener(this::onDayClick)
+        }
+    }
+
+    fun onDayClick(v: View) {
+        val idx = dayLabels.indexOf(v as TextView)
+        if (idx >= 0 && idx < grid_size) {
+            onItemClick(this, idx)
+        }
+    }
+
+    companion object {
+        private val lineLayoutIds = listOf(
+                R.id.layout_calendar_line_0,
+                R.id.layout_calendar_line_1,
+                R.id.layout_calendar_line_2,
+                R.id.layout_calendar_line_3,
+                R.id.layout_calendar_line_4,
+                R.id.layout_calendar_line_5,
+        )
+
+        private val dayLabelIds = listOf(
+                R.id.cal_day_line_0_item_0, R.id.cal_day_line_0_item_1, R.id.cal_day_line_0_item_2, R.id.cal_day_line_0_item_3,
+                R.id.cal_day_line_0_item_4, R.id.cal_day_line_0_item_5, R.id.cal_day_line_0_item_6,
+                R.id.cal_day_line_1_item_0, R.id.cal_day_line_1_item_1, R.id.cal_day_line_1_item_2, R.id.cal_day_line_1_item_3,
+                R.id.cal_day_line_1_item_4, R.id.cal_day_line_1_item_5, R.id.cal_day_line_1_item_6,
+                R.id.cal_day_line_2_item_0, R.id.cal_day_line_2_item_1, R.id.cal_day_line_2_item_2, R.id.cal_day_line_2_item_3,
+                R.id.cal_day_line_2_item_4, R.id.cal_day_line_2_item_5, R.id.cal_day_line_2_item_6,
+                R.id.cal_day_line_3_item_0, R.id.cal_day_line_3_item_1, R.id.cal_day_line_3_item_2, R.id.cal_day_line_3_item_3,
+                R.id.cal_day_line_3_item_4, R.id.cal_day_line_3_item_5, R.id.cal_day_line_3_item_6,
+                R.id.cal_day_line_4_item_0, R.id.cal_day_line_4_item_1, R.id.cal_day_line_4_item_2, R.id.cal_day_line_4_item_3,
+                R.id.cal_day_line_4_item_4, R.id.cal_day_line_4_item_5, R.id.cal_day_line_4_item_6,
+                R.id.cal_day_line_5_item_0, R.id.cal_day_line_5_item_1, R.id.cal_day_line_5_item_2, R.id.cal_day_line_5_item_3,
+                R.id.cal_day_line_5_item_4, R.id.cal_day_line_5_item_5, R.id.cal_day_line_5_item_6
+        )
+
+        val grid_size: Int
+            get() = dayLabelIds.size
+    }
+}
 
 class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAlertRecord> {
 
@@ -59,45 +103,24 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
 
     private var primaryColor: Int? = Consts.DEFAULT_CALENDAR_EVENT_COLOR
     private var eventFormatter: EventFormatter? = null
-
-    private var currentDay: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-
-    private lateinit var lineLayouts: Array<LinearLayout>
-    private lateinit var dayLabels: Array<TextView>
-
-    private lateinit var monthNames: Array<String>
-
     private lateinit var currentMonthColor: ColorStateList
     private lateinit var currentDayColor: ColorStateList
     private lateinit var otherMonthColor: ColorStateList
+    private lateinit var calendarViewRoot: LinearLayout
+
+    private lateinit var grid: CalendarGrid
+
+    private lateinit var monthNames: Array<String>
+
+
+    private var currentDay: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+    private val dayLabelDays = IntArray(CalendarGrid.grid_size)
+
+
+
 
     private lateinit var settings: Settings
 
-    private val lineLayoutIds = listOf(
-            R.id.layout_calendar_line_0,
-            R.id.layout_calendar_line_1,
-            R.id.layout_calendar_line_2,
-            R.id.layout_calendar_line_3,
-            R.id.layout_calendar_line_4,
-            R.id.layout_calendar_line_5,
-    )
-
-    private val dayLabelIds = listOf(
-            R.id.cal_day_line_0_item_0, R.id.cal_day_line_0_item_1, R.id.cal_day_line_0_item_2, R.id.cal_day_line_0_item_3,
-            R.id.cal_day_line_0_item_4, R.id.cal_day_line_0_item_5, R.id.cal_day_line_0_item_6,
-            R.id.cal_day_line_1_item_0, R.id.cal_day_line_1_item_1, R.id.cal_day_line_1_item_2, R.id.cal_day_line_1_item_3,
-            R.id.cal_day_line_1_item_4, R.id.cal_day_line_1_item_5, R.id.cal_day_line_1_item_6,
-            R.id.cal_day_line_2_item_0, R.id.cal_day_line_2_item_1, R.id.cal_day_line_2_item_2, R.id.cal_day_line_2_item_3,
-            R.id.cal_day_line_2_item_4, R.id.cal_day_line_2_item_5, R.id.cal_day_line_2_item_6,
-            R.id.cal_day_line_3_item_0, R.id.cal_day_line_3_item_1, R.id.cal_day_line_3_item_2, R.id.cal_day_line_3_item_3,
-            R.id.cal_day_line_3_item_4, R.id.cal_day_line_3_item_5, R.id.cal_day_line_3_item_6,
-            R.id.cal_day_line_4_item_0, R.id.cal_day_line_4_item_1, R.id.cal_day_line_4_item_2, R.id.cal_day_line_4_item_3,
-            R.id.cal_day_line_4_item_4, R.id.cal_day_line_4_item_5, R.id.cal_day_line_4_item_6,
-            R.id.cal_day_line_5_item_0, R.id.cal_day_line_5_item_1, R.id.cal_day_line_5_item_2, R.id.cal_day_line_5_item_3,
-            R.id.cal_day_line_5_item_4, R.id.cal_day_line_5_item_5, R.id.cal_day_line_5_item_6
-    )
-
-    private val dayLabelDays = IntArray(dayLabelIds.size)
 
 
     override fun onCreateView(
@@ -122,6 +145,11 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
             currentMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_month))
             otherMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_other_month))
             currentDayColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_day))
+
+            grid = CalendarGrid(ctx, inflater) { _, idx -> onDayClick(idx) }
+            calendarViewRoot = root.findViewById(R.id.layout_calendar_root)
+            val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            calendarViewRoot.addView(grid.layout, lp)
         }
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
@@ -135,15 +163,6 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         currentDay.minute = 0
         currentDay.second = 0
         currentDay.millisecond = 0
-
-
-        dayLabels = dayLabelIds.map{ id -> root.findViewById<TextView>(id) }.toTypedArray()
-        lineLayouts = lineLayoutIds.map{ id -> root.findViewById<LinearLayout>(id) }.toTypedArray()
-
-        for (lbl in dayLabels) {
-            lbl.setOnClickListener(this::onDayClick)
-        }
-
 
         return root
     }
@@ -205,7 +224,7 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         }
 
         for (idx in 0 until 7 * 6) {
-            val layout = lineLayouts[idx / 7]
+            val layout = grid.lineLayouts[idx / 7]
 
             if (idx == 5 * 7 && day.month != currentMonth) {
                 layout.visibility = View.GONE
@@ -213,17 +232,17 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
             }
             layout.visibility = View.VISIBLE
 
-            dayLabels[idx].setText("${day.dayOfMonth}")
+            grid.dayLabels[idx].setText("${day.dayOfMonth}")
 
             if (day.month == currentMonth) {
                 dayLabelDays[idx] = day.dayOfMonth
                 if (day.dayOfMonth == currentDayOfMonth)
-                    dayLabels[idx].setTextColor(currentDayColor)
+                    grid.dayLabels[idx].setTextColor(currentDayColor)
                 else
-                    dayLabels[idx].setTextColor(currentMonthColor)
+                    grid.dayLabels[idx].setTextColor(currentMonthColor)
             }
             else {
-                dayLabels[idx].setTextColor(otherMonthColor)
+                grid.dayLabels[idx].setTextColor(otherMonthColor)
             }
 
 
@@ -232,8 +251,7 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         }
     }
 
-    fun onDayClick(v: View) {
-        val idx = dayLabels.indexOf(v as TextView)
+    fun onDayClick(idx: Int) {
         if (idx < 0 || idx >= dayLabelDays.size || dayLabelDays[idx] == -1) {
             return
         }
