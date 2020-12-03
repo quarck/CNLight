@@ -375,15 +375,15 @@ open class ViewEventActivity : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.action_move_next_day -> {
-                    confirmAndReschedule(addDays = 1)
+                    reschedule(addTime = 1 * Consts.DAY_IN_SECONDS * 1000L)
                     true
                 }
                 R.id.action_move_next_week -> {
-                    confirmAndReschedule(addDays = 7)
+                    reschedule(addTime = 7 * Consts.DAY_IN_SECONDS * 1000L)
                     true
                 }
                 R.id.action_move_next_month_30d -> {
-                    confirmAndReschedule(addDays = 30)
+                    reschedule(addTime = 30 * Consts.DAY_IN_SECONDS * 1000L)
                     true
                 }
                 else -> false
