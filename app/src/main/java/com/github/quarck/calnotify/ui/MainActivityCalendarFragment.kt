@@ -20,11 +20,14 @@
 package com.github.quarck.calnotify.ui
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toolbar
 import androidx.appcompat.widget.PopupMenu
@@ -41,32 +44,32 @@ import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.utils.adjustCalendarColor
-import com.github.quarck.calnotify.utils.background
+import com.github.quarck.calnotify.utils.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import java.lang.StringBuilder
 import java.util.*
 
-class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<MonitorDataPair> {
+class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAlertRecord> {
 
     private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
 
-    private var adapter: SimpleEventListAdapter<MonitorDataPair>? = null
+    private var adapter: SimpleEventListAdapter<EventAlertRecord>? = null
 
     private var primaryColor: Int? = Consts.DEFAULT_CALENDAR_EVENT_COLOR
     private var eventFormatter: EventFormatter? = null
 
-    private var statusHandled: String? = null
-    private var eventReminderTimeFmt: String? = null
-
     private var currentDay: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
 
-    private lateinit var lineLayouts: List<LinearLayout>
-    private lateinit var dayLabels: List<TextView>
+    private lateinit var lineLayouts: Array<LinearLayout>
+    private lateinit var dayLabels: Array<TextView>
 
     private lateinit var monthNames: Array<String>
+
+    private lateinit var currentMonthColor: ColorStateList
+    private lateinit var currentDayColor: ColorStateList
+    private lateinit var otherMonthColor: ColorStateList
 
     private lateinit var settings: Settings
 
@@ -93,7 +96,9 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<Monitor
             R.id.cal_day_line_5_item_0, R.id.cal_day_line_5_item_1, R.id.cal_day_line_5_item_2, R.id.cal_day_line_5_item_3,
             R.id.cal_day_line_5_item_4, R.id.cal_day_line_5_item_5, R.id.cal_day_line_5_item_6
     )
-    
+
+    private val dayLabelDays = IntArray(dayLabelIds.size)
+
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -112,11 +117,11 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<Monitor
                             R.layout.event_card_compact,
                             this)
 
-            statusHandled = ctx.resources.getString(R.string.event_was_marked_as_finished)
-            eventReminderTimeFmt = ctx.resources.getString(R.string.reminder_at_fmt)
-
             monthNames = ctx.resources.getStringArray(R.array.month_names_short)
 
+            currentMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_month))
+            otherMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_other_month))
+            currentDayColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_day))
         }
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
@@ -126,6 +131,18 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<Monitor
         adapter?.recyclerView = recyclerView
 
         currentDay.firstDayOfWeek = Calendar.MONDAY
+        currentDay.hourOfDay = 0
+        currentDay.minute = 0
+        currentDay.second = 0
+        currentDay.millisecond = 0
+
+
+        dayLabels = dayLabelIds.map{ id -> root.findViewById<TextView>(id) }.toTypedArray()
+        lineLayouts = lineLayoutIds.map{ id -> root.findViewById<LinearLayout>(id) }.toTypedArray()
+
+        for (lbl in dayLabels) {
+            lbl.setOnClickListener(this::onDayClick)
+        }
 
 
         return root
@@ -138,32 +155,23 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<Monitor
     override fun onResume() {
         DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
+        displayCalendar()
+        updateTitle()
+        reloadData()
+    }
 
+    fun reloadData() {
         this.activity?.let {
             activity ->
 
             background {
-                val from = System.currentTimeMillis()
-                val to = from + Consts.UPCOMING_EVENTS_WINDOW
-
-                val monitorEntries =
-                        CalendarMonitor(CalendarProvider)
-                                .getAlertsForAlertRange(activity, scanFrom = from, scanTo = to)
-                                .associateBy{ it.key }
+                val from = currentDay.timeInMillis
+                val to = from + Consts.DAY_IN_MILLISECONDS
 
                 val events =
                         CalendarProvider
-                                .getEventAlertsForInstancesInRange(activity, from, to)
-                                .filter {
-                                    it.alertTime >= from
-                                }
-                                .map {
-                                    ev ->
-                                    val monitorEntry = monitorEntries.getOrElse(
-                                            ev.monitorEntryKey, { MonitorEventAlertEntry.fromEventAlertRecord(ev) })
-                                    MonitorDataPair(monitorEntry, ev)
-                                }
-                                .sortedBy { it -> it.eventEntry.alertTime }
+                                .getInstancesInRange(activity, from, to)
+                                .sortedBy { it -> it.instanceStartTime }
                                 .toMutableList()
 
                 activity.runOnUiThread {
@@ -171,47 +179,96 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<Monitor
                 }
             }
         }
-
-        updateTitle()
     }
 
     fun updateTitle() {
         this.activity?.let { activity ->
-            (activity as MainActivityNG).supportActionBar?.title = "${monthNames[currentDay.get(Calendar.MONTH)]} ${currentDay.get(Calendar.YEAR)}"
+            (activity as MainActivityNG).supportActionBar?.title = "${monthNames[currentDay.month]} ${currentDay.year}"
         }
     }
 
+    fun displayCalendar() {
+        val currentMonth = currentDay.month
+        val currentDayOfMonth =  currentDay.dayOfMonth
+
+        val day = currentDay.clone() as Calendar
+        day.dayOfMonth = 1
+
+        for (idx in 0 until 7) {
+            if (day.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
+                break;
+            day.timeInMillis -= 24 * 3600 * 1000L
+        }
+
+        for (idx in 0 until 7 * 6) {
+            dayLabelDays[idx] = -1
+        }
+
+        for (idx in 0 until 7 * 6) {
+            val layout = lineLayouts[idx / 7]
+
+            if (idx == 5 * 7 && day.month != currentMonth) {
+                layout.visibility = View.GONE
+                break
+            }
+            layout.visibility = View.VISIBLE
+
+            dayLabels[idx].setText("${day.dayOfMonth}")
+
+            if (day.month == currentMonth) {
+                dayLabelDays[idx] = day.dayOfMonth
+                if (day.dayOfMonth == currentDayOfMonth)
+                    dayLabels[idx].setTextColor(currentDayColor)
+                else
+                    dayLabels[idx].setTextColor(currentMonthColor)
+            }
+            else {
+                dayLabels[idx].setTextColor(otherMonthColor)
+            }
+
+
+            // move to the next day
+            day.timeInMillis += 24 * 3600 * 1000L
+        }
+    }
+
+    fun onDayClick(v: View) {
+        val idx = dayLabels.indexOf(v as TextView)
+        if (idx < 0 || idx >= dayLabelDays.size || dayLabelDays[idx] == -1) {
+            return
+        }
+        currentDay.dayOfMonth = dayLabelDays[idx]
+        displayCalendar()
+        reloadData()
+    }
+
     // TODO: add an option to view the event, not only to restore it
-    override fun onItemClick(v: View, position: Int, entry: MonitorDataPair) {
+    override fun onItemClick(v: View, position: Int, entry: EventAlertRecord) {
         this.context?.let {
             ctx ->
             startActivity(
                     Intent(ctx, ViewEventActivity::class.java)
-                            .putExtra(Consts.INTENT_EVENT_ID_KEY, entry.eventEntry.eventId)
-                            .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, entry.eventEntry.instanceStartTime)
-                            .putExtra(Consts.INTENT_ALERT_TIME, entry.eventEntry.alertTime)
+                            .putExtra(Consts.INTENT_EVENT_ID_KEY, entry.eventId)
+                            .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, entry.instanceStartTime)
                             .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                             .putExtra(Consts.INTENT_VIEW_FUTURE_EVENT, true)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
     }
 
-    override fun getItemTitle(entry: MonitorDataPair): String =  entry.eventEntry.title
+    override fun getItemTitle(entry: EventAlertRecord): String =  entry.title
 
-    override fun getItemMiddleLine(entry: MonitorDataPair): String {
-        return eventFormatter?.let {
-            it.formatDateTimeOneLine(entry.eventEntry) + " / " +
-                    (eventReminderTimeFmt ?: "%s").format(it.formatTimePoint(entry.monitorEntry.alertTime, noWeekDay = true))
-        } ?: "NULL"
+    override fun getItemMiddleLine(entry: EventAlertRecord): String {
+        return eventFormatter?.formatDateTimeOneLine(entry) ?: "NULL"
     }
 
-    override fun getItemBottomLine(entry: MonitorDataPair): String {
-        return if (entry.monitorEntry.wasHandled) statusHandled ?: "_handled_" else ""
+    override fun getItemBottomLine(entry: EventAlertRecord): String {
+        return ""
     }
 
-    override fun getItemColor(entry: MonitorDataPair): Int =
-            if (entry.eventEntry.color != 0)
-                entry.eventEntry.color.adjustCalendarColor()
+    override fun getItemColor(entry: EventAlertRecord): Int =
+            if (entry.color != 0)
+                entry.color.adjustCalendarColor()
             else
                 primaryColor ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
 

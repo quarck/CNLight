@@ -1382,6 +1382,80 @@ object CalendarProvider  {
     }
 
 
+    fun getInstancesInRange(
+            context: Context,
+            instanceFrom: Long,
+            instanceTo: Long,
+            eventId: Long? = null
+    ): List<EventAlertRecord> {
+        val ret = arrayListOf<EventAlertRecord>()
+
+        if (!PermissionsManager.hasReadCalendar(context)) {
+            DevLog.error(LOG_TAG, "getEventAlertsForInstancesInRange: no permissions")
+            return ret
+        }
+
+        val settings = Settings(context)
+
+        val handledCalendars = getHandledCalendarsIds(context, settings)
+
+        try {
+            val timezone = TimeZone.getDefault()
+
+            DevLog.info(LOG_TAG, "getEventAlertsForInstancesInRange: Manual alerts scan started, range: from $instanceFrom to $instanceTo")
+
+            val scanStart = System.currentTimeMillis()
+
+            val instanceCursor: Cursor? =
+                    CalendarContract.Instances.query(
+                            context.contentResolver,
+                            instanceFields,
+                            instanceFrom,
+                            instanceTo
+                    )
+
+            if (instanceCursor != null && instanceCursor.moveToFirst()) {
+                do {
+                    val event = cursorToEventInstance(instanceCursor)
+                    if (event == null) {
+                        DevLog.info(LOG_TAG, "Got entry with one of: instanceStart, eventId or calendarId not present - skipping")
+                        continue
+                    }
+
+                    if (!handledCalendars.contains(event.calendarId) || event.calendarId == -1L) {
+                        DevLog.info(LOG_TAG, "Event id ${event.eventId} / calId ${event.calendarId} - not handling")
+                        continue
+                    }
+
+                    if (event.instanceStartTime < instanceFrom) {
+                        DevLog.debug(LOG_TAG, "Event id ${event.eventId}: instanceStart ${event.instanceStartTime} is actully before instanceFrom $instanceFrom, skipping")
+                        continue
+                    }
+
+                    if (eventId != null && eventId != event.eventId) {
+                        // looking for alerts for a particular eventid - skip everything else
+                        continue
+                    }
+
+                    ret.add(event)
+
+                } while (instanceCursor.moveToNext())
+            }
+
+            instanceCursor?.close()
+
+            val scanEnd = System.currentTimeMillis()
+
+            DevLog.info(LOG_TAG, "getEventAlertsForInstancesInRange: found ${ret.size} entries, scan time: ${scanEnd - scanStart}ms")
+        }
+        catch (ex: Exception) {
+            DevLog.error(LOG_TAG, "getEventAlertsForInstancesInRange: exception ${ex.detailed}")
+        }
+
+        return ret
+    }
+
+
     fun getEventAlertsForInstanceAt(
             context: Context,
             instanceStartTime: Long,

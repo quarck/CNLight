@@ -40,4 +40,8 @@
     <color name="nearly_black">#0f0f0f</color>
     <color name="true_black_as_night">#000</color>
 
+    <color name="cal_current_month">#EEEEEF</color>
+    <color name="cal_current_day">#03A9F4</color>
+    <color name="cal_other_month">#8D8D8E</color>
+
 </resources>

@@ -126,7 +126,7 @@ open class ViewEventActivity : AppCompatActivity() {
             }
         } else {
             val calEvent = CalendarProvider.getEventAlertsForInstanceAt(this, instanceStartTime, eventId)
-                    .firstOrNull { it.alertTime == alertTime }
+                    .firstOrNull { alertTime == -1L || it.alertTime == alertTime }
             if (calEvent == null) {
                 DevLog.error(LOG_TAG, "ViewActivity started for non-existing eveng id $eventId, st $instanceStartTime")
                 finish()
