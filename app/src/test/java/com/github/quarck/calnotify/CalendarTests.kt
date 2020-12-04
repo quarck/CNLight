@@ -1,12 +1,13 @@
 package com.github.quarck.calnotify
 
 import com.github.quarck.calnotify.calendar.*
+import com.github.quarck.calnotify.utils.*
 import org.junit.Test
 
 import org.junit.Assert.*
 
 
-class CalendareRecurrenceParsingTest {
+class CalendarTests {
     @Test
     fun parsingRrulesIntoValueLinesTest() {
         // Here we are just expecting code to run with no exceptions, as any parsing error will raise one
@@ -247,5 +248,23 @@ class CalendareRecurrenceParsingTest {
         assertEquals(CalendarProviderHelper.encodeRfc2445Duration(1*1000L), "P1S")
         assertEquals(CalendarProviderHelper.encodeRfc2445Duration(232323*1000L), "P232323S")
 
+    }
+
+    @Test
+    fun moveToNextPrevMonthTst() {
+        val cal = java.util.Calendar.getInstance()
+        cal.set(2020, 6, 15, 1, 2, 3)
+        cal.millisecond = 456
+
+        assertEquals(cal.toISO8601String(), "2020-07-15T01:02:03.456")
+        assertEquals(cal.toAdjacentMonth(1).toISO8601String(), "2020-08-15T01:02:03.456")
+        assertEquals(cal.toAdjacentMonth(-1).toISO8601String(), "2020-06-15T01:02:03.456")
+
+        val cal2 = cal.clone() as java.util.Calendar
+        cal2.dayOfMonth = 30
+
+        assertEquals(cal2.toISO8601String(), "2020-07-30T01:02:03.456")
+        assertEquals(cal2.toAdjacentMonth(1).toISO8601String(), "2020-08-28T01:02:03.456")
+        assertEquals(cal2.toAdjacentMonth(-1).toISO8601String(), "2020-06-28T01:02:03.456")
     }
 }

@@ -19,6 +19,7 @@
 
 package com.github.quarck.calnotify.utils
 
+import com.github.quarck.calnotify.Consts
 import java.util.*
 
 object DateTimeUtils {
@@ -143,3 +144,29 @@ fun Calendar.addHours(hours: Int) {
 fun Calendar.addMinutes(minutes: Int) {
     this.add(Calendar.MINUTE, minutes)
 }
+
+fun Calendar.toAdjacentMonth(direction: Int): Calendar {
+    val ret = this.clone() as Calendar
+    val currentMonth = this.month
+
+    for (i in 0 until 7) {
+        if (ret.month != currentMonth) {
+            ret.dayOfMonth = Math.min(28, this.dayOfMonth)
+            ret.hourOfDay = this.hourOfDay // so we don't jump in hours in case of DST
+            break
+        }
+        if (direction > 0)
+            ret.timeInMillis += 7 * Consts.DAY_IN_MILLISECONDS
+        else
+            ret.timeInMillis -= 7 * Consts.DAY_IN_MILLISECONDS
+    }
+
+    return ret
+}
+
+// Mostly for unit tests
+fun Calendar.toISO8601String(): String =
+        "%04d-%02d-%02dT%02d:%02d:%02d.%03d".format(
+                this.year, this.month + 1, this.dayOfMonth,
+                this.hourOfDay, this.minute, this.second, this.millisecond
+        )

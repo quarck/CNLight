@@ -19,16 +19,14 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.GestureDetector.SimpleOnGestureListener
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -42,57 +40,6 @@ import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import java.util.*
 
-class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onItemClick: (CalendarGrid, Int)->Unit) {
-    var layout: LinearLayout
-    var dayLabels: Array<TextView>
-    var lineLayouts: Array<LinearLayout>
-
-    init {
-        layout = inflater.inflate(R.layout.days_grid, null) as LinearLayout
-        dayLabels = dayLabelIds.map{ id -> layout.findViewById<TextView>(id) }.toTypedArray()
-        lineLayouts = lineLayoutIds.map{ id -> layout.findViewById<LinearLayout>(id) }.toTypedArray()
-
-        for (lbl in dayLabels) {
-            lbl.setOnClickListener(this::onDayClick)
-        }
-    }
-
-    fun onDayClick(v: View) {
-        val idx = dayLabels.indexOf(v as TextView)
-        if (idx >= 0 && idx < grid_size) {
-            onItemClick(this, idx)
-        }
-    }
-
-    companion object {
-        private val lineLayoutIds = listOf(
-                R.id.layout_calendar_line_0,
-                R.id.layout_calendar_line_1,
-                R.id.layout_calendar_line_2,
-                R.id.layout_calendar_line_3,
-                R.id.layout_calendar_line_4,
-                R.id.layout_calendar_line_5,
-        )
-
-        private val dayLabelIds = listOf(
-                R.id.cal_day_line_0_item_0, R.id.cal_day_line_0_item_1, R.id.cal_day_line_0_item_2, R.id.cal_day_line_0_item_3,
-                R.id.cal_day_line_0_item_4, R.id.cal_day_line_0_item_5, R.id.cal_day_line_0_item_6,
-                R.id.cal_day_line_1_item_0, R.id.cal_day_line_1_item_1, R.id.cal_day_line_1_item_2, R.id.cal_day_line_1_item_3,
-                R.id.cal_day_line_1_item_4, R.id.cal_day_line_1_item_5, R.id.cal_day_line_1_item_6,
-                R.id.cal_day_line_2_item_0, R.id.cal_day_line_2_item_1, R.id.cal_day_line_2_item_2, R.id.cal_day_line_2_item_3,
-                R.id.cal_day_line_2_item_4, R.id.cal_day_line_2_item_5, R.id.cal_day_line_2_item_6,
-                R.id.cal_day_line_3_item_0, R.id.cal_day_line_3_item_1, R.id.cal_day_line_3_item_2, R.id.cal_day_line_3_item_3,
-                R.id.cal_day_line_3_item_4, R.id.cal_day_line_3_item_5, R.id.cal_day_line_3_item_6,
-                R.id.cal_day_line_4_item_0, R.id.cal_day_line_4_item_1, R.id.cal_day_line_4_item_2, R.id.cal_day_line_4_item_3,
-                R.id.cal_day_line_4_item_4, R.id.cal_day_line_4_item_5, R.id.cal_day_line_4_item_6,
-                R.id.cal_day_line_5_item_0, R.id.cal_day_line_5_item_1, R.id.cal_day_line_5_item_2, R.id.cal_day_line_5_item_3,
-                R.id.cal_day_line_5_item_4, R.id.cal_day_line_5_item_5, R.id.cal_day_line_5_item_6
-        )
-
-        val grid_size: Int
-            get() = dayLabelIds.size
-    }
-}
 
 class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAlertRecord> {
 
@@ -103,26 +50,18 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
 
     private var primaryColor: Int? = Consts.DEFAULT_CALENDAR_EVENT_COLOR
     private var eventFormatter: EventFormatter? = null
-    private lateinit var currentMonthColor: ColorStateList
-    private lateinit var currentDayColor: ColorStateList
-    private lateinit var otherMonthColor: ColorStateList
-    private lateinit var calendarViewRoot: LinearLayout
 
+    private lateinit var calendarViewRoot: LinearLayout
     private lateinit var grid: CalendarGrid
 
     private lateinit var monthNames: Array<String>
 
-
+    private var today: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
     private var currentDay: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-    private val dayLabelDays = IntArray(CalendarGrid.grid_size)
-
-
-
 
     private lateinit var settings: Settings
 
-
-
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -130,8 +69,7 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
     ): View? {
         val root = inflater.inflate(R.layout.fragment_calendar, container, false)
 
-        this.context?.let {
-            ctx ->
+        this.context?.let { ctx ->
             primaryColor = ContextCompat.getColor(ctx, R.color.primary)
             eventFormatter  = EventFormatter(ctx)
             adapter =
@@ -142,14 +80,19 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
 
             monthNames = ctx.resources.getStringArray(R.array.month_names_short)
 
-            currentMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_month))
-            otherMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_other_month))
-            currentDayColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_day))
+            grid = CalendarGrid(ctx, inflater, this::onDayClick)
 
-            grid = CalendarGrid(ctx, inflater) { _, idx -> onDayClick(idx) }
             calendarViewRoot = root.findViewById(R.id.layout_calendar_root)
             val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            calendarViewRoot.addView(grid.layout, lp)
+            calendarViewRoot.addView(grid.view, lp)
+
+//            root.findViewById<View>(R.id.calendar_touch_list_view).setOnTouchListener {
+//                v, event ->
+//                if (gestureDetector.onTouchEvent(event))
+//                    true
+//                else
+//                    calendarViewRoot.onTouchEvent(event)
+//            }
         }
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
@@ -174,14 +117,18 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
     override fun onResume() {
         DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
-        displayCalendar()
+        grid.setDisplayPosition(currentDay, today)
         updateTitle()
         reloadData()
     }
 
     fun reloadData() {
-        this.activity?.let {
-            activity ->
+
+        // TODO:
+        // TODO: Here when loading data we have to manually apply UTC offset, since calendar is given in UTC!!!
+        // TODO:
+
+        this.activity?.let { activity ->
 
             background {
                 val from = currentDay.timeInMillis
@@ -200,70 +147,22 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         }
     }
 
-    fun updateTitle() {
+    private fun updateTitle() {
         this.activity?.let { activity ->
             (activity as MainActivityNG).supportActionBar?.title = "${monthNames[currentDay.month]} ${currentDay.year}"
         }
     }
 
-    fun displayCalendar() {
-        val currentMonth = currentDay.month
-        val currentDayOfMonth =  currentDay.dayOfMonth
-
-        val day = currentDay.clone() as Calendar
-        day.dayOfMonth = 1
-
-        for (idx in 0 until 7) {
-            if (day.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY)
-                break;
-            day.timeInMillis -= 24 * 3600 * 1000L
-        }
-
-        for (idx in 0 until 7 * 6) {
-            dayLabelDays[idx] = -1
-        }
-
-        for (idx in 0 until 7 * 6) {
-            val layout = grid.lineLayouts[idx / 7]
-
-            if (idx == 5 * 7 && day.month != currentMonth) {
-                layout.visibility = View.GONE
-                break
-            }
-            layout.visibility = View.VISIBLE
-
-            grid.dayLabels[idx].setText("${day.dayOfMonth}")
-
-            if (day.month == currentMonth) {
-                dayLabelDays[idx] = day.dayOfMonth
-                if (day.dayOfMonth == currentDayOfMonth)
-                    grid.dayLabels[idx].setTextColor(currentDayColor)
-                else
-                    grid.dayLabels[idx].setTextColor(currentMonthColor)
-            }
-            else {
-                grid.dayLabels[idx].setTextColor(otherMonthColor)
-            }
-
-
-            // move to the next day
-            day.timeInMillis += 24 * 3600 * 1000L
-        }
-    }
-
-    fun onDayClick(idx: Int) {
-        if (idx < 0 || idx >= dayLabelDays.size || dayLabelDays[idx] == -1) {
-            return
-        }
-        currentDay.dayOfMonth = dayLabelDays[idx]
-        displayCalendar()
+    private fun onDayClick(grid: CalendarGrid, c: Calendar) {
+        currentDay = c.clone() as Calendar
+        grid.setDisplayPosition(currentDay, today)
         reloadData()
+        updateTitle()
     }
 
-    // TODO: add an option to view the event, not only to restore it
+    // Click on the event in the list
     override fun onItemClick(v: View, position: Int, entry: EventAlertRecord) {
-        this.context?.let {
-            ctx ->
+        this.context?.let { ctx ->
             startActivity(
                     Intent(ctx, ViewEventActivity::class.java)
                             .putExtra(Consts.INTENT_EVENT_ID_KEY, entry.eventId)
@@ -281,7 +180,7 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
     }
 
     override fun getItemBottomLine(entry: EventAlertRecord): String {
-        return ""
+        return "__ADD_UTC_OFFSET_WHEN_LOADING__"
     }
 
     override fun getItemColor(entry: EventAlertRecord): Int =
@@ -303,5 +202,8 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
 
     companion object {
         private const val LOG_TAG = "UpcomingEventsFragment"
+
+        private const val SWIPE_THRESHOLD = 100
+        private const val SWIPE_VELOCITY_THRESHOLD = 100
     }
 }
