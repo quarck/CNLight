@@ -156,9 +156,7 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onDaySelected
             if (thisMonthDay) {
                 dayLabelDays[idx] = day.dayOfMonth
             }
-            else {
-                dayLabels[idx].text = ""
-            }
+
 
             // move to the next day
             day.timeInMillis += 24 * 3600 * 1000L

@@ -42,6 +42,6 @@
 
     <color name="cal_current_month">#EEEEEF</color>
     <color name="cal_current_day">#03A9F4</color>
-    <color name="cal_other_month">#6D6D6E</color>
+    <color name="cal_other_month">#4D4D4E</color>
 
 </resources>
