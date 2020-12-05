@@ -195,6 +195,18 @@ class EventFormatter(val ctx: Context) {
                     formatDateTimeOneLineRegular(event, showWeekDay)
             }
 
+    fun formatEventTimeOnly(event: EventAlertRecord, showWeekDay: Boolean = false): String {
+        if (event.isAllDay)
+            return ""
+
+        val startTime = event.displayedStartTime
+        var endTime = event.displayedEndTime
+        if (endTime == 0L)
+            endTime = startTime
+
+        return DateUtils.formatDateRange(ctx, startTime, endTime, DateUtils.FORMAT_SHOW_TIME)
+    }
+
     private fun formatDateTimeOneLineRegular(event: EventAlertRecord, showWeekDay: Boolean = false): String {
 
         val startTime = event.displayedStartTime

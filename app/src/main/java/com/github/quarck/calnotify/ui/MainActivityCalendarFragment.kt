@@ -199,7 +199,7 @@ class MainActivityCalendarFragment : Fragment() {
             val fragment: MainActivityCalendarFragment
     ) : RecyclerView.Adapter<CalendarEventListAdapter.ViewHolder>() {
 
-        val cardVewResourceId: Int = R.layout.event_card_compact
+        val cardVewResourceId: Int = R.layout.event_card_compact_narrow
 
         inner class ViewHolder(itemView: View)
             : RecyclerView.ViewHolder(itemView) {
@@ -208,15 +208,8 @@ class MainActivityCalendarFragment : Fragment() {
 
             var eventHolder: RelativeLayout?
             var eventTitleText: TextView
-
-            var eventDateText: TextView
             var eventTimeText: TextView
-
-            var snoozedUntilText: TextView?
             val compactViewCalendarColor: View?
-
-            val compactViewContentLayout: RelativeLayout?
-            var undoLayout: RelativeLayout?
 
             var calendarColor: ColorDrawable
 
@@ -224,13 +217,8 @@ class MainActivityCalendarFragment : Fragment() {
                 eventHolder = itemView.findViewById<RelativeLayout>(R.id.card_view_main_holder)
                 eventTitleText = itemView.findViewById<TextView>(R.id.card_view_event_name)
 
-                eventDateText = itemView.findViewById<TextView>(R.id.card_view_event_date)
-                eventTimeText = itemView.findViewById<TextView>(R.id.card_view_event_time)
-                snoozedUntilText = itemView.findViewById<TextView>(R.id.card_view_snoozed_until)
+                eventTimeText = itemView.findViewById<TextView>(R.id.card_view_event_datetime)
 
-                undoLayout = itemView.findViewById<RelativeLayout?>(R.id.event_card_undo_layout)
-
-                compactViewContentLayout = itemView.findViewById<RelativeLayout?>(R.id.compact_view_content_layout)
                 compactViewCalendarColor = itemView.findViewById<View?>(R.id.compact_view_calendar_color)
 
                 calendarColor = ColorDrawable(0)
@@ -241,7 +229,6 @@ class MainActivityCalendarFragment : Fragment() {
                         fragment.onEventListItemClick(eventTitleText, adapterPosition, it)
                     }
                 }
-
                 eventHolder?.setOnClickListener(itemClickListener)
             }
         }
@@ -264,18 +251,8 @@ class MainActivityCalendarFragment : Fragment() {
 
             if (true) {
                 holder.entry = entry
-
                 holder.eventTitleText.text = entry.title
-
-                holder.undoLayout?.visibility = View.GONE
-                holder.compactViewContentLayout?.visibility = View.VISIBLE
-
-                val time = fragment.eventFormatter?.formatDateTimeOneLine(entry) ?: "NULL"
-                holder.eventDateText.text = time
-                holder.eventTimeText.text = ""
-
-                holder.snoozedUntilText?.text = ""
-                holder.snoozedUntilText?.visibility = View.VISIBLE;
+                holder.eventTimeText.text = fragment.eventFormatter?.formatEventTimeOnly(entry) ?: ""
 
                 holder.calendarColor.color =
                         if (entry.color != 0)
