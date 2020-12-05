@@ -23,10 +23,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
-import android.view.GestureDetector.SimpleOnGestureListener
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -78,21 +76,13 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
                             R.layout.event_card_compact,
                             this)
 
-            monthNames = ctx.resources.getStringArray(R.array.month_names_short)
+            monthNames = ctx.resources.getStringArray(R.array.month_names)
 
             grid = CalendarGrid(ctx, inflater, this::onDayClick)
 
             calendarViewRoot = root.findViewById(R.id.layout_calendar_root)
             val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             calendarViewRoot.addView(grid.view, lp)
-
-//            root.findViewById<View>(R.id.calendar_touch_list_view).setOnTouchListener {
-//                v, event ->
-//                if (gestureDetector.onTouchEvent(event))
-//                    true
-//                else
-//                    calendarViewRoot.onTouchEvent(event)
-//            }
         }
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
@@ -110,10 +100,6 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         return root
     }
 
-    // TODO: coroutines!!!
-    // TODO: coroutines!!!
-    // TODO: coroutines!!!
-    // TODO: coroutines!!!
     override fun onResume() {
         DevLog.debug(LOG_TAG, "onResume")
         super.onResume()

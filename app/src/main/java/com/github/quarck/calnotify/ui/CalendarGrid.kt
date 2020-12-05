@@ -18,10 +18,10 @@ import com.github.quarck.calnotify.utils.toAdjacentMonth
 import java.util.*
 
 @SuppressLint("ClickableViewAccessibility")
-class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onItemClick: (CalendarGrid, Calendar)->Unit) {
+class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onDaySelected: (CalendarGrid, Calendar)->Unit) {
     private var layout: LinearLayout
 
-    private lateinit var gestureDetector: GestureDetectorCompat
+    private var gestureDetector: GestureDetectorCompat
 
     private var dayLabels: Array<TextView>
     private var lineLayouts: Array<LinearLayout>
@@ -33,11 +33,14 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onItemClick: 
 
     private var lastDayIdx: Int = -1
 
-    private val dayLabelDays = IntArray(CalendarGrid.grid_size)
+    private val dayLabelDays = IntArray(grid_size)
 
     private val currentMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_month))
     private val otherMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_other_month))
     private val currentDayColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_day))
+
+    private val labelOnTouchListener: View.OnTouchListener
+    private val undLayoutOnTouchListener: View.OnTouchListener
 
     init {
         layout = inflater.inflate(R.layout.days_grid, null) as LinearLayout
@@ -46,28 +49,41 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onItemClick: 
 
         gestureDetector = GestureDetectorCompat(ctx, GestureListener())
 
+        labelOnTouchListener = View.OnTouchListener { v, event ->
+            lastDayIdx = dayLabels.indexOf(v as TextView)
+            gestureDetector.onTouchEvent(event)
+        }
+
+        undLayoutOnTouchListener = View.OnTouchListener { v, event ->
+            lastDayIdx = -1
+            gestureDetector.onTouchEvent(event)
+        }
+
         for (lbl in dayLabels) {
             lbl.setOnClickListener(this::onDayClick)
-
-            lbl.setOnTouchListener {
-                v, event ->
-                lastDayIdx = dayLabels.indexOf(v as TextView)
-                gestureDetector.onTouchEvent(event)
-            }
-
+            lbl.setOnTouchListener(labelOnTouchListener)
         }
+
+        for (layout in lineLayouts) {
+            layout.setOnTouchListener(undLayoutOnTouchListener)
+        }
+
+        layout.setOnTouchListener(undLayoutOnTouchListener)
     }
 
 
     val view: View
         get() = layout
 
-    private fun onDayClick(v: View) {
-        val idx = dayLabels.indexOf(v as TextView)
+    private fun onIdxClick(idx: Int) {
         if ((idx in 0 until grid_size) && dayLabelDays[idx] != -1) {
             displayPosition.dayOfMonth = dayLabelDays[idx]
-            onItemClick(this, displayPosition)
+            onDaySelected(this, displayPosition)
         }
+    }
+
+    private fun onDayClick(v: View) {
+        onIdxClick(dayLabels.indexOf(v as TextView))
     }
 
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {
@@ -76,10 +92,7 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onItemClick: 
         }
 
         override fun onSingleTapUp(e: MotionEvent): Boolean {
-            if ((lastDayIdx in 0 until grid_size) && dayLabelDays[lastDayIdx] != -1) {
-                displayPosition.dayOfMonth = dayLabelDays[lastDayIdx]
-                onItemClick(this@CalendarGrid, displayPosition)
-            }
+            onIdxClick(lastDayIdx)
             return true
         }
 
@@ -103,12 +116,7 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onItemClick: 
 
     fun adjustMonthPosition(direction: Int) {
         displayPosition = displayPosition.toAdjacentMonth(direction)
-
-        onItemClick(this, displayPosition)
-
-        //grid.setDisplayPosition(currentDay, today)
-        //updateTitle()
-        //reloadData()
+        onDaySelected(this, displayPosition)
     }
 
 
@@ -136,18 +144,21 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onItemClick: 
         for (idx in 0 until 7 * 6) {
             val layout = lineLayouts[idx / 7]
 
-            if (idx == 5 * 7 && day.month != displayMonth) {
-                layout.visibility = View.GONE
-                break
+            val thisMonthDay = (day.month == displayMonth)
+
+            if (idx == 4 * 7 || idx == 5 * 7) { // we are at the very start of rows 5 or 6
+                layout.visibility = if (thisMonthDay) View.VISIBLE else View.GONE
             }
-            layout.visibility = View.VISIBLE
 
             dayLabels[idx].text = "${day.dayOfMonth}"
-
-            if (day.month == displayMonth)
-                dayLabelDays[idx] = day.dayOfMonth
-
             dayLabels[idx].setTextColor(getDayColor(day))
+
+            if (thisMonthDay) {
+                dayLabelDays[idx] = day.dayOfMonth
+            }
+            else {
+                dayLabels[idx].text = ""
+            }
 
             // move to the next day
             day.timeInMillis += 24 * 3600 * 1000L
