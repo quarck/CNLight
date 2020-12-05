@@ -34,6 +34,7 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.utils.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 
 
@@ -76,6 +77,16 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
             calendarViewRoot = root.findViewById(R.id.layout_calendar_root)
             val lp = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             calendarViewRoot.addView(grid.view, lp)
+
+            root.findViewById<FloatingActionButton>(R.id.action_btn_add_event).setOnClickListener {
+                val defaultStartTime = currentDay.clone() as Calendar
+                defaultStartTime.hourOfDay = 9
+                ctx.startActivity(
+                        Intent(ctx, EditEventActivity::class.java)
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                                .putExtra(EditEventActivity.NEW_EVENT_START_TIME, defaultStartTime.timeInMillis)
+                )
+            }
         }
 
         staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)

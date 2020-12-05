@@ -251,6 +251,8 @@ open class EditEventActivity : AppCompatActivity() {
         originalInstanceStart = intent.getLongExtra(INSTANCE_START, 0)
         originalInstanceEnd = intent.getLongExtra(INSTANCE_END, 0)
 
+        val newStartTime = intent.getLongExtra(NEW_EVENT_START_TIME, 0)
+
         if (eventId != -1L) {
             originalEvent = CalendarProvider.getEvent(this, eventId)
 
@@ -437,7 +439,7 @@ open class EditEventActivity : AppCompatActivity() {
             window.statusBarColor = calendar.color.scaleColor(0.7f)
 
             // Set default date and time
-            var currentTime = System.currentTimeMillis()
+            var currentTime = if (newStartTime != 0L) newStartTime else System.currentTimeMillis()
             currentTime -= (currentTime % 1000)  // Drop millis
 
             from = DateTimeUtils.createCalendarTime(currentTime)
@@ -1303,5 +1305,6 @@ open class EditEventActivity : AppCompatActivity() {
         const val EVENT_ID = "event_id"
         const val INSTANCE_START = "instance_start"
         const val INSTANCE_END = "instance_end"
+        const val NEW_EVENT_START_TIME = "new_start_time"
     }
 }
