@@ -13,7 +13,10 @@
         android:id="@+id/layout_calendar_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp">
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

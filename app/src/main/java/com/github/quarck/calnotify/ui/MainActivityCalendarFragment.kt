@@ -19,7 +19,6 @@
 
 package com.github.quarck.calnotify.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -30,7 +29,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.utils.*
@@ -54,12 +52,11 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
 
     private lateinit var monthNames: Array<String>
 
-    private var today: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-    private var currentDay: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+    private val deviceTimeZone = TimeZone.getDefault()
 
-    private lateinit var settings: Settings
+    private var today: Calendar = Calendar.getInstance(deviceTimeZone)
+    private var currentDay: Calendar = Calendar.getInstance(deviceTimeZone)
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -69,12 +66,8 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
 
         this.context?.let { ctx ->
             primaryColor = ContextCompat.getColor(ctx, R.color.primary)
-            eventFormatter  = EventFormatter(ctx)
-            adapter =
-                    SimpleEventListAdapter(
-                            ctx,
-                            R.layout.event_card_compact,
-                            this)
+            eventFormatter = EventFormatter(ctx)
+            adapter = SimpleEventListAdapter(ctx, R.layout.event_card_compact, this)
 
             monthNames = ctx.resources.getStringArray(R.array.month_names)
 
@@ -100,6 +93,30 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         return root
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        DevLog.info(LOG_TAG, "onCreate")
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, menuInflater)
+        DevLog.info(LOG_TAG, "onCreateOptionsMenu")
+        menuInflater.inflate(R.menu.calendar_activity_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        this.context?.let {
+            ctx ->
+            when (item.itemId) {
+                R.id.action_go_today ->
+                    onDayClick(grid, today)
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onResume() {
         DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
@@ -108,14 +125,9 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         reloadData()
     }
 
-    fun reloadData() {
-
-        // TODO:
-        // TODO: Here when loading data we have to manually apply UTC offset, since calendar is given in UTC!!!
-        // TODO:
+    private fun reloadData() {
 
         this.activity?.let { activity ->
-
             background {
                 val from = currentDay.timeInMillis
                 val to = from + Consts.DAY_IN_MILLISECONDS
@@ -138,6 +150,7 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
             (activity as MainActivityNG).supportActionBar?.title = "${monthNames[currentDay.month]} ${currentDay.year}"
         }
     }
+
 
     private fun onDayClick(grid: CalendarGrid, c: Calendar) {
         currentDay = c.clone() as Calendar

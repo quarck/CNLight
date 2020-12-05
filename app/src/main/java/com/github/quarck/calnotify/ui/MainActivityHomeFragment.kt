@@ -167,7 +167,6 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         this.context?.let {
             ctx ->
             when (item.itemId) {
@@ -178,22 +177,6 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
                                     .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 
-//                R.id.action_finished_events ->
-//                    startActivity(
-//                            Intent(ctx, FinishedEventsActivity::class.java)
-//                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-//
-//                R.id.action_settings -> {
-//                    startActivity(
-//                            Intent(ctx, SettingsActivityNew::class.java)
-//                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-//                }
-//
-//                R.id.action_about ->
-//                    startActivity(
-//                            Intent(ctx, AboutActivity::class.java)
-//                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-//
                 R.id.action_test_page ->
                     startActivity(
                             Intent(ctx, TestActivity::class.java)
@@ -207,13 +190,6 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
 
 
     private fun reloadData() {
-
-        // TODO: coroutines!!!
-        // TODO: coroutines!!!
-        // TODO: coroutines!!!
-        // TODO: coroutines!!!
-        // TODO: coroutines!!!
-        // TODO: coroutines!!!
 
         this.context?.let {
             ctx ->
