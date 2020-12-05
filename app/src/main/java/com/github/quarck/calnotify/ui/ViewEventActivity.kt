@@ -41,9 +41,6 @@ import com.github.quarck.calnotify.permissions.PermissionsManager
 import android.content.res.ColorStateList
 import androidx.core.content.ContextCompat
 import android.text.method.ScrollingMovementMethod
-import android.view.ViewGroup
-import androidx.core.view.MarginLayoutParamsCompat
-import androidx.core.view.marginEnd
 import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
 
 // TODO: add repeating rule and calendar name somewhere on the snooze activity
@@ -90,10 +87,11 @@ open class ViewEventActivity : AppCompatActivity() {
         // Populate event details
         val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
         val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1L)
-        val alertTime = intent.getLongExtra(Consts.INTENT_ALERT_TIME, -1L)
+        val alertTime = intent.getLongExtra(Consts.INTENT_ALERT_TIME, 0L)
 
         snoozeFromMainActivity = intent.getBooleanExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, false)
-        viewForFutureEvent = intent.getBooleanExtra(Consts.INTENT_VIEW_FUTURE_EVENT, false)
+        viewForFutureEvent = intent.getBooleanExtra(Consts.INTENT_VIEW_FUTURE_EVENT_EXTRA, false)
+        val noSkips = intent.getBooleanExtra(Consts.INTENT_NO_SKIPS_EXTRA, false)
 
         findViewById<Toolbar?>(R.id.toolbar)?.visibility = View.GONE
 
@@ -125,8 +123,12 @@ open class ViewEventActivity : AppCompatActivity() {
                 event = dbEvent
             }
         } else {
-            val calEvent = CalendarProvider.getEventAlertsForInstanceAt(this, instanceStartTime, eventId)
-                    .firstOrNull { alertTime == -1L || it.alertTime == alertTime }
+            var calEvent = CalendarProvider.getEventAlertsForInstanceAt(this, instanceStartTime, eventId)
+                    .firstOrNull { alertTime == 0L || it.alertTime == alertTime }
+            if (calEvent == null) {
+                calEvent = CalendarProvider.getInstancesInRange(this, instanceStartTime, instanceStartTime+100L, eventId)
+                        .firstOrNull()
+            }
             if (calEvent == null) {
                 DevLog.error(LOG_TAG, "ViewActivity started for non-existing eveng id $eventId, st $instanceStartTime")
                 finish()
@@ -326,14 +328,17 @@ open class ViewEventActivity : AppCompatActivity() {
             fabMoveButton.visibility = View.GONE
         }
 
-        if (!viewForFutureEvent) {
-            fabMarkDoneButton.setOnClickListener{
-                ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
-                finish()
+        if (!noSkips) {
+            if (!viewForFutureEvent) {
+                fabMarkDoneButton.setOnClickListener {
+                    ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
+                    finish()
+                }
+            } else {
+                fabMarkDoneButton.setOnClickListener(this::futureEventMarkDoneBtn)
             }
-        }
-        else {
-            fabMarkDoneButton.setOnClickListener(this::futureEventMarkDoneBtn)
+        } else {
+            fabMarkDoneButton.visibility = View.GONE
         }
 
         val menuButton = findViewById<ImageView?>(R.id.event_view_menu)

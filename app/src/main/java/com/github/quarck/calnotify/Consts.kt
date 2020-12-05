@@ -51,7 +51,8 @@ object Consts {
     const val INTENT_ALERT_TIME = "alert_time"
     const val INTENT_SNOOZE_ALL_IS_CHANGE = "snooze_all_is_change"
     const val INTENT_SNOOZE_FROM_MAIN_ACTIVITY = "snooze_by_main_activity"
-    const val INTENT_VIEW_FUTURE_EVENT = "view_future_event"
+    const val INTENT_VIEW_FUTURE_EVENT_EXTRA = "view_future_event"
+    const val INTENT_NO_SKIPS_EXTRA = "no_skips"
 
     const val INTENT_IS_USER_ACTION = "causedByUser"
 

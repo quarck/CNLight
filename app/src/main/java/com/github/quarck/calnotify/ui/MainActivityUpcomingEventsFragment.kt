@@ -24,21 +24,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
-import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
-import java.lang.StringBuilder
 
 class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<MonitorDataPair> {
 
@@ -132,7 +128,7 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
                             .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, entry.eventEntry.instanceStartTime)
                             .putExtra(Consts.INTENT_ALERT_TIME, entry.eventEntry.alertTime)
                             .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
-                            .putExtra(Consts.INTENT_VIEW_FUTURE_EVENT, true)
+                            .putExtra(Consts.INTENT_VIEW_FUTURE_EVENT_EXTRA, true)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
     }

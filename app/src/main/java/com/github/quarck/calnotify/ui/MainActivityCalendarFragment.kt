@@ -179,7 +179,8 @@ class MainActivityCalendarFragment : Fragment() {
                             .putExtra(Consts.INTENT_EVENT_ID_KEY, entry.eventId)
                             .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, entry.instanceStartTime)
                             .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
-                            .putExtra(Consts.INTENT_VIEW_FUTURE_EVENT, true)
+                            .putExtra(Consts.INTENT_VIEW_FUTURE_EVENT_EXTRA, true)
+                            .putExtra(Consts.INTENT_NO_SKIPS_EXTRA, true)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
     }
