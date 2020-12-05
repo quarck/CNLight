@@ -3,6 +3,7 @@ package com.github.quarck.calnotify.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -15,6 +16,7 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.utils.dayOfMonth
 import com.github.quarck.calnotify.utils.month
 import com.github.quarck.calnotify.utils.toAdjacentMonth
+import com.github.quarck.calnotify.utils.year
 import java.util.*
 
 @SuppressLint("ClickableViewAccessibility")
@@ -38,6 +40,8 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onDaySelected
     private val currentMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_month))
     private val otherMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_other_month))
     private val currentDayColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_day))
+    private val defaultBackground = ContextCompat.getColor(ctx, R.color.background)
+    private val todayBackground = ContextCompat.getColor(ctx, R.color.cal_today_bg)
 
     private val labelOnTouchListener: View.OnTouchListener
     private val undLayoutOnTouchListener: View.OnTouchListener
@@ -152,6 +156,7 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onDaySelected
 
             dayLabels[idx].text = "${day.dayOfMonth}"
             dayLabels[idx].setTextColor(getDayColor(day))
+            dayLabels[idx].setBackgroundColor(getDayBackground(day))
 
             if (thisMonthDay) {
                 dayLabelDays[idx] = day.dayOfMonth
@@ -161,6 +166,13 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onDaySelected
             // move to the next day
             day.timeInMillis += 24 * 3600 * 1000L
         }
+    }
+
+    private fun getDayBackground(day: Calendar): Int {
+        return if (day.year == today.year && day.month == today.month && day.dayOfMonth == today.dayOfMonth)
+            todayBackground
+        else
+            defaultBackground
     }
 
     private fun getDayColor(day: Calendar): ColorStateList {
