@@ -28,7 +28,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
@@ -59,7 +58,6 @@ fun FinishedEventAlertRecord.formatReason(ctx: Context): String =
 
 class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<FinishedEventAlertRecord> {
 
-    private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
 
     private var adapter: SimpleEventListAdapter<FinishedEventAlertRecord>? = null
@@ -87,9 +85,7 @@ class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<F
                             this)
         }
 
-        staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = root.findViewById<RecyclerView>(R.id.list_events)
-        recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
         adapter?.recyclerView = recyclerView
 

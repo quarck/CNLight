@@ -28,7 +28,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.app.ApplicationController
@@ -43,7 +42,6 @@ import java.lang.StringBuilder
 
 class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<MonitorDataPair> {
 
-    private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
 
     private var adapter: SimpleEventListAdapter<MonitorDataPair>? = null
@@ -75,9 +73,7 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
             eventReminderTimeFmt = ctx.resources.getString(R.string.reminder_at_fmt)
         }
 
-        staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = root.findViewById<RecyclerView>(R.id.list_events)
-        recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
         adapter?.recyclerView = recyclerView
 

@@ -19,14 +19,17 @@
 
 package com.github.quarck.calnotify.ui
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.CalendarProvider
@@ -38,12 +41,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 
 
-class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAlertRecord> {
+class MainActivityCalendarFragment : Fragment() {
 
-    private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
+    //private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
 
-    private var adapter: SimpleEventListAdapter<EventAlertRecord>? = null
+    private var adapter: CalendarEventListAdapter? = null
 
     private var primaryColor: Int? = Consts.DEFAULT_CALENDAR_EVENT_COLOR
     private var eventFormatter: EventFormatter? = null
@@ -68,7 +71,7 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         this.context?.let { ctx ->
             primaryColor = ContextCompat.getColor(ctx, R.color.primary)
             eventFormatter = EventFormatter(ctx)
-            adapter = SimpleEventListAdapter(ctx, R.layout.event_card_compact, this)
+            adapter = CalendarEventListAdapter(ctx, this)
 
             monthNames = ctx.resources.getStringArray(R.array.month_names)
 
@@ -89,9 +92,7 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
             }
         }
 
-        staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = root.findViewById<RecyclerView>(R.id.list_events)
-        recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
         adapter?.recyclerView = recyclerView
 
@@ -171,7 +172,7 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
     }
 
     // Click on the event in the list
-    override fun onItemClick(v: View, position: Int, entry: EventAlertRecord) {
+    fun onEventListItemClick(v: View, position: Int, entry: EventAlertRecord) {
         this.context?.let { ctx ->
             startActivity(
                     Intent(ctx, ViewEventActivity::class.java)
@@ -183,23 +184,6 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         }
     }
 
-    override fun getItemTitle(entry: EventAlertRecord): String =  entry.title
-
-    override fun getItemMiddleLine(entry: EventAlertRecord): String {
-        return eventFormatter?.formatDateTimeOneLine(entry) ?: "NULL"
-    }
-
-    override fun getItemBottomLine(entry: EventAlertRecord): String {
-        return "__ADD_UTC_OFFSET_WHEN_LOADING__"
-    }
-
-    override fun getItemColor(entry: EventAlertRecord): Int =
-            if (entry.color != 0)
-                entry.color.adjustCalendarColor()
-            else
-                primaryColor ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
-
-
     override fun onPause() {
         super.onPause()
         DevLog.info(LOG_TAG, "onPause")
@@ -210,10 +194,115 @@ class MainActivityCalendarFragment : Fragment(), SimpleEventListCallback<EventAl
         DevLog.info(LOG_TAG, "onDetach")
     }
 
+    class CalendarEventListAdapter(
+            val context: Context,
+            val fragment: MainActivityCalendarFragment
+    ) : RecyclerView.Adapter<CalendarEventListAdapter.ViewHolder>() {
+
+        val cardVewResourceId: Int = R.layout.event_card_compact
+
+        inner class ViewHolder(itemView: View)
+            : RecyclerView.ViewHolder(itemView) {
+            //var eventId: Long = 0;
+            var entry: EventAlertRecord? = null
+
+            var eventHolder: RelativeLayout?
+            var eventTitleText: TextView
+
+            var eventDateText: TextView
+            var eventTimeText: TextView
+
+            var snoozedUntilText: TextView?
+            val compactViewCalendarColor: View?
+
+            val compactViewContentLayout: RelativeLayout?
+            var undoLayout: RelativeLayout?
+
+            var calendarColor: ColorDrawable
+
+            init {
+                eventHolder = itemView.findViewById<RelativeLayout>(R.id.card_view_main_holder)
+                eventTitleText = itemView.findViewById<TextView>(R.id.card_view_event_name)
+
+                eventDateText = itemView.findViewById<TextView>(R.id.card_view_event_date)
+                eventTimeText = itemView.findViewById<TextView>(R.id.card_view_event_time)
+                snoozedUntilText = itemView.findViewById<TextView>(R.id.card_view_snoozed_until)
+
+                undoLayout = itemView.findViewById<RelativeLayout?>(R.id.event_card_undo_layout)
+
+                compactViewContentLayout = itemView.findViewById<RelativeLayout?>(R.id.compact_view_content_layout)
+                compactViewCalendarColor = itemView.findViewById<View?>(R.id.compact_view_calendar_color)
+
+                calendarColor = ColorDrawable(0)
+
+
+                val itemClickListener = View.OnClickListener {
+                    entry?.let {
+                        fragment.onEventListItemClick(eventTitleText, adapterPosition, it)
+                    }
+                }
+
+                eventHolder?.setOnClickListener(itemClickListener)
+            }
+        }
+
+        private var entries = mutableListOf<EventAlertRecord>();
+
+        private var _recyclerView: RecyclerView? = null
+        var recyclerView: RecyclerView?
+            get() = _recyclerView
+            set(value) {
+                _recyclerView = value
+            }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            //
+            if (position < 0 || position >= entries.size)
+                return
+
+            val entry = entries[position]
+
+            if (true) {
+                holder.entry = entry
+
+                holder.eventTitleText.text = entry.title
+
+                holder.undoLayout?.visibility = View.GONE
+                holder.compactViewContentLayout?.visibility = View.VISIBLE
+
+                val time = fragment.eventFormatter?.formatDateTimeOneLine(entry) ?: "NULL"
+                holder.eventDateText.text = time
+                holder.eventTimeText.text = ""
+
+                holder.snoozedUntilText?.text = ""
+                holder.snoozedUntilText?.visibility = View.VISIBLE;
+
+                holder.calendarColor.color =
+                        if (entry.color != 0)
+                            entry.color.adjustCalendarColor()
+                        else
+                            fragment.primaryColor ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
+
+                holder.compactViewCalendarColor?.background = holder.calendarColor
+            }
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(cardVewResourceId, parent, false);
+            return ViewHolder(view);
+        }
+
+        override fun getItemCount(): Int = entries.size
+
+        fun setEventsToDisplay(newEntries: MutableList<EventAlertRecord>)
+                = synchronized(this) {
+            entries = newEntries;
+            notifyDataSetChanged();
+        }
+    }
+
+
     companion object {
         private const val LOG_TAG = "UpcomingEventsFragment"
-
-        private const val SWIPE_THRESHOLD = 100
-        private const val SWIPE_VELOCITY_THRESHOLD = 100
     }
 }

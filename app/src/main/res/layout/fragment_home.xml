@@ -63,6 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/true_black_as_night"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -29,7 +29,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
@@ -53,7 +52,6 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
 
     private val settings: Settings? by lazy { context?.run { Settings(this)}  }
 
-    private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var reloadLayout: RelativeLayout
 
@@ -90,9 +88,7 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
             adapter = EventListAdapter(it, this)
         }
 
-        staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = root.findViewById<RecyclerView>(R.id.list_events)
-        recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter
         adapter?.recyclerView = recyclerView
 

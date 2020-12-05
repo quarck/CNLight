@@ -21,24 +21,22 @@ package com.github.quarck.calnotify.prefs
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import androidx.appcompat.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.RecyclerView
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarRecord
-import com.github.quarck.calnotify.utils.logs.DevLog
-//import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.utils.background
+import com.github.quarck.calnotify.utils.logs.DevLog
 
 enum class CalendarListEntryType {Header, Calendar, Divider }
 
@@ -137,7 +135,6 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
 class CalendarsActivity : AppCompatActivity() {
 
     private lateinit var adapter: CalendarListAdapter
-    private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
     private lateinit var noCalendarsText: TextView
 
@@ -164,9 +161,7 @@ class CalendarsActivity : AppCompatActivity() {
             settings.setCalendarIsHandled(calendarId, isEnabled)
         }
 
-        staggeredLayoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
         recyclerView = findViewById<RecyclerView>(R.id.list_calendars)
-        recyclerView.layoutManager = staggeredLayoutManager;
         recyclerView.adapter = adapter;
 
         noCalendarsText = findViewById<TextView>(R.id.no_calendars_text)
