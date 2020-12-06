@@ -68,6 +68,8 @@ class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<F
     private var primaryColor: Int? = Consts.DEFAULT_CALENDAR_EVENT_COLOR
     private var eventFormatter: EventFormatter? = null
 
+    private var bottomLineColor: Int = 0x7f3f3f3f
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -86,6 +88,8 @@ class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<F
                             ctx,
                             R.layout.event_card_compact,
                             this)
+
+            bottomLineColor = ContextCompat.getColor(ctx, R.color.divider)
         }
 
         recyclerView = root.findViewById<RecyclerView>(R.id.list_events)
@@ -152,7 +156,7 @@ class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<F
 
     override fun getItemMiddleLine(entry: FinishedEventAlertRecord): String = eventFormatter?.formatDateTimeOneLine(entry.event) ?: "_NO_FORMATTER_"
 
-    override fun getItemBottomLine(entry: FinishedEventAlertRecord): String = context?.let{ entry.formatReason(it) } ?: "_NO_CONTEXT_"
+    override fun getItemBottomLine(entry: FinishedEventAlertRecord): Pair<String, Int> = Pair(context?.let{ entry.formatReason(it) } ?: "_NO_CONTEXT_", bottomLineColor)
 
     override fun getItemColor(entry: FinishedEventAlertRecord): Int =
             if (entry.event.color != 0)
@@ -160,6 +164,7 @@ class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<F
             else
                 primaryColor ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
 
+    override fun getUseBoldTitle(entry: FinishedEventAlertRecord): Boolean = false
 
     override fun onPause() {
         super.onPause()

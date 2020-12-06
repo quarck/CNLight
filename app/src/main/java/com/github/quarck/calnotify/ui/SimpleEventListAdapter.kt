@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.ui
 
 import android.content.Context
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
@@ -30,14 +31,12 @@ import android.widget.TextView
 import com.github.quarck.calnotify.R
 
 interface SimpleEventListCallback<T> {
-    fun getItemTitle(entry: T): String // entry.event.title
-    fun getItemMiddleLine(entry: T): String // eventFormatter.formatDateTimeOneLine(entry.event)
-    fun getItemBottomLine(entry: T): String //  entry.formatReason(context)
-    fun getItemColor(entry: T): Int /*if (entry.event.color != 0)
-                        entry.event.color.adjustCalendarColor()
-                    else
-                        primaryColor*/
+    fun getItemTitle(entry: T): String
+    fun getItemMiddleLine(entry: T): String
+    fun getItemBottomLine(entry: T): Pair<String, Int>
+    fun getItemColor(entry: T): Int
     fun onItemClick(v: View, position: Int, entry: T)
+    fun getUseBoldTitle(entry: T): Boolean
 }
 
 // T == CompleteEventAlertRecord originally
@@ -114,6 +113,11 @@ class SimpleEventListAdapter<T>(
 
             holder.eventTitleText.text = cb.getItemTitle(entry) // entry.event.title
 
+            if (cb.getUseBoldTitle(entry))
+               holder.eventTitleText.setTypeface(null, Typeface.BOLD)
+            else
+                holder.eventTitleText.setTypeface(null, Typeface.NORMAL)
+
             holder.undoLayout?.visibility = View.GONE
             holder.compactViewContentLayout?.visibility = View.VISIBLE
 
@@ -121,14 +125,12 @@ class SimpleEventListAdapter<T>(
             holder.eventDateText.text = time
             holder.eventTimeText.text = ""
 
-            holder.snoozedUntilText?.text = cb.getItemBottomLine(entry) //entry.formatReason(context)
+            val (bottomText, bottomColor) = cb.getItemBottomLine(entry)
+            holder.snoozedUntilText?.text =  bottomText
+            holder.snoozedUntilText?.setTextColor(bottomColor)
             holder.snoozedUntilText?.visibility = View.VISIBLE;
 
             holder.calendarColor.color = cb.getItemColor(entry)
-//                    if (entry.event.color != 0)
-//                        entry.event.color.adjustCalendarColor()
-//                    else
-//                        primaryColor
             holder.compactViewCalendarColor?.background = holder.calendarColor
         }
     }

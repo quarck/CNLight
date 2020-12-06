@@ -21,6 +21,7 @@ package com.github.quarck.calnotify.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,7 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
+import com.github.quarck.calnotify.utils.DateTimeUtils
 import com.github.quarck.calnotify.utils.adjustCalendarColor
 import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
@@ -47,6 +49,8 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
 
     private var statusHandled: String? = null
     private var eventReminderTimeFmt: String? = null
+    private var colorSkippedItemBotomLine: Int  = 0x7f3f3f3f
+    private var colorNonSkippedItemBottomLine: Int = 0x7f7f7f7f
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -67,6 +71,9 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
 
             statusHandled = ctx.resources.getString(R.string.event_was_marked_as_finished)
             eventReminderTimeFmt = ctx.resources.getString(R.string.reminder_at_fmt)
+
+            colorSkippedItemBotomLine = ContextCompat.getColor(ctx, R.color.divider)
+            colorNonSkippedItemBottomLine = ContextCompat.getColor(ctx, R.color.secondary_text)
         }
 
         recyclerView = root.findViewById<RecyclerView>(R.id.list_events)
@@ -135,15 +142,33 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
 
     override fun getItemTitle(entry: MonitorDataPair): String =  entry.eventEntry.title
 
+    override fun getUseBoldTitle(entry: MonitorDataPair): Boolean = isToday(entry.eventEntry)
+
+    private fun isToday(event: EventAlertRecord): Boolean =
+            if (event.isAllDay) DateUtils.isToday(event.displayedStartTime)
+            else DateTimeUtils.isUTCToday(event.displayedStartTime)
+
     override fun getItemMiddleLine(entry: MonitorDataPair): String {
-        return eventFormatter?.let {
-            it.formatDateTimeOneLine(entry.eventEntry) + " / " +
-                    (eventReminderTimeFmt ?: "%s").format(it.formatTimePoint(entry.monitorEntry.alertTime, noWeekDay = true))
-        } ?: "NULL"
+        return eventFormatter?.formatDateTimeOneLine(entry.eventEntry) ?: "NULL"
     }
 
-    override fun getItemBottomLine(entry: MonitorDataPair): String {
-        return if (entry.monitorEntry.wasHandled) statusHandled ?: "_handled_" else ""
+    override fun getItemBottomLine(entry: MonitorDataPair): Pair<String, Int> {
+
+        val reminderLine = eventFormatter?.let { (eventReminderTimeFmt ?: "%s").format(it.formatTimePoint(entry.monitorEntry.alertTime, noWeekDay = true)) }
+
+        val line =
+                if (entry.monitorEntry.wasHandled)
+                    (statusHandled ?: "/SKIP/") + " " + reminderLine
+                else
+                    reminderLine
+
+        val color =
+                if (entry.monitorEntry.wasHandled)
+                    colorSkippedItemBotomLine
+                else
+                    colorNonSkippedItemBottomLine
+
+        return Pair(line ?: "", color)
     }
 
     override fun getItemColor(entry: MonitorDataPair): Int =

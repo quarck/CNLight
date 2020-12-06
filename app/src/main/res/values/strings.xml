@@ -138,7 +138,7 @@
     <string name="on_the_day_of_event">On the day of event</string>
     <string name="before_the_event">before the event</string>
 
-    <string name="reminder_at_fmt" formatted="false">reminder: %s</string>
+    <string name="reminder_at_fmt" formatted="false">Remind @ %s</string>
     <string name="handle_email_only_events_title">Handle e-mail only events</string>
     <string name="handle_email_only_events_summary">Notify locally about events with email-only reminders</string>
 
@@ -262,7 +262,7 @@
     <string name="active_events">Notifications</string>
     <string name="upcoming_events">Upcoming Notifications</string>
     <string name="finished_events">Notification Log</string>
-    <string name="event_was_marked_as_finished">MARKED AS DONE</string>
+    <string name="event_was_marked_as_finished">/SKIP/</string>
     <string name="mark_finished">Mark as done</string>
     <string name="view_event_details">View event details</string>
     <string name="yes">Yes</string>
