@@ -684,7 +684,7 @@ open class EditEventActivity : AppCompatActivity() {
                 exRDate = exRDate,
                 color = originalEvent?.color ?: 0,
                 reminders = remindersToAdd,
-                lastDate = newRRule?.until?.value
+                lastDate = null
         )
 
         val eventToEdit = originalEvent
@@ -706,27 +706,7 @@ open class EditEventActivity : AppCompatActivity() {
                 Toast.makeText(this, R.string.failed_to_update_event_details, Toast.LENGTH_LONG).show()
         }
         else {
-            // Updating the repeating event, we are doing that by creating the new event from today, and
-            // then cutting the recurrence of the old event by adding UNTIL= to the RRULE
-            if (newRRule == null) {
-                Toast.makeText(this, R.string.failed_to_parse_new_rrule, Toast.LENGTH_LONG).show()
-                return
-            }
-
-            // create the new recurrence first - from today onward
-            val eventId = editor.createEvent(this, calendar.calendarId, calendar.owner, details)
-            if (eventId != -1L) {
-                // update the old recurrence now, making it stop just before the original instance start
-                val lastDate = originalInstanceStart - 1 * 1000L
-                oldRRule.until = RRuleVal.UNTIL(lastDate)
-                if (editor.updateEvent(this, eventToEdit,
-                                eventToEdit.details.copy(rRule = oldRRule.serialize(), lastDate = lastDate)))
-                    onEventUpdated(false, eventId, details.startTime)
-                else
-                    Toast.makeText(this, R.string.failed_to_update_old_recurrence, Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, R.string.failed_to_update_recurrence, Toast.LENGTH_LONG).show()
-            }
+            Toast.makeText(this, R.string.can_only_edit_the_whole_series, Toast.LENGTH_LONG).show()
         }
     }
 

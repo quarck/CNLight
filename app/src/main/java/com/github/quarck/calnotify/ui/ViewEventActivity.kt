@@ -321,9 +321,6 @@ open class ViewEventActivity : AppCompatActivity() {
         val allowEdit = !calendar.isReadOnly
         if (!allowEdit) {
             menu.findItem(R.id.action_edit)?.isVisible = false
-        }
-
-        if (!allowEdit || event.isRepeating) {
             menu.findItem(R.id.action_delete_event)?.isVisible = false
         }
 
@@ -348,23 +345,11 @@ open class ViewEventActivity : AppCompatActivity() {
 
         when (item.itemId) {
             R.id.action_edit -> {
-                if (!event.isRepeating) {
-                    val intent = Intent(this, EditEventActivity::class.java)
-                            .putExtra(EditEventActivity.EVENT_ID, event.eventId)
-                            .putExtra(EditEventActivity.INSTANCE_START, event.instanceStartTime)
-                            .putExtra(EditEventActivity.INSTANCE_END, event.instanceEndTime)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    CalendarIntents.viewCalendarEvent(this, event)
-                    finish()
-                }
+                confirmAndEdit()
             }
 
             R.id.action_delete_event -> {
-                if (!event.isRepeating) {
-                    confirmAndDelete()
-                }
+                confirmAndDelete()
             }
 
             R.id.action_open_in_calendar -> {
@@ -395,19 +380,30 @@ open class ViewEventActivity : AppCompatActivity() {
         val popup = PopupMenu(this, v)
         val inflater = popup.menuInflater
         inflater.inflate(R.menu.move_options, popup.menu)
+
+        if (event.isRepeating) {
+            popup.menu.findItem(R.id.action_move_next_day)?.isVisible = false
+            popup.menu.findItem(R.id.action_move_next_week)?.isVisible = false
+            popup.menu.findItem(R.id.action_move_next_month_30d)?.isVisible = false
+        }
+        else {
+            popup.menu.findItem(R.id.action_move_copy_next_day)?.isVisible = false
+            popup.menu.findItem(R.id.action_move_copy_next_week)?.isVisible = false
+            popup.menu.findItem(R.id.action_move_copy_next_month_30d)?.isVisible = false
+        }
+
         popup.setOnMenuItemClickListener {
             item ->
-
             when (item.itemId) {
-                R.id.action_move_next_day -> {
+                R.id.action_move_next_day, R.id.action_move_copy_next_day -> {
                     reschedule(addTime = 1 * Consts.DAY_IN_SECONDS * 1000L)
                     true
                 }
-                R.id.action_move_next_week -> {
+                R.id.action_move_next_week, R.id.action_move_copy_next_week -> {
                     reschedule(addTime = 7 * Consts.DAY_IN_SECONDS * 1000L)
                     true
                 }
-                R.id.action_move_next_month_30d -> {
+                R.id.action_move_next_month_30d, R.id.action_move_copy_next_month_30d -> {
                     reschedule(addTime = 30 * Consts.DAY_IN_SECONDS * 1000L)
                     true
                 }
@@ -425,33 +421,63 @@ open class ViewEventActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun confirmAndReschedule(addDays: Long) {
+//    private fun confirmAndReschedule(addDays: Long) {
+//
+//        AlertDialog.Builder(this)
+//                .setMessage(getString(R.string.move_event_confirm).format(addDays))
+//                .setCancelable(true)
+//                .setPositiveButton(R.string.yes) { _, _ ->
+//                    reschedule(addTime = addDays * Consts.DAY_IN_SECONDS * 1000L)
+//                }
+//                .setNegativeButton(R.string.cancel) { _, _ ->
+//                }
+//                .create()
+//                .show()
+//    }
+//
 
-        AlertDialog.Builder(this)
-                .setMessage(getString(R.string.move_event_confirm).format(addDays))
-                .setCancelable(true)
-                .setPositiveButton(R.string.yes) { _, _ ->
-                    reschedule(addTime = addDays * Consts.DAY_IN_SECONDS * 1000L)
-                }
-                .setNegativeButton(R.string.cancel) { _, _ ->
-                }
-                .create()
-                .show()
+    private fun confirmAndEdit() {
+        if (!event.isRepeating) {
+            val intent = Intent(this, EditEventActivity::class.java)
+                    .putExtra(EditEventActivity.EVENT_ID, event.eventId)
+                    .putExtra(EditEventActivity.INSTANCE_START, event.instanceStartTime)
+                    .putExtra(EditEventActivity.INSTANCE_END, event.instanceEndTime)
+            startActivity(intent)
+            finish()
+        } else {
+            AlertDialog.Builder(this)
+                    .setMessage(getString(R.string.edit_series_question))
+                    .setCancelable(true)
+                    .setPositiveButton(R.string.yes) { _, _ ->
+                        val intent = Intent(this, EditEventActivity::class.java)
+                                .putExtra(EditEventActivity.EVENT_ID, event.eventId)
+                                .putExtra(EditEventActivity.INSTANCE_START, event.startTime)
+                                .putExtra(EditEventActivity.INSTANCE_END, event.endTime)
+                        startActivity(intent)
+                        finish()
+                    }
+                    .setNegativeButton(R.string.cancel) { _, _ ->
+                    }
+                    .create()
+                    .show()
+        }
     }
 
     private fun confirmAndDelete() {
         AlertDialog.Builder(this)
-                .setMessage(getString(R.string.delete_event_question))
+                .setMessage(getString(if (event.isRepeating) R.string.delete_recurring_event else R.string.delete_event_question))
                 .setCancelable(true)
                 .setPositiveButton(R.string.yes) { _, _ ->
                     CalendarProvider.deleteEvent(this, event.eventId)
+                    if (!viewForFutureEvent) {
+                        ApplicationController.dismissEvent(this, EventFinishType.DeletedInTheApp, event)
+                    }
                     finish()
                 }
                 .setNegativeButton(R.string.cancel) { _, _ ->
                 }
                 .create()
                 .show()
-
     }
 
     private fun reschedule(addTime: Long) {

@@ -5,4 +5,8 @@
     <item android:id="@+id/action_move_next_week" android:title="@string/next_week" />
     <item android:id="@+id/action_move_next_month_30d" android:title="@string/next_month_30d" />
 
+    <item android:id="@+id/action_move_copy_next_day" android:title="@string/copy_next_day" />
+    <item android:id="@+id/action_move_copy_next_week" android:title="@string/copy_next_week" />
+    <item android:id="@+id/action_move_copy_next_month_30d" android:title="@string/copy_next_month_30d" />
+
 </menu>

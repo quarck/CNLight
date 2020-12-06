@@ -110,6 +110,9 @@
 
     <string name="complete_from_the_app" formatted="false">In the app on %s</string>
     <string name="complete_from_notification" formatted="false">Via notification %s</string>
+    <string name="event_deleted_in_the_app" formatted="false">Ev. deleted on %s</string>
+
+
     <string name="event_moved_new_time" formatted="false">Moved, new time: %s</string>
     <string name="mark_not_finished">Mark not done</string>
 
@@ -245,6 +248,10 @@
     <string name="next_week">Next Week</string>
     <string name="next_month_30d">Next Month (+30d)</string>
 
+    <string name="copy_next_day">Next Day (copy inst.)</string>
+    <string name="copy_next_week">Next Week (copy inst.)</string>
+    <string name="copy_next_month_30d">Next Month (+30d) (copy inst.)</string>
+
     <string name="move_event_confirm" formatted="false">Move event by %d days?</string>
     <string name="add_event">Add Event</string>
     <string name="nav_header_title">Calendar</string>
@@ -299,6 +306,9 @@
     <string name="menu_calendar">Calendar</string>
     <string name="edit">Edit</string>
     <string name="delete_event_question">Delete this event?</string>
+    <string name="delete_recurring_event">Delete the recurring series?</string>
+    <string name="edit_series_question">Edit the recurring series?</string>
+    <string name="can_only_edit_the_whole_series">ERROR: can only edit the whole series!</string>
 
 </resources>
 

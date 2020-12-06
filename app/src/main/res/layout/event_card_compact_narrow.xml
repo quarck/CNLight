@@ -37,8 +37,8 @@
             android:layout_marginStart="@dimen/compact_view_left_margin"
             android:layout_marginEnd="@dimen/compact_view_right_margin"
             android:layout_marginTop="2dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="1dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="0dp"
 
             android:layout_toEndOf="@id/compact_view_calendar_color"
             android:layout_alignParentTop="true"
@@ -58,7 +58,7 @@
             android:layout_marginBottom="2dp"
 
             android:paddingTop="1dp"
-            android:paddingBottom="4dp"
+            android:paddingBottom="10dp"
 
             android:text="sdfasdfasfd asdf asdf asdf asdf asdf asdf adsfasdf asdf asdf asdf asfd asdf asdf asdf asdf asdf asd fsadf "
 

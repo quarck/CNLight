@@ -454,7 +454,8 @@ enum class EventFinishType(val code: Int) {
     ManuallyViaNotification(0),
     ManuallyInTheApp(1),
     AutoDueToCalendarMove(2),
-    EventMovedInTheApp(3);
+    EventMovedInTheApp(3),
+    DeletedInTheApp(4);
 
     companion object {
         @JvmStatic

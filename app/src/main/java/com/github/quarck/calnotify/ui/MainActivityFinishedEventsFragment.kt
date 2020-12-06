@@ -54,6 +54,9 @@ fun FinishedEventAlertRecord.formatReason(ctx: Context): String =
 
             EventFinishType.EventMovedInTheApp ->
                 String.format(ctx.resources.getString(R.string.event_moved_new_time), dateToStr(ctx, this.event.startTime))
+
+            EventFinishType.DeletedInTheApp ->
+                String.format(ctx.resources.getString(R.string.event_deleted_in_the_app), dateToStr(ctx, this.finishTime))
         }
 
 class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<FinishedEventAlertRecord> {
