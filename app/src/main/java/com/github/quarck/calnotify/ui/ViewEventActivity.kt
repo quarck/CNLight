@@ -445,6 +445,7 @@ open class ViewEventActivity : AppCompatActivity() {
                 .setCancelable(true)
                 .setPositiveButton(R.string.yes) { _, _ ->
                     CalendarProvider.deleteEvent(this, event.eventId)
+                    finish()
                 }
                 .setNegativeButton(R.string.cancel) { _, _ ->
                 }

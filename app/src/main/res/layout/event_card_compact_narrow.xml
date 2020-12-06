@@ -7,24 +7,24 @@
     android:id="@+id/card_view_main_holder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="64dp"
     android:background="@color/true_black_as_night">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="wrap_content"
         android:id="@+id/compact_view_content_layout"
         >
 
         <View
-            android:id="@+id/compact_view_calendar_color"
+            android:id="@+id/compact_view_calendar_color_align"
             android:layout_width="10dp"
-            android:layout_height="match_parent"
-            android:background="@color/cal_sample_primary"
+            android:layout_height="0.5dp"
+            android:background="@color/background"
             android:layout_marginStart="2dp"
             android:layout_marginEnd="5dp"
             android:layout_marginTop="1.5dp"
             android:layout_marginBottom="0.5dp"/>
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -36,8 +36,9 @@
 
             android:layout_marginStart="@dimen/compact_view_left_margin"
             android:layout_marginEnd="@dimen/compact_view_right_margin"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="1dp"
+            android:layout_marginTop="2dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="1dp"
 
             android:layout_toEndOf="@id/compact_view_calendar_color"
             android:layout_alignParentTop="true"
@@ -52,21 +53,32 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/primary_text"
             android:ellipsize="end"
-            android:maxLines="1"
             android:layout_marginStart="@dimen/compact_view_left_margin"
             android:layout_marginEnd="@dimen/compact_view_right_margin"
+            android:layout_marginBottom="2dp"
 
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="3dp"
+            android:paddingTop="1dp"
+            android:paddingBottom="4dp"
 
-            android:text="@string/event_title_example"
+            android:text="sdfasdfasfd asdf asdf asdf asdf asdf asdf adsfasdf asdf asdf asdf asfd asdf asdf asdf asdf asdf asd fsadf "
 
             android:layout_below="@id/card_view_event_datetime"
 
 
-            android:layout_toEndOf="@id/compact_view_calendar_color"
+            android:layout_toEndOf="@id/compact_view_calendar_color_align"
 
             />
+
+        <View
+            android:id="@+id/compact_view_calendar_color"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="@color/cal_sample_primary"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="5dp"
+            android:layout_alignTop="@id/card_view_event_datetime"
+            android:layout_alignBottom="@id/card_view_event_name"/>
+
 
 
     </RelativeLayout>
