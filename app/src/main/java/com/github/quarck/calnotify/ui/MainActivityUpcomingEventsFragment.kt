@@ -38,11 +38,13 @@ import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 
-class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<MonitorDataPair> {
+class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<EventAlertRecord> {
 
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerViewToday: RecyclerView
+    private lateinit var recyclerViewOther: RecyclerView
 
-    private var adapter: SimpleEventListAdapter<MonitorDataPair>? = null
+    private var adapterToday: SimpleEventListAdapter<EventAlertRecord>? = null
+    private var adapterOther: SimpleEventListAdapter<EventAlertRecord>? = null
 
     private var primaryColor: Int? = Consts.DEFAULT_CALENDAR_EVENT_COLOR
     private var eventFormatter: EventFormatter? = null
@@ -51,6 +53,8 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
     private var eventReminderTimeFmt: String? = null
     private var colorSkippedItemBotomLine: Int  = 0x7f3f3f3f
     private var colorNonSkippedItemBottomLine: Int = 0x7f7f7f7f
+
+    private var monitorEntries = mapOf<MonitorEventAlertEntryKey, MonitorEventAlertEntry>()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -63,11 +67,8 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
             ctx ->
             primaryColor = ContextCompat.getColor(ctx, R.color.primary)
             eventFormatter  = EventFormatter(ctx)
-            adapter =
-                    SimpleEventListAdapter(
-                            ctx,
-                            R.layout.event_card_compact,
-                            this)
+            adapterToday = SimpleEventListAdapter(ctx, R.layout.event_card_compact, this)
+            adapterOther = SimpleEventListAdapter(ctx, R.layout.event_card_compact, this)
 
             statusHandled = ctx.resources.getString(R.string.event_was_marked_as_finished)
             eventReminderTimeFmt = ctx.resources.getString(R.string.reminder_at_fmt)
@@ -76,17 +77,19 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
             colorNonSkippedItemBottomLine = ContextCompat.getColor(ctx, R.color.secondary_text)
         }
 
-        recyclerView = root.findViewById<RecyclerView>(R.id.list_events)
-        recyclerView.adapter = adapter;
-        adapter?.recyclerView = recyclerView
+        recyclerViewToday = root.findViewById<RecyclerView>(R.id.list_events_today)
+        recyclerViewToday.adapter = adapterToday
+        adapterToday?.recyclerView = recyclerViewToday
+        recyclerViewToday.isNestedScrollingEnabled = false
+
+        recyclerViewOther = root.findViewById<RecyclerView>(R.id.list_events_other)
+        recyclerViewOther.adapter = adapterOther
+        adapterOther?.recyclerView = recyclerViewOther
+        recyclerViewOther.isNestedScrollingEnabled = false
 
         return root
     }
 
-    // TODO: coroutines!!!
-    // TODO: coroutines!!!
-    // TODO: coroutines!!!
-    // TODO: coroutines!!!
     override fun onResume() {
         DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
@@ -94,31 +97,36 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
         this.activity?.let {
             activity ->
             background {
+
                 val from = System.currentTimeMillis()
+                val mid = from + Consts.UPCOMING_EVENTS_WINDOW / 2
                 val to = from + Consts.UPCOMING_EVENTS_WINDOW
 
-                val monitorEntries =
+                monitorEntries =
                         CalendarMonitor(CalendarProvider)
                                 .getAlertsForAlertRange(activity, scanFrom = from, scanTo = to)
                                 .associateBy{ it.key }
 
-                val events =
+                val events1 =
                         CalendarProvider
-                                .getEventAlertsForInstancesInRange(activity, from, to)
-                                .filter {
-                                    it.alertTime >= from
-                                }
-                                .map {
-                                    ev ->
-                                    val monitorEntry = monitorEntries.getOrElse(
-                                            ev.monitorEntryKey, { MonitorEventAlertEntry.fromEventAlertRecord(ev) })
-                                    MonitorDataPair(monitorEntry, ev)
-                                }
-                                .sortedBy { it -> it.eventEntry.alertTime }
-                                .toMutableList()
+                                .getEventAlertsForInstancesInRange(activity, from, mid)
+                                .filter { it.alertTime >= from }
+                                .partition { isToday(it) }
+
+                val today = events1.first.sortedBy { it.alertTime }.toMutableList()
+
+                activity.runOnUiThread { adapterToday?.setEventsToDisplay(today) }
+
+                val events2 =
+                        CalendarProvider
+                                .getEventAlertsForInstancesInRange(activity, mid, to)
+                                .filter { it.alertTime >= from }
+
+
+                val otherDays = (events1.second + events2).sortedBy { it.alertTime }.toMutableList()
 
                 activity.runOnUiThread {
-                    adapter?.setEventsToDisplay(events)
+                    adapterOther?.setEventsToDisplay(otherDays)
                 }
             }
         }
@@ -126,54 +134,47 @@ class MainActivityUpcomingEventsFragment : Fragment(), SimpleEventListCallback<M
     }
 
     // TODO: add an option to view the event, not only to restore it
-    override fun onItemClick(v: View, position: Int, entry: MonitorDataPair) {
+    override fun onItemClick(v: View, position: Int, entry: EventAlertRecord) {
         this.context?.let {
             ctx ->
             startActivity(
                     Intent(ctx, ViewEventActivity::class.java)
-                            .putExtra(Consts.INTENT_EVENT_ID_KEY, entry.eventEntry.eventId)
-                            .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, entry.eventEntry.instanceStartTime)
-                            .putExtra(Consts.INTENT_ALERT_TIME, entry.eventEntry.alertTime)
+                            .putExtra(Consts.INTENT_EVENT_ID_KEY, entry.eventId)
+                            .putExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, entry.instanceStartTime)
+                            .putExtra(Consts.INTENT_ALERT_TIME, entry.alertTime)
                             .putExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, true)
                             .putExtra(Consts.INTENT_VIEW_FUTURE_EVENT_EXTRA, true)
                             .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
     }
 
-    override fun getItemTitle(entry: MonitorDataPair): String =  entry.eventEntry.title
+    override fun getItemTitle(entry: EventAlertRecord): String =  entry.title
 
-    override fun getUseBoldTitle(entry: MonitorDataPair): Boolean = isToday(entry.eventEntry)
+    override fun getUseBoldTitle(entry: EventAlertRecord): Boolean = false
 
     private fun isToday(event: EventAlertRecord): Boolean =
             if (event.isAllDay) DateUtils.isToday(event.displayedStartTime)
             else DateTimeUtils.isUTCToday(event.displayedStartTime)
 
-    override fun getItemMiddleLine(entry: MonitorDataPair): String {
-        return eventFormatter?.formatDateTimeOneLine(entry.eventEntry) ?: "NULL"
+    override fun getItemMiddleLine(entry: EventAlertRecord): String {
+        return eventFormatter?.formatDateTimeOneLine(entry) ?: "NULL"
     }
 
-    override fun getItemBottomLine(entry: MonitorDataPair): Pair<String, Int> {
+    override fun getItemBottomLine(entry: EventAlertRecord): Pair<String, Int> {
 
-        val reminderLine = eventFormatter?.let { (eventReminderTimeFmt ?: "%s").format(it.formatTimePoint(entry.monitorEntry.alertTime, noWeekDay = true)) }
+        val monEntry = monitorEntries.get(entry.monitorEntryKey)
+        val wasHandled = monEntry?.wasHandled == true
+        val reminderLine = eventFormatter?.let { (eventReminderTimeFmt ?: "%s").format(it.formatTimePoint(entry.alertTime, noWeekDay = true)) } ?: ""
 
-        val line =
-                if (entry.monitorEntry.wasHandled)
-                    (statusHandled ?: "/SKIP/") + " " + reminderLine
-                else
-                    reminderLine
-
-        val color =
-                if (entry.monitorEntry.wasHandled)
-                    colorSkippedItemBotomLine
-                else
-                    colorNonSkippedItemBottomLine
-
-        return Pair(line ?: "", color)
+        return if (wasHandled)
+            Pair((statusHandled ?: "/SKIP/") + " " + reminderLine, colorSkippedItemBotomLine)
+        else
+            Pair(reminderLine, colorNonSkippedItemBottomLine)
     }
 
-    override fun getItemColor(entry: MonitorDataPair): Int =
-            if (entry.eventEntry.color != 0)
-                entry.eventEntry.color.adjustCalendarColor()
+    override fun getItemColor(entry: EventAlertRecord): Int =
+            if (entry.color != 0)
+                entry.color.adjustCalendarColor()
             else
                 primaryColor ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR
 
