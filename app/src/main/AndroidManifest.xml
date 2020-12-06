@@ -34,7 +34,7 @@
         </activity>
         <activity
             android:name=".ui.ViewEventActivity"
-            android:label="@string/view_event"
+            android:label=""
             android:launchMode="singleTask"
             android:parentActivityName=".ui.MainActivityNG"
             android:screenOrientation="portrait"

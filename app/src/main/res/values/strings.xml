@@ -113,6 +113,8 @@
     <string name="event_moved_new_time" formatted="false">Moved, new time: %s</string>
     <string name="mark_not_finished">Mark not done</string>
 
+    <string name="restore_notification">Restore notification</string>
+
     <string name="title_activity_privacy_policy">Privacy Policy</string>
 
     <string name="privacy_policy_title">PRIVACY POLICY</string>
@@ -291,9 +293,12 @@
     <string name="delete_event">Delete event</string>
     <string name="move_event">move_event</string>
     <string name="snooze_event">Snooze event</string>
-    <string name="skip_done">Skip (done)</string>
-    <string name="do_not_skip_not_done">Do not skip (not done)</string>
+    <string name="skip_done">Skip notification</string>
+    <string name="do_not_skip_not_done">Don\'t skip notification</string>
+    <string name="dismiss_notification">Dismiss</string>
     <string name="menu_calendar">Calendar</string>
+    <string name="edit">Edit</string>
+    <string name="delete_event_question">Delete this event?</string>
 
 </resources>
 

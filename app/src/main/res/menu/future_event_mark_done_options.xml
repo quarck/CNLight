@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:id="@+id/action_mark_done" android:title="@string/skip_done" />
-    <item android:id="@+id/action_mark_note_done" android:title="@string/do_not_skip_not_done" />
-
-</menu>

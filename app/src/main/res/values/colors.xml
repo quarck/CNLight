@@ -3,7 +3,7 @@
 
     <color name="background">#000</color>
 
-    <color name="backgroundToolbar">#222</color>
+    <color name="backgroundToolbar">#111111</color>
 
     <color name="primary">#A08375</color>
     <color name="primary_dark">#BAA59C</color>

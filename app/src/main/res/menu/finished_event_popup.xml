@@ -6,6 +6,6 @@
 
     <item
         android:id="@+id/action_mark_not_finished"
-        android:title="@string/mark_not_finished" />
+        android:title="@string/restore_notification" />
 
 </menu>
