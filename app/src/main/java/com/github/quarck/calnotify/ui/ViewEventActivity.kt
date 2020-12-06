@@ -44,6 +44,7 @@ import android.text.method.ScrollingMovementMethod
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
 import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
 
 // TODO: add repeating rule and calendar name somewhere on the snooze activity
@@ -324,14 +325,13 @@ open class ViewEventActivity : AppCompatActivity() {
             menu.findItem(R.id.action_delete_event)?.isVisible = false
         }
 
-        if (viewForFutureEvent) {
+        if (viewForFutureEvent && event.alertTime != 0L ) {
             menu.findItem(R.id.action_dismiss)?.isVisible = false
 
-            val now = System.currentTimeMillis()
-            if (event.instanceStartTime !in now until now + 2 * Consts.DAY_IN_MILLISECONDS) {
-                menu.findItem(R.id.action_mark_done)?.isVisible = false
-                menu.findItem(R.id.action_mark_not_done)?.isVisible = false
-            }
+            val wasHandled = CalendarMonitor(CalendarProvider).getAlertWasHandled(this, event)
+            val inShortRange = (event.instanceStartTime-System.currentTimeMillis()) in 0 until 2 * Consts.DAY_IN_MILLISECONDS
+            menu.findItem(R.id.action_mark_done)?.isVisible = !wasHandled && inShortRange
+            menu.findItem(R.id.action_mark_not_done)?.isVisible = wasHandled && inShortRange
         }
         else {
             menu.findItem(R.id.action_mark_done)?.isVisible = false
