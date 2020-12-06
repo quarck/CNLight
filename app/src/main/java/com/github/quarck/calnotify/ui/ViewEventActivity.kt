@@ -469,7 +469,7 @@ open class ViewEventActivity : AppCompatActivity() {
                 .setCancelable(true)
                 .setPositiveButton(R.string.yes) { _, _ ->
                     CalendarProvider.deleteEvent(this, event.eventId)
-                    if (!viewForFutureEvent) {
+                    if (!viewForFutureEvent && event.alertTime != 0L) {
                         ApplicationController.dismissEvent(this, EventFinishType.DeletedInTheApp, event)
                     }
                     finish()
