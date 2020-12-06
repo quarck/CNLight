@@ -114,7 +114,7 @@ class SimpleEventListAdapter<T>(
             holder.eventTitleText.text = cb.getItemTitle(entry) // entry.event.title
 
             if (cb.getUseBoldTitle(entry))
-               holder.eventTitleText.setTypeface(null, Typeface.BOLD)
+               holder.eventTitleText.setTypeface(null, Typeface.BOLD_ITALIC)
             else
                 holder.eventTitleText.setTypeface(null, Typeface.NORMAL)
 
