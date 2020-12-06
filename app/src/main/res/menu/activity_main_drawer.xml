@@ -9,10 +9,6 @@
             android:icon="@drawable/ic_view_agenda_white_24dp"
             android:title="@string/menu_home" />
         <item
-            android:id="@+id/nav_finished"
-            android:icon="@drawable/ic_done_all_white_24dp"
-            android:title="@string/menu_finished" />
-        <item
             android:id="@+id/nav_upcoming"
             android:icon="@drawable/ic_inbox_white_24dp"
             android:title="@string/menu_upcoming" />
@@ -21,6 +17,14 @@
             android:id="@+id/nav_calendar"
             android:icon="@drawable/ic_date_range_white_24dp"
             android:title="@string/menu_calendar" />
+    </group>
+
+    <group android:id="@+id/group_notification_log"
+        android:checkableBehavior="single">
+    <item
+        android:id="@+id/nav_finished"
+        android:icon="@drawable/ic_done_all_white_24dp"
+        android:title="@string/menu_finished" />
     </group>
 
     <group android:id="@+id/group_about_n_settings"

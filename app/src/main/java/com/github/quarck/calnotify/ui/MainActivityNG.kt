@@ -75,8 +75,8 @@ class MainActivityNG : AppCompatActivity() {
                 setOf(
                     R.id.nav_home,
                     R.id.nav_upcoming,
-                    R.id.nav_finished,
                     R.id.nav_calendar,
+                    R.id.nav_finished,
                     R.id.nav_about,
                     R.id.nav_settings
                 ),
