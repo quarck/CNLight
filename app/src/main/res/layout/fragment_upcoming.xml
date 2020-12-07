@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,65 +9,13 @@
     android:orientation="vertical"
     android:background="@color/true_black_as_night">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-        tools:context=".ui.MainActivityUpcomingEventsFragment"
-        android:orientation="vertical"
-        android:background="@color/true_black_as_night">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/primary_text"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:layout_marginStart="@dimen/compact_view_left_margin"
-        android:layout_marginEnd="@dimen/compact_view_right_margin"
-
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-
-        android:text="@string/today_semi"
-        />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_events_today"
+        android:id="@+id/list_events"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/background"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/primary_text"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:layout_marginStart="@dimen/compact_view_left_margin"
-        android:layout_marginEnd="@dimen/compact_view_right_margin"
-
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"
-
-
-        android:text="@string/tomorrow_and_following"
-        />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_events_other"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/background"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        />
-
-    </LinearLayout>
-
-</ScrollView>
+</LinearLayout>

@@ -158,6 +158,28 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/event_card_heading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/compact_view_layout_height"
+        android:background="@color/true_black_as_night"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/event_view_heading_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/primary_text"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="25dp"
+            android:text="HELLO WORLD"
+            tools:ignore="HardcodedText" />
+
+    </RelativeLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="0.25dp"

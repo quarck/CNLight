@@ -52,43 +52,25 @@ class SimpleEventListAdapter<T>(
         //var eventId: Long = 0;
         var entry: T? = null
 
-        var eventHolder: RelativeLayout?
-        var eventTitleText: TextView
+        var eventHolder: RelativeLayout? = itemView.findViewById<RelativeLayout>(R.id.card_view_main_holder)
+        var eventTitleText: TextView = itemView.findViewById<TextView>(R.id.card_view_event_name)
 
-        var eventDateText: TextView
-        var eventTimeText: TextView
+        var eventDateText: TextView = itemView.findViewById<TextView>(R.id.card_view_event_date)
+        var eventTimeText: TextView = itemView.findViewById<TextView>(R.id.card_view_event_time)
 
-        var snoozedUntilText: TextView?
-        val compactViewCalendarColor: View?
+        var snoozedUntilText: TextView? = itemView.findViewById<TextView>(R.id.card_view_snoozed_until)
+        val compactViewCalendarColor: View? = itemView.findViewById<View?>(R.id.compact_view_calendar_color)
 
-        val compactViewContentLayout: RelativeLayout?
-        var undoLayout: RelativeLayout?
+        val compactViewContentLayout: RelativeLayout? = itemView.findViewById<RelativeLayout?>(R.id.compact_view_content_layout)
+        var undoLayout: RelativeLayout? = itemView.findViewById<RelativeLayout?>(R.id.event_card_undo_layout)
 
-        var calendarColor: ColorDrawable
+        var calendarColor: ColorDrawable = ColorDrawable(0)
 
         init {
-            eventHolder = itemView.findViewById<RelativeLayout>(R.id.card_view_main_holder)
-            eventTitleText = itemView.findViewById<TextView>(R.id.card_view_event_name)
-
-            eventDateText = itemView.findViewById<TextView>(R.id.card_view_event_date)
-            eventTimeText = itemView.findViewById<TextView>(R.id.card_view_event_time)
-            snoozedUntilText = itemView.findViewById<TextView>(R.id.card_view_snoozed_until)
-
-            undoLayout = itemView.findViewById<RelativeLayout?>(R.id.event_card_undo_layout)
-
-            compactViewContentLayout = itemView.findViewById<RelativeLayout?>(R.id.compact_view_content_layout)
-            compactViewCalendarColor = itemView.findViewById<View?>(R.id.compact_view_calendar_color)
-
-            calendarColor = ColorDrawable(0)
-
-
-            val itemClickListener = View.OnClickListener {
-
+            eventHolder?.setOnClickListener{
                 if (entry != null)
                     cb.onItemClick(eventTitleText, adapterPosition, entry!!);
             }
-
-            eventHolder?.setOnClickListener(itemClickListener)
         }
     }
 
