@@ -157,20 +157,20 @@ open class EditEventActivity : AppCompatActivity() {
 
     private lateinit var persistentState: EditEventActivityState
 
-    var calendarProvider = CalendarProvider
+    private var calendarProvider = CalendarProvider
 
-    val reminders = mutableListOf<ReminderWrapper>()
+    private val reminders = mutableListOf<ReminderWrapper>()
 
-    var originalEvent: EventRecord? = null
-    var originalInstanceStart = 0L
-    var originalInstanceEnd = 0L
+    private var originalEvent: EventRecord? = null
+    private var originalInstanceStart = 0L
+    private var originalInstanceEnd = 0L
 
-    var rRule: String = ""
-    var rDate: String = ""
-    var exRRule: String = ""
-    var exRDate: String = ""
+    private var rRule: String = ""
+    private var rDate: String = ""
+    private var exRRule: String = ""
+    private var exRDate: String = ""
 
-    val anyChanges: Boolean
+    private val anyChanges: Boolean
         get() {
             val details = originalEvent?.details
 
@@ -269,10 +269,10 @@ open class EditEventActivity : AppCompatActivity() {
                 }
             }
         }
-        else {
-            if (receivedSharedText.isEmpty())
-                findViewById<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
-        }
+//        else {
+//            if (receivedSharedText.isEmpty())
+//                findViewById<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
+//        }
 
         layoutMain = findViewById(R.id.layout_main)
         layoutRecurrence = findViewById(R.id.layout_recurrence)
@@ -413,8 +413,6 @@ open class EditEventActivity : AppCompatActivity() {
                 to.dayOfMonth = toUtc.dayOfMonth
             }
 
-            eventTitleText.clearFocus()
-
             updateDateTimeUI()
 
             for (reminder in eventToEdit.reminders) {
@@ -463,6 +461,9 @@ open class EditEventActivity : AppCompatActivity() {
 
             updateReminders()
         }
+
+        eventTitleText.requestFocus()
+        eventTitleText.setSelection(eventTitleText.text.length)
 
         updateRecurrenceLabel()
     }
