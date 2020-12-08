@@ -255,7 +255,6 @@ open class EditEventActivity : AppCompatActivity() {
 
         if (eventId != -1L) {
             originalEvent = CalendarProvider.getEvent(this, eventId)
-
             if (originalEvent == null) {
                 Toast.makeText(this, R.string.event_not_found, Toast.LENGTH_LONG).show()
                 finish()
@@ -267,12 +266,12 @@ open class EditEventActivity : AppCompatActivity() {
                     originalInstanceStart = it.startTime
                     originalInstanceEnd = it.endTime
                 }
+                else {
+                    originalInstanceStart = it.startTime
+                    originalInstanceEnd = it.startTime + (it.details.duration ?: Consts.HOUR_IN_MILLISECONDS)
+                }
             }
         }
-//        else {
-//            if (receivedSharedText.isEmpty())
-//                findViewById<LinearLayout>(R.id.layout_focus_catcher).visibility = View.GONE
-//        }
 
         layoutMain = findViewById(R.id.layout_main)
         layoutRecurrence = findViewById(R.id.layout_recurrence)
