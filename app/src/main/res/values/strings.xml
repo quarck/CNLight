@@ -311,6 +311,7 @@
     <string name="can_only_edit_the_whole_series">ERROR: can only edit the whole series!</string>
     <string name="today_semi">Upcoming today:</string>
     <string name="tomorrow_and_following">On other days:</string>
+    <string name="new_evt">New Evt.</string>
 
 </resources>
 
