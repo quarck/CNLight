@@ -41,9 +41,9 @@
     <color name="true_black_as_night">#000</color>
 
     <color name="cal_current_month">#EEEEEF</color>
-    <color name="cal_current_day">#03A9F4</color>
+    <color name="cal_today_color">#Ff2924</color>
     <color name="cal_other_month">#4D4D4E</color>
 
-    <color name="cal_today_bg">#151519</color>
+    <color name="cal_current_day_bg">#757575</color>
 
 </resources>

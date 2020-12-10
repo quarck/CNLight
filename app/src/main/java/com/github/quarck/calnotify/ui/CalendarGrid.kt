@@ -39,9 +39,9 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onDaySelected
 
     private val currentMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_month))
     private val otherMonthColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_other_month))
-    private val currentDayColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_current_day))
+    private val todayDayColor = ColorStateList.valueOf(ContextCompat.getColor(ctx, R.color.cal_today_color))
     private val defaultBackground = ContextCompat.getColor(ctx, R.color.background)
-    private val todayBackground = ContextCompat.getColor(ctx, R.color.cal_today_bg)
+    private val currentDayBackground = ContextCompat.getColor(ctx, R.color.cal_current_day_bg)
 
     private val labelOnTouchListener: View.OnTouchListener
     private val undLayoutOnTouchListener: View.OnTouchListener
@@ -169,20 +169,16 @@ class CalendarGrid(val ctx: Context, inflater: LayoutInflater, val onDaySelected
     }
 
     private fun getDayBackground(day: Calendar): Int {
-        return if (day.year == today.year && day.month == today.month && day.dayOfMonth == today.dayOfMonth)
-            todayBackground
+        return if (day.month == displayMonth && day.dayOfMonth == displayDayOfMonth)
+            currentDayBackground
         else
             defaultBackground
     }
 
     private fun getDayColor(day: Calendar): ColorStateList {
-        return if (day.month == displayMonth) {
-            if (day.dayOfMonth == displayDayOfMonth)
-                currentDayColor
-            else
-                currentMonthColor
-        }
-        else otherMonthColor
+        if (day.year == today.year && day.month == today.month && day.dayOfMonth == today.dayOfMonth)
+            return todayDayColor
+        return if (day.month == displayMonth) currentMonthColor else otherMonthColor
     }
 
     companion object {
