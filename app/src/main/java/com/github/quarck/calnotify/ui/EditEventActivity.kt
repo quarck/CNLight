@@ -685,7 +685,8 @@ open class EditEventActivity : AppCompatActivity() {
                 exRDate = exRDate,
                 color = originalEvent?.color ?: 0,
                 reminders = remindersToAdd,
-                lastDate = null
+                lastDate = null,
+                colorKey = originalEvent?.details?.colorKey
         )
 
         val eventToEdit = originalEvent

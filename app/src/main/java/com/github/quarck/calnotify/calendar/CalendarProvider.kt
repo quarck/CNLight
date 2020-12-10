@@ -168,7 +168,8 @@ object CalendarProvider  {
                     CalendarContract.Events.STATUS,
                     CalendarContract.Events.SELF_ATTENDEE_STATUS,
                     CalendarContract.Events.LAST_DATE,
-                    CalendarContract.Events.DURATION
+                    CalendarContract.Events.DURATION,
+                    CalendarContract.Events.EVENT_COLOR_KEY
             )
 
     const val EVENT_PROJECTTION_INDEX_CALENDAR_ID = 0
@@ -188,6 +189,7 @@ object CalendarProvider  {
     const val EVENT_PROJECTTION_INDEX_ATTENDANCE = 14
     const val EVENT_PROJECTTION_INDEX_LAST_DATE = 15
     const val EVENT_PROJECTTION_INDEX_DURATION = 16
+    const val EVENT_PROJECTTION_INDEX_COLOR_KEY = 17
 
     private val instanceFields =
             arrayOf(
@@ -309,6 +311,7 @@ object CalendarProvider  {
         val attendance: Int? = cursor.getInt(EVENT_PROJECTTION_INDEX_ATTENDANCE)
         val lastDate: Long? = cursor.getLong(EVENT_PROJECTTION_INDEX_LAST_DATE)
         val duration: String? = cursor.getString(EVENT_PROJECTTION_INDEX_DURATION)
+        val colorKey: String? = cursor.getString(EVENT_PROJECTTION_INDEX_COLOR_KEY)
 
         if (title != null && start != null) {
 
@@ -339,7 +342,8 @@ object CalendarProvider  {
                             color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
                             title = title,
                             lastDate = lastDate,
-                            duration = duration?.let{ CalendarProviderHelper.parseRfc2445Duration(it) }
+                            duration = duration?.let{ CalendarProviderHelper.parseRfc2445Duration(it) },
+                            colorKey = colorKey
                     ),
                     eventStatus = EventStatus.fromInt(status),
                     attendanceStatus = AttendanceStatus.fromInt(attendance)
@@ -706,8 +710,8 @@ object CalendarProvider  {
 
         values.put(CalendarContract.Events.EVENT_LOCATION, details.location)
 
-        if (details.color != 0)
-            values.put(CalendarContract.Events.EVENT_COLOR, details.color) // just something
+        if (details.colorKey != null)
+            values.put(CalendarContract.Events.EVENT_COLOR_KEY, details.colorKey) // just something
 
         values.put(CalendarContract.Events.ACCESS_LEVEL, CalendarContract.Events.ACCESS_DEFAULT)
         values.put(CalendarContract.Events.AVAILABILITY, CalendarContract.Events.AVAILABILITY_BUSY)

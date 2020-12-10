@@ -101,7 +101,8 @@ data class CalendarEventDetails(
         val exRDate: String = "", // empty if not repeating
         val lastDate: Long? = null,
         val duration: Long? = null,
-        val color: Int = 0
+        val color: Int = 0,
+        val colorKey: String? = null
 ) {
 }
 
