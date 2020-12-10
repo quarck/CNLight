@@ -451,8 +451,8 @@ open class ViewEventActivity : AppCompatActivity() {
                     .setPositiveButton(R.string.yes) { _, _ ->
                         val intent = Intent(this, EditEventActivity::class.java)
                                 .putExtra(EditEventActivity.EVENT_ID, event.eventId)
-                                .putExtra(EditEventActivity.INSTANCE_START, event.startTime)
-                                .putExtra(EditEventActivity.INSTANCE_END, event.endTime)
+                                .putExtra(EditEventActivity.INSTANCE_START, event.instanceStartTime)
+                                .putExtra(EditEventActivity.INSTANCE_END, event.instanceEndTime)
                         startActivity(intent)
                         finish()
                     }
