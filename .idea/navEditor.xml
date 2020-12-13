@@ -20,7 +20,19 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="nav_complete">
+                  <entry key="nav_calendar">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="nav_finished">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
@@ -44,7 +56,7 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="nav_oncoming">
+                  <entry key="nav_settings">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
@@ -56,7 +68,7 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="nav_settings">
+                  <entry key="nav_upcoming">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
