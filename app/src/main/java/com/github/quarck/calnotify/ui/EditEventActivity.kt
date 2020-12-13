@@ -716,14 +716,8 @@ open class EditEventActivity : AppCompatActivity() {
         else { // recurrent and not the very first instance - will be creating the new event off the old one, and terminating the old one
             val eventId = editor.createEvent(this, calendar.calendarId, calendar.owner, details)
             if (eventId != -1L) {
-                if (editor.updateEvent(this, eventToEdit,
-                                eventToEdit.details.copy(
-                                        lastDate = details.startTime - 1000L,
-                                        rRule = oldRRule.apply { until = RRuleVal.UNTIL(details.startTime - 1000L)}.serialize() ))
-                ) {
-                    onEventUpdated(false, eventId, startTime)
-                } else
-                    Toast.makeText(this, R.string.failed_to_update_event_details, Toast.LENGTH_LONG).show()
+                calendarProvider.deleteEvent(this, eventToEdit.eventId)
+                onEventUpdated(false, eventId, startTime)
             } else
                 Toast.makeText(this, R.string.failed_to_update_event_details, Toast.LENGTH_LONG).show()
         }
