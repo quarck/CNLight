@@ -148,6 +148,7 @@ class CalendarEditor(val provider: CalendarProvider) {
         val details = oldEvent.details.copy(
                 startTime = newStartTime,
                 endTime = newEndTime,
+                duration = null,
                 rRule = "",
                 rDate = "",
                 exRRule = "",

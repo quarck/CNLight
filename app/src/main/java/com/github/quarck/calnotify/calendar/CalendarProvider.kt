@@ -341,7 +341,7 @@ object CalendarProvider  {
                             exRDate = exRDate ?: "",
                             color = color ?: Consts.DEFAULT_CALENDAR_EVENT_COLOR,
                             title = title,
-                            lastDate = lastDate,
+                            lastDate = if (lastDate != 0L) lastDate else null,
                             duration = duration?.let{ CalendarProviderHelper.parseRfc2445Duration(it) },
                             colorKey = colorKey
                     ),
