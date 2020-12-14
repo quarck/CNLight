@@ -307,7 +307,7 @@
     <string name="edit">Edit</string>
     <string name="delete_event_question">Delete this event?</string>
     <string name="delete_recurring_event">Delete the recurring series?</string>
-    <string name="edit_series_question">Edit the recurring series?</string>
+    <string name="edit_series_question">Edit the recurring series?\nOn save this will delete the old series and create new</string>
     <string name="can_only_edit_the_whole_series">ERROR: can only edit the whole series!</string>
     <string name="today_semi">Upcoming today:</string>
     <string name="tomorrow_and_following">On other days:</string>
