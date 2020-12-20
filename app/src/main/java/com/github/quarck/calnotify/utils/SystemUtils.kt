@@ -56,24 +56,6 @@ fun wakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, fn: () -> Unit
     }
 }
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun backgroundWakeLocked(pm: PowerManager, levelAndFlags: Int, tag: String, noinline fn: () -> Unit) {
-
-    val wakeLock = pm.newWakeLock(levelAndFlags, tag)
-            ?: throw Exception("Failed to acquire wakelock");
-
-    wakeLock.acquire(1800L * 1000L)
-
-    background {
-        try {
-            fn();
-        }
-        finally {
-            wakeLock.release()
-        }
-    }
-}
-
 fun AlarmManager.setExactAndAlarm(
         context: Context,
         useSetAlarmClock: Boolean, // settings: Settings,

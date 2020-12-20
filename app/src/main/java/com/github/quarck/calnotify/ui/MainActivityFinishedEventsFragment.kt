@@ -35,10 +35,10 @@ import com.github.quarck.calnotify.calendar.FinishedEventAlertRecord
 import com.github.quarck.calnotify.calendar.EventFinishType
 import com.github.quarck.calnotify.eventsstorage.FinishedEventsStorage
 import com.github.quarck.calnotify.utils.adjustCalendarColor
-import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.textutils.dateToStr
+import kotlinx.coroutines.*
 
 
 fun FinishedEventAlertRecord.formatReason(ctx: Context): String =
@@ -60,6 +60,8 @@ fun FinishedEventAlertRecord.formatReason(ctx: Context): String =
         }
 
 class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<FinishedEventAlertRecord> {
+
+    private val scope = MainScope()
 
     private lateinit var recyclerView: RecyclerView
 
@@ -99,28 +101,25 @@ class MainActivityFinishedEventsFragment : Fragment(), SimpleEventListCallback<F
         return root
     }
 
-    // TODO: coroutines!!!
-    // TODO: coroutines!!!
-    // TODO: coroutines!!!
-    // TODO: coroutines!!!
     override fun onResume() {
         DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
 
-        this.activity?.let {
-            activity ->
-            background {
-                val events =
-                        FinishedEventsStorage(activity).use {
-                            db ->
-                            db.events.sortedByDescending { it.finishTime }.toMutableList()
-                        }
-                activity.runOnUiThread {
-                    adapter?.setEventsToDisplay(events)
+        val ctx = this.activity ?: return
+
+        scope.launch {
+            val events = withContext(Dispatchers.IO) {
+                FinishedEventsStorage(ctx).use { db ->
+                    db.events.sortedByDescending { it.finishTime }.toMutableList()
                 }
             }
+            adapter?.setEventsToDisplay(events)
         }
+    }
 
+    override fun onDestroy() {
+        scope.cancel()
+        super.onDestroy()
     }
 
     // TODO: add an option to view the event, not only to restore it

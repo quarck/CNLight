@@ -38,10 +38,13 @@ import com.github.quarck.calnotify.utils.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.*
 import java.util.*
 
 
 class MainActivityCalendarFragment : Fragment() {
+
+    private val scope = MainScope()
 
     //private lateinit var staggeredLayoutManager: StaggeredGridLayoutManager
     private lateinit var recyclerView: RecyclerView
@@ -139,21 +142,20 @@ class MainActivityCalendarFragment : Fragment() {
 
     private fun reloadData() {
 
-        this.activity?.let { activity ->
-            background {
-                val from = currentDay.timeInMillis
-                val to = from + Consts.DAY_IN_MILLISECONDS
+        val ctx = this.activity ?: return
 
-                val events =
-                        CalendarProvider
-                                .getInstancesInRange(activity, from, to)
-                                .sortedBy { it -> it.instanceStartTime }
-                                .toMutableList()
+        scope.launch {
+            val from = currentDay.timeInMillis
+            val to = from + Consts.DAY_IN_MILLISECONDS
 
-                activity.runOnUiThread {
-                    adapter?.setEventsToDisplay(events)
-                }
+            val events = withContext(Dispatchers.IO) {
+                CalendarProvider
+                        .getInstancesInRange(ctx, from, to)
+                        .sortedBy { it -> it.instanceStartTime }
+                        .toMutableList()
             }
+
+            adapter?.setEventsToDisplay(events)
         }
     }
 
@@ -193,6 +195,11 @@ class MainActivityCalendarFragment : Fragment() {
     override fun onDetach() {
         super.onDetach()
         DevLog.info(LOG_TAG, "onDetach")
+    }
+
+    override fun onDestroy() {
+        scope.cancel()
+        super.onDestroy()
     }
 
     class CalendarEventListAdapter(

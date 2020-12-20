@@ -35,8 +35,8 @@ import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.CalendarProvider
 import com.github.quarck.calnotify.calendar.CalendarRecord
-import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
+import kotlinx.coroutines.*
 
 enum class CalendarListEntryType {Header, Calendar, Divider }
 
@@ -134,6 +134,8 @@ class CalendarListAdapter(val context: Context, var entries: Array<CalendarListE
 
 class CalendarsActivity : AppCompatActivity() {
 
+    private val scope = MainScope()
+
     private lateinit var adapter: CalendarListAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var noCalendarsText: TextView
@@ -167,51 +169,54 @@ class CalendarsActivity : AppCompatActivity() {
         noCalendarsText = findViewById<TextView>(R.id.no_calendars_text)
     }
 
+    override fun onDestroy() {
+        scope.cancel()
+        super.onDestroy()
+    }
+
     override fun onResume() {
         super.onResume()
 
-        background {
+        scope.launch {
             // load the data here
-            val calendars = CalendarProvider.getCalendars(this).toTypedArray()
 
-            val entries = mutableListOf<CalendarListEntry>()
+            val entriesFinal = withContext(Dispatchers.Default) {
+                val calendars = CalendarProvider.getCalendars(this@CalendarsActivity).toTypedArray()
 
-            // Arrange entries by accountName calendar
-            for ((accountName, type) in calendars.map { Pair(it.accountName, it.accountType) }.toSet()) {
+                val entries = mutableListOf<CalendarListEntry>()
 
-                // Add group title
-                entries.add(CalendarListEntry(type = CalendarListEntryType.Header, headerTitle = accountName))
+                // Arrange entries by accountName calendar
+                for ((accountName, type) in calendars.map { Pair(it.accountName, it.accountType) }.toSet()) {
 
-                // Add all the calendars for this accountName
-                entries.addAll(
-                        calendars
-                                .filter { it.accountName == accountName && it.accountType == type }
-                                .sortedBy { it.calendarId }
-                                .map {
-                                    CalendarListEntry(
-                                            type = CalendarListEntryType.Calendar,
-                                            calendar = it,
-                                            isHandled = settings.getCalendarIsHandled(it.calendarId))
-                                })
+                    // Add group title
+                    entries.add(CalendarListEntry(type = CalendarListEntryType.Header, headerTitle = accountName))
 
-                // Add a divider
-                entries.add(CalendarListEntry(type = CalendarListEntryType.Divider))
+                    // Add all the calendars for this accountName
+                    entries.addAll(
+                            calendars
+                                    .filter { it.accountName == accountName && it.accountType == type }
+                                    .sortedBy { it.calendarId }
+                                    .map {
+                                        CalendarListEntry(
+                                                type = CalendarListEntryType.Calendar,
+                                                calendar = it,
+                                                isHandled = settings.getCalendarIsHandled(it.calendarId))
+                                    })
+
+                    // Add a divider
+                    entries.add(CalendarListEntry(type = CalendarListEntryType.Divider))
+                }
+
+                // remove last divider
+                if (entries.size >= 1 && entries[entries.size - 1].type == CalendarListEntryType.Divider)
+                    entries.removeAt(entries.size - 1)
+
+                entries.toTypedArray()
             }
 
-            // remove last divider
-            if (entries.size >= 1 && entries[entries.size - 1].type == CalendarListEntryType.Divider)
-                entries.removeAt(entries.size - 1)
-
-            val entriesFinal = entries.toTypedArray()
-
-            runOnUiThread {
-                // update activity finally
-
-                noCalendarsText.visibility = if (entriesFinal.isNotEmpty()) View.GONE else View.VISIBLE
-
-                adapter.entries = entriesFinal
-                adapter.notifyDataSetChanged();
-            }
+            noCalendarsText.visibility = if (entriesFinal.isNotEmpty()) View.GONE else View.VISIBLE
+            adapter.entries = entriesFinal
+            adapter.notifyDataSetChanged()
         }
     }
 

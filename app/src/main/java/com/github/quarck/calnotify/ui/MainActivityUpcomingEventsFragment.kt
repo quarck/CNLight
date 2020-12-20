@@ -37,11 +37,10 @@ import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
-import com.github.quarck.calnotify.utils.DateTimeUtils
 import com.github.quarck.calnotify.utils.adjustCalendarColor
-import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
+import kotlinx.coroutines.*
 
 data class UpcomingEventAlertRecordWrap(
         val isToday: Boolean,
@@ -139,6 +138,8 @@ class UpcomingEventListAdapter(
 
 class MainActivityUpcomingEventsFragment : Fragment() {
 
+    private val scope = MainScope()
+
     private lateinit var recyclerView: RecyclerView
 
     private var adapter: UpcomingEventListAdapter? = null
@@ -190,33 +191,39 @@ class MainActivityUpcomingEventsFragment : Fragment() {
         DevLog.debug(LOG_TAG, "onResume")
         super.onResume()
 
-        this.activity?.let {
-            activity ->
-            background {
+        val ctx: Context = this.activity ?: return
 
-                val from = System.currentTimeMillis()
-                val to = from + Consts.UPCOMING_EVENTS_WINDOW
+        scope.launch {
 
+            val from = System.currentTimeMillis()
+            val to = from + Consts.UPCOMING_EVENTS_WINDOW
+
+            val merged = withContext(Dispatchers.IO) {
                 monitorEntries =
                         CalendarMonitor(CalendarProvider)
-                                .getAlertsForAlertRange(activity, scanFrom = from, scanTo = to)
-                                .associateBy{ it.key }
+                                .getAlertsForAlertRange(ctx, scanFrom = from, scanTo = to)
+                                .associateBy { it.key }
 
                 val events =
                         CalendarProvider
-                                .getEventAlertsForInstancesInRange(activity, from, to)
+                                .getEventAlertsForInstancesInRange(ctx, from, to)
                                 .filter { it.alertTime >= from }
-                                .map{ UpcomingEventAlertRecordWrap(false, it)}
+                                .map { UpcomingEventAlertRecordWrap(false, it) }
                                 .sortedBy { it.event?.alertTime ?: 0L }
                                 .partition { isTodayAlert(it.event) }
 
-                val merged = listOf(UpcomingEventAlertRecordWrap(true, null)) + events.first +
+                listOf(UpcomingEventAlertRecordWrap(true, null)) + events.first +
                         listOf(UpcomingEventAlertRecordWrap(false, null)) + events.second
-
-                activity.runOnUiThread { adapter?.setEventsToDisplay(merged) }
             }
+
+            adapter?.setEventsToDisplay(merged)
         }
 
+    }
+
+    override fun onDestroy() {
+        scope.cancel()
+        super.onDestroy()
     }
 
     private fun isTodayAlert(event: EventAlertRecord?): Boolean {

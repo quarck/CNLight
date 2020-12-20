@@ -38,9 +38,9 @@ import com.github.quarck.calnotify.calendar.EventAlertRecord
 import com.github.quarck.calnotify.calendar.EventFinishType
 import com.github.quarck.calnotify.eventsstorage.FinishedEventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.utils.background
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.*
 
 
 class DataUpdatedReceiverNG(val fragment: MainActivityHomeFragment): BroadcastReceiver() {
@@ -50,7 +50,7 @@ class DataUpdatedReceiverNG(val fragment: MainActivityHomeFragment): BroadcastRe
 
 class MainActivityHomeFragment : Fragment(), EventListCallback {
 
-    private val settings: Settings? by lazy { context?.run { Settings(this)}  }
+    private val scope = MainScope()
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var reloadLayout: RelativeLayout
@@ -121,12 +121,11 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
         context?.registerReceiver(dataUpdatedReceiver, IntentFilter(Consts.DATA_UPDATED_BROADCAST))
 
         reloadData()
-        // TODO: replace with coroutines!
-        // TODO: replace with coroutines!
-        // TODO: replace with coroutines!
-        background {
-            context?.let {
-                ApplicationController.onMainActivityResumed(it)
+
+        context?.let {
+            ctx ->
+            scope.launch(Dispatchers.Default) {
+                ApplicationController.onMainActivityResumed(ctx)
             }
         }
 
@@ -142,6 +141,11 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
     override fun onDetach() {
         super.onDetach()
         DevLog.info(LOG_TAG, "onDetach")
+    }
+
+    override fun onDestroy() {
+        scope.cancel()
+        super.onDestroy()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -187,40 +191,39 @@ class MainActivityHomeFragment : Fragment(), EventListCallback {
 
     private fun reloadData() {
 
-        this.context?.let {
-            ctx ->
-            background {
-                FinishedEventsStorage(ctx).use { it.purgeOld(System.currentTimeMillis(), Consts.BIN_KEEP_HISTORY_MILLISECONDS) }
+        val ctx = this.context ?: return
 
-                val events =
-                        EventsStorage(ctx).use {
+        scope.launch {
 
-                            db ->
-                            db.events.sortedWith(
-                                    Comparator<EventAlertRecord> {
-                                        lhs, rhs ->
+            val events =
+                withContext(Dispatchers.IO) {
+                    FinishedEventsStorage(ctx).use { it.purgeOld(System.currentTimeMillis(), Consts.BIN_KEEP_HISTORY_MILLISECONDS) }
 
-                                        if (lhs.snoozedUntil < rhs.snoozedUntil)
-                                            return@Comparator -1;
-                                        else if (lhs.snoozedUntil > rhs.snoozedUntil)
-                                            return@Comparator 1;
+                    EventsStorage(ctx).use {
+                        db ->
+                        db.events.sortedWith(
+                                Comparator<EventAlertRecord> {
+                                    lhs, rhs ->
 
-                                        if (lhs.lastStatusChangeTime > rhs.lastStatusChangeTime)
-                                            return@Comparator -1;
-                                        else if (lhs.lastStatusChangeTime < rhs.lastStatusChangeTime)
-                                            return@Comparator 1;
+                                    if (lhs.snoozedUntil < rhs.snoozedUntil)
+                                        return@Comparator -1;
+                                    else if (lhs.snoozedUntil > rhs.snoozedUntil)
+                                        return@Comparator 1;
 
-                                        return@Comparator 0;
+                                    if (lhs.lastStatusChangeTime > rhs.lastStatusChangeTime)
+                                        return@Comparator -1;
+                                    else if (lhs.lastStatusChangeTime < rhs.lastStatusChangeTime)
+                                        return@Comparator 1;
 
-                                    }).toTypedArray()
-                        }
+                                    return@Comparator 0;
 
-                this.activity?.runOnUiThread {
-                    adapter?.setEventsToDisplay(events);
-                    onNumEventsUpdated()
-                    refreshLayout?.isRefreshing = false
+                                }).toTypedArray()
+                    }
                 }
-            }
+
+            adapter?.setEventsToDisplay(events);
+            onNumEventsUpdated()
+            refreshLayout?.isRefreshing = false
         }
     }
 
