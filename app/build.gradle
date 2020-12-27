@@ -10,8 +10,8 @@ android {
         applicationId "com.github.quarck.cnlight"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 5
-        versionName "1.0.4"
+        versionCode 6
+        versionName "1.0.5"
 
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
 
