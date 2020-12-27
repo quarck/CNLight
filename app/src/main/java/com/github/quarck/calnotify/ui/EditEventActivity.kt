@@ -455,10 +455,6 @@ open class EditEventActivity : AppCompatActivity() {
             addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER), false)
             addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER), true)
 
-//            val emailMethod = CalendarContract.Reminders.METHOD_EMAIL
-//            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_NEW_EVENT_REMINDER, method=emailMethod), false)
-//            addReminder(EventReminderRecord(Consts.NEW_EVENT_DEFAULT_ALL_DAY_REMINDER, method=emailMethod), true)
-
             updateReminders()
         }
 
@@ -669,6 +665,7 @@ open class EditEventActivity : AppCompatActivity() {
         val newRRule = RRule.tryParse(rRule)
 
         val isRecurring = newRRule != null && !newRRule.isEmpty()
+        val wasRecurring = oldRRule != null && !oldRRule.isEmpty()
 
         val details = CalendarEventDetails(
                 title = eventTitleText.text.toString(),
@@ -698,14 +695,15 @@ open class EditEventActivity : AppCompatActivity() {
             else
                 Toast.makeText(this, R.string.new_event_failed_to_create_event, Toast.LENGTH_LONG).show()
         }
-        else if (oldRRule == null || oldRRule.isEmpty()) { // non-recurrent event
+        else if (!wasRecurring && !isRecurring) { // non-recurrent event
             val success = editor.updateEvent(this, eventToEdit, details)
             if (success)
                 onEventUpdated(false, eventToEdit.eventId, details.startTime)
             else
                 Toast.makeText(this, R.string.failed_to_update_event_details, Toast.LENGTH_LONG).show()
         }
-        else if (originalInstanceStart == eventToEdit.startTime) { // recurrent, but we are looking at the very first instance
+        else if (wasRecurring == isRecurring &&
+                originalInstanceStart == eventToEdit.startTime) { // recurrent, but we are looking at the very first instance
 
             val success = editor.updateEvent(this, eventToEdit, details)
             if (success)
