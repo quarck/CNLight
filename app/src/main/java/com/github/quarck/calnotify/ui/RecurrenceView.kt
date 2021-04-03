@@ -12,11 +12,10 @@ import android.view.View
 import android.widget.*
 import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.utils.*
 import com.github.quarck.calnotify.utils.logs.DevLog
+import com.github.quarck.calnotify.R
 import java.util.*
 import kotlin.text.toIntOrNull
 
@@ -346,10 +345,7 @@ class RecurrenceView(
                 currentUntil.dayOfMonth
         )
 
-        val firstDayOfWeek = Settings(context).firstDayOfWeek
-        if (firstDayOfWeek != -1) {
-            dialog.datePicker.firstDayOfWeek = firstDayOfWeek
-        }
+        dialog.datePicker.firstDayOfWeek = Calendar.MONDAY
 
         dialog.show()
     }

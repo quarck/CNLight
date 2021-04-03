@@ -6,9 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.MainActivityNG"
-    tools:showIn="@layout/fragment_about"
-    android:background="@color/background"
+    android:background="?attr/cn_background"
     >
 
     <LinearLayout
@@ -25,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/primary_text"
+            android:textColor="?attr/cn_primary_text"
             android:text="@string/app_name_cnlight"
             android:layout_gravity="center_horizontal"
             />
@@ -35,7 +33,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/text_view_app_version"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/primary_text"
+            android:textColor="?attr/cn_primary_text"
             android:text="version XXX"
             android:layout_gravity="center_horizontal"
             tools:ignore="HardcodedText"
@@ -45,7 +43,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/text_view_app_build_time"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/primary_text"
+            android:textColor="?attr/cn_primary_text"
             android:text="build time"
             android:layout_gravity="center_horizontal"
             tools:ignore="HardcodedText"
@@ -56,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/accent"
+            android:textColor="?attr/cn_accent"
             android:layout_margin="10dp"
             android:text="@string/privacy_policy_title"
             android:clickable="true"
@@ -71,14 +69,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/primary_text"
+            android:textColor="?attr/cn_primary_text"
             android:text="@string/gplv3_notice"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/primary_text"
+            android:textColor="?attr/cn_primary_text"
             android:text="@string/gplv3_src_comment"/>
 
         <TextView
@@ -89,7 +87,7 @@
             android:text="@string/projectPageOnGitHub"
             android:layout_marginBottom="6dp"
             android:layout_marginTop="12dp"
-            android:textColor="@color/accent"
+            android:textColor="?attr/cn_accent"
             android:layout_gravity="center_horizontal"
             android:clickable="true"/>
 
@@ -107,8 +105,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/primary_text"
-            android:text="(c) 2019 QRCK"
+            android:textColor="?attr/cn_primary_text"
+            android:text="(c) 2021 QRCK"
             android:layout_gravity="center_horizontal"
             tools:ignore="HardcodedText"
             />
@@ -117,7 +115,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/secondary_text"
+            android:textColor="?attr/cn_secondary_text"
             android:text="(quarck@gmail.com)"
             android:layout_gravity="center_horizontal"
             tools:ignore="HardcodedText"
@@ -137,7 +135,7 @@
             android:paddingBottom="20dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:textColor="@color/primary_text"
+            android:textColor="?attr/cn_primary_text"
             android:textStyle="bold"
             android:text="@string/donation_offers_are_rejected"
             android:layout_gravity="center_horizontal"

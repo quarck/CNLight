@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:padding="0dp"
     android:fitsSystemWindows="true"
-    tools:context=".ui.ViewEventActivity"
     >
 
     <com.google.android.material.appbar.AppBarLayout
@@ -19,9 +18,10 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/background"
             app:popupTheme="@style/AppTheme.PopupOverlay"
+            style="@style/Widget.CalendarAppTheme.ActionBar"
             app:titleTextAppearance="@style/ToolbarTitle"
+
             android:elevation="@dimen/toolbar_elevation"
             tools:targetApi="m"/>
 
@@ -33,7 +33,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".ui.EventViewActivityNoRecents"
         tools:showIn="@layout/activity_view"
-        android:background="@color/background">
+        android:background="?attr/cn_background">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -42,10 +42,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
+                android:background="?attr/cn_background"
                 android:id="@+id/event_view_event_details_layout"
                 android:visibility="visible"
-                android:elevation="@dimen/toolbar_elevation"
                 tools:targetApi="m">
 
                 <View
@@ -54,7 +53,7 @@
                     android:layout_height="12dp"
                     android:layout_marginStart="22dp"
                     android:layout_marginEnd="@dimen/event_view_img_padding_end"
-                    android:layout_marginTop="11dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="12dp"
                     android:background="@color/material_blue"
                     />
@@ -65,9 +64,9 @@
                     android:id="@+id/event_view_title"
                     android:text="Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. Event Title Place Holder. "
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:textColor="@color/primary_text"
+                    android:textColor="?attr/cn_primary_text"
                     android:paddingStart="@dimen/event_view_padding_start"
-                    android:paddingTop="@dimen/event_view_in_text_vert_padding"
+                    android:paddingTop="10dp"
                     android:paddingEnd="@dimen/event_view_padding_end"
                     android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                     android:gravity="start|bottom"
@@ -92,7 +91,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/background">
+                    android:background="?attr/cn_background">
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -122,7 +121,7 @@
                             android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                             android:text="Tomorrow"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                            android:textColor="@color/primary_text"
+                            android:textColor="?attr/cn_primary_text"
                             tools:ignore="HardcodedText" />
 
                         <TextView
@@ -135,7 +134,7 @@
                             android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                             android:text="13:00 - 14:00"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                            android:textColor="@color/primary_text"
+                            android:textColor="?attr/cn_primary_text"
                             android:visibility="visible"
                             tools:ignore="HardcodedText" />
 
@@ -145,7 +144,7 @@
                             android:id="@+id/event_view_recurrence"
                             android:text="Repeats every 10 minutes when the moon is high"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                            android:textColor="@color/primary_text"
+                            android:textColor="?attr/cn_primary_text"
                             android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                             android:paddingTop="0dp"
                             android:paddingStart="@dimen/event_view_padding_start"
@@ -160,7 +159,7 @@
                             android:id="@+id/event_view_timezone"
                             android:text="Timezone: UTC"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                            android:textColor="@color/primary_text"
+                            android:textColor="?attr/cn_primary_text"
                             android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                             android:paddingTop="8dp"
                             android:paddingStart="@dimen/event_view_padding_start"
@@ -183,7 +182,7 @@
                                 android:layout_height="wrap_content"
                                 android:text="@string/remind_col"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                                android:textColor="@color/primary_text"
+                                android:textColor="?attr/cn_primary_text"
                                 android:gravity="start|bottom"
                                 android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                                 android:paddingTop="0dp"
@@ -199,7 +198,7 @@
                                 android:id="@+id/event_view_reminders"
                                 android:text="15 minutes before\n15 minutes before as email"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                                android:textColor="@color/primary_text"
+                                android:textColor="?attr/cn_primary_text"
                                 android:gravity="start|bottom"
                                 android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                                 android:paddingTop="0dp"
@@ -254,7 +253,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/background"
+                    android:background="?attr/cn_background"
                     android:paddingBottom="@dimen/event_view_action_padding_bottom"
                     android:paddingTop="0dp"
                     android:visibility="visible"
@@ -266,7 +265,7 @@
                         android:id="@+id/view_event_calendar_name"
                         android:text="__CALENDAR_NAME__"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="0dp"
                         android:paddingStart="@dimen/event_view_padding_start"
@@ -282,7 +281,7 @@
                         android:id="@+id/view_event_calendar_account"
                         android:text="__CALENDAR_ACCOUNT__"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="?attr/cn_secondary_text"
                         android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="0dp"
                         android:paddingStart="@dimen/event_view_padding_start"
@@ -298,7 +297,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/event_view_location_layout"
-                    android:background="@color/background"
+                    android:background="?attr/cn_background"
                     android:paddingBottom="@dimen/event_view_action_padding_bottom"
                     android:paddingTop="8dp"
                     android:visibility="gone">
@@ -321,7 +320,7 @@
                         android:id="@+id/event_view_location"
                         android:text="Meeting room 1.01"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:paddingStart="@dimen/event_view_padding_start"
@@ -336,7 +335,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/background"
+                    android:background="?attr/cn_background"
                     android:paddingBottom="@dimen/event_view_action_padding_bottom"
                     android:paddingTop="@dimen/event_view_action_padding_top"
                     android:id="@+id/layout_event_description"
@@ -361,7 +360,7 @@
                         android:id="@+id/event_view_description"
                         android:text="__DESC_PLACEHOLDER__"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:paddingBottom="@dimen/event_view_in_text_vert_padding"
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:paddingStart="@dimen/event_view_padding_start"
@@ -375,13 +374,13 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/divider"
+                    android:background="?attr/cn_divider"
                     android:padding="0dp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/background"
+                    android:background="?attr/cn_background"
                     android:id="@+id/snooze_layout"
                     android:paddingBottom="@dimen/event_view_action_padding_bottom"
                     android:paddingTop="@dimen/event_view_action_padding_top">
@@ -408,7 +407,7 @@
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:text="@string/snooze_event_for"
                         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                        android:textColor="@color/primary_text" />
+                        android:textColor="?attr/cn_primary_text" />
 
                     <LinearLayout
                         android:id="@+id/event_view_snooze_sub_layout"
@@ -421,7 +420,7 @@
 
                         android:paddingEnd="@dimen/event_view_padding_end"
                         android:paddingStart="0dp"
-                        android:paddingTop="5dp"
+                        android:paddingTop="0dp"
                         android:paddingBottom="5dp"
                         >
 
@@ -438,7 +437,7 @@
                             android:layout_marginEnd="64dp"
                             android:text="__template__"
                             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                            android:textColor="@color/primary_text"
+                            android:textColor="?attr/cn_primary_text"
                             android:visibility="gone"
                             tools:ignore="HardcodedText" />
 

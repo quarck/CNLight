@@ -21,11 +21,9 @@ package com.github.quarck.calnotify.app
 
 import android.content.Context
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.FinishedEventsStorage
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.notification.EventNotificationManager
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
@@ -38,15 +36,6 @@ import com.github.quarck.calnotify.utils.detailed
 object ApplicationController  {
 
     private const val LOG_TAG = "App"
-
-    private var settings: Settings? = null
-    private fun getSettings(ctx: Context): Settings {
-        synchronized(this) {
-            if (settings == null)
-                settings = Settings(ctx)
-        }
-        return settings!!
-    }
 
     private val notificationManager = EventNotificationManager()
 
@@ -62,6 +51,7 @@ object ApplicationController  {
 
     private val tagsManager: TagsManager by lazy { TagsManager() }
 
+    @JvmStatic
     val CalendarMonitor: CalendarMonitor
         get() = calendarMonitorInternal
 
@@ -74,7 +64,6 @@ object ApplicationController  {
 
     fun onEventAlarm(context: Context) {
         DevLog.info(LOG_TAG, "onEventAlarm at ${System.currentTimeMillis()}")
-        context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
         notificationManager.postEventNotifications(context)
         alarmScheduler.rescheduleAlarms(context)
     }
@@ -106,6 +95,8 @@ object ApplicationController  {
         onPostHybernation(context)
     }
 
+
+    @JvmStatic
     fun onCalendarChanged(context: Context) {
         DevLog.info(LOG_TAG, "onCalendarChanged")
         CalendarMonitorOneTimeJobService.schedule(context, 2000)
@@ -200,12 +191,6 @@ object ApplicationController  {
 
     fun registerNewEvent(context: Context, event: EventAlertRecord): Boolean {
         var ret = false
-        val settings = getSettings(context)
-
-        if (event.calendarId != -1L && !settings.getCalendarIsHandled(event.calendarId)) {
-            DevLog.info(LOG_TAG, "Event ${event.eventId} -> calendar ${event.calendarId} is not handled");
-            return ret;
-        }
 
         tagsManager.parseEventTags(event)
 
@@ -285,9 +270,7 @@ object ApplicationController  {
             pairs: List<MonitorDataPair>
     ): ArrayList<MonitorDataPair> {
 
-        val settings = getSettings(context)
-
-        val handledCalendars = calendarProvider.getHandledCalendarsIds(context, settings)
+        val handledCalendars = calendarProvider.getHandledCalendarsIds(context)
 
         val handledPairs = pairs.filter {
             (_, event) ->
@@ -524,6 +507,7 @@ object ApplicationController  {
 
     fun fireEventReminder(context: Context) = notificationManager.fireEventReminder(context)
 
+    @JvmStatic
     fun onMainActivityStarted(context: Context?) {
         if (context != null)
             CalendarMonitorPeriodicJobService.schedule(context)
@@ -621,6 +605,7 @@ object ApplicationController  {
             }
             else {
                 DevLog.error(LOG_TAG, "dismissEvent: can't find event $eventId, $instanceStartTime")
+                notificationManager.removeNotification(context, notificationId)
             }
         }
     }
@@ -716,5 +701,12 @@ object ApplicationController  {
         }
 
         return moved
+    }
+
+    fun clearLog(context: Context) {
+        FinishedEventsStorage(context).use {
+            db ->
+            db.clearHistory()
+        }
     }
 }

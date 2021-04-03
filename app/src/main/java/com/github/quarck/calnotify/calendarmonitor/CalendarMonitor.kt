@@ -19,8 +19,10 @@
 
 package com.github.quarck.calnotify.calendarmonitor
 
+import android.content.ContentProviderResult
 import android.content.Context
 import android.content.Intent
+import android.provider.CalendarContract
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastReceiver
@@ -28,7 +30,6 @@ import com.github.quarck.calnotify.broadcastreceivers.ManualEventExactAlarmBroad
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.permissions.PermissionsManager
-import com.github.quarck.calnotify.ui.MainActivityNG
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.cancelExactAndAlarm
 import com.github.quarck.calnotify.utils.detailed
@@ -233,7 +234,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
                     exactTime,
                     ManualEventAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                     ManualEventExactAlarmBroadcastReceiver::class.java,
-                    MainActivityNG::class.java // alarm info intent
+                    com.github.quarck.calnotify.ui.MainActivity::class.java // alarm info intent
                     )
         }
         else {

@@ -1,26 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="activity_navbar_top">48dp</dimen>
-    <dimen name="activity_navbar_bottom">32dp</dimen>
-
-    <!-- Compact view - 'dismissed' view - 'x' icon margin -->
     <dimen name="ic_clear_margin">25dp</dimen>
     <dimen name="swipe_bg_margin">2dp</dimen>
-
-    <!--  amount to scroll on the main activity until 'undo' layout hides itself, in dp-s -->
     <dimen name="undo_dismiss_sensitivity">160dp</dimen>
-
     <dimen name="event_view_padding_start">60dp</dimen>
     <dimen name="event_view_padding_end">20dp</dimen>
 
     <dimen name="event_view_img_padding_start">16dp</dimen>
     <dimen name="event_view_img_padding_end">16dp</dimen>
-
-    <dimen name="event_view_header_padding_top">16dp</dimen>
-    <dimen name="event_view_header_padding_bottom">24dp</dimen>
 
     <dimen name="event_view_action_padding_top">16dp</dimen>
     <dimen name="event_view_action_padding_bottom">8dp</dimen>
@@ -65,6 +54,6 @@
 
 
     <dimen name="add_event_view_title_height">60dp</dimen>
-    <dimen name="nav_header_vertical_spacing">8dp</dimen>
+
 
 </resources>

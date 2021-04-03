@@ -25,7 +25,6 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.globalState
 
 object UINotifier {
     fun notify(context: Context?, isUserAction: Boolean) {

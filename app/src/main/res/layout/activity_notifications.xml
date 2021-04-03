@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="0dp"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/activity_main_bottom_indicators"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/activity_main_reload_layout"
+            android:visibility="gone"
+            android:elevation="4dp"
+            tools:targetApi="m"
+            >
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?attr/cn_divider"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/calendar_was_changed_pull_down_to_refresh"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                android:textColor="?attr/cn_primary_text"
+                android:gravity="start"
+                android:paddingTop="@dimen/activity_main_text_padding_top"
+                android:paddingBottom="@dimen/activity_main_text_padding_bottom"
+                android:paddingStart="@dimen/activity_main_text_padding_start"
+                android:paddingEnd="@dimen/activity_main_text_padding_end"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            style="@style/Widget.CalendarAppTheme.ActionBar"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleTextAppearance="@style/ToolbarTitle"
+            android:elevation="@dimen/toolbar_elevation"
+            tools:targetApi="m"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/cardview_refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/app_bar_layout"
+        android:layout_above="@id/activity_main_bottom_indicators">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list_events"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/cn_background"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="?attr/cn_secondary_text"
+        android:text="@string/no_events_to_display"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="?attr/cn_secondary_text"
+        android:text="@string/no_calendar_permissions_main" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:src="@drawable/ic_add_white_24dp"
+        android:id="@+id/action_btn_add_event"
+        app:fabSize="normal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:visibility="visible"
+        android:elevation="@dimen/toolbar_elevation"
+        app:backgroundTint="#134093"
+        tools:targetApi="m"
+        android:contentDescription="@string/add_event"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        tools:ignore="RelativeOverlap" />
+
+
+</RelativeLayout>

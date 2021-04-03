@@ -29,9 +29,9 @@ import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
 import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
-import com.github.quarck.calnotify.ui.MainActivityNG
 import com.github.quarck.calnotify.ui.ViewEventActivity
 import com.github.quarck.calnotify.utils.*
+import com.github.quarck.calnotify.R
 
 @Suppress("VARIABLE_WITH_REDUNDANT_INITIALIZER")
 class EventNotificationManager {
@@ -91,20 +91,12 @@ class EventNotificationManager {
         context.notificationManager.cancelAll()
     }
 
-    /**
-     * @param events - events to sort
-     * @returns pair of boolean and list, boolean means "all collapsed"
-     */
-    private fun sortEvents(events: List<EventAlertRecord>): Pair<Boolean, List<EventAlertRecord>> {
-
-        var allCollapsed = false
-
+    private fun shouldCollapseAll(events: List<EventAlertRecord>): Boolean {
         if (events.size > Consts.MAX_NOTIFICATIONS)
-            allCollapsed = true
+            return true
         else if (events.any {it.displayStatus == EventDisplayStatus.DisplayedCollapsed})
-            allCollapsed = true
-
-        return Pair(allCollapsed, events)
+            return true
+        return false
     }
 
     // NOTES:
@@ -115,11 +107,6 @@ class EventNotificationManager {
             = db.events.filter {
                 (it.snoozedUntil == 0L) || (it.snoozedUntil < currentTime + Consts.ALARM_THRESHOLD)
             }
-
-    /**
-     * @returns pair of boolean and list, boolean means "all collapsed"
-     */
-    private fun processEvents(db: EventsStorage) = sortEvents(getEventsAndUnSnooze(db))
 
     fun postEventNotifications(
             context: Context,
@@ -133,8 +120,7 @@ class EventNotificationManager {
         EventsStorage(context).use {
             db ->
 
-            val (allCollapsed, events) = processEvents(db)
-
+            val events = getEventsAndUnSnooze(db)
             val notificationRecords = generateNotificationRecords(
                     context = context,
                     events = events,
@@ -142,25 +128,22 @@ class EventNotificationManager {
                     isReminder = isReminder
             )
 
-            if (!allCollapsed) {
-                hideCollapsedEventsNotification(context)
+            if (shouldCollapseAll(events)) {
+                val (alarms, nonAlarms) = notificationRecords.partition { it.event.isAlarm }
+                if (alarms.isNotEmpty()) {
+                    postIndividualNotifications(context, db, formatterLocal, alarms.toMutableList())
+                }
 
-                if (events.isNotEmpty()) {
-                    postDisplayedEventNotifications(
-                            context = context,
-                            db = db,
-                            formatter = formatterLocal,
-                            notificationRecords = notificationRecords
-                    )
+                if (nonAlarms.isNotEmpty()){
+                    postCollapsedNotification(context, db, nonAlarms.toMutableList())
+                }
+                else {
+                    hideCollapsedEventsNotification(context)
                 }
             }
             else {
-                postEverythingCollapsed(
-                        context = context,
-                        db = db,
-                        notificationRecords = notificationRecords,
-                        isReminder = isReminder
-                )
+                hideCollapsedEventsNotification(context)
+                postIndividualNotifications(context, db, formatterLocal, notificationRecords)
             }
         }
     }
@@ -168,8 +151,7 @@ class EventNotificationManager {
     fun fireEventReminder(context: Context) {
         EventsStorage(context).use {
             db ->
-            val activeEvents = db.events.filter { it.isNotSnoozed && it.isAlarm }
-            if (activeEvents.count() > 0) {
+            if (db.events.any { it.isNotSnoozed && it.isAlarm }) {
                 postEventNotifications(context, isReminder = true)
             }
         }
@@ -221,8 +203,6 @@ class EventNotificationManager {
 
         val ret = mutableListOf<EventAlertNotificationRecord>()
 
-        //val notificationsSettings = settings.notificationSettingsSnapshot
-
         val eventsSorted = events.sortedByDescending { it.instanceStartTime }
 
         var firstReminder = isReminder
@@ -266,11 +246,10 @@ class EventNotificationManager {
     ///
     /// Post events in collapsed state
     ///
-    private fun postEverythingCollapsed(
+    private fun postCollapsedNotification(
             context: Context,
             db: EventsStorage,
-            notificationRecords: MutableList<EventAlertNotificationRecord>,
-            isReminder: Boolean
+            notificationRecords: MutableList<EventAlertNotificationRecord>
     ) {
         if (notificationRecords.isEmpty()) {
             hideCollapsedEventsNotification(context)
@@ -294,7 +273,7 @@ class EventNotificationManager {
         }
 
         // now build actual notification and notify
-        val intent = Intent(context, MainActivityNG::class.java)
+        val intent = Intent(context, com.github.quarck.calnotify.ui.MainActivity::class.java)
         val pendingIntent = pendingActivityIntent(context, intent, MAIN_ACTIVITY_NUM_NOTIFICATIONS_COLLAPSED_CODE, clearTop = true)
 
         val numEvents = events.size
@@ -329,14 +308,7 @@ class EventNotificationManager {
         lines.forEach { notificationStyle.addLine(it) }
         notificationStyle.setBigContentTitle("")
 
-        var contentTitle = context.getString(R.string.multiple_events_single_notification).format(events.size)
-
-        if (isReminder) {
-            val currentTime = System.currentTimeMillis()
-            contentTitle += context.getString(R.string.reminder_at).format(
-                    DateUtils.formatDateTime(context, currentTime, DateUtils.FORMAT_SHOW_TIME)
-            )
-        }
+        val contentTitle = context.getString(R.string.multiple_events_single_notification).format(events.size)
 
         val alertOnlyOnce = notificationRecords.all{it.alertOnlyOnce}
         val contentText = if (lines.size > 0) lines[0] else ""
@@ -370,7 +342,7 @@ class EventNotificationManager {
     }
 
 
-    private fun postDisplayedEventNotifications(
+    private fun postIndividualNotifications(
             context: Context,
             db: EventsStorage,
             formatter: EventFormatter,
@@ -564,7 +536,7 @@ class EventNotificationManager {
 
     }
 
-    private fun removeNotification(ctx: Context, notificationId: Int) {
+    fun removeNotification(ctx: Context, notificationId: Int) {
         val notificationManager = ctx.notificationManager
         notificationManager.cancel(notificationId)
     }

@@ -19,33 +19,40 @@
 
 package com.github.quarck.calnotify.ui
 
+//import com.github.quarck.calnotify.utils.logs.Logger
+
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
+import android.content.res.ColorStateList
+import android.net.Uri
 import android.os.Bundle
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import android.provider.CalendarContract.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.PopupMenu
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import android.view.View
-import android.widget.*
-import com.github.quarck.calnotify.app.*
+import androidx.core.content.ContextCompat
+import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.app.ApplicationController
+import com.github.quarck.calnotify.app.SnoozeResult
+import com.github.quarck.calnotify.app.SnoozeType
+import com.github.quarck.calnotify.app.toast
 import com.github.quarck.calnotify.calendar.*
+import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
 import com.github.quarck.calnotify.eventsstorage.EventsStorage
-//import com.github.quarck.calnotify.utils.logs.Logger
+import com.github.quarck.calnotify.permissions.PermissionsManager
+import com.github.quarck.calnotify.utils.adjustCalendarColor
+import com.github.quarck.calnotify.utils.logs.DevLog
 import com.github.quarck.calnotify.utils.maps.MapsIntents
 import com.github.quarck.calnotify.utils.textutils.EventFormatter
-import com.github.quarck.calnotify.utils.*
-import com.github.quarck.calnotify.*
-import com.github.quarck.calnotify.utils.logs.DevLog
-import com.github.quarck.calnotify.permissions.PermissionsManager
-import android.content.res.ColorStateList
-import androidx.core.content.ContextCompat
-import android.text.method.ScrollingMovementMethod
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import com.github.quarck.calnotify.calendarmonitor.CalendarMonitor
-import com.github.quarck.calnotify.calendarmonitor.CalendarReloadManager
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.github.quarck.calnotify.R
+
 
 // TODO: add repeating rule and calendar name somewhere on the snooze activity
 
@@ -57,18 +64,17 @@ open class ViewEventActivity : AppCompatActivity() {
 
     lateinit var snoozePresets: LongArray
 
-    lateinit var settings: Settings
-
     lateinit var formatter: EventFormatter
 
     private val calendarReloadManager = CalendarReloadManager
     private val calendarProvider = CalendarProvider
 
-    var snoozeFromMainActivity = false
-    var viewForFutureEvent = false
+    var hasEventInDB = false
 
     lateinit var calendarNameTextView: TextView
     lateinit var calendarAccountTextView: TextView
+
+    var isUpcoming = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -78,6 +84,8 @@ open class ViewEventActivity : AppCompatActivity() {
             finish()
             return
         }
+
+        Theme.apply(this)
 
         setContentView(R.layout.activity_view)
 
@@ -91,23 +99,50 @@ open class ViewEventActivity : AppCompatActivity() {
 
         val currentTime = System.currentTimeMillis()
 
-        settings = Settings(this)
         formatter = EventFormatter(this)
 
         // Populate event details
-        val eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
-        val instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1L)
+        var eventId = intent.getLongExtra(Consts.INTENT_EVENT_ID_KEY, -1)
+        var instanceStartTime = intent.getLongExtra(Consts.INTENT_INSTANCE_START_TIME_KEY, -1L)
+        var instanceEndTime = -1L
         val alertTime = intent.getLongExtra(Consts.INTENT_ALERT_TIME, 0L)
+        var attendeeResponse = Attendees.ATTENDEE_STATUS_NONE
 
-        snoozeFromMainActivity = intent.getBooleanExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, false)
-        viewForFutureEvent = intent.getBooleanExtra(Consts.INTENT_VIEW_FUTURE_EVENT_EXTRA, false)
-        val noSkips = intent.getBooleanExtra(Consts.INTENT_NO_SKIPS_EXTRA, false)
+        if (intent != null && Intent.ACTION_VIEW == intent.action) {
+            instanceStartTime = intent.getLongExtra(EXTRA_EVENT_BEGIN_TIME, 0L)
+            instanceEndTime = intent.getLongExtra(EXTRA_EVENT_END_TIME, 0L)
+            attendeeResponse = intent.getIntExtra(Attendees.ATTENDEE_STATUS, Attendees.ATTENDEE_STATUS_NONE)
 
-        // findViewById<Toolbar?>(R.id.toolbar)?.visibility = View.GONE
+            val data: Uri? = intent.data
+            if (data != null) {
+                try {
+                    val pathSegments: List<String> = data.getPathSegments()
+                    val size = pathSegments.size
+                    if (size > 2 && "EventTime" == pathSegments[2]) {
+                        // Support non-standard VIEW intent format:
+                        //dat = content://com.android.calendar/events/[id]/EventTime/[start]/[end]
+                        eventId = pathSegments[1].toLong()
+                        if (size > 4) {
+                            instanceStartTime = pathSegments[3].toLong()
+                            instanceEndTime = pathSegments[4].toLong()
+                        }
+                    } else {
+                        eventId = data.getLastPathSegment()?.toLong() ?: -1L
+                    }
+                } catch (e: NumberFormatException) {
+//                    eventId = -1L
+                    instanceStartTime = 0
+                    instanceEndTime = 0
+                }
+            }
 
-        // load event if it is not a "snooze all"
+            hasEventInDB = false
+        }
+        else {
+            hasEventInDB = !isUpcoming
+        }
 
-        if (!viewForFutureEvent) {
+        if (hasEventInDB) {
             EventsStorage(this).use { db ->
 
                 var dbEvent = db.getEvent(eventId, instanceStartTime)
@@ -136,7 +171,7 @@ open class ViewEventActivity : AppCompatActivity() {
             var calEvent = CalendarProvider.getEventAlertsForInstanceAt(this, instanceStartTime, eventId)
                     .firstOrNull { alertTime == 0L || it.alertTime == alertTime }
             if (calEvent == null) {
-                calEvent = CalendarProvider.getInstancesInRange(this, instanceStartTime, instanceStartTime+100L, eventId)
+                calEvent = CalendarProvider.getInstancesInRange(this, instanceStartTime, instanceStartTime + 100L, eventId)
                         .firstOrNull()
             }
             if (calEvent == null) {
@@ -185,12 +220,6 @@ open class ViewEventActivity : AppCompatActivity() {
         // title
         val title = findViewById<TextView>(R.id.event_view_title)
         title.text = if (event.title.isNotEmpty()) event.title else this.resources.getString(R.string.empty_title);
-//        title.setMovementMethod(ScrollingMovementMethod())
-//        title.post {
-//            val y = title.getLayout()?.getLineTop(0)
-//            if (y != null)
-//                title.scrollTo(0, y)
-//        }
         title.setTextIsSelectable(true)
 
         findViewById<View>(R.id.event_view_event_color_view).setBackgroundColor(event.color.adjustCalendarColor(darker = false))
@@ -208,7 +237,6 @@ open class ViewEventActivity : AppCompatActivity() {
         }
 
         var eventTimeZoneOffset = 0
-//        var deviceTimeZoneOffset = 0
         if (event.timeZone.isNotBlank()) {
             try {
                 val eventTimeZone = java.util.TimeZone.getTimeZone(event.timeZone)
@@ -221,13 +249,7 @@ open class ViewEventActivity : AppCompatActivity() {
         }
 
         findViewById<TextView>(R.id.event_view_timezone).apply {
-//            if (eventTimeZoneOffset == deviceTimeZoneOffset) {
-//                text = event.timeZone
-//                visibility = View.VISIBLE
-//            }
-//            else {
             visibility = View.GONE
-            //}
         }
 
         // recurrence
@@ -262,7 +284,7 @@ open class ViewEventActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.event_view_description).text = event.desc
         }
 
-        if (!viewForFutureEvent) {
+        if (hasEventInDB) {
             findViewById<RelativeLayout>(R.id.snooze_layout).visibility = View.VISIBLE
         } else {
             findViewById<RelativeLayout>(R.id.snooze_layout).visibility = View.GONE
@@ -301,16 +323,14 @@ open class ViewEventActivity : AppCompatActivity() {
 
         val fabColorStateList =  ColorStateList(
                 arrayOf(intArrayOf(android.R.attr.state_enabled), intArrayOf(android.R.attr.state_pressed)),
-                intArrayOf(event.color.adjustCalendarColor(false),  event.color.adjustCalendarColor(true)))
+                intArrayOf(event.color.adjustCalendarColor(false), event.color.adjustCalendarColor(true)))
 
         fabMoveButton.backgroundTintList = fabColorStateList
 
-        val allowEdit = !calendar.isReadOnly
-
-        val eventStartTimeHasPassed = (DateTimeUtils.isUTCTodayOrInThePast(event.startTime))
-        if (allowEdit && !viewForFutureEvent && eventStartTimeHasPassed) {
+        if ((isUpcoming || hasEventInDB) && !calendar.isReadOnly) {
             fabMoveButton.setOnClickListener(this::showMoveMenu)
-        } else {
+        }
+        else {
             fabMoveButton.visibility = View.GONE
         }
     }
@@ -325,17 +345,12 @@ open class ViewEventActivity : AppCompatActivity() {
             menu.findItem(R.id.action_delete_event)?.isVisible = false
         }
 
-        if (viewForFutureEvent && event.alertTime != 0L ) {
+        if (!hasEventInDB && event.alertTime != 0L ) {
             menu.findItem(R.id.action_dismiss)?.isVisible = false
-
-            val wasHandled = CalendarMonitor(CalendarProvider).getAlertWasHandled(this, event)
-            val inShortRange = (event.instanceStartTime-System.currentTimeMillis()) in 0 until 2 * Consts.DAY_IN_MILLISECONDS
-            menu.findItem(R.id.action_mark_done)?.isVisible = !wasHandled && inShortRange
-            menu.findItem(R.id.action_mark_not_done)?.isVisible = wasHandled && inShortRange
         }
-        else {
-            menu.findItem(R.id.action_mark_done)?.isVisible = false
-            menu.findItem(R.id.action_mark_not_done)?.isVisible = false
+
+        if (event.isRepeating) {
+            menu.findItem(R.id.action_delete_event)?.isVisible = false
         }
 
         return true
@@ -352,23 +367,8 @@ open class ViewEventActivity : AppCompatActivity() {
                 confirmAndDelete()
             }
 
-            R.id.action_open_in_calendar -> {
-                CalendarIntents.viewCalendarEvent(this, event)
-                finish()
-            }
-
             R.id.action_dismiss -> {
                 ApplicationController.dismissEvent(this, EventFinishType.ManuallyInTheApp, event)
-                finish()
-            }
-
-            R.id.action_mark_done -> {
-                ApplicationController.dismissFutureEvent(this, MonitorDataPair.fromEventAlertRecord(event))
-                finish()
-            }
-
-            R.id.action_mark_not_done -> {
-                ApplicationController.restoreEvent(this, event)
                 finish()
             }
         }
@@ -392,8 +392,7 @@ open class ViewEventActivity : AppCompatActivity() {
             popup.menu.findItem(R.id.action_move_copy_next_month_30d)?.isVisible = false
         }
 
-        popup.setOnMenuItemClickListener {
-            item ->
+        popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.action_move_next_day, R.id.action_move_copy_next_day -> {
                     reschedule(addTime = 1 * Consts.DAY_IN_SECONDS * 1000L)
@@ -437,39 +436,36 @@ open class ViewEventActivity : AppCompatActivity() {
 //
 
     private fun confirmAndEdit() {
-        if (!event.isRepeating) {
-            val intent = Intent(this, EditEventActivity::class.java)
-                    .putExtra(EditEventActivity.EVENT_ID, event.eventId)
-                    .putExtra(EditEventActivity.INSTANCE_START, event.instanceStartTime)
-                    .putExtra(EditEventActivity.INSTANCE_END, event.instanceEndTime)
-            startActivity(intent)
+
+//        if (!event.isRepeating) {
+//            val intent = Intent(this, EditEventActivity::class.java)
+//                    .putExtra(EditEventActivity.EVENT_ID, event.eventId)
+//                    .putExtra(EditEventActivity.INSTANCE_START, event.instanceStartTime)
+//                    .putExtra(EditEventActivity.INSTANCE_END, event.instanceEndTime)
+//            startActivity(intent)
+//            finish()
+//        } else {
+            CalendarIntents.viewCalendarEvent(this, event)
             finish()
-        } else {
-            AlertDialog.Builder(this)
-                    .setMessage(getString(R.string.edit_series_question))
-                    .setCancelable(true)
-                    .setPositiveButton(R.string.yes) { _, _ ->
-                        val intent = Intent(this, EditEventActivity::class.java)
-                                .putExtra(EditEventActivity.EVENT_ID, event.eventId)
-                                .putExtra(EditEventActivity.INSTANCE_START, event.instanceStartTime)
-                                .putExtra(EditEventActivity.INSTANCE_END, event.instanceEndTime)
-                        startActivity(intent)
-                        finish()
-                    }
-                    .setNegativeButton(R.string.cancel) { _, _ ->
-                    }
-                    .create()
-                    .show()
-        }
+//        }
     }
 
     private fun confirmAndDelete() {
+
+        if (calendar.isReadOnly) {
+            return
+        }
+        // not allowing any delete from the app for repeating events
+        if (event.isRepeating) {
+            return
+        }
+
         AlertDialog.Builder(this)
-                .setMessage(getString(if (event.isRepeating) R.string.delete_recurring_event else R.string.delete_event_question))
+                .setMessage(getString(R.string.delete_event_question))
                 .setCancelable(true)
                 .setPositiveButton(R.string.yes) { _, _ ->
                     CalendarProvider.deleteEvent(this, event.eventId)
-                    if (!viewForFutureEvent && event.alertTime != 0L) {
+                    if (!hasEventInDB && event.alertTime != 0L) {
                         ApplicationController.dismissEvent(this, EventFinishType.DeletedInTheApp, event)
                     }
                     finish()
@@ -510,3 +506,12 @@ open class ViewEventActivity : AppCompatActivity() {
     }
 
 }
+
+class ViewEventActivityUpcoming: ViewEventActivity() {
+    init {
+        isUpcoming = true
+    }
+}
+
+class ViewEventActivityLog: ViewEventActivity() {}
+

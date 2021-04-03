@@ -1,13 +1,114 @@
-<resources>
+<?xml version="1.0" encoding="utf-8"?><!--
+/* //device/apps/Calendar/assets/res/any/styles.xml
+**
+** Copyright 2006, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+
+    <!-- Application theme. -->
+    <style name="CalendarAppTheme" parent="Base.CalendarAppTheme">
+
     </style>
 
+    <style name="Base.CalendarAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="light_dark">@color/bg_black</item>
+        <item name="settings_titleText">?android:attr/textAppearanceLargeInverse</item>
+        <item name="month_header_bgcolor">@color/month_other_bgcolor</item>
+        <item name="agenda_general_bgcolor">@color/agenda_general_background_color</item>
+        <item name="agenda_day_item_text_color">@color/agenda_day_item_text_color</item>
+        <item name="edit_event_bgcolor">@color/edit_event_color</item>
+        <item name="editEvent_small_color">@color/edit_event_small</item>
+        <item name="recurrence_picker_bgcolor_up">@android:color/white</item>
+        <item name="recurrence_picker_bgcolor">@color/recurrence_picker_background</item>
+        <item name="done_text_recurrence">@color/recurrence_done_text_color</item>
+        <item name="spinner_privacy_presence_bgcolor">@color/spinner_privacy_popupBackground</item>
+        <item name="event_info_bgcolor">@color/background_color</item>
+        <item name="event_info_scrollview_bgcolor">@android:color/white</item>
+        <item name="event_info_organizer_color">@color/event_info_organizer_color</item>
+        <item name="event_info_description_color">@color/event_info_description_color</item>
+        <item name="event_info_body_color">@color/event_info_body_color</item>
+        <item name="event_info_label_color">@color/event_info_label_color</item>
+        <item name="android:itemBackground">@android:color/white</item>
+        <item name="create_event_date_color">@color/create_event_date_color</item>
+        <item name="calendar_owner_text_color">@color/calendar_owner_text_color</item>
+        <item name="calendar_date_banner_bgcolor">@color/calendar_date_banner_background</item>
+        <item name="app_bar_color">@color/app_bar</item>
+        <item name="autoCompleteTextViewStyle">@style/actionbar_cursor</item>
+        <item name="minus_button">@drawable/ic_menu_remove_field_holo_light</item>
+        <item name="ic_menu_email">@drawable/ic_menu_email_holo_light</item>
+        <item name="calendar_future_bg_color">@color/calendar_future_bg_color</item>
+        <item name="month_other_bgcolor">@color/month_other_bgcolor</item>
+        <item name="settings_calendar_offline">@drawable/ic_sync_off_light</item>
+        <item name="iconAboutAuthors">@android:color/black</item>
+        <item name="iconAboutLicense">@android:color/black</item>
+        <item name="iconSettingsAbout">@android:color/black</item>
+        <item name="iconSettingsGeneral">@android:color/black</item>
+        <item name="iconAddCalendar">@android:color/black</item>
+        <item name="iconCalendarAccount">@android:color/black</item>
+
+        <item name="cn_background">@color/cn_white_background</item>
+        <item name="cn_primary">@color/cn_white_primary</item>
+        <item name="cn_primary_dark">@color/cn_white_primary_dark</item>
+        <item name="cn_primary_light">@color/cn_white_primary_light</item>
+        <item name="cn_accent">@color/cn_white_accent</item>
+        <item name="cn_primary_text">@color/cn_white_primary_text</item>
+        <item name="cn_secondary_text">@color/cn_white_secondary_text</item>
+        <item name="cn_icons">@color/cn_white_icons</item>
+        <item name="cn_divider">@color/cn_white_divider</item>
+        <item name="cn_divider_light">@color/cn_white_divider_light</item>
+        <item name="cn_event_title_color">@color/cn_white_event_title_color</item>
+        <item name="cn_event_title_hint_color">@color/cn_white_event_title_hint_color</item>
+        <item name="cn_event_unselected_tag_color">@color/cn_white_event_unselected_tag_color</item>
+        <item name="cn_event_selected_tag_color">@color/cn_white_event_selected_tag_color</item>
+        <item name="cn_light_divider">@color/cn_white_light_divider</item>
+        <item name="cn_ultra_light_divider">@color/cn_white_ultra_light_divider</item>
+        <item name="cn_complete_event_bg">@color/cn_white_complete_event_bg</item>
+        <item name="cn_skip_event_bg">@color/cn_white_skip_event_bg</item>
+        <item name="cn_cal_sample_primary">@color/cn_white_cal_sample_primary</item>
+    </style>
+
+    <style name="Widget.CalendarAppTheme.ActionBar" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">?attr/app_bar_color</item>
+        <item name="android:theme">@style/ThemeOverlay.CalendarAppTheme.ActionBar</item>
+        <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
+    </style>
+
+    <style name="ThemeOverlay.CalendarAppTheme.ActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/titleTextColor</item>
+    </style>
+
+
+    <style name="actionbar_cursor" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/actionbar_cursor</item>
+    </style>
+    <!-- END Application theme -->
+
+
+    <style name="CalendarTheme.WithoutActionBar" parent="CalendarAppTheme">
+        <item name="android:endYear">2036</item>
+        <item name="android:startYear">1970</item>
+        <item name="android:windowBackground">@color/bg_black</item>
+    </style>
+
+
+    <!-- Base application theme. -->
 
 
     <style name="PickerDialogTheme" parent="AppTheme.NoActionBar">

@@ -7,9 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.EditEventActivity"
     tools:showIn="@layout/activity_add_event"
-    android:background="@color/background">
+    android:background="?attr/cn_background">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -62,7 +61,7 @@
                     android:text="@string/save_button_title"
                     android:textAppearance="@style/TextAppearance.AppCompat.Small"
                     android:textStyle="normal"
-                    android:textColor="@color/primary_text"
+                    android:textColor="?attr/cn_primary_text"
                     tools:ignore="RelativeOverlap"
                     android:contentDescription="@string/save_button"
                     />
@@ -76,8 +75,8 @@
                     android:text="@string/empty"
                     android:hint="@string/add_event_event_title_hint"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/event_title_color"
-                    android:textColorHint="@color/event_title_hint_color"
+                    android:textColor="?attr/cn_event_title_color"
+                    android:textColorHint="?attr/cn_event_title_hint_color"
 
                     android:paddingBottom="@dimen/add_event_view_header_padding_bottom"
                     android:paddingTop="@dimen/add_event_view_header_padding_top"
@@ -101,7 +100,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
+                android:background="?attr/cn_background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -134,7 +133,7 @@
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:text="Events (&lt;.."
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text"
+                    android:textColor="?attr/cn_primary_text"
                     tools:ignore="HardcodedText"
                     android:clickable="true"/>
 
@@ -145,7 +144,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider"
+                android:background="?attr/cn_divider"
                 android:padding="0dp"
                 />
 
@@ -153,7 +152,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
+                android:background="?attr/cn_background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -182,7 +181,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:text="@string/all_day"
                     android:layout_toEndOf="@id/image_date_time"
-                    android:textColor="@color/primary_text"
+                    android:textColor="?attr/cn_primary_text"
 
                     />
 
@@ -192,7 +191,7 @@
                     android:id="@+id/add_event_date_from"
                     android:text="7/03/2018"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text"
+                    android:textColor="?attr/cn_primary_text"
                     android:paddingBottom="@dimen/add_event_padding_bottom"
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:paddingStart="@dimen/add_event_text_start"
@@ -209,7 +208,7 @@
                     android:id="@+id/add_event_time_from"
                     android:text="13:00"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text"
+                    android:textColor="?attr/cn_primary_text"
                     android:paddingBottom="@dimen/add_event_padding_bottom"
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:paddingEnd="@dimen/add_event_time_end"
@@ -226,7 +225,7 @@
                     android:id="@+id/add_event_date_to"
                     android:text="7/03/2018"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text"
+                    android:textColor="?attr/cn_primary_text"
                     android:paddingBottom="@dimen/add_event_padding_bottom"
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:paddingStart="@dimen/add_event_text_start"
@@ -243,7 +242,7 @@
                     android:id="@+id/add_event_time_to"
                     android:text="14:00"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text"
+                    android:textColor="?attr/cn_primary_text"
                     android:paddingBottom="@dimen/add_event_padding_bottom"
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:paddingEnd="@dimen/add_event_time_end"
@@ -259,7 +258,7 @@
                     android:id="@+id/add_event_recurrence"
                     android:text="@string/recurrence_does_not_repeat"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text"
+                    android:textColor="?attr/cn_primary_text"
                     android:paddingBottom="@dimen/add_event_padding_bottom"
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:paddingStart="@dimen/add_event_text_start"
@@ -278,7 +277,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider"
+                android:background="?attr/cn_divider"
                 android:padding="0dp"
                 />
 
@@ -287,7 +286,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
+                android:background="?attr/cn_background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -318,9 +317,9 @@
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:text="@string/empty"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text"
-                    android:textColorHint="@color/secondary_text"
-                    android:background="@color/background"
+                    android:textColor="?attr/cn_primary_text"
+                    android:textColorHint="?attr/cn_secondary_text"
+                    android:background="?attr/cn_background"
 
                     />
 
@@ -330,7 +329,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider"
+                android:background="?attr/cn_divider"
                 android:padding="0dp"
                 />
 
@@ -339,7 +338,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
+                android:background="?attr/cn_background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -373,7 +372,7 @@
                         android:id="@+id/notificationPrototype"
                         android:text="15 minutes before"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:paddingBottom="@dimen/add_event_padding_bottom"
                         android:paddingTop="@dimen/add_event_padding_top"
                         android:paddingStart="@dimen/add_event_text_start"
@@ -391,7 +390,7 @@
                     android:id="@+id/add_notification"
                     android:text="@string/add_notification"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/secondary_text"
+                    android:textColor="?attr/cn_secondary_text"
                     android:paddingBottom="@dimen/add_event_padding_bottom"
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:paddingStart="@dimen/add_event_text_start"
@@ -414,7 +413,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/divider"
+                android:background="?attr/cn_divider"
                 android:padding="0dp"
                 />
 
@@ -423,7 +422,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/background"
+                android:background="?attr/cn_background"
                 android:paddingBottom="@dimen/add_event_view_action_padding_bottom"
                 android:paddingTop="@dimen/add_event_view_action_padding_top"
                 >
@@ -454,9 +453,9 @@
                     android:paddingTop="@dimen/add_event_padding_top"
                     android:text="@string/empty"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@color/primary_text"
-                    android:textColorHint="@color/secondary_text"
-                    android:background="@color/background"
+                    android:textColor="?attr/cn_primary_text"
+                    android:textColorHint="?attr/cn_secondary_text"
+                    android:background="?attr/cn_background"
                     android:inputType="textMultiLine"
                     />
 

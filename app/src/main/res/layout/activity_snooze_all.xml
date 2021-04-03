@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:padding="0dp"
     android:fitsSystemWindows="true"
-    tools:context=".ui.SnoozeAllActivity"
     >
 
     <com.google.android.material.appbar.AppBarLayout
@@ -19,7 +18,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/backgroundToolbar"
+            style="@style/Widget.CalendarAppTheme.ActionBar"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:titleTextAppearance="@style/ToolbarTitle"
             android:elevation="@dimen/toolbar_elevation"
@@ -33,7 +32,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".ui.EventViewActivityNoRecents"
         tools:showIn="@layout/activity_view"
-        android:background="@color/background">
+        android:background="?attr/cn_background">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -52,7 +51,7 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/background"
+                    android:background="?attr/cn_background"
                     android:paddingBottom="@dimen/event_view_action_padding_bottom"
                     android:paddingTop="@dimen/event_view_action_padding_top">
 
@@ -80,7 +79,7 @@
                         android:paddingTop="@dimen/event_view_in_text_vert_padding"
                         android:text="@string/snooze_event_for"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text" />
+                        android:textColor="?attr/cn_primary_text" />
 
                     <TextView
                         android:id="@+id/snooze_view_snooze_present1_quiet_time_notice_baseline"
@@ -100,7 +99,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:visibility="visible" />
 
                     <TextView
@@ -122,7 +121,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="?attr/cn_secondary_text"
                         android:visibility="gone" />
 
                     <TextView
@@ -141,7 +140,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_15_min"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text" />
+                        android:textColor="?attr/cn_primary_text" />
 
 
                     <TextView
@@ -162,7 +161,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:visibility="visible" />
 
                     <TextView
@@ -184,7 +183,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="?attr/cn_secondary_text"
                         android:visibility="gone" />
 
                     <TextView
@@ -203,7 +202,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_1_hour"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text" />
+                        android:textColor="?attr/cn_primary_text" />
 
                     <TextView
                         android:id="@+id/snooze_view_snooze_present3_quiet_time_notice_baseline"
@@ -223,7 +222,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:visibility="visible" />
 
                     <TextView
@@ -245,7 +244,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="?attr/cn_secondary_text"
                         android:visibility="gone" />
 
                     <TextView
@@ -264,7 +263,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_4_hours"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text" />
+                        android:textColor="?attr/cn_primary_text" />
 
 
                     <TextView
@@ -285,7 +284,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:visibility="visible" />
 
                     <TextView
@@ -307,7 +306,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="?attr/cn_secondary_text"
                         android:visibility="gone" />
 
                     <TextView
@@ -326,7 +325,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_1_day"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text" />
+                        android:textColor="?attr/cn_primary_text" />
 
 
                     <TextView
@@ -347,7 +346,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:visibility="visible" />
 
                     <TextView
@@ -369,7 +368,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="?attr/cn_secondary_text"
                         android:visibility="gone" />
 
                     <TextView
@@ -388,7 +387,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_1_day"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text" />
+                        android:textColor="?attr/cn_primary_text" />
 
                     <TextView
                         android:id="@+id/snooze_view_snooze_present6_quiet_time_notice_baseline"
@@ -408,7 +407,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text=""
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:visibility="visible" />
 
                     <TextView
@@ -430,7 +429,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/hits_quiet_period"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textColor="@color/secondary_text"
+                        android:textColor="?attr/cn_secondary_text"
                         android:visibility="gone" />
 
                     <TextView
@@ -449,7 +448,7 @@
                         android:paddingTop="@dimen/event_view_spacing"
                         android:text="@string/snooze_preset_1_day"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/primary_text"
+                        android:textColor="?attr/cn_primary_text"
                         android:visibility="gone" />
 
                 </RelativeLayout>

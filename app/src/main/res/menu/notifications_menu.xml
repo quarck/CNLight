@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_snooze_all"
+        android:orderInCategory="90"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_update_white_24dp"
+        android:title="@string/snooze_all" />
+
+    <item
+        android:id="@+id/action_upcoming"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        android:title="@string/menu_upcoming"
+        android:icon="@drawable/ic_inbox_white_24dp"
+        android:visible="true"
+        />
+
+    <item
+        android:id="@+id/action_log"
+        android:orderInCategory="110"
+        app:showAsAction="ifRoom"
+        android:title="@string/notification_log"
+        android:icon="@drawable/ic_done_all_white_24dp"
+        android:visible="true"
+        />
+
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="310"
+        app:showAsAction="never"
+        android:title="@string/menu_about"
+        android:visible="true"
+        />
+
+
+</menu>

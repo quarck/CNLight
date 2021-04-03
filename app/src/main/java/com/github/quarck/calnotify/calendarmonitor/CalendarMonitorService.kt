@@ -30,8 +30,8 @@ import android.app.job.JobScheduler
 import android.app.job.JobInfo
 import android.content.ComponentName
 import android.app.job.JobService
-import com.github.quarck.calnotify.BuildConfig
 import com.github.quarck.calnotify.Consts
+import com.github.quarck.calnotify.BuildConfig
 
 // TODO: check if this is still required -- or all the work can be handled by jobs?
 // TODO: IntentService is depricated

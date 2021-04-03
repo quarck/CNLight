@@ -7,20 +7,20 @@
     android:id="@+id/card_view_main_holder"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="@dimen/compact_view_layout_height"
-    android:background="@color/true_black_as_night">
+    android:background="?attr/cn_background">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/compact_view_layout_height"
         android:id="@+id/compact_view_content_layout"
+        android:visibility="visible"
         >
 
         <View
             android:id="@+id/compact_view_calendar_color"
             android:layout_width="10dp"
             android:layout_height="match_parent"
-            android:background="@color/cal_sample_primary"
+            android:background="?attr/cn_cal_sample_primary"
             android:layout_marginStart="2dp"
             android:layout_marginEnd="5dp"
             android:layout_marginTop="1.5dp"
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:gravity="start"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/primary_text"
+            android:textColor="?attr/cn_primary_text"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_marginStart="@dimen/compact_view_left_margin"
@@ -54,7 +54,7 @@
             android:id="@+id/card_view_event_date"
             android:text="@string/event_time_example"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/secondary_text"
+            android:textColor="?attr/cn_secondary_text"
             android:layout_below="@id/card_view_event_name"
 
             android:layout_marginStart="@dimen/compact_view_left_margin"
@@ -71,7 +71,7 @@
             android:id="@+id/card_view_event_time"
             android:text=""
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/secondary_text"
+            android:textColor="?attr/cn_secondary_text"
 
             android:layout_marginStart="@dimen/compact_view_left_margin"
             android:layout_marginEnd="@dimen/compact_view_right_margin"
@@ -88,7 +88,7 @@
             android:id="@+id/card_view_snoozed_until"
             android:text="@string/snoozed_until_example"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/divider"
+            android:textColor="?attr/cn_divider"
 
             android:layout_below="@id/card_view_event_date"
             android:layout_toEndOf="@id/compact_view_calendar_color"
@@ -124,7 +124,7 @@
         android:id="@+id/event_card_undo_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/compact_view_layout_height"
-        android:background="@color/complete_event_bg"
+        android:background="?attr/cn_complete_event_bg"
         android:visibility="gone"
         >
 
@@ -133,7 +133,7 @@
             android:layout_height="wrap_content"
             android:text="@string/marked_as_done"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/icons"
+            android:textColor="?attr/cn_icons"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
             android:layout_marginStart="25dp"
@@ -145,7 +145,7 @@
             android:text="@string/undo"
             android:id="@+id/card_view_button_undo"
             android:visibility="visible"
-            android:textColor="@color/icons"
+            android:textColor="?attr/cn_icons"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:background="?android:attr/selectableItemBackground"
             android:layout_alignParentEnd="true"
@@ -161,8 +161,8 @@
     <RelativeLayout
         android:id="@+id/event_card_heading_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/compact_view_layout_height"
-        android:background="@color/true_black_as_night"
+        android:layout_height="48dp"
+        android:background="?attr/cn_background"
         android:visibility="gone"
         >
 
@@ -170,8 +170,8 @@
             android:id="@+id/event_view_heading_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/primary_text"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="?attr/cn_primary_text"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
             android:layout_marginStart="25dp"
@@ -183,7 +183,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.25dp"
-        android:background="@color/light_divider"
+        android:background="?attr/cn_light_divider"
         android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

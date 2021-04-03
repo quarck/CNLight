@@ -38,69 +38,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.Consts
-import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.calendar.*
 import com.github.quarck.calnotify.calendar.CalendarEditor
 import com.github.quarck.calnotify.utils.logs.DevLog
-import com.github.quarck.calnotify.utils.textutils.EventFormatter
 import com.github.quarck.calnotify.utils.textutils.dateToStr
 import com.github.quarck.calnotify.utils.*
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.github.quarck.calnotify.R
 import java.util.*
 
-fun EventReminderRecord.toLocalizedString(ctx: Context, isAllDay: Boolean): String {
-
-    val ret = StringBuilder()
-
-    if (!isAllDay) {
-        val duration = EventFormatter(ctx).formatTimeDuration(this.millisecondsBefore, 60L)
-
-        ret.append(
-                ctx.resources.getString(R.string.add_event_fmt_before).format(duration)
-        )
-    }
-    else {
-        val fullDaysBefore = allDayDaysBefore
-        val (hr, min) = allDayHourOfDayAndMinute
-
-        val cal = DateTimeUtils.createCalendarTime(System.currentTimeMillis(), hr, min)
-
-        val time = DateUtils.formatDateTime(ctx, cal.timeInMillis, DateUtils.FORMAT_SHOW_TIME)
-
-        when (fullDaysBefore) {
-            0 ->
-                ret.append(
-                        ctx.resources.getString(R.string.add_event_zero_days_before).format(time)
-                )
-            1 ->
-                ret.append(
-                        ctx.resources.getString(R.string.add_event_one_day_before).format(time)
-                )
-            else ->
-                ret.append(
-                        ctx.resources.getString(R.string.add_event_n_days_before).format(fullDaysBefore, time)
-                )
-        }
-    }
-
-    when (this.method) {
-        CalendarContract.Reminders.METHOD_EMAIL -> {
-            ret.append(" ")
-            ret.append(ctx.resources.getString(R.string.add_event_as_email_suffix))
-        }
-        CalendarContract.Reminders.METHOD_SMS -> {
-            ret.append(" ")
-            ret.append(ctx.resources.getString(R.string.add_event_as_sms_suffix))
-        }
-        CalendarContract.Reminders.METHOD_ALARM -> {
-            ret.append(" ")
-            ret.append(ctx.resources.getString(R.string.add_event_as_alarm_suffix))
-        }
-    }
-
-    return ret.toString()
-}
 
 class EditEventActivityState(val ctx: Context): PersistentStorageBase(ctx, "add_event_state") {
     var lastCalendar by PersistentStorageBase.LongProperty(-1, "A") // give a short name to simplify XML parsing
@@ -148,8 +94,6 @@ open class EditEventActivity : AppCompatActivity() {
 
     private lateinit var calendars: List<CalendarRecord>
     private lateinit var calendar: CalendarRecord
-
-    private lateinit var settings: Settings
 
     private lateinit var from: Calendar
     private lateinit var to: Calendar
@@ -222,6 +166,7 @@ open class EditEventActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Theme.apply(this)
 
         setContentView(R.layout.activity_add_event)
 
@@ -310,17 +255,8 @@ open class EditEventActivity : AppCompatActivity() {
 
         notificationPrototype.visibility = View.GONE
 
-        // settings
-        settings = Settings(this)
-
         // Default calendar
-        calendars = calendarProvider
-                .getCalendars(this)
-                .filter {
-                    !it.isReadOnly &&
-                            it.isVisible &&
-                            settings.getCalendarIsHandled(it.calendarId)
-                }
+        calendars = calendarProvider.getCalendars(this).filter { !it.isReadOnly && it.isVisible }
 
         if (calendars.isEmpty()) {
             DevLog.error(LOG_TAG, "You have no enabled calendars")
@@ -606,8 +542,6 @@ open class EditEventActivity : AppCompatActivity() {
                 persistentState.lastCalendar = calendar.calendarId
 
                 accountName.text = calendar.name
-//                eventTitleText.background = ColorDrawable(
-//                        calendar.color.adjustCalendarColor(settings.darkerCalendarColors))
 
                 window.statusBarColor = 0
 
@@ -763,10 +697,7 @@ open class EditEventActivity : AppCompatActivity() {
                 from.dayOfMonth
         )
 
-        val firstDayOfWeek = Settings(this).firstDayOfWeek
-        if (firstDayOfWeek != -1) {
-            dialog.datePicker.firstDayOfWeek = firstDayOfWeek
-        }
+        dialog.datePicker.firstDayOfWeek = Calendar.MONDAY
 
         dialog.show()
         //builder.setIcon(R.mipmap.ic_launcher_new)
@@ -825,10 +756,7 @@ open class EditEventActivity : AppCompatActivity() {
                 to.month,
                 to.dayOfMonth
         )
-        val firstDayOfWeek = Settings(this).firstDayOfWeek
-        if (firstDayOfWeek != -1) {
-            dialog.datePicker.firstDayOfWeek = firstDayOfWeek
-        }
+        dialog.datePicker.firstDayOfWeek = Calendar.MONDAY
 
         dialog.show()
     }
@@ -868,7 +796,7 @@ open class EditEventActivity : AppCompatActivity() {
         inflater.inflate(R.menu.menu_recurrence_popup, popup.menu)
 
         val timeZone = originalEvent?.timeZone ?: TimeZone.getDefault().id
-        val weekStart = WeekDay.fromJavaCalendarDayOfWeek(Settings(this).firstDayOfWeek)
+        val weekStart = WeekDay.fromJavaCalendarDayOfWeek(Calendar.MONDAY)
 
         if (originalEvent != null) {
             val item = popup.menu.findItem(R.id.repeats_does_not)
@@ -957,7 +885,7 @@ open class EditEventActivity : AppCompatActivity() {
 
         if (currentRecurrence == null)
             currentRecurrence = CalendarRecurrence.Weekly.createDefaultForDate(
-                    currentStartTime, tz, WeekDay.fromJavaCalendarDayOfWeek(settings.firstDayOfWeek))
+                    currentStartTime, tz, WeekDay.fromJavaCalendarDayOfWeek(Calendar.MONDAY))
 
         recurrenceView.setViewModel(RecurrenceViewModel(
                 currentStartTime,

@@ -1,38 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <string name="app_name">Calendar Notifications</string>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_label">Calendar Notifications</string>
+    <string name="main_activity_title">Notifications</string>
     <string name="app_name_cnlight">CN Light</string>
-
-    <string name="main_activity_title">Calendar Notifications</string>
-
-    <string name="settings">Settings</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="event_not_found">"Event not found."</string>
     <string name="application_has_no_access">This application needs special permissions to be able to access calendar notifications\n\nPlease grant READ_CALENDAR and WRITE_CALENDAR permissions\n\nWRITE_CALENDAR is required to hide original calendar notification</string>
-
     <string name="cancel">Cancel</string>
-
     <string name="empty" translatable="false" />
-
     <string name="done">done</string>
-
     <string name="empty_title">(No title)</string>
     <string name="snooze_event_for">Snooze:</string>
-
     <string name="snooze_preset_15_min">15 minutes</string>
     <string name="snooze_preset_1_hour">1 hour</string>
     <string name="snooze_preset_4_hours">4 hours</string>
     <string name="snooze_preset_1_day">1 day</string>
-
     <string name="location">Location:</string>
-    <string name="today">Today</string>
-    <string name="tomorrow">Tomorrow</string>
-    <string name="change_event_time">Move:</string>
-    <string name="change_event_time_repeating_event">Move instance:</string>
-    <string name="title_activity_activity_test_buttons_and_to_do" translatable="false">ActivityTestButtonsAndToDo</string>
-
     <string name="snoozed_until_string">Snoozed until </string>
-    <!-- string name="dialog_snooze_text_label">Comma-separated list of snooze-presets is expected\n\nSupported values like \'15m\', \'2h\' or \'3d\'\n\nUp to 6 items in the list\n\nLeave the empty string to use defaults</string -->
-
     <string name="now">now</string>
     <string name="days">days</string>
     <string name="day">day</string>
@@ -44,27 +30,18 @@
     <string name="second">second</string>
     <string name="no_events_to_display">No event notifications to display\nActive and snoozed notifications would appear here</string>
     <string name="no_calendar_permissions_main">Application has no calendar permissions</string>
-    <string name="misc_settings">Misc settings</string>
-
     <string name="projectPageOnGitHub">Project page on GitHub</string>
     <string name="snooze_all">Snooze All</string>
     <string name="change_all">Change All</string>
     <string name="snooze_all_confirmation">Snooze ALL events?\nAlready snoozed would also change snooze time unless snoozed to longer period</string>
     <string name="change_all_notification">This will change snooze time for all events\nContinue?</string>
-
     <string name="snooze_all_events">Snooze all events to:</string>
     <string name="change_all_events">Change snooze time for all events:</string>
-
     <string name="change_snooze_to">Change snooze to:</string>
-
     <string name="snooze_all_title">Snooze all events</string>
     <string name="change_all_title">Change all events</string>
 
-    <string name="quiet_time_to">Quiet time to</string>
-
     <string name="hits_quiet_period">(hits quiet period)</string>
-    <!-- Displayed on the snooze activity next to the time when this time would result snoozed event time to be within quiet time-->
-
     <string-array name="time_units_plurals">
         <item>Minutes</item>
         <item>Hours</item>
@@ -78,13 +55,9 @@
         <item>Days</item>
     </string-array>
 
-    <string name="title_calendars_activity">Handled Calendars</string>
-
-
     <string name="before_event">before</string>
     <string name="menu_about">About</string>
 
-    <!-- NOTE for translators: 'gplv3_notice' is a part of standard GPLv3 notice text. Most likely there is already official version of this text translated to your language -->
     <string name="gplv3_notice">This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</string>
 
     <string name="gplv3_src_comment">\nFull text of GPLv3 license as well as full source code for this program can be found on the:</string>
@@ -97,7 +70,6 @@
     <string name="event_time_example">Wednesday, 31 December</string>
 
     <string name="hyphen" translatable="false">—</string>
-    <string name="no_calendars_found">No calendars found</string>
     <string name="marked_as_done">Done</string>
 
     <string name="next_col">Next:</string>
@@ -107,15 +79,11 @@
     <string name="multiple_events_single_notification" formatted="false">%d calendar events</string>
     <string name="reminder_at" formatted="false"> (reminder at %s)</string>
 
-
     <string name="complete_from_the_app" formatted="false">In the app on %s</string>
     <string name="complete_from_notification" formatted="false">Via notification %s</string>
     <string name="event_deleted_in_the_app" formatted="false">Ev. deleted on %s</string>
 
-
     <string name="event_moved_new_time" formatted="false">Moved, new time: %s</string>
-    <string name="mark_not_finished">Mark not done</string>
-
     <string name="restore_notification">Restore notification</string>
 
     <string name="title_activity_privacy_policy">Privacy Policy</string>
@@ -124,23 +92,8 @@
     <string name="privacy_policy_content">This app does not steal your data\n\nNo data is being ever sent over network to any 3rd party</string>
 
     <string name="build_time_string_format" formatted="false">Build time: %s</string>
-    <string name="handle_events_with_no_reminders">Handle events with no reminders</string>
-    <string name="handle_events_with_no_reminders_summary">Notify about events with no reminder added</string>
-    <string name="default_reminder_time">Default reminder time</string>
-    <string name="default_reminder_time_summary_short">Reminder time for events with no reminders</string>
-    <string name="default_all_day_reminder_time">Default all day reminder</string>
-    <string name="default_all_day_reminder_time_summary_short">Default reminder time for all day events with no reminders</string>
 
-    <string name="first_day_of_week">First day of the week</string>
-    <string name="first_day_of_week_summary" />
-
-    <string name="on_the_day_before">On the day before</string>
-    <string name="on_the_day_of_event">On the day of event</string>
-    <string name="before_the_event">before the event</string>
-
-    <string name="reminder_at_fmt" formatted="false">Remind @ %s</string>
-    <string name="handle_email_only_events_title">Handle e-mail only events</string>
-    <string name="handle_email_only_events_summary">Notify locally about events with email-only reminders</string>
+    <string name="reminder_at_fmt" formatted="false">%s:</string>
 
     <string name="exit">Exit</string>
 
@@ -164,31 +117,8 @@
     <string name="add_event_one_day_before" formatted="false">Day before at %s</string>
     <string name="add_event_zero_days_before" formatted="false">On the day at %s</string>
     <string name="remove_reminder">Remove</string>
-    <string name="days_before">days before, at:</string>
-    <string name="remind">Remind</string>
+    <string name="days_before">Days before:</string>
     <string name="remind_col">Remind:</string>
-
-    <string-array name="default_reminder_intervals">
-        <item>1 minute</item>
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>2 hours</item>
-        <item>4 hours</item>
-        <item>1 day</item>
-        <item>1 week</item>
-        <item>Custom</item>
-    </string-array>
-
-    <string-array name="default_reminder_intervals_all_day">
-        <item>Enter manually</item>
-        <item>Day before at 8:00</item>
-        <item>Day before at 12:00</item>
-        <item>Day before at 18:00</item>
-        <item>Day before at 21:00</item>
-        <item>On the day at 8:00</item>
-        <item>On the day at 12:00</item>
-    </string-array>
 
     <string name="new_event_max_reminder_is_28_days">Max reminder interval is 28 days before the event</string>
 
@@ -197,20 +127,14 @@
     <string name="new_event_failed_to_create_event">Failed to create event!</string>
     <string name="no_active_calendars">No active / handled calendars</string>
 
-
     <string name="event_was_created">Event was created</string>
     <string name="event_was_created_reminder_at" formatted="false">Event was created, next reminder: %s</string>
 
-    <string name="event_not_found">Event not found</string>
     <string name="calendar_not_found">Calendar not found</string>
     <string name="failed_to_update_event_details">Failed to update event details</string>
 
     <string name="event_was_updated">Event was updated</string>
     <string name="event_was_updated_next_reminder" formatted="false">Event was updated, next reminder: %s</string>
-
-    <string name="open_in_calendar">Open in Calendar</string>
-
-    <string name="calendar_handling_options">Calendar handling options</string>
 
     <string name="create_event">Create Event</string>
 
@@ -219,22 +143,12 @@
     <string name="notification_channel_alarm">Alarm Notifications</string>
     <string name="notification_channel_alarm_desc">Notifications that behave like an alarm (with #alarm tag)</string>
 
-
     <string name="plus_more" formatted="false">+%d more events</string>
 
-    <string name="view_event">View Event</string>
-    <string name="content_desc_menu">menu</string>
-    <string name="regular_notification_settings">Main channel settings</string>
-    <string name="alarm_notification_settings">Alarms channel settings</string>
-
-    <string name="content_desc_navigate_back">navigate back</string>
-    <string name="main_notifications">Notification channels</string>
     <string name="owner_dummy_local">Local</string>
     <string name="no_account">No account</string>
     <string name="dummy">Dummy</string>
     <string name="unknown">Unknown</string>
-
-    <!-- do not translate the line below - only used for debugging -->
 
     <string name="battery_optimisation_title">Battery optimisation</string>
     <string name="battery_optimisation_details">It is recommended to disable battery optimisations for this app to ensure correct operation (Android battery optimisation can put app into deep sleep, resulting missed calendar notifications)</string>
@@ -252,21 +166,13 @@
     <string name="copy_next_week">Next Week (copy inst.)</string>
     <string name="copy_next_month_30d">Next Month (+30d) (copy inst.)</string>
 
-    <string name="move_event_confirm" formatted="false">Move event by %d days?</string>
     <string name="add_event">Add Event</string>
-    <string name="nav_header_title">Calendar</string>
 
-    <string name="menu_home">Notifications</string>
     <string name="menu_upcoming">Upcoming</string>
-    <string name="menu_finished">Notification Log</string>
-    <string name="active_events">Notifications</string>
+    <string name="notification_log">Notification Log</string>
     <string name="upcoming_events">Upcoming Notifications</string>
-    <string name="finished_events">Notification Log</string>
     <string name="event_was_marked_as_finished">/SKIP/</string>
-    <string name="mark_finished">Mark as done</string>
-    <string name="view_event_details">View event details</string>
     <string name="yes">Yes</string>
-    <string name="edit_event">Edit Event</string>
     <string name="recurrence_daily">Daily</string>
     <string name="recurrence_weekly">Weekly</string>
     <string name="recurrence_monthly">Monthly</string>
@@ -293,25 +199,43 @@
     <string name="recurrence_dialog_title">Recurrence</string>
     <string name="done_caps">DONE</string>
     <string name="repeats_every">Repeats every:</string>
-    <string name="failed_to_parse_original_rrule">Failed to parse original rrule</string>
-    <string name="failed_to_update_recurrence">Failed to update recurrence</string>
-    <string name="failed_to_update_old_recurrence">Failed to update old recurrence</string>
-    <string name="failed_to_parse_new_rrule">Failed to parse the new rrule</string>
     <string name="delete_event">Delete event</string>
     <string name="move_event">move_event</string>
-    <string name="snooze_event">Snooze event</string>
-    <string name="skip_done">Skip notification</string>
-    <string name="do_not_skip_not_done">Don\'t skip notification</string>
     <string name="dismiss_notification">Dismiss</string>
-    <string name="menu_calendar">Calendar</string>
     <string name="edit">Edit</string>
     <string name="delete_event_question">Delete this event?</string>
-    <string name="delete_recurring_event">Delete the recurring series?</string>
-    <string name="edit_series_question">Edit the recurring series?\nOn save this will delete the old series and create new</string>
-    <string name="can_only_edit_the_whole_series">ERROR: can only edit the whole series!</string>
-    <string name="today_semi">Upcoming today:</string>
-    <string name="tomorrow_and_following">On other days:</string>
-    <string name="new_evt">New Evt.</string>
+    <string name="today_semi">Today:</string>
+    <string name="no_more_today">Nothing for today</string>
+    <string name="tomorrow_and_following">Tomorrow+:</string>
+    <string name="no_more_other_days">Nothing for tomorrow</string>
+
+    <string name="clear_log">Clear Log</string>
+    <string name="clear_log_confirmation">Clear log entries?</string>
+    <string name="no_undo">No undo available for this action</string>
+
+    <string name="at_comma">At:</string>
+    <string name="about_activity">About</string>
+
+    <string-array name="default_reminder_intervals">
+        <item>1 minute</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>4 hours</item>
+        <item>1 day</item>
+        <item>1 week</item>
+        <item>Custom</item>
+    </string-array>
+
+    <string-array name="default_reminder_intervals_all_day">
+        <item>Enter manually</item>
+        <item>Day before at 8:00</item>
+        <item>Day before at 12:00</item>
+        <item>Day before at 18:00</item>
+        <item>Day before at 21:00</item>
+        <item>On the day at 8:00</item>
+        <item>On the day at 12:00</item>
+    </string-array>
 
 </resources>
-

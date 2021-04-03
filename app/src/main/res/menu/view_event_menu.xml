@@ -17,23 +17,6 @@
         android:orderInCategory="10"
         app:showAsAction="never"
         />
-    <item android:id="@+id/action_mark_done"
-        android:title="@string/skip_done"
-        android:orderInCategory="110"
-        app:showAsAction="never"
-        />
-    <item android:id="@+id/action_mark_not_done"
-        android:title="@string/do_not_skip_not_done"
-        android:orderInCategory="120"
-        app:showAsAction="never"
-        />
-
-    <item
-        android:id="@+id/action_open_in_calendar"
-        android:orderInCategory="130"
-        app:showAsAction="never"
-        android:title="@string/open_in_calendar"
-        />
 
     <item
         android:id="@+id/action_delete_event"

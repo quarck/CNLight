@@ -25,11 +25,9 @@ import android.content.Intent
 import android.os.PowerManager
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
-import com.github.quarck.calnotify.globalState
 import com.github.quarck.calnotify.utils.logs.DevLog
 //import com.github.quarck.calnotify.utils.logs.Logger
 import com.github.quarck.calnotify.persistentState
-import com.github.quarck.calnotify.ui.MainActivityNG
 import com.github.quarck.calnotify.utils.alarmManager
 import com.github.quarck.calnotify.utils.powerManager
 import com.github.quarck.calnotify.utils.setExactAndAlarm
@@ -44,8 +42,6 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
         if (context == null || intent == null) {
             return;
         }
-
-        context.globalState?.lastTimerBroadcastReceived = System.currentTimeMillis()
 
         if (!ApplicationController.hasActiveEventsToRemind(context)) {
             DevLog.info(LOG_TAG, "Reminder broadcast alarm received: no active requests")
@@ -87,7 +83,7 @@ open class ReminderAlarmGenericBroadcastReceiver : BroadcastReceiver() {
                         nextFireAt,
                         ReminderAlarmBroadcastReceiver::class.java, // ignored on KitKat and below
                         ReminderExactAlarmBroadcastReceiver::class.java,
-                        MainActivityNG::class.java)
+                        com.github.quarck.calnotify.ui.MainActivity::class.java)
             }
 
             if (shouldFire) {

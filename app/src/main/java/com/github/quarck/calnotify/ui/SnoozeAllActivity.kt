@@ -29,7 +29,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.R
-import com.github.quarck.calnotify.Settings
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.app.toast
 import com.github.quarck.calnotify.utils.logs.DevLog
@@ -81,13 +80,9 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
     lateinit var snoozePresets: LongArray
 
-    lateinit var settings: Settings
-
     lateinit var formatter: EventFormatter
 
     var snoozeAllIsChange = false
-
-    var snoozeFromMainActivity = false
 
     val snoozePresetControlIds = intArrayOf(
             R.id.snooze_view_snooze_present1,
@@ -119,6 +114,7 @@ open class SnoozeAllActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        Theme.apply(this)
 
         setContentView(R.layout.activity_snooze_all)
 
@@ -126,12 +122,9 @@ open class SnoozeAllActivity : AppCompatActivity() {
 
         // val currentTime = System.currentTimeMillis()
 
-        settings = Settings(this)
         formatter = EventFormatter(this)
 
         snoozeAllIsChange = intent.getBooleanExtra(Consts.INTENT_SNOOZE_ALL_IS_CHANGE, false)
-
-        snoozeFromMainActivity = intent.getBooleanExtra(Consts.INTENT_SNOOZE_FROM_MAIN_ACTIVITY, false)
 
         val toolbar = findViewById<Toolbar?>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -175,7 +168,6 @@ open class SnoozeAllActivity : AppCompatActivity() {
                 else
                     resources.getString(R.string.change_all_title)
     }
-
 
     @Suppress("unused", "UNUSED_PARAMETER")
     fun onButtonCancelClick(v: View?) {

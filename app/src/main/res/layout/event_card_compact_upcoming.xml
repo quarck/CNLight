@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view_main_holder"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/cn_background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/compact_view_layout_height"
+        android:id="@+id/compact_view_content_layout"
+        android:visibility="visible"
+        >
+
+        <View
+            android:id="@+id/compact_view_calendar_color"
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:background="?attr/cn_cal_sample_primary"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="1.5dp"
+            android:layout_marginBottom="0.5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_view_notification_time"
+            android:text="\@ 10:11:"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="?attr/cn_primary_text"
+
+            android:layout_toEndOf="@id/compact_view_calendar_color"
+
+            android:layout_marginStart="@dimen/compact_view_left_margin"
+            android:layout_marginEnd="@dimen/compact_view_right_margin"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+
+            android:layout_alignParentTop="true"
+            tools:ignore="HardcodedText" />
+
+
+        <TextView
+            android:id="@+id/card_view_skip_flag"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="4dp"
+
+            android:layout_marginEnd="@dimen/compact_view_right_margin"
+
+            android:layout_marginBottom="2dp"
+            android:layout_toEndOf="@id/card_view_notification_time"
+            android:text="@string/event_was_marked_as_finished"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textStyle="bold"
+            android:layout_alignBaseline="@id/card_view_notification_time"
+
+            android:textColor="@color/material_red" />
+
+        <TextView
+            android:id="@+id/card_view_event_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="?attr/cn_primary_text"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:layout_marginStart="@dimen/compact_view_left_margin"
+            android:layout_marginEnd="@dimen/compact_view_right_margin"
+
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+
+            android:text="@string/event_title_example"
+
+            android:layout_toEndOf="@id/compact_view_calendar_color"
+            android:layout_below="@id/card_view_notification_time"
+            android:layout_alignParentEnd="true"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_view_event_date"
+            android:text="@string/event_time_example"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="?attr/cn_secondary_text"
+            android:layout_below="@id/card_view_event_name"
+
+            android:layout_marginStart="@dimen/compact_view_left_margin"
+            android:layout_marginEnd="@dimen/compact_view_right_margin"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="3dp"
+
+            android:layout_toEndOf="@id/compact_view_calendar_color"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_view_event_time"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="?attr/cn_secondary_text"
+
+            android:layout_marginStart="@dimen/compact_view_left_margin"
+            android:layout_marginEnd="@dimen/compact_view_right_margin"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="1dp"
+
+            android:layout_below="@id/card_view_event_date"
+            android:layout_toEndOf="@id/compact_view_calendar_color"
+            />
+
+
+
+        <ImageView
+            android:id="@+id/imageview_is_alarm_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/card_view_event_date"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:importantForAccessibility="no"
+            android:padding="0dp"
+            android:scaleX="0.75"
+            android:scaleY="0.75"
+            android:visibility="gone"
+            card_view:srcCompat="@drawable/ic_alarm_white_24dp"
+            android:alpha="0.75"
+            />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/event_card_undo_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/compact_view_layout_height"
+        android:background="?attr/cn_complete_event_bg"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/marked_as_done"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="?attr/cn_icons"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="25dp"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/undo"
+            android:id="@+id/card_view_button_undo"
+            android:visibility="visible"
+            android:textColor="?attr/cn_icons"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+
+            android:paddingStart="18dp"
+            android:paddingEnd="16dp"
+            tools:ignore="RelativeOverlap" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/event_card_heading_layout"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?attr/cn_background"
+        android:visibility="gone"
+        >
+
+        <TextView
+            android:id="@+id/event_view_heading_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="?attr/cn_primary_text"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="25dp"
+            android:text="HELLO WORLD"
+            tools:ignore="HardcodedText" />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.25dp"
+        android:background="?attr/cn_light_divider"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>
+
+

@@ -31,6 +31,13 @@ data class md5state(var a: Int, var b: Int, var c: Int, var d: Int) {
         }
         return md5
     }
+
+    fun xor(other: md5state) {
+        a = a xor other.a
+        b = b xor other.b
+        c = c xor other.c
+        d = d xor other.d
+    }
 }
 
 object MD5 {

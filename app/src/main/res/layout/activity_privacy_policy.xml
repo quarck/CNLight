@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.PrivacyPolicyActivity"
-    android:background="@color/background"
+
+    android:background="?attr/cn_background"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -17,7 +17,6 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/backgroundToolbar"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -38,7 +37,7 @@
                 android:padding="32dp"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textColor="@color/primary_text"
+                android:textColor="?attr/cn_primary_text"
                 android:text="@string/privacy_policy_title"/>
 
             <TextView
@@ -47,7 +46,7 @@
                 android:padding="16dp"
                 android:gravity="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/primary_text"
+                android:textColor="?attr/cn_primary_text"
                 android:text="@string/privacy_policy_content"/>
 
         </LinearLayout>

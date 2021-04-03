@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:theme="@style/PickerDialogTheme"
     >
 
     <TextView
@@ -20,7 +19,7 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:textStyle="bold"
-        android:textColor="@color/secondary_text"
+        android:textColor="?attr/cn_secondary_text"
 
         />
 
@@ -45,7 +44,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/spinnerTimeIntervalUnit"
             android:layout_gravity="center"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:entries="@array/time_units_plurals"
             />
 
@@ -57,11 +56,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/notification_as_email"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="10dp"
-        android:textColor="@color/primary_text"
+        android:padding="10dp"
+        android:textColor="?attr/cn_primary_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:layout_gravity="center"
         />

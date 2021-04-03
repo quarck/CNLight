@@ -42,7 +42,6 @@ import com.github.quarck.calnotify.utils.adjustCalendarColor
 
 interface EventListCallback {
     fun onItemClick(v: View, position: Int, eventId: Long): Unit
-    fun onItemSnooze(v: View, position: Int, eventId: Long): Unit
     fun onItemRemoved(event: EventAlertRecord)
     fun onItemRestored(event: EventAlertRecord) // e.g. undo
     fun onScrollPositionChange(newPos: Int)
@@ -98,7 +97,7 @@ class EventListAdapter(
             onRecycleViewRegistered(_recyclerView)
         }
 
-    private val primaryColor: Int = ContextCompat.getColor(context, R.color.primary)
+    private val primaryColor: Int
 
     private var currentScrollPosition: Int = 0
 
@@ -106,6 +105,10 @@ class EventListAdapter(
     private var eventsPendingRemoval = mutableMapOf<EventAlertRecordKey, EventAlertRecord>()
 
     private val eventFormatter = EventFormatter(context)
+
+    init {
+        primaryColor = Theme.resolveColor(context, R.attr.cn_primary)
+    }
 
     val scrollPosition: Int
         get() = currentScrollPosition
@@ -130,12 +133,14 @@ class EventListAdapter(
 
                     val escapeVelocityMultiplier = 5.0f
 
-                    val background = ColorDrawable(ContextCompat.getColor(context, R.color.complete_event_bg))
-                    var vMark = (ContextCompat.getDrawable(context, R.drawable.ic_check_white_24dp) ?: throw Exception("Now v-mark"))
-                                .apply{
-                                    colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
-                                            ContextCompat.getColor(context, R.color.icons), BlendModeCompat.SRC_ATOP)
-                                }
+                    val iconsColor = Theme.resolveColor(context, R.attr.cn_icons)
+
+                    val background = ColorDrawable(Theme.resolveColor(context, R.attr.cn_complete_event_bg))
+                    val vMark = (ContextCompat.getDrawable(context, R.drawable.ic_check_white_24dp) ?: throw Exception("Now v-mark"))
+                            .apply{
+                                colorFilter = BlendModeColorFilterCompat.createBlendModeColorFilterCompat(
+                                        iconsColor, BlendModeCompat.SRC_ATOP)
+                            }
 
                     var vMarkMargin = context.resources.getDimension(R.dimen.ic_clear_margin).toInt()
                     var bgMargin = context.resources.getDimension(R.dimen.swipe_bg_margin).toInt()

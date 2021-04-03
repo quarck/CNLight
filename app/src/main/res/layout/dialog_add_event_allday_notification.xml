@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme.NoActionBar"
     android:orientation="vertical"
     >
 
@@ -15,24 +14,19 @@
     android:layout_height="wrap_content"
     >
 
-
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal"
-        >
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:text="@string/remind"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColor="@color/primary_text"
+            android:text="@string/days_before"
+            android:textColor="?attr/cn_primary_text"
+            android:layout_margin="32dp"
+            android:padding="16dp"
             android:layout_gravity="center"
             />
 
@@ -43,42 +37,43 @@
             android:layout_gravity="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             />
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:text="@string/days_before"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:textColor="@color/primary_text"
+            android:text="@string/at_comma"
+
+            android:textColor="?attr/cn_primary_text"
             android:layout_gravity="center"
+            android:layout_margin="32dp"
+            android:padding="16dp"
+
             />
 
+        <TimePicker
+            android:id="@+id/time_picker_notification_time_of_day"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:timePickerMode="spinner"
+            />
     </LinearLayout>
-
-
-    <TimePicker
-        android:id="@+id/time_picker_notification_time_of_day"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:theme="@android:style/Theme.Holo.Light"
-        />
 
 
     <CheckBox
         android:id="@+id/checkbox_as_email"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/notification_as_email"
-        android:paddingStart="30dp"
-        android:paddingEnd="10dp"
-        android:paddingTop="30dp"
-        android:paddingBottom="10dp"
-        android:textColor="@color/primary_text"
+        android:layout_margin="32dp"
+        android:padding="16dp"
+        android:textColor="?attr/cn_primary_text"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:layout_gravity="center_horizontal"
         />
