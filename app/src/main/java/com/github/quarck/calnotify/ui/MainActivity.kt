@@ -98,12 +98,6 @@ class MainActivity : AppCompatActivity(), EventListCallback {
         reloadLayout = findViewById<RelativeLayout>(R.id.activity_main_reload_layout)
 
         emptyView = findViewById(R.id.empty_view)
-
-        findViewById<FloatingActionButton>(R.id.action_btn_add_event).setOnClickListener {
-            startActivity(
-                    Intent(this, EditEventActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            )
-        }
     }
 
     override fun onResume() {

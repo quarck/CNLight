@@ -428,6 +428,12 @@ class EventNotificationManager {
     ) {
         val notificationManager = ctx.notificationManager
 
+        val viewEventPendingIntent =
+            pendingActivityIntent(ctx,
+                CalendarIntents.intentForAction(Intent.ACTION_VIEW, event.eventId),
+                event.notificationId * EVENT_CODES_TOTAL + EVENT_CODE_OPEN_OFFSET
+            )
+
         val snoozeActivityIntent =
                 pendingActivityIntent(ctx,
                         snoozeIntent(ctx, event.eventId, event.instanceStartTime, event.notificationId),
@@ -462,7 +468,7 @@ class EventNotificationManager {
                 .setContentTitle(title)
                 .setContentText(notificationTextString)
                 .setSmallIcon(R.drawable.ic_event_white_24dp)
-                .setContentIntent(snoozeActivityIntent)
+                .setContentIntent(viewEventPendingIntent)
                 .setAutoCancel(false)
                 .setOngoing(true)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(notificationTextString))
@@ -475,13 +481,22 @@ class EventNotificationManager {
         builder.setGroup(NOTIFICATION_GROUP)
 
         val dismissAction =
-                NotificationCompat.Action.Builder(
-                        R.drawable.ic_clear_white_24dp,
-                        ctx.getString(R.string.done),
-                        dismissPendingIntent
-                ).build()
+            NotificationCompat.Action.Builder(
+                R.drawable.ic_clear_white_24dp,
+                ctx.getString(R.string.dismiss_notification),
+                dismissPendingIntent
+            ).build()
 
         builder.addAction(dismissAction)
+
+        val snoozeAction =
+            NotificationCompat.Action.Builder(
+                R.drawable.ic_event_white_24dp,
+                ctx.getString(R.string.snooze),
+                snoozeActivityIntent
+            ).build()
+        
+        builder.addAction(snoozeAction)
 
         builder.setColor(event.color.adjustCalendarColor(false))
 
@@ -634,7 +649,7 @@ class EventNotificationManager {
         const val EVENT_CODE_SNOOOZE_OFFSET = 0
         const val EVENT_CODE_DISMISS_OFFSET = 1
         @Suppress("unused")
-        const val EVENT_CODE_DELETE_OFFSET = 2
+//        const val EVENT_CODE_DELETE_OFFSET = 2
         const val EVENT_CODE_OPEN_OFFSET = 3
         const val EVENT_CODE_DEFAULT_SNOOOZE0_OFFSET = 4
         const val EVENT_CODE_MUTE_TOGGLE_OFFSET = 5

@@ -31,7 +31,7 @@ object CalendarIntents {
 
     private const val LOG_TAG = "CalendarIntents"
 
-    private fun intentForAction(action: String, eventId: Long): Intent {
+    fun intentForAction(action: String, eventId: Long): Intent {
 
         val uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventId);
         val intent = Intent(action).setData(uri)

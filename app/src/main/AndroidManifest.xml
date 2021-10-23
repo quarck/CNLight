@@ -54,24 +54,6 @@
             android:targetActivity="com.github.quarck.calnotify.ui.MainActivity">
         </activity-alias>
 
-        <activity
-            android:name="com.github.quarck.calnotify.ui.EditEventActivityTextReceiver"
-            android:label="@string/create_event"
-            android:parentActivityName="com.github.quarck.calnotify.ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.PROCESS_TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-        </activity>
-
         <receiver android:name="com.github.quarck.calnotify.broadcastreceivers.AppUpdatedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
@@ -142,12 +124,6 @@
         <activity
             android:name="com.github.quarck.calnotify.ui.AboutActivity"
             android:label="@string/about_activity"
-            android:parentActivityName="com.github.quarck.calnotify.ui.MainActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name="com.github.quarck.calnotify.ui.EditEventActivity"
-            android:label="@string/empty"
             android:parentActivityName="com.github.quarck.calnotify.ui.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />

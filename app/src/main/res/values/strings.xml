@@ -201,7 +201,7 @@
     <string name="repeats_every">Repeats every:</string>
     <string name="delete_event">Delete event</string>
     <string name="move_event">move_event</string>
-    <string name="dismiss_notification">Dismiss</string>
+    <string name="dismiss_notification">dismiss</string>
     <string name="edit">Edit</string>
     <string name="delete_event_question">Delete this event?</string>
     <string name="today_semi">Today:</string>
@@ -215,6 +215,7 @@
 
     <string name="at_comma">At:</string>
     <string name="about_activity">About</string>
+    <string name="snooze">snooze</string>
 
     <string-array name="default_reminder_intervals">
         <item>1 minute</item>
