@@ -83,6 +83,10 @@ data class MonitorEventAlertEntry(
         return sb.toString()
     }
 
+    override fun hashCode(): Int {
+        return md5.a
+    }
+
     fun keyEquals(alertKey: MonitorEventAlertEntryKey) =
             (alertTime == alertKey.alertTime) &&
                     (instanceStartTime == alertKey.instanceStartTime) &&

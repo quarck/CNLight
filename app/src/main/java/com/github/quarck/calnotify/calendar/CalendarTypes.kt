@@ -20,6 +20,7 @@
 package com.github.quarck.calnotify.calendar
 
 import android.provider.CalendarContract
+import android.util.Log
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.utils.MD5
 import com.github.quarck.calnotify.utils.md5state
@@ -112,13 +113,14 @@ fun eventContentHash(calendarId: Long, isAllDay: Boolean, color: Int,
                      eventStatus: EventStatus, attendanceStatus: AttendanceStatus,
                      title: String, desc: String, location: String, timeZone: String,
                      rRule: String, rDate: String, exRRule: String, exRDate: String
-) = MD5.compute((
-        "$calendarId,$isAllDay,$color," +
-                "$startTime,$endTime," +
-                "$eventStatus,$attendanceStatus," +
-                "${title.length},${desc.length},${location.length},${timeZone.length}," +
-                "$title,$desc,$location,$timeZone,"// +
-        ).toByteArray())
+): md5state {
+    val text = "$calendarId,$isAllDay,$color," +
+            "$startTime,$endTime," +
+            "$eventStatus,$attendanceStatus," +
+            "${title.length},${desc.length},${location.length},${timeZone.length}," +
+            "$title,$desc,$location,$timeZone,"// +
+    return MD5.compute(text.toByteArray())
+}
 
 data class EventRecord(
         val calendarId: Long,

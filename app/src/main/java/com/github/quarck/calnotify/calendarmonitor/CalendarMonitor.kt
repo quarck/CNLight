@@ -23,6 +23,7 @@ import android.content.ContentProviderResult
 import android.content.Context
 import android.content.Intent
 import android.provider.CalendarContract
+import android.util.Log
 import com.github.quarck.calnotify.Consts
 import com.github.quarck.calnotify.app.ApplicationController
 import com.github.quarck.calnotify.broadcastreceivers.ManualEventAlarmBroadcastReceiver
@@ -579,6 +580,7 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
 
         val alerts = calendarProvider.getEventAlertsForInstancesInRange(context, scanFrom, scanTo)
                 .map{ MonitorDataPair.fromEventAlertRecord(it) }
+
         val alertsMerged =
                 filterAndMergeAlerts(context, alerts, scanFrom, scanTo).sortedBy { it.first.alertTime }
 
@@ -662,9 +664,16 @@ class CalendarMonitor(val calendarProvider: CalendarProvider) {
             val newAlerts = providedAlerts - knownAlerts.keys
             val disappearedAlerts = knownAlerts - providedAlerts.keys
 
-            DevLog.info(LOG_TAG, "filterAndMergeAlerts: ${newAlerts.size} new alerts, ${disappearedAlerts.size} disappeared alerts")
+            // only delete events that are both disappeared and outdated
+            val eventsToDelete =
+                disappearedAlerts.values
+                    .filter { it.first.instanceStartTime < scanFrom && it.first.alertTime < scanFrom }
+                    .map { it.first }
 
-            db.deleteAlerts(disappearedAlerts.values.map{ it.first })
+            DevLog.info(LOG_TAG, "filterAndMergeAlerts: ${newAlerts.size} new alerts, ${disappearedAlerts.size} disappeared alerts (${eventsToDelete.size} to remove)")
+
+            db.deleteAlerts(eventsToDelete)
+
             db.addAlerts(newAlerts.values.map{ it.first })
 
             // Presumably this would be faster than re-reading SQLite again
